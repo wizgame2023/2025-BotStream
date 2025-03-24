@@ -1,0 +1,28 @@
+/*!
+@file GameTuboi.h
+@brief ゲームステージ
+*/
+
+#pragma once
+#include "stdafx.h"
+
+namespace basecross {
+
+	//--------------------------------------------------------------------------------------
+	//	ゲームステージクラス
+	//--------------------------------------------------------------------------------------
+	class StageTuboi : public Stage {
+		//ビューの作成
+		void CreateViewLight();
+	public:
+		//構築と破棄
+		StageTuboi() :Stage() {}
+		virtual ~StageTuboi() {}
+		//初期化
+		virtual void OnCreate()override;
+	};
+
+
+}
+//end basecross
+
