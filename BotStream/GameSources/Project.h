@@ -13,5 +13,11 @@
 #include "Character.h"
 #include "Player.h"
 
+//開発ステージ用
+#include "StageAbe.h"
+#include "StageSanpei.h"
+#include "StageSato.h"
+#include "StageTuboi.h"
+
 
 

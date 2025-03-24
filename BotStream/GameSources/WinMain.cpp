@@ -9,8 +9,8 @@ using namespace basecross;
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 //íËêî
-const wchar_t* pClassName = L"BaseCrossFullClass";
-const wchar_t* pWndTitle = L"BaseCrossFullSample";
+const wchar_t* pClassName = L"BotStream";
+const wchar_t* pWndTitle = L"BotStream(âº)";
 
 
 //--------------------------------------------------------------------------------------
