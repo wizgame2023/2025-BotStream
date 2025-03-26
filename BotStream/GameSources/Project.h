@@ -13,6 +13,12 @@
 #include "Character.h"
 #include "Player.h"
 
+
+#include "MyGameObject.h"//全ての親クラス
+
+#include "ObjectMove.h" //動くオブジェクト
+#include "ObjectNotMove.h"//動かないオブジェクト
+
 //開発ステージ用
 #include "StageAbe.h"
 #include "StageSanpei.h"
