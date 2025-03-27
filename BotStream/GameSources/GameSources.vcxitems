@@ -14,8 +14,16 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Actor.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)AttackCollision.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)CameraManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Character.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyGameObject.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ProjectBehavior.h" />
@@ -25,10 +33,19 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSanpei.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSato.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageTuboi.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)State.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Actor.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Character.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LandDetect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MyGameObject.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ObjectMove.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ObjectNotMove.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ProjectBehavior.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ProjectShader.cpp" />
@@ -37,6 +54,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSanpei.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageTuboi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
   </ItemGroup>
 </Project>
