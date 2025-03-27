@@ -64,6 +64,9 @@
     <Filter Include="Sources\State">
       <UniqueIdentifier>{57242715-40de-44d9-be01-a0ba0624242e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\State">
+      <UniqueIdentifier>{900b3316-2f08-4bb7-812b-629479593fcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Character.h">
@@ -106,6 +109,24 @@
       <Filter>Headers\ObjectMoveNot</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h">
+      <Filter>Headers\ObjectMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Actor.h">
+      <Filter>Headers\ObjectMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h">
+      <Filter>Headers\ObjectMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CameraManager.h">
+      <Filter>Headers\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)AttackCollision.h">
+      <Filter>Headers\ObjectMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)State.h">
+      <Filter>Headers\State</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h">
       <Filter>Headers\ObjectMove</Filter>
     </ClInclude>
   </ItemGroup>
@@ -166,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
       <Filter>Sources\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp">
+      <Filter>Sources\ObjectMove</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
