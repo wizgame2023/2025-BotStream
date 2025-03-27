@@ -113,6 +113,8 @@ namespace basecross{
 			if (m_controler.fThumbLY != 0.0f && m_controler.fThumbLX != 0.0f)
 			{
 				m_trans->SetRotation(m_rot);
+				float playerRad = atan2f(contrloerVec.y, contrloerVec.x);//Šp“x‚ðŽæ“¾
+				float playerdeg = XMConvertToDegrees(playerRad);//Šp“x‚ð‚Å‚¡
 			}
 
 		}
