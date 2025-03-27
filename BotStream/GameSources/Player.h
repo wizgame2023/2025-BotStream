@@ -27,6 +27,9 @@ namespace basecross{
 		//動く処理
 		void PlayerMove();
 
+		//デバック用の文字列
+		void DebagLog();
+
 	};
 
 }

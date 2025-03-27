@@ -56,16 +56,16 @@ namespace basecross{
 	{
 		float delta = App::GetApp()->GetElapsedTime();
 		
-		//アニメーション再生
-		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(delta);
-
 		//動く処理(仮)
 		PlayerMove();
+
+		//デバック用文字列
+		DebagLog();
 	}
 
 	void Player::PlayerMove()
 	{
-		auto pos = GetComponent<Transform>()->GetPosition();//ポジション取得
+		//auto pos = GetComponent<Transform>()->GetPosition();//ポジション取得
 		auto Delta = App::GetApp()->GetElapsedTime();
 		float m_speed = 3.0f;//仮のスピード
 
@@ -73,15 +73,16 @@ namespace basecross{
 		auto inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
 		//コントローラーの取得
 		auto m_controler = inputDevice.GetControlerVec()[0];
+		Vec2 contrloerVec = Vec2(m_controler.fThumbLX, m_controler.fThumbLY);
 
 
 		//左ステックの向きにプレイヤーが進む
 		if (m_controler.bConnected)
 		{
-			pos.z += (m_controler.fThumbLY * m_speed * Delta) * 2;
-			pos.x += (m_controler.fThumbLX * m_speed * Delta) * 2;
+			m_pos.z += (m_controler.fThumbLY * m_speed * Delta) * 2;
+			m_pos.x += (m_controler.fThumbLX * m_speed * Delta) * 2;
 
-			m_trans->SetPosition(pos);//ポジション更新
+			m_trans->SetPosition(m_pos);//ポジション更新
 		}
 
 		//ステックを傾けるとアニメーションが再生される
@@ -116,6 +117,29 @@ namespace basecross{
 
 		}
 
+	}
+
+	void Player::DebagLog()
+	{
+		// インプットデバイスオブジェクト
+		auto inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
+		////コントローラーの取得
+		//auto m_controler = inputDevice.GetControlerVec()[0];
+		//Vec2 contrloerVec = Vec2(m_controler.fThumbLX, m_controler.fThumbLY);
+
+		////デバック用
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
+		//auto gameStage = scene->GetGameStage();
+		//m_Pos = GetComponent<Transform>()->GetPosition();
+
+		wss /* << L"デバッグ用文字列 "*/
+			<< L"\nPos.x " << m_pos.x << "\nPos.z " << m_pos.z
+			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+			//<<L"\nFPS:"<< 1.0f/delta
+			<< endl;
+
+		scene->SetDebugString(wss.str());
 	}
 }
 //end basecross
