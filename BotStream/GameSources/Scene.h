@@ -39,6 +39,10 @@ namespace basecross{
 		*/
 		//--------------------------------------------------------------------------------------
 		virtual void OnEvent(const shared_ptr<Event>& event) override;
+	
+		//ゲームに必要な物のパスを渡す
+		void GameResourses();
+
 	};
 
 }
