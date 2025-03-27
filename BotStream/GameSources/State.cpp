@@ -1,13 +1,21 @@
 /*!
 @file State.cpp
-@brief ステート
+@brief 状態の処理
 */
 
 #include "stdafx.h"
 #include "Project.h"
 
 namespace basecross {
+	State::State(const shared_ptr<Stage>& stagePtr) :
+		ObjectMove(stagePtr)
+	{
 
+	}
+	State::~State()
+	{
+
+	}
 
 }
 //end basecross

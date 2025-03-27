@@ -13,9 +13,9 @@ namespace basecross {
 	{
 
 	private:
-		//void AttackCollision();	// UŒ‚”»’è
-		//enum State;				// ó‘Ô			(enum‚Å—Ç‚¢‚©‚Í‚í‚©‚ç‚È‚¢‚Ì‚Å‹C‚É“ü‚ç‚È‚©‚Á‚½‚ç•Ï‚¦‚Ä‚­‚¾‚³‚¢)
-		//void LandDetect();		//				(‚±‚ê‚æ‚­‚í‚©‚ç‚È‚¢‚Ì‚Å‚Æ‚è‚ ‚¦‚¸void‚ÌŠÖ”‚É‚µ‚Ä‚¨‚«‚Ü‚·)
+		//shared_ptr<AttackCollision> m_AttackCol;
+		//shared_ptr<State> m_State;
+		//shared_ptr<LandDetect> m_LandDetect;
 	public:
 		Actor(const shared_ptr<Stage>& stagePtr);
 		~Actor();
