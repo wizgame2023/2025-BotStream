@@ -18,6 +18,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)AttackCollision.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CameraManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Character.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h" />
@@ -40,6 +41,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Character.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LandDetect.cpp" />
