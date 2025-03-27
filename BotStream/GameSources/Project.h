@@ -23,6 +23,11 @@
 //Manager
 #include "CameraManager.h"
 
+//Actor‚Ì’†‚É“ü‚Á‚Ä‚é‚â‚ÂH
+#include "AttackCollision.h"
+#include "State.h"
+#include "LandDetect.h"
+
 //Actor
 #include "Player.h"
 #include "Enemy.h"
