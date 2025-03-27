@@ -62,6 +62,11 @@ namespace basecross {
 		float addAngle = 3.0f * contrloerVec.x * delta;//追加する角度を決めて
 		m_cameraAngle += addAngle;//追加
 
+		//RBボタンを押すと範囲内に対象がいるならロックオンそうでなければPlayerが向いている方向に回転する
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+		{
+			auto test = 0;
+		}
 
 
 		//カメラをPlayerに追従
@@ -70,5 +75,49 @@ namespace basecross {
 		//注視点はPlayerの位置よりも少し先にしたい
 		lockStageCamera->SetAt(playerPos);
 	}
+
+
+	//デバック用のただの四角い奴
+	Cube::Cube(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale) :
+		ObjectNotMove(stagePtr),
+		m_pos(pos),
+		m_rot(rot),
+		m_scale(scale)
+	{
+
+	}
+	Cube::~Cube()
+	{
+
+	}
+
+	void Cube::OnCreate()
+	{
+		//Transform設定
+		auto m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, 0.0f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = AddComponent<PNTBoneModelDraw>();
+		ptrDraw->SetMeshResource(L"DEFALT_CUBE");//仮のメッシュ
+		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		ptrDraw->SetTextureResource(L"SpearmenTexture");
+
+	}
+
+
+
 }
 //end basecross
