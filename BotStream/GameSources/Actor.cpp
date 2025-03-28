@@ -8,8 +8,11 @@
 #include "Actor.h"
 
 namespace basecross {
-	Actor::Actor(const shared_ptr<Stage>& stagePtr) :
-		ObjectMove(stagePtr)
+	Actor::Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+		ObjectMove(stagePtr),
+		m_pos(pos),
+		m_rot(rot),
+		m_scale(scale)
 	{
 
 	}
@@ -18,6 +21,9 @@ namespace basecross {
 
 	}
 
+	void Actor::OnCreate() {
+		AddComponent<PNTBoneModelDraw>();
+	}
 
 }
 //end basecross
