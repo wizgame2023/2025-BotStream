@@ -22,6 +22,7 @@
 
 //Manager
 #include "CameraManager.h"
+#include "EffectManager.h"
 
 //Actor‚Ì’†‚É“ü‚Á‚Ä‚é‚â‚ÂH
 #include "AttackCollision.h"
