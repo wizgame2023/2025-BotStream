@@ -60,12 +60,11 @@ namespace basecross{
 		PlayerMove();
 
 		//デバック用文字列
-		DebagLog();
+		//DebagLog();
 	}
 
 	void Player::PlayerMove()
 	{
-		//auto pos = GetComponent<Transform>()->GetPosition();//ポジション取得
 		auto Delta = App::GetApp()->GetElapsedTime();
 		float m_speed = 3.0f;//仮のスピード
 
@@ -100,45 +99,48 @@ namespace basecross{
 		}
 
 
-		float deg = 0;
 		//左ステックの向きにプレイヤーも向く
 		if (m_controler.bConnected)
 		{
-			//スティックの傾きをラジアンにする
-			float rad = -atan2(m_controler.fThumbLY, m_controler.fThumbLX);
-			//ラジアンの傾きをディグリー角にする
-			deg = rad * 180 / 3.14f;
-			m_rot.y = rad;
 			//ゲームパットの傾きが無ければ回転度は更新しない
 			if (m_controler.fThumbLY != 0.0f && m_controler.fThumbLX != 0.0f)
-			{
+			{		
+				//スティックの傾きをラジアンにする
+				m_angle = -atan2(m_controler.fThumbLY, m_controler.fThumbLX);
+				m_rot.y = m_angle;
+
 				m_trans->SetRotation(m_rot);
 				float playerRad = atan2f(contrloerVec.y, contrloerVec.x);//角度を取得
 				float playerdeg = XMConvertToDegrees(playerRad);//角度をでぃ
 			}
-
 		}
 
 	}
 
+	//Playerの向いている方向のゲッター
+	float Player::GetAngle()
+	{
+		return m_angle;
+	}
+
+	//Playerの向いている方向のセッター
+	void Player::SetAngle(float angle)
+	{
+		m_angle = angle;
+	}
+
+	//デバック用文字列表示関数
 	void Player::DebagLog()
 	{
 		// インプットデバイスオブジェクト
 		auto inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
-		////コントローラーの取得
-		//auto m_controler = inputDevice.GetControlerVec()[0];
-		//Vec2 contrloerVec = Vec2(m_controler.fThumbLX, m_controler.fThumbLY);
 
 		////デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
-		//auto gameStage = scene->GetGameStage();
-		//m_Pos = GetComponent<Transform>()->GetPosition();
 
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\nPos.x " << m_pos.x << "\nPos.z " << m_pos.z
-			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-			//<<L"\nFPS:"<< 1.0f/delta
 			<< endl;
 
 		scene->SetDebugString(wss.str());
