@@ -129,6 +129,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h">
       <Filter>Headers\ObjectMove</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Character.cpp">
@@ -191,5 +193,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp">
       <Filter>Sources\ObjectMove</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp" />
   </ItemGroup>
 </Project>
