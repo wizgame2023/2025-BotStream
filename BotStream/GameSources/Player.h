@@ -11,9 +11,31 @@
 namespace basecross{
 	class Player : public Actor
 	{
+	private:
+		shared_ptr<Transform> m_trans;
+		Vec3 m_pos;//位置
+		Vec3 m_rot;//回転
+		Vec3 m_scale;//大きさ
+
+		float m_angle;//Playerが向いている角度
+
 	public:
-		Player(const shared_ptr<Stage>& stagePtr);
+		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale);
 		~Player();
+
+		void OnCreate()override;//作成
+		void OnUpdate()override;//更新
+
+		//動く処理
+		void PlayerMove();
+
+		float GetAngle();   //今プレイヤーが向いている方向のゲッター
+		void SetAngle(float angle);	//プレイヤーの向いている方向のセッター
+
+
+		//デバック用の文字列
+		void DebagLog();
+
 	};
 
 }
