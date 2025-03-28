@@ -74,6 +74,22 @@ namespace basecross {
 
 		//注視点はPlayerの位置よりも少し先にしたい
 		lockStageCamera->SetAt(playerPos);
+
+		auto testAngle = player->GetAngle();
+
+		////デバック用
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
+
+		wss /* << L"デバッグ用文字列 "*/
+			<< L"\nPlayerから見てカメラの角度: " << XMConvertToDegrees(m_cameraAngle)
+			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(testAngle)
+			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+			//<<L"\nFPS:"<< 1.0f/delta
+			<< endl;
+
+		scene->SetDebugString(wss.str());
+
 	}
 
 
