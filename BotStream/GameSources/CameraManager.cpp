@@ -78,11 +78,12 @@ namespace basecross {
 
 
 	//デバック用のただの四角い奴
-	Cube::Cube(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale) :
+	Cube::Cube(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale,Col4 color) :
 		ObjectNotMove(stagePtr),
 		m_pos(pos),
 		m_rot(rot),
-		m_scale(scale)
+		m_scale(scale),
+		m_color(color)
 	{
 
 	}
@@ -99,22 +100,11 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		Mat4x4 spanMat;
-		spanMat.affineTransformation(
-			Vec3(1.0f, 1.0f, 1.0f),
-			Vec3(0.0f, 0.0f, 0.0f),
-			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, 0.0f, 0.0f)
-		);
-
 		//ドローメッシュの設定
-		auto ptrDraw = AddComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMeshResource(L"DEFALT_CUBE");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
-		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
-		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		ptrDraw->SetTextureResource(L"SpearmenTexture");
-
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+		ptrDraw->SetDiffuse(m_color);
+		ptrDraw->SetOwnShadowActive(false);//影は消す
 	}
 
 

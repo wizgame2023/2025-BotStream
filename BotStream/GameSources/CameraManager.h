@@ -32,11 +32,10 @@ namespace basecross{
 		Vec3 m_pos;//ˆÊ’u
 		Vec3 m_rot;//‰ñ“]
 		Vec3 m_scale;//‘å‚«‚³
-
+		Col4 m_color;//F
 	public:
-		Cube(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale);
+		Cube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		~Cube();
-	protected:
 		void OnCreate()override;//ì¬
 		//void OnUpdate()override;
 	};
