@@ -8,10 +8,7 @@
 
 namespace basecross{
 	Player::Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale) :
-		Actor(stagePtr),
-		m_pos(pos),
-		m_rot(rot),
-		m_scale(scale)
+		Actor(stagePtr, pos, rot, scale)
 	{
 
 	}
@@ -23,6 +20,7 @@ namespace basecross{
 	//作成
 	void Player::OnCreate()
 	{
+		Actor::OnCreate();
 		//Transform設定
 		m_trans = GetComponent<Transform>();
 		m_trans->SetPosition(m_pos);
@@ -38,7 +36,7 @@ namespace basecross{
 		);
 
 		//ドローメッシュの設定
-		auto ptrDraw = AddComponent<PNTBoneModelDraw>();
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
 		ptrDraw->SetMultiMeshResource(L"Spearmen");//仮のメッシュ
 		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態

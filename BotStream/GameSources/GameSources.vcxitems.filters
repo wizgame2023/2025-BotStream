@@ -130,7 +130,12 @@
       <Filter>Headers\ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h">
+      <Filter>Headers\ObjectMoveNot</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyManager.h">
+      <Filter>Headers\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Character.cpp">
@@ -194,6 +199,11 @@
       <Filter>Sources\ObjectMove</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EffectManager.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp">
+      <Filter>Sources\ObjectNotMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)EnemyManager.cpp">
+      <Filter>Sources\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

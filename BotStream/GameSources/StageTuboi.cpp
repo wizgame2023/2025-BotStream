@@ -36,6 +36,14 @@ namespace basecross {
 		catch (...) {
 			throw;
 		}
+
+		auto enemyMgr = AddGameObject<EnemyManager>();
+		SetSharedGameObject(L"EnemyManager", enemyMgr);
+
+		enemyMgr->InstEnemy(Vec3(1), Vec3(0), Vec3(1));
+
+		auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		SetSharedGameObject(L"Player", player);
 	}
 
 }

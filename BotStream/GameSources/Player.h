@@ -28,10 +28,6 @@ namespace basecross{
 		//スティックのデッドゾーン(あとでmanager系に置くかも)
 		float m_stickDeadZone = .1f;
 
-		shared_ptr<Transform> m_trans;
-		Vec3 m_pos;//位置
-		Vec3 m_rot;//回転
-		Vec3 m_scale;//大きさ
 
 		float m_angle;//Playerが向いている角度
 
