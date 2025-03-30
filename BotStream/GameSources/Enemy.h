@@ -23,9 +23,10 @@ namespace basecross{
 		//初期化処理(敵をスポーンさせるとき使う？)
 		void Initialize(Vec3 pos, Vec3 rot, Vec3 scale) {
 			m_used = true;
-			m_pos = pos;
-			m_rot = rot;
-			m_scale = scale;
+			auto ptr = GetComponent<Transform>();
+			ptr->SetPosition(pos);
+			ptr->SetRotation(rot);
+			ptr->SetScale(scale);
 		}
 
 		bool GetUsed() {
