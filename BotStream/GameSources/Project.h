@@ -18,6 +18,7 @@
 
 #include "ObjectMove.h" //動くオブジェクト
 #include "ObjectNotMove.h"//動かないオブジェクト
+#include "Ground.h";//地面
 //#include "Actor.h"
 
 //Manager
