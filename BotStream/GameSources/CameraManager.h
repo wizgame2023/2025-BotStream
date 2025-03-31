@@ -77,12 +77,16 @@ namespace basecross{
 	class LockOnLook : public ObjectMove
 	{
 	private:
-		Vec3 m_pos;//位置
+		//Vec3 m_pos;//位置
 		Vec3 m_rot;//回転
 		Vec3 m_scale;//大きさ
+		Vec3 m_pushPos;//追加座標
 		Col4 m_color;//色
+
+		weak_ptr<Actor> m_parentObj;//追跡対象
+		shared_ptr<Transform> m_trans;
 	public:
-		LockOnLook(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
+		LockOnLook(const shared_ptr<Stage>& stagePtr, Vec3 rot, Vec3 scale,weak_ptr<Actor> parenatObj,Vec3 pushPos = Vec3(0.0f,0.0f,0.0f));
 		~LockOnLook();
 		void OnCreate()override;//作成
 		void OnUpdate()override;//更新

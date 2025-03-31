@@ -119,13 +119,27 @@ namespace basecross {
 			//ロックオン対象だったら配列に格納する
 			if (targetRange <= radiusRange)
 			{
+				if (!enemy->FindTag(L"ロックオン候補"))
+				{
+					stage->AddGameObject<LockOnLook>(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), enemy, Vec3(0.0f, 4.0f, 0.0f));
+				}
+
 				targetVec.push_back(enemy);
+				enemy->AddTag(L"ロックオン候補");//ロックオン候補のタグ追加
+			}
+			else if(enemy->FindTag(L"ロックオン候補"))
+			{
+				enemy->RemoveTag(L"ロックオン候補");
 			}
 		}
 
 		//ロックオン候補がいないならロックオンできない＆選択を初期化
 		if (targetVec.size() <= 0)
 		{
+			for (auto enemy : enemyVec)
+			{
+				enemy->RemoveTag(L"ロックオン対象");
+			}
 			m_lockOn = false;
 			m_lockOnNum = -1;
 			m_targetObj = NULL;
@@ -135,10 +149,14 @@ namespace basecross {
 		//RBボタンを押すと範囲内に対象がいるならロックオンそうでなければPlayerが向いている方向に回転する
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
+			for (auto enemy : enemyVec)
+			{
+				enemy->RemoveTag(L"ロックオン対象");
+			}
+
 			//ここで誰をロックオン対象にするか決める
 			if (targetVec.size() > 0)
 			{
-				//m_lockOn = true;
 				m_lockOnNum++;
 
 				//選択している数値がロックオン候補の数より大きくならないようにする
@@ -146,8 +164,6 @@ namespace basecross {
 				{
 					m_lockOnNum = targetVec.size() - 1;
 				}
-
-				//m_targetObj = targetVec[m_lockOnNum];
 			}
 			if (targetVec.size() <= 0)
 			{
@@ -160,6 +176,7 @@ namespace basecross {
 			{
 				m_lockOn = true;
 				m_targetObj = targetVec[m_lockOnNum];
+				targetVec[m_lockOnNum]->AddTag(L"ロックオン対象");
 			}
 
 		}
@@ -338,11 +355,12 @@ namespace basecross {
 	}
 
 	//ロックオンしている対象を分かるようにする処理
-	LockOnLook::LockOnLook(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	LockOnLook::LockOnLook(const shared_ptr<Stage>& stagePtr,Vec3 rot, Vec3 scale,weak_ptr<Actor> parentObj,Vec3 pushPos) :
 		ObjectMove(stagePtr),
-		m_pos(pos),
 		m_rot(rot),
-		m_scale(scale)
+		m_scale(scale),
+		m_parentObj(parentObj),
+		m_pushPos(pushPos)
 	{
 
 	}
@@ -353,11 +371,52 @@ namespace basecross {
 
 	void LockOnLook::OnCreate()
 	{
+		auto parentLock = m_parentObj.lock();
+		auto parentPos = parentLock->GetComponent<Transform>()->GetPosition();
 
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(parentPos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//ドローメッシュの設定
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_CONE");
+		ptrDraw->SetDiffuse(Col4(0.0f,1.0f,0.0f,1.0f));
+		ptrDraw->SetOwnShadowActive(false);//影は消す
+		ptrDraw->SetDrawActive(true);
 	}
 	void LockOnLook::OnUpdate()
 	{
+		auto parentLock = m_parentObj.lock();
+		//追跡対象が消えていたら自分も消える
+		if (!parentLock)
+		{
+			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
+			return;
+		}
+		//ここで追跡対象のタグにロックオン対象やロックオン候補などのタグがなければ消去される
+		if (!parentLock->FindTag(L"ロックオン候補"))
+		{
+			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
+			return;
+		}
 
+
+		if (parentLock->FindTag(L"ロックオン対象"))
+		{
+			auto ptrDraw = GetComponent<PNTStaticDraw>();
+			ptrDraw->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		else
+		{
+			auto ptrDraw = GetComponent<PNTStaticDraw>();
+			ptrDraw->SetDiffuse(Col4(0.0f, 1.0f, 0.0f, 1.0f));
+		}
+		//追跡対象と同じ座標にいる(PushPosという例外あり)
+		auto parentPos = parentLock->GetComponent<Transform>()->GetPosition();
+		m_trans->SetPosition(parentPos + m_pushPos);
 	}
 
 
