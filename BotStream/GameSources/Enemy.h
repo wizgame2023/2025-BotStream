@@ -15,6 +15,7 @@ namespace basecross{
 
 	public:
 		Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
+		Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
 		~Enemy();
 
 		void OnCreate() override;
@@ -27,6 +28,8 @@ namespace basecross{
 			ptr->SetPosition(pos);
 			ptr->SetRotation(rot);
 			ptr->SetScale(scale);
+			SetDrawActive(true);
+			SetUpdateActive(true);
 		}
 
 		bool GetUsed() {
