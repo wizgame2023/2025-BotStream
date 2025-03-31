@@ -7,10 +7,13 @@
 #include "Project.h"
 
 namespace basecross {
-	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr) :
+	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange) :
 		MyGameObject(stagePtr),
 		m_cameraAngle(XMConvertToRadians(270.0f)),
-		m_range(20.0f)
+		m_range(range),
+		m_targetRange(targetRange),
+		m_lockOn(false),
+		m_lockOnNum(-1)
 	{
 
 	}
@@ -49,7 +52,8 @@ namespace basecross {
 		//raycast->GetComponent<Transform>()->SetQuaternion((Quat)CameraQt);
 
 
-
+		//ロックオンの有効範囲を可視化
+		stage->AddGameObject<LockOnRange>(m_targetRange * 2, player);
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
@@ -95,12 +99,69 @@ namespace basecross {
 		m_cameraAngle += addAngle;//追加
 
 
+		//ロックオン処理
+		auto enemyManager = stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
+		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
+		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
+		vector<shared_ptr<Enemy>> targetVec;//ロックオン候補配列
+		//shared_ptr<Enemy> targetObj;//ターゲット対象
+
+		//EnemyとPlayerとの距離を測ってロックオン候補になるのか確認する
+		for (auto enemy : enemyVec)
+		{
+			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
+			
+			//ロックオン範囲の円の中にいるか計算する
+			float targetRange = (enemyPos.x - playerPos.x) * (enemyPos.x - playerPos.x) +
+								(enemyPos.z - playerPos.z) * (enemyPos.z - playerPos.z);
+			float radiusRange = m_targetRange * m_targetRange;
+
+			//ロックオン対象だったら配列に格納する
+			if (targetRange <= radiusRange)
+			{
+				targetVec.push_back(enemy);
+			}
+		}
+
+		//ロックオン候補がいないならロックオンできない＆選択を初期化
+		if (targetVec.size() <= 0)
+		{
+			m_lockOn = false;
+			m_lockOnNum = -1;
+			m_targetObj = NULL;
+		}
+
 		float playerAngle = player->GetAngle();
 		//RBボタンを押すと範囲内に対象がいるならロックオンそうでなければPlayerが向いている方向に回転する
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
-			//Playerの向いている方向の鏡合わせになるように角度を変更する
-			MovePlayerAngle(playerAngle);
+			//ここで誰をロックオン対象にするか決める
+			if (targetVec.size() > 0)
+			{
+				//m_lockOn = true;
+				m_lockOnNum++;
+
+				//選択している数値がロックオン候補の数より大きくならないようにする
+				if (m_lockOnNum > targetVec.size() - 1)
+				{
+					m_lockOnNum = targetVec.size() - 1;
+				}
+
+				//m_targetObj = targetVec[m_lockOnNum];
+			}
+			if (targetVec.size() <= 0)
+			{
+				//Playerの向いている方向の鏡合わせになるように角度を変更する
+				MovePlayerAngle(playerAngle);
+			}
+
+			//ロックオンしていいか判断する
+			if (m_lockOnNum >= targetVec.size() - 1 && m_lockOnNum >= 0)
+			{
+				m_lockOn = true;
+				m_targetObj = targetVec[m_lockOnNum];
+			}
+
 		}
 		//角度リセット(デバック用)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
@@ -108,11 +169,24 @@ namespace basecross {
 			m_cameraAngle = XMConvertToRadians(270.0f);
 		}
 
+		//ロックオン
+		if (m_lockOn)
+		{
+			LockOn(m_targetObj, player);
+		}//ロックオンできない時
+		else if (!m_lockOn)
+		{
+			//注視点はPlayerの位置よりも少し先にしたい
+			m_lockStageCamera->SetAt(playerPos);
+		}
+
+
+
+
+
 
 		//カメラをPlayerに追従
 		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngle) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngle) * m_range)));
-		//注視点はPlayerの位置よりも少し先にしたい
-		m_lockStageCamera->SetAt(playerPos);
 
 		//角度の調整0~360度までしか出ないようにする
 		AdjustmentAngle();
@@ -137,9 +211,17 @@ namespace basecross {
 	}
 
 	//ロックオン機能 対象のオブジェクトを中心点とする
-	void CameraManager::LockOn(shared_ptr<GameObject> lockOnObj)
+	void CameraManager::LockOn(shared_ptr<GameObject> lockOnObj,shared_ptr<Player> originObj)
 	{
 		Vec3 lockOnPos = lockOnObj->GetComponent<Transform>()->GetPosition();
+		Vec3 originPos = originObj->GetComponent<Transform>()->GetPosition();
+
+		//ロックオン対象をPlayerの距離ベクトルを測って角度取得
+		Vec3 lockOnVec = lockOnPos - originPos;
+		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
+
+		//計算した角度を入れてカメラを旋回させる
+		m_cameraAngle = m_targetRad + XMConvertToRadians(180.0f);
 
 		m_lockStageCamera->SetAt(lockOnPos);
 	}
@@ -162,6 +244,7 @@ namespace basecross {
 			m_cameraAngle += XMConvertToRadians(360.0f);
 		}
 	}
+
 
 
 	//カメラのレイキャスト用
@@ -200,6 +283,82 @@ namespace basecross {
 
 	}
 
+	//ロックオン範囲を知らせるためのオブジェクト
+	//第一引数　ロックオン有効範囲,第二引数　ロックオン範囲の中心となるオブジェクト
+	LockOnRange::LockOnRange(const shared_ptr<Stage>& stagePtr,float range,shared_ptr<Player> player):
+		ObjectMove(stagePtr),
+		m_pos(Vec3(0.0f)),
+		m_rot(Vec3(0.0f)),
+		m_scale(Vec3(range, 0.1f, range)),
+		m_range(range),
+		m_player(player)
+	{
+
+	}
+	LockOnRange::~LockOnRange()
+	{
+
+	}
+
+	void LockOnRange::OnCreate()
+	{
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//ドローメッシュの設定
+		m_ptrDraw = AddComponent<PNTStaticDraw>();
+		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetOwnShadowActive(false);//影は消す
+		m_ptrDraw->SetDrawActive(true);
+
+	}
+
+	void LockOnRange::OnUpdate()
+	{
+		float delta = App::GetApp()->GetElapsedTime();
+		auto stage = GetStage();
+		auto playerLock = m_player.lock();
+
+		//Playerが消えていたら自分も消える
+		if (!playerLock)
+		{
+			GetStage()->RemoveGameObject<LockOnRange>(GetThis<LockOnRange>());
+			return;
+		}
+
+		//いつもPlayerについていくようにする
+		Vec3 PlayerPos = playerLock->GetComponent<Transform>()->GetPosition();
+		m_pos = PlayerPos;
+		m_pos.y = PlayerPos.y - 0.5f;
+		m_trans->SetPosition(m_pos);
+		
+	}
+
+	//ロックオンしている対象を分かるようにする処理
+	LockOnLook::LockOnLook(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+		ObjectMove(stagePtr),
+		m_pos(pos),
+		m_rot(rot),
+		m_scale(scale)
+	{
+
+	}
+	LockOnLook::~LockOnLook()
+	{
+
+	}
+
+	void LockOnLook::OnCreate()
+	{
+
+	}
+	void LockOnLook::OnUpdate()
+	{
+
+	}
 
 
 	//デバック用のただの四角い奴
