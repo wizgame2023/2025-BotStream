@@ -14,6 +14,7 @@ namespace basecross {
 		for (auto& e : m_enemies) {
 			if (e->GetUsed() == false) {
 				e->Initialize(pos, rot, scale);
+				return;
 			}
 
 		}

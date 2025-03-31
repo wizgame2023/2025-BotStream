@@ -47,6 +47,10 @@ namespace basecross{
 		auto modPath = path + L"Models/";
 		auto SoundPath = path + L"Sounds/";
 
+		//テクスチャ
+		wstring strTexture = texPath + L"StoneBrick.png";
+		app->RegisterTexture(L"StoneBrick", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ

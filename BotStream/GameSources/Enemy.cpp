@@ -10,7 +10,15 @@
 
 namespace basecross {
 	Enemy::Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
-		Actor(stagePtr, pos, rot, scale)
+		Actor(stagePtr, pos, rot, scale),
+		m_used(false)
+	{
+
+	}
+
+	Enemy::Enemy(const shared_ptr<Stage>&stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
+		Actor(stagePtr, pos, rot, scale),
+		m_used(use)
 	{
 
 	}
@@ -60,6 +68,7 @@ namespace basecross {
 			SetDrawActive(m_used);
 		}
 		if (m_used == false) {
+			SetUpdateActive(m_used);
 			return;
 		}
 
