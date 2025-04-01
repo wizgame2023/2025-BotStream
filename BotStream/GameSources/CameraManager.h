@@ -37,6 +37,9 @@ namespace basecross{
 		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
 		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
 		void AdjustmentAngle();//角度の調整
+
+		//ロックオンの解除
+		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
 		
 		void GetMeleeRange();
 		void SetMeleeRange();

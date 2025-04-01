@@ -136,13 +136,7 @@ namespace basecross {
 		//ロックオン候補がいないならロックオンできない＆選択を初期化
 		if (targetVec.size() <= 0)
 		{
-			for (auto enemy : enemyVec)
-			{
-				enemy->RemoveTag(L"ロックオン対象");
-			}
-			m_lockOn = false;
-			m_lockOnNum = -1;
-			m_targetObj = NULL;
+			LockOff(enemyVec);//ロックオンの解除
 		}
 
 		float playerAngle = player->GetAngle();
@@ -178,15 +172,9 @@ namespace basecross {
 				m_targetObj = targetVec[m_lockOnNum];
 				targetVec[m_lockOnNum]->AddTag(L"ロックオン対象");
 			}
-			else if (m_lockOnNum <= -1)
+			else if (m_lockOnNum <= -1)//ロックオンの解除
 			{
-				for (auto enemy : enemyVec)
-				{
-					enemy->RemoveTag(L"ロックオン対象");
-				}
-				m_lockOn = false;
-				m_lockOnNum = -1;
-				m_targetObj = NULL;
+				LockOff(enemyVec);//ロックオンの解除
 			}
 
 		}
@@ -251,6 +239,18 @@ namespace basecross {
 		m_cameraAngle = m_targetRad + XMConvertToRadians(180.0f);
 
 		m_lockStageCamera->SetAt(lockOnPos);
+	}
+
+	//ロックオンの解除機能
+	void CameraManager::LockOff(vector<shared_ptr<Enemy>> enemyVec)
+	{
+		for (auto enemy : enemyVec)
+		{
+			enemy->RemoveTag(L"ロックオン対象");
+		}
+		m_lockOn = false;
+		m_lockOnNum = -1;
+		m_targetObj = NULL;
 	}
 
 	//Playerの向いている方向の鏡合わせになるように角度を変更する
