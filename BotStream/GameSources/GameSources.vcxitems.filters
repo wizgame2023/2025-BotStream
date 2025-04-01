@@ -1,209 +1,180 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{4b0a624a-610d-4bc6-b311-2b02a781cdf9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources">
-      <UniqueIdentifier>{96692d2a-8790-41a9-bfac-6c5662d4ad61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\System">
-      <UniqueIdentifier>{dd74ea39-8fe9-4948-b2a3-c5a53e8b0736}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Effect">
-      <UniqueIdentifier>{c25d6a62-9945-44d0-a170-f561be4d127c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Manager">
-      <UniqueIdentifier>{39b74c01-60b5-41fe-a707-a058f9443c3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Stage">
-      <UniqueIdentifier>{fd2908da-2add-469f-9265-ef03838bc6d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Tools">
-      <UniqueIdentifier>{52539089-3d84-4c13-8de8-dfd4dc597b67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\UI">
-      <UniqueIdentifier>{1e8b7df7-e1c5-462d-a5e4-47fe8875414f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Effect">
+    <Filter Include="Effect">
       <UniqueIdentifier>{e810461d-6659-4b9e-8625-0282ab3fbcfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Manager">
+    <Filter Include="Manager">
       <UniqueIdentifier>{785bd51b-1565-4aec-9b26-6c3da5e997e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Stage">
-      <UniqueIdentifier>{9afb8b96-7ae1-4662-8c59-dbe982726eba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\StagePrivate">
-      <UniqueIdentifier>{8cafc156-fa51-43dd-975c-ea1277f3a505}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\ObjectMove">
+    <Filter Include="ObjectMove">
       <UniqueIdentifier>{a339a58d-8433-4e17-bf6e-cfdb8bb4b466}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\ObjectMoveNot">
-      <UniqueIdentifier>{f6b1f275-82a8-4677-be23-172691801f85}</UniqueIdentifier>
+    <Filter Include="Stage">
+      <UniqueIdentifier>{9afb8b96-7ae1-4662-8c59-dbe982726eba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\System">
-      <UniqueIdentifier>{f0da64f7-f5b7-4177-a743-022863675af8}</UniqueIdentifier>
+    <Filter Include="StagePrivate">
+      <UniqueIdentifier>{8cafc156-fa51-43dd-975c-ea1277f3a505}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Tools">
-      <UniqueIdentifier>{4b2be4f2-97fb-42df-9d8c-b720f2025515}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\UI">
-      <UniqueIdentifier>{5e936a43-9e49-41a1-b0b4-5388a5ea29c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\ObjectNotMove">
-      <UniqueIdentifier>{88502a73-b64f-40b3-b6d7-bcc5aec0b363}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\ObjectMove">
-      <UniqueIdentifier>{7cef748c-ee64-4784-8c68-661bc71c475f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\StagePrivate">
-      <UniqueIdentifier>{7c22011c-1d42-419d-9807-835cb5631e37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\State">
-      <UniqueIdentifier>{57242715-40de-44d9-be01-a0ba0624242e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\State">
+    <Filter Include="State">
       <UniqueIdentifier>{900b3316-2f08-4bb7-812b-629479593fcd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{f0da64f7-f5b7-4177-a743-022863675af8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{4b2be4f2-97fb-42df-9d8c-b720f2025515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{5e936a43-9e49-41a1-b0b4-5388a5ea29c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ObjectNotMove">
+      <UniqueIdentifier>{f6b1f275-82a8-4677-be23-172691801f85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Character.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)ProjectShader.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)ProjectBehavior.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h">
-      <Filter>Headers\Tools</Filter>
+      <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h">
-      <Filter>Headers\Stage</Filter>
+      <Filter>Stage</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.h">
-      <Filter>Headers\System</Filter>
+      <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h">
-      <Filter>Headers\ObjectMove</Filter>
+      <Filter>ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StageAbe.h">
-      <Filter>Headers\StagePrivate</Filter>
+      <Filter>StagePrivate</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSanpei.h">
-      <Filter>Headers\StagePrivate</Filter>
+      <Filter>StagePrivate</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSato.h">
-      <Filter>Headers\StagePrivate</Filter>
+      <Filter>StagePrivate</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)StageTuboi.h">
-      <Filter>Headers\StagePrivate</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)MyGameObject.h">
-      <Filter>Headers\ObjectMoveNot</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h">
-      <Filter>Headers\ObjectMoveNot</Filter>
+      <Filter>StagePrivate</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h">
-      <Filter>Headers\ObjectMove</Filter>
+      <Filter>ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Actor.h">
-      <Filter>Headers\ObjectMove</Filter>
+      <Filter>ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h">
-      <Filter>Headers\ObjectMove</Filter>
+      <Filter>ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)CameraManager.h">
-      <Filter>Headers\Manager</Filter>
+      <Filter>Manager</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)AttackCollision.h">
-      <Filter>Headers\ObjectMove</Filter>
+      <Filter>ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)State.h">
-      <Filter>Headers\State</Filter>
+      <Filter>State</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h">
-      <Filter>Headers\ObjectMove</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h">
-      <Filter>Headers\ObjectMoveNot</Filter>
+      <Filter>ObjectMove</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyManager.h">
-      <Filter>Headers\Manager</Filter>
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Character.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ProjectBehavior.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ProjectShader.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h">
+      <Filter>ObjectNotMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyGameObject.h">
+      <Filter>ObjectNotMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h">
+      <Filter>ObjectNotMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)WaveStage.h">
+      <Filter>Stage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Character.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ProjectShader.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ProjectBehavior.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp">
-      <Filter>Sources\ObjectMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
-      <Filter>Sources\System</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp">
-      <Filter>Sources\System</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
-      <Filter>Sources\Stage</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)StageAbe.cpp">
-      <Filter>Sources\StagePrivate</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)StageSanpei.cpp">
-      <Filter>Sources\StagePrivate</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp">
-      <Filter>Sources\StagePrivate</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)StageTuboi.cpp">
-      <Filter>Sources\StagePrivate</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)MyGameObject.cpp">
-      <Filter>Sources\ObjectNotMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ObjectNotMove.cpp">
-      <Filter>Sources\ObjectNotMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)ObjectMove.cpp">
-      <Filter>Sources\ObjectMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Actor.cpp">
-      <Filter>Sources\ObjectMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp">
-      <Filter>Sources\State</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)LandDetect.cpp">
-      <Filter>Sources\ObjectMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp">
-      <Filter>Sources\ObjectMove</Filter>
-    </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
-      <Filter>Sources\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp">
-      <Filter>Sources\ObjectMove</Filter>
-    </ClCompile>
-    <ClCompile Include="$(MSBuildThisFileDirectory)EffectManager.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp">
-      <Filter>Sources\ObjectNotMove</Filter>
+      <Filter>Manager</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyManager.cpp">
-      <Filter>Sources\Manager</Filter>
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Actor.cpp">
+      <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp">
+      <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp">
+      <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)LandDetect.cpp">
+      <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ObjectMove.cpp">
+      <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp">
+      <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp">
+      <Filter>ObjectNotMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)MyGameObject.cpp">
+      <Filter>ObjectNotMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ObjectNotMove.cpp">
+      <Filter>ObjectNotMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp">
+      <Filter>Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp">
+      <Filter>State</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageAbe.cpp">
+      <Filter>StagePrivate</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageSanpei.cpp">
+      <Filter>StagePrivate</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp">
+      <Filter>StagePrivate</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageTuboi.cpp">
+      <Filter>StagePrivate</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)EffectManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)WaveStage.cpp">
+      <Filter>Stage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
