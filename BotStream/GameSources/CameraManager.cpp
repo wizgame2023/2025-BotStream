@@ -7,13 +7,14 @@
 #include "Project.h"
 
 namespace basecross {
-	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange) :
+	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange) :
 		MyGameObject(stagePtr),
 		m_cameraAngle(XMConvertToRadians(270.0f)),
 		m_range(range),
 		m_targetRange(targetRange),
 		m_lockOn(false),
-		m_lockOnNum(-1)
+		m_lockOnNum(-1),
+		m_meleeRange(meleeRange)
 	{
 
 	}
@@ -86,7 +87,6 @@ namespace basecross {
 		TRIANGLE testTriangle;
 		size_t testsize;
 		//m_ptrDraw->HitTestStaticMeshSegmentTriangles(playerPos, m_lockStageCamera->GetEye(), hitPos,testTriangle,testsize);
-
 
 		// インプットデバイスオブジェクト
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
