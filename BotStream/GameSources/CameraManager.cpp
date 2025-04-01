@@ -96,7 +96,7 @@ namespace basecross {
 
 		//左スティックを傾けてカメラがPlayerの周りを回転する処理
 		float addAngle = 3.0f * contrloerVec.x * delta;//追加する角度を決めて
-		m_cameraAngle += addAngle;//追加
+		m_cameraAngle += -addAngle;//追加
 
 
 		//ロックオン処理
