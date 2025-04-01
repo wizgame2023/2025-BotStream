@@ -25,8 +25,10 @@ namespace basecross{
 		bool m_lockOn;//ロックオンするかしないかの変数
 		int m_lockOnNum;//ロックオン対象を決めるための変数
 
+		float m_meleeRange;//近接戦闘の範囲
+		bool m_meleeFlag;//近接戦闘していいかのフラグ
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f);
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f);
 		~CameraManager();
 
 		void OnCreate()override;//作成
@@ -35,7 +37,9 @@ namespace basecross{
 		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
 		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
 		void AdjustmentAngle();//角度の調整
-
+		
+		void GetMeleeRange();
+		void SetMeleeRange();
 	};
 
 	//カメラのレイキャスト
