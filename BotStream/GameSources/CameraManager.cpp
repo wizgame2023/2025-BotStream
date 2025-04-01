@@ -162,7 +162,7 @@ namespace basecross {
 				//選択している数値がロックオン候補の数より大きくならないようにする
 				if (m_lockOnNum > targetVec.size() - 1)
 				{
-					m_lockOnNum = targetVec.size() - 1;
+					m_lockOnNum = -1;
 				}
 			}
 			if (targetVec.size() <= 0)
@@ -172,11 +172,21 @@ namespace basecross {
 			}
 
 			//ロックオンしていいか判断する
-			if (m_lockOnNum >= targetVec.size() - 1 && m_lockOnNum >= 0)
+			if (m_lockOnNum >= 0)
 			{
 				m_lockOn = true;
 				m_targetObj = targetVec[m_lockOnNum];
 				targetVec[m_lockOnNum]->AddTag(L"ロックオン対象");
+			}
+			else if (m_lockOnNum <= -1)
+			{
+				for (auto enemy : enemyVec)
+				{
+					enemy->RemoveTag(L"ロックオン対象");
+				}
+				m_lockOn = false;
+				m_lockOnNum = -1;
+				m_targetObj = NULL;
 			}
 
 		}
@@ -374,6 +384,14 @@ namespace basecross {
 		auto parentLock = m_parentObj.lock();
 		auto parentPos = parentLock->GetComponent<Transform>()->GetPosition();
 
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(XMConvertToRadians(180.0f), 0.0f, 0.0f),
+			Vec3(0.0f, 0.0f, 0.0f)
+		);
+
 		//Transform設定
 		m_trans = GetComponent<Transform>();
 		m_trans->SetPosition(parentPos);
@@ -384,6 +402,7 @@ namespace basecross {
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_CONE");
 		ptrDraw->SetDiffuse(Col4(0.0f,1.0f,0.0f,1.0f));
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetOwnShadowActive(false);//影は消す
 		ptrDraw->SetDrawActive(true);
 	}
