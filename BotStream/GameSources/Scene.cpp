@@ -21,6 +21,7 @@ namespace basecross{
 			//自分自身にイベントを送る
 			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
 			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"ToGameStage");
+			GameResourses();
 		}
 		catch (...) {
 			throw;
@@ -33,8 +34,32 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<GameStage>();
+			ResetActiveStage<StageTuboi>();
 		}
+	}
+
+	void Scene::GameResourses()
+	{
+		auto& app = App::GetApp();
+
+		auto path = app->GetDataDirWString();
+		auto texPath = path + L"Textures/";
+		auto modPath = path + L"Models/";
+		auto SoundPath = path + L"Sounds/";
+
+		//テクスチャ
+		wstring strTexture = texPath + L"StoneBrick.png";
+		app->RegisterTexture(L"StoneBrick", strTexture);
+
+		//モデル
+
+		//ボーンマルチメッシュ
+		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//仮のプレイヤーメッシュ(槍兵)
+		app->RegisterResource(L"Spearmen", boneMultiModelMesh);
+		//ボーンマルチメッシュ用テクスチャ
+		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
+		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
+
 	}
 
 }

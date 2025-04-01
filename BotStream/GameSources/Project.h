@@ -18,11 +18,13 @@
 
 #include "ObjectMove.h" //動くオブジェクト
 #include "ObjectNotMove.h"//動かないオブジェクト
+#include "Ground.h";//地面
 //#include "Actor.h"
 
 //Manager
 #include "CameraManager.h"
 #include "EffectManager.h"
+#include "EnemyManager.h"
 
 //Actorの中に入ってるやつ？
 #include "AttackCollision.h"
