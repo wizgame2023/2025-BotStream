@@ -17,17 +17,26 @@ namespace basecross{
 		//速度
 		Vec3 m_velocity;
 		Vec3 m_accel;
+		//ジャンプ力ぅ…
+		const float m_jumpPower = 18.0f;
 		//最高速
-		const float m_speedMax = 100.0f;
+		const float m_speedMax = 10;
 		//加速度
 		const float m_baseAccel = 400.0f;
+		//重力
+		const float m_gravity = -32.0f;
+		//落下時の終端速度
+		const float m_fallTerminal = -120.0f;
 		//摩擦係数(静/動/完全停止)
 		const float m_friction = .75f;
 		const float m_frictionDynamic = .5f;
 		const float m_frictionThreshold = .5f;
 		//スティックのデッドゾーン(あとでmanager系に置くかも)
 		float m_stickDeadZone = .1f;
-
+		//地上にいるか否か
+		bool m_isLand = false;
+		//着地判定を無効化する時間
+		float m_disableLandDetect = 0.0f;
 
 		float m_angle;//Playerが向いている角度
 
@@ -39,6 +48,10 @@ namespace basecross{
 		void Friction();
 		//速度制限
 		void SpeedLimit(float multiply);
+		//重力
+		void Gravity();
+
+		void Jump();
 
 	public:
 		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale);

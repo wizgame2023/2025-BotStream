@@ -16,6 +16,23 @@ namespace basecross {
 	{
 
 	}
+
+	//‰Šú‰»
+	void Ground::OnCreate() {
+		auto trans = GetComponent<Transform>();
+		trans->SetPosition(Vec3(0, -2, 0));
+		trans->SetScale(Vec3(10.0f, 1, 10.0f));
+		auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+
+		//OBBÕ“Ë”»’è‚ğ•t‚¯‚é
+		auto ptrColl = AddComponent<CollisionObb>();
+		ptrColl->SetFixed(true);
+		//ƒ^ƒO‚ğ‚Â‚¯‚é
+		AddTag(L"Floor");
+
+	}
+
 }
 //end basecross
 

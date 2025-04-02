@@ -30,6 +30,7 @@ namespace basecross{
 			ptr->SetScale(scale);
 			SetDrawActive(true);
 			SetUpdateActive(true);
+			//m_LandDetect->SetUpdateActive(true);
 		}
 
 		bool GetUsed() {

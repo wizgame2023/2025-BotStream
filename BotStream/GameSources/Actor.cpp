@@ -22,7 +22,22 @@ namespace basecross {
 	}
 
 	void Actor::OnCreate() {
+		AddTag(L"Actor");
+
+		auto group = GetStage()->GetSharedObjectGroup(L"Actor");
+		if (group) {
+			group->IntoGroup(GetThis<GameObject>());
+		}
+
 		AddComponent<PNTBoneModelDraw>();
+
+		//着地判定の生成、子オブジェクトにする
+		m_LandDetect = GetStage()->AddGameObject<LandDetect>();
+		m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+	}
+
+	void Actor::OnUpdate() {
+		
 	}
 
 }

@@ -6,6 +6,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Project.h"
+#include "LandDetect.h"
 //#include "MyGameObject.h"
 
 namespace basecross {
@@ -20,12 +21,14 @@ namespace basecross {
 
 		//shared_ptr<AttackCollision> m_AttackCol;
 		//shared_ptr<State> m_State;
-		//shared_ptr<LandDetect> m_LandDetect;
+	protected:
+		shared_ptr<LandDetect> m_LandDetect;
 	public:
 		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		~Actor();
 
 		void OnCreate() override;
+		void OnUpdate() override;
 	};
 	
 }
