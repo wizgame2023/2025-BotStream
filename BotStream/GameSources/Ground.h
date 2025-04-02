@@ -14,6 +14,7 @@ namespace basecross {
 	public:
 		Ground(const shared_ptr<Stage>& stagePtr);
 		~Ground();
+		virtual void OnCreate() override;
 	};
 
 }
