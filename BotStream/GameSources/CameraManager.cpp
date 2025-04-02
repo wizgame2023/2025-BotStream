@@ -12,7 +12,8 @@ namespace basecross {
 		m_cameraAngle(XMConvertToRadians(270.0f)),
 		m_range(range),
 		m_targetRange(targetRange),
-		m_lockOn(false),
+		m_lockOnFlag(false),
+		m_lockOnUse(false),
 		m_lockOnNum(-1),
 		m_meleeRange(meleeRange)
 	{
@@ -27,12 +28,12 @@ namespace basecross {
 	void CameraManager::OnCreate()
 	{
 		//ステージ上で使われるカメラを取得する
-		auto stage = GetStage();
+		m_stage = GetStage();
 		m_stageCamera = OnGetDrawCamera();//ステージのカメラ取得
 		m_lockStageCamera = m_stageCamera.lock();	
 
 		//カメラとPlayerの距離ベクトルを測って大きさを決める
-		auto player = stage->GetSharedGameObject<Player>(L"Player");
+		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		Vec3 playerPos = player->GetComponent<Transform>()->GetPosition();
 		
 		//カメラをPlayerに追従
@@ -54,7 +55,7 @@ namespace basecross {
 
 
 		//ロックオンの有効範囲を可視化
-		stage->AddGameObject<LockOnRange>(m_targetRange * 2, player);
+		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
@@ -67,9 +68,9 @@ namespace basecross {
 	//更新
 	void CameraManager::OnUpdate()
 	{
-		auto delta = App::GetApp()->GetElapsedTime();
+		m_delta = App::GetApp()->GetElapsedTime();
 		m_lockStageCamera = m_stageCamera.lock();
-		auto stage = GetStage();
+		//shared_ptr<Stage> stage = GetStage();
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
@@ -79,7 +80,7 @@ namespace basecross {
 		}
 
 
-		auto player = stage->GetSharedGameObject<Player>(L"Player");
+		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		Vec3 playerPos = player->GetComponent<Transform>()->GetPosition();
 
 		Vec3 hitPos;//当たった場所を保存する変数
@@ -95,49 +96,25 @@ namespace basecross {
 		Vec2 contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
 		//左スティックを傾けてカメラがPlayerの周りを回転する処理
-		float addAngle = 3.0f * contrloerVec.x * delta;//追加する角度を決めて
+		float addAngle = 3.0f * contrloerVec.x * m_delta;//追加する角度を決めて
 		m_cameraAngle += -addAngle;//追加
 
-
 		//ロックオン処理
-		auto enemyManager = stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
+		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
-		vector<shared_ptr<Enemy>> targetVec;//ロックオン候補配列
-		//shared_ptr<Enemy> targetObj;//ターゲット対象
+		//vector<shared_ptr<Enemy>> targetVec;//ロックオン候補配列
 
-		//EnemyとPlayerとの距離を測ってロックオン候補になるのか確認する
-		for (auto enemy : enemyVec)
-		{
-			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
-			
-			//ロックオン範囲の円の中にいるか計算する
-			float targetRange = (enemyPos.x - playerPos.x) * (enemyPos.x - playerPos.x) +
-								(enemyPos.z - playerPos.z) * (enemyPos.z - playerPos.z);
-			float radiusRange = m_targetRange * m_targetRange;
-
-			//ロックオン対象だったら配列に格納する
-			if (targetRange <= radiusRange)
-			{
-				if (!enemy->FindTag(L"ロックオン候補"))
-				{
-					stage->AddGameObject<LockOnLook>(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), enemy, Vec3(0.0f, 4.0f, 0.0f));
-				}
-
-				targetVec.push_back(enemy);
-				enemy->AddTag(L"ロックオン候補");//ロックオン候補のタグ追加
-			}
-			else if(enemy->FindTag(L"ロックオン候補"))
-			{
-				enemy->RemoveTag(L"ロックオン候補");
-			}
-		}
+		//ロックオン候補はどのオブジェクト達になるのか処理
+		LockOnCandidate(enemyVec, playerPos);
 
 		//ロックオン候補がいないならロックオンできない＆選択を初期化
-		if (targetVec.size() <= 0)
+		if (m_targetVec.size() <= 0)
 		{
 			LockOff(enemyVec);//ロックオンの解除
 		}
+
+		ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
 		//RBボタンを押すと範囲内に対象がいるならロックオンそうでなければPlayerが向いている方向に回転する
@@ -149,17 +126,17 @@ namespace basecross {
 			}
 
 			//ここで誰をロックオン対象にするか決める
-			if (targetVec.size() > 0)
+			if (m_lockOnFlag)
 			{
 				m_lockOnNum++;
 
 				//選択している数値がロックオン候補の数より大きくならないようにする
-				if (m_lockOnNum > targetVec.size() - 1)
+				if (m_lockOnNum > m_targetVec.size() - 1)
 				{
 					m_lockOnNum = -1;
 				}
 			}
-			if (targetVec.size() <= 0)
+			if (!m_lockOnFlag)
 			{
 				//Playerの向いている方向の鏡合わせになるように角度を変更する
 				MovePlayerAngle(playerAngle);
@@ -168,16 +145,17 @@ namespace basecross {
 			//ロックオンしていいか判断する
 			if (m_lockOnNum >= 0)
 			{
-				m_lockOn = true;
-				m_targetObj = targetVec[m_lockOnNum];
-				targetVec[m_lockOnNum]->AddTag(L"ロックオン対象");
+				//m_lockOnFlag = true;
+				m_lockOnUse = true;//ロックオン使用
+				m_targetObj = m_targetVec[m_lockOnNum];
+				m_targetVec[m_lockOnNum]->AddTag(L"ロックオン対象");
 			}
 			else if (m_lockOnNum <= -1)//ロックオンの解除
 			{
 				LockOff(enemyVec);//ロックオンの解除
 			}
-
 		}
+
 		//角度リセット(デバック用)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 		{
@@ -185,11 +163,11 @@ namespace basecross {
 		}
 
 		//ロックオン
-		if (m_lockOn)
+		if (m_lockOnUse)
 		{
 			LockOn(m_targetObj, player);
 		}//ロックオンできない時
-		else if (!m_lockOn)
+		else if (!m_lockOnUse)
 		{
 			//注視点はPlayerの位置よりも少し先にしたい
 			m_lockStageCamera->SetAt(playerPos);
@@ -225,6 +203,45 @@ namespace basecross {
 
 	}
 
+	//ロックオン候補を決める関数
+	void CameraManager::LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec,Vec3 playerPos)
+	{
+		m_targetVec.clear();//配列の初期化
+		m_lockOnFlag = false;//フラグの初期化
+
+		for (auto enemy : enemyVec)
+		{
+			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
+
+			//ロックオン範囲の円の中にいるか計算する
+			float targetRange = (enemyPos.x - playerPos.x) * (enemyPos.x - playerPos.x) +
+				(enemyPos.z - playerPos.z) * (enemyPos.z - playerPos.z);
+			float radiusRange = m_targetRange * m_targetRange;
+
+			//ロックオン候補なら配列にオブジェクトとPosを入れる
+			if (targetRange <= radiusRange)
+			{
+				if (!enemy->FindTag(L"ロックオン候補"))
+				{
+					m_stage->AddGameObject<LockOnLook>(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), enemy, Vec3(0.0f, 4.0f, 0.0f));
+				}
+
+				m_targetPosVec.push_back(enemyPos);//ロックオン候補のPosを配列に入れる
+				m_targetVec.push_back(enemy);
+				enemy->AddTag(L"ロックオン候補");//ロックオン候補のタグ追加
+				m_lockOnFlag = true;//ロックオン使用可能
+			}
+			else if (enemy->FindTag(L"ロックオン候補"))//ロックオン候補から外れたのがロックオン対象ならロックオンをやめる
+			{
+				enemy->RemoveTag(L"ロックオン候補");
+				if (enemy->FindTag(L"ロックオン対象"))
+				{
+					LockOff(enemyVec);//ロックオンの解除
+				}
+			}
+		}
+	}
+
 	//ロックオン機能 対象のオブジェクトを中心点とする
 	void CameraManager::LockOn(shared_ptr<GameObject> lockOnObj,shared_ptr<Player> originObj)
 	{
@@ -248,7 +265,8 @@ namespace basecross {
 		{
 			enemy->RemoveTag(L"ロックオン対象");
 		}
-		m_lockOn = false;
+		m_lockOnFlag = false;//ロックオンできない
+		m_lockOnUse = false;//ロックオンしない
 		m_lockOnNum = -1;
 		m_targetObj = NULL;
 	}
@@ -316,7 +334,7 @@ namespace basecross {
 		ObjectMove(stagePtr),
 		m_pos(Vec3(0.0f)),
 		m_rot(Vec3(0.0f)),
-		m_scale(Vec3(range, 0.1f, range)),
+		m_scale(Vec3(range*2, 1.0f, range*2)),
 		m_range(range),
 		m_player(player)
 	{
@@ -405,6 +423,7 @@ namespace basecross {
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetOwnShadowActive(false);//影は消す
 		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(Col4(0.0f, 1.0f, 0.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 	}
 	void LockOnLook::OnUpdate()
 	{
@@ -427,11 +446,13 @@ namespace basecross {
 		{
 			auto ptrDraw = GetComponent<PNTStaticDraw>();
 			ptrDraw->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));
+			ptrDraw->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		}
 		else
 		{
 			auto ptrDraw = GetComponent<PNTStaticDraw>();
 			ptrDraw->SetDiffuse(Col4(0.0f, 1.0f, 0.0f, 1.0f));
+			ptrDraw->SetEmissive(Col4(0.0f, 1.0f, 0.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		}
 		//追跡対象と同じ座標にいる(PushPosという例外あり)
 		auto parentPos = parentLock->GetComponent<Transform>()->GetPosition();
@@ -468,6 +489,15 @@ namespace basecross {
 		ptrDraw->SetDiffuse(m_color);
 		ptrDraw->SetOwnShadowActive(false);//影は消す
 		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(m_color); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+		////影を付ける
+		//auto m_ptrShadow = AddComponent<Shadowmap>();
+		//m_ptrShadow->SetMeshResource(L"DEFAULT_CUBE");
+		////m_ptrShadow->SetMeshToTransformMatrix(spanMat);
+
+
 		//ptrDraw->HitTestSkinedMeshSegmentTriangles();
 
 		//ptrDraw->HitT

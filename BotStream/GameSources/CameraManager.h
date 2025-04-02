@@ -16,13 +16,18 @@ namespace basecross{
 		weak_ptr<Camera> m_stageCamera;//ステージ上のカメラ
 		shared_ptr<Camera> m_lockStageCamera;//ロックできたステージ上のカメラ
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
+		shared_ptr<Stage> m_stage;
+		float m_delta;
 
 		float m_cameraAngle;  //Playerから見てカメラのいる角度
 		float m_range;//Playerからどのくらい離れるか
 		float m_targetRange;//ロックオンの範囲
 
+		vector<shared_ptr<Enemy>> m_targetVec;//ターゲット候補
+		vector<Vec3> m_targetPosVec;//ロックオン候補のPosを保存する配列
 		shared_ptr<Enemy> m_targetObj;//ターゲット対象
-		bool m_lockOn;//ロックオンするかしないかの変数
+		bool m_lockOnFlag;//ロックオンできるかできないかの変数
+		bool m_lockOnUse;//ロックオンするかしないかの変数
 		int m_lockOnNum;//ロックオン対象を決めるための変数
 
 		float m_meleeRange;//近接戦闘の範囲
@@ -38,6 +43,8 @@ namespace basecross{
 		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
 		void AdjustmentAngle();//角度の調整
 
+		//ロックオン候補を決める関数
+		void LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec, Vec3 playerPos);
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
 		
