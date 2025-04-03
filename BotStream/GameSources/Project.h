@@ -40,4 +40,4 @@
 #include "StageSanpei.h"
 #include "StageSato.h"
 #include "StageTuboi.h"
-
+#include "WaveStage.h"
