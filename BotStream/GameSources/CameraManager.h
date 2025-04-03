@@ -9,6 +9,24 @@
 #include "Player.h"
 
 namespace basecross{
+	//ターゲット候補のデータ
+	class targetsDeta
+	{
+	public:
+		float lockOnAngle;//プレイヤーから見てターゲットのいる方向
+		int leftOrRight;//右か左どちらにいるのか　falseが左trueが右
+
+		targetsDeta(float lockOnAngle, int leftOrRight) :
+			lockOnAngle(lockOnAngle),
+			leftOrRight(leftOrRight)
+		{
+		}
+		~targetsDeta()
+		{
+		}
+	};
+
+
 	class Enemy;
 	class CameraManager : public MyGameObject
 	{
@@ -19,16 +37,33 @@ namespace basecross{
 		shared_ptr<Stage> m_stage;
 		float m_delta;
 
+		CONTROLER_STATE m_controler;//コントローラー
+
 		float m_cameraAngle;  //Playerから見てカメラのいる角度
 		float m_range;//Playerからどのくらい離れるか
 		float m_targetRange;//ロックオンの範囲
 
-		vector<shared_ptr<Enemy>> m_targetVec;//ターゲット候補
-		vector<Vec3> m_targetPosVec;//ロックオン候補のPosを保存する配列
+		//右か左かそれとも真ん中か
+		enum LeftOrRight
+		{
+			Middle,
+			Left,
+			Right
+		};
+
+		//ロックオンの処理////////////////////////////////////////////////////////////
+		vector<shared_ptr<Enemy>> m_targets;//ターゲット候補
+		vector<Vec3> m_targetsPos;//ロックオン候補のPosを保存する配列
 		shared_ptr<Enemy> m_targetObj;//ターゲット対象
 		bool m_lockOnFlag;//ロックオンできるかできないかの変数
 		bool m_lockOnUse;//ロックオンするかしないかの変数
 		int m_lockOnNum;//ロックオン対象を決めるための変数
+
+		bool m_stickFlag;//スティックを傾ける入力を受け取るかのフラグ
+
+		vector<targetsDeta> m_targesDeta;//ロックオン対象のデータが入った配列
+		vector<float> m_lockOnAngle;//ロックオン候補がPlayerにとってどの方向にいるのかの変数
+		/////////////////////////////////////////////////////////////////////////////
 
 		float m_meleeRange;//近接戦闘の範囲
 		bool m_meleeFlag;//近接戦闘していいかのフラグ
@@ -121,6 +156,8 @@ namespace basecross{
 		void OnCreate()override;//作成
 		//void OnUpdate()override;
 	};
+
+
 
 }
 //end basecross
