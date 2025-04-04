@@ -9,9 +9,11 @@
 #include "Actor.h"
 
 namespace basecross{
+	class EnemyStateMachine;
 	class Enemy : public Actor
 	{
 		bool m_used = false;
+		shared_ptr<EnemyStateMachine> m_state;
 
 	public:
 		Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);

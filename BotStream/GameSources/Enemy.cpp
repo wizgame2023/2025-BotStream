@@ -52,7 +52,7 @@ namespace basecross {
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetTextureResource(L"SpearmenTexture");
-
+		
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
@@ -60,6 +60,8 @@ namespace basecross {
 		AddTag(L"Player");//Player用のタグ
 
 		AddTag(L"Enemy");
+
+		m_state = shared_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
 	}
 
 	void Enemy::OnUpdate() {
@@ -75,7 +77,7 @@ namespace basecross {
 		}
 
 		//なんやかんや
-
+		m_state->Update();
 
 	}
 
