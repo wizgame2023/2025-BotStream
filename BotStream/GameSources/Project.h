@@ -1,6 +1,6 @@
 /*!
 @file Project.h
-@brief ƒRƒ“ƒeƒ“ƒc—p‚Ìƒwƒbƒ_‚ğ‚Ü‚Æ‚ß‚é
+@brief ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ç”¨ã®ãƒ˜ãƒƒãƒ€ã‚’ã¾ã¨ã‚ã‚‹
 */
 
 #pragma once
@@ -14,15 +14,15 @@
 //#include "Player.h"
 
 
-#include "MyGameObject.h"//‘S‚Ä‚ÌeƒNƒ‰ƒX
+#include "MyGameObject.h"//å…¨ã¦ã®è¦ªã‚¯ãƒ©ã‚¹
 
-#include "ObjectMove.h" //“®‚­ƒIƒuƒWƒFƒNƒg
-#include "ObjectNotMove.h"//“®‚©‚È‚¢ƒIƒuƒWƒFƒNƒg
-#include "Ground.h";//’n–Ê
+#include "ObjectMove.h" //å‹•ãã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+#include "ObjectNotMove.h"//å‹•ã‹ãªã„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+#include "Ground.h";//åœ°é¢
 //#include "Actor.h"
 
 
-//Actor‚Ì’†‚É“ü‚Á‚Ä‚é‚â‚ÂH
+//Actorã®ä¸­ã«å…¥ã£ã¦ã‚‹ã‚„ã¤ï¼Ÿ
 #include "AttackCollision.h"
 #include "State.h"
 #include "LandDetect.h"
@@ -31,13 +31,16 @@
 #include "Player.h"
 #include "Enemy.h"
 
-//ŠJ”­ƒXƒe[ƒW—p
+//é–‹ç™ºã‚¹ãƒ†ãƒ¼ã‚¸ç”¨
 #include "StageAbe.h"
 #include "StageSanpei.h"
 #include "StageSato.h"
 #include "StageTuboi.h"
+#include "WaveStage.h"
 
-//Manager ‚ ‚Æ‚Å’¼‚·
+//Manager
 #include "CameraManager.h"
 #include "EffectManager.h"
 #include "EnemyManager.h"
+
+

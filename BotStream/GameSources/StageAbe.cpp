@@ -7,350 +7,95 @@
 #include "Project.h"
 
 namespace basecross {
+	SoundManager::SoundManager(const shared_ptr<Stage>& StagePtr) :
+		GameObject(StagePtr)
+	{}
 
-	//--------------------------------------------------------------------------------------
-	//	ゲームステージクラス実体
-	//--------------------------------------------------------------------------------------
-	void StageAbe::CreateViewLight() {
-		const Vec3 eye(10.0f, 60.0f, -5.0f);
-		//const Vec3 eye(0.0f, 1.0f, -5.0f);		
-		const Vec3 at(10.0f);
-        //const Vec3 at(0.0f);
-		auto PtrView = CreateView<SingleView>();
-		//ビューのカメラの設定
-		auto PtrCamera = ObjectFactory::Create<Camera>();
-		PtrView->SetCamera(PtrCamera);
-		PtrCamera->SetEye(eye);
-		PtrCamera->SetAt(at);
-		//マルチライトの作成
-		auto PtrMultiLight = CreateLight<MultiLight>();
-		//デフォルトのライティングを指定
-		PtrMultiLight->SetDefaultLighting();
+	SoundManager::~SoundManager()
+	{
 	}
 
-    void StageAbe::OnCreate()
-    {
-        try {
-            //ビューとライトの作成
-            CreateViewLight();
+	void SoundManager::OnCreate()
+	{
+	}
 
-            CreateFloor();
-            CreateWall();
-            CreateCeiling();
-            CreateDoor();
-            CreateTestEnemy();
-        }
-        catch (...) {
-            throw;
-        }
-    }
+	void SoundManager::PlaySE(int sfx)
+	{
+		switch (sfx)
+		{
+		case 0:
+			m_SE = m_ptrSound->Start(L"Decision", 0, 0.3f);
+			break;
+		case 1:
+			m_SE = m_ptrSound->Start(L"Decision2", 0, 0.3f);
+			break;
+		case 2:
+			m_SE = m_ptrSound->Start(L"Landing", 0, 0.3f);
+			break;
+		case 3:
+			m_SE = m_ptrSound->Start(L"Dash", 0, 0.5f);
+			break;
+		case 4:
+			m_SE = m_ptrSound->Start(L"ArmorBreak", 0, 0.3f);
+			break;
+		case 5:
+			m_SE = m_ptrSound->Start(L"Attack1", 0, 0.3f);
+			break;
+		case 6:
+			m_SE = m_ptrSound->Start(L"Attack2", 0, 0.3f);
+			break;
+		case 7:
+			m_SE = m_ptrSound->Start(L"Attack3", 0, 0.3f);
+			break;
+		case 8:
+			m_SE = m_ptrSound->Start(L"HandGun", 0, 0.3f);
+			break;
+		case 9:
+			m_SE = m_ptrSound->Start(L"Reload", 0, 0.3f);
+			break;
+		case 10:
+			m_SE = m_ptrSound->Start(L"AssaultRifle", 0, 0.3f);
+			break;
 
-    void StageAbe::OnUpdate()
-    {
-    }
+		}
+	}
 
+	void SoundManager::PlayBGM(int sfx)
+	{
+		switch(sfx)
+		{
+		case 0:
+			m_BGM = m_ptrSound->Start(L"Title", XAUDIO2_LOOP_INFINITE, 0.5f);
+			break;
+		case 1:
+			m_BGM = m_ptrSound->Start(L"Diagnosis", XAUDIO2_LOOP_INFINITE, 0.5f);
+			break;
+		case 2:
+			m_BGM = m_ptrSound->Start(L"SelectStage", XAUDIO2_LOOP_INFINITE, 0.5f);
+			break;
+		case 3:
+			m_BGM = m_ptrSound->Start(L"EnemyWave", XAUDIO2_LOOP_INFINITE, 0.5f);
+			break;
+		case 4:
+			m_BGM = m_ptrSound->Start(L"BossWave", XAUDIO2_LOOP_INFINITE, 0.5f);
+			break;
+		case 5:
+			m_BGM = m_ptrSound->Start(L"Result", XAUDIO2_LOOP_INFINITE, 0.5f);
+			break;
 
-    void StageAbe::CreateFloor()
-    {
-        vector < vector<Vec3> > vec =
-        {
-            {
-                Vec3(10.0f, 0.1f, 10.0f),
-                Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, 0.0f, 0.0f)
-            }
-        };
-        for (auto v : vec)
-        {
-            AddGameObject<Floor>(v[0], v[1], v[2]);
-        }
-    }
+		}
+	}
 
+	void SoundManager::StopSE()
+	{
+		auto XAPtr = App::GetApp()->GetXAudio2Manager();
+		XAPtr->Stop(m_SE);
+	}
 
-    Floor::Floor(const shared_ptr<Stage>& StagePtr,
-        const Vec3& Scale,
-        const Vec3& Rotation,
-        const Vec3& Position
-    ) :
-        GameObject(StagePtr),
-        m_Scale(Scale),
-        m_Rotation(Rotation),
-        m_Position(Position)
-    {
-    }
-    Floor::~Floor() {}
-
-    void Floor::OnCreate()
-    {
-        auto ptrTransform = GetComponent<Transform>();
-        ptrTransform->SetScale(m_Scale);
-        ptrTransform->SetRotation(m_Rotation);
-        ptrTransform->SetPosition(m_Position);
-
-        auto ptrColl = AddComponent<CollisionObb>();
-        ptrColl->SetFixed(true);
-
-        auto shadowPtr = AddComponent<Shadowmap>();
-        shadowPtr->SetMeshResource(L"DEFAULT_CUBE");
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
-        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetFogEnabled(true);
-        ptrDraw->SetOwnShadowActive(true);
-    }
-
-    void StageAbe::CreateWall()
-    {
-        vector < vector<Vec3> > vec =
-        {
-            {
-                Vec3(5.0f, 0.1f, 10.0f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(5.0f, 2.4f, 0.0f)
-            },
-            {
-                Vec3(5.0f, 0.1f, 10.0f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-5.0f, 2.4f, 0.0f)
-            },
-            {
-                Vec3(5.0f, 0.1f, 10.0f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 2.4f, 5.0f)
-            },
-            {
-                Vec3(5.0f, 0.1f, 10.0f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 2.4f, -5.0f)
-            }
-
-
-
-        };
-        for (auto v : vec)
-        {
-            AddGameObject<Wall>(v[0], v[1], v[2]);
-        }
-    }
-
-
-    Wall::Wall(const shared_ptr<Stage>& StagePtr,
-        const Vec3& Scale,
-        const Vec3& Rotation,
-        const Vec3& Position
-    ) :
-        GameObject(StagePtr),
-        m_Scale(Scale),
-        m_Rotation(Rotation),
-        m_Position(Position)
-    {
-    }
-    Wall::~Wall() {}
-
-    void Wall::OnCreate()
-    {
-        auto ptrTransform = GetComponent<Transform>();
-        ptrTransform->SetScale(m_Scale);
-        ptrTransform->SetRotation(m_Rotation);
-        ptrTransform->SetPosition(m_Position);
-
-        auto ptrColl = AddComponent<CollisionObb>();
-        ptrColl->SetFixed(true);
-
-        auto shadowPtr = AddComponent<Shadowmap>();
-        shadowPtr->SetMeshResource(L"DEFAULT_CUBE");
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
-        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetFogEnabled(true);
-        ptrDraw->SetOwnShadowActive(true);
-    }
-
-
-    void StageAbe::CreateCeiling()
-    {
-        vector < vector<Vec3> > vec =
-        {
-            {
-                Vec3(10.0f, 0.1f, 10.0f),
-                Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, 4.9f, 0.0f)
-            }
-        };
-        for (auto v : vec)
-        {
-            AddGameObject<Ceiling>(v[0], v[1], v[2]);
-        }
-    }
-
-
-    Ceiling::Ceiling(const shared_ptr<Stage>& StagePtr,
-        const Vec3& Scale,
-        const Vec3& Rotation,
-        const Vec3& Position
-    ) :
-        GameObject(StagePtr),
-        m_Scale(Scale),
-        m_Rotation(Rotation),
-        m_Position(Position)
-    {
-    }
-    Ceiling::~Ceiling() {}
-
-    void Ceiling::OnCreate()
-    {
-        auto ptrTransform = GetComponent<Transform>();
-        ptrTransform->SetScale(m_Scale);
-        ptrTransform->SetRotation(m_Rotation);
-        ptrTransform->SetPosition(m_Position);
-
-        auto ptrColl = AddComponent<CollisionObb>();
-        ptrColl->SetFixed(true);
-
-        auto shadowPtr = AddComponent<Shadowmap>();
-        shadowPtr->SetMeshResource(L"DEFAULT_CUBE");
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
-        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetFogEnabled(true);
-        ptrDraw->SetOwnShadowActive(true);
-    }
-
-
-    void StageAbe::CreateDoor()
-    {
-        vector < vector<Vec3> > vec =
-        {
-            {
-                Vec3(2.5f, 0.05f, 0.5f),
-                Vec3(0.0f, -0.6f, 1.57f),
-                Vec3(0.5f, 0.0f, 4.7f)
-            },
-            {
-                Vec3(2.5f, 0.05f, 0.5f),
-                Vec3(0.0f, 0.6f, 1.57f),
-                Vec3(-0.5f, 0.0f, 4.7f)
-            },
-            {
-                Vec3(2.5f, 0.05f, 0.5f),
-                Vec3(0.0f, -0.6f, 1.57f),
-                Vec3(-0.5f, 2.4f, -4.7f)
-            },
-            {
-                Vec3(2.5f, 0.05f, 0.5f),
-                Vec3(0.0f, 0.6f, 1.57f),
-                Vec3(0.5f, 2.4f, -4.7f)
-            }
-
-
-
-        };
-        for (auto v : vec)
-        {
-            AddGameObject<Door>(v[0], v[1], v[2]);
-        }
-    }
-
-
-    Door::Door(const shared_ptr<Stage>& StagePtr,
-        const Vec3& Scale,
-        const Vec3& Rotation,
-        const Vec3& Position
-    ) :
-        GameObject(StagePtr),
-        m_Scale(Scale),
-        m_Rotation(Rotation),
-        m_Position(Position)
-    {
-    }
-    Door::~Door() {}
-
-    void Door::OnCreate()
-    {
-        auto ptrTransform = GetComponent<Transform>();
-        ptrTransform->SetScale(m_Scale);
-        ptrTransform->SetRotation(m_Rotation);
-        ptrTransform->SetPosition(m_Position);
-
-        auto ptrColl = AddComponent<CollisionObb>();
-        ptrColl->SetFixed(true);
-
-        auto shadowPtr = AddComponent<Shadowmap>();
-        shadowPtr->SetMeshResource(L"DEFAULT_CUBE");
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
-        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetFogEnabled(true);
-        ptrDraw->SetOwnShadowActive(true);
-    }
-
-
-    void StageAbe::CreateTestEnemy()
-    {
-        vector < vector<Vec3> > vec =
-        {
-            {
-                Vec3(0.5f, 0.5f, 0.5f),
-                Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, 0.3f, 0.0f)
-            }
-        };
-
-        for (auto v : vec)
-        {
-            AddGameObject<TestEnemy>(v[0], v[1], v[2]);
-        }
-    }
-
-
-    TestEnemy::TestEnemy(const shared_ptr<Stage>& StagePtr,
-        const Vec3& Scale,
-        const Vec3& Rotation,
-        const Vec3& Position
-    ) :
-        GameObject(StagePtr),
-        m_Scale(Scale),
-        m_Rotation(Rotation),
-        m_Position(Position)
-    {
-    }
-    TestEnemy::~TestEnemy() {}
-
-    void TestEnemy::OnCreate()
-    {
-        auto ptrTransform = GetComponent<Transform>();
-        ptrTransform->SetScale(m_Scale);
-        ptrTransform->SetRotation(m_Rotation);
-        ptrTransform->SetPosition(m_Position);
-
-        auto ptrColl = AddComponent<CollisionSphere>();
-        ptrColl->SetFixed(true);
-
-        auto shadowPtr = AddComponent<Shadowmap>();
-        shadowPtr->SetMeshResource(L"DEFAULT_SPHERE");
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
-        ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-        ptrDraw->SetFogEnabled(true);
-        ptrDraw->SetOwnShadowActive(true);
-
-        AddTag(L"Enemy");
-    }
-
-    void TestEnemy::OnUpdate()
-    {
-        auto& app = App::GetApp();
-        auto scene = app->GetScene<Scene>();
-        auto KeyState = App::GetApp()->GetInputDevice().GetKeyState();
-        int m_HP = 1;
-
-        if (KeyState.m_bPressedKeyTbl[VK_SPACE])
-        {
-            m_HP -= 1;
-        }
-
-        if (m_HP == 0)
-        {
-            scene->PostEvent(1.0f, GetThis<ObjectInterface>(), app->GetScene<Scene>(), L"ToGameStage");
-        }
-
-
-    }
-
+	void SoundManager::StopBGM()
+	{
+		auto XAPtr = App::GetApp()->GetXAudio2Manager();
+		XAPtr->Stop(m_BGM);
+	}
 }
 //end basecross
