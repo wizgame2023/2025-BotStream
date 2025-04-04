@@ -78,6 +78,9 @@ namespace basecross{
 		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
 		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
 		void AdjustmentAngle();//角度の調整
+		
+		void UpdateTargesDeta(Vec3 playerPos);//ロックオン候補のデータを更新する関数
+		void ChangeLockOn(int leftOrRight,float targetAngle);//ロックオン対象を変更する処理
 
 		//ロックオン候補を決める関数
 		void LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec, Vec3 playerPos);
