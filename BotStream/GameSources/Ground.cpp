@@ -21,7 +21,7 @@ namespace basecross {
 	void Ground::OnCreate() {
 		auto trans = GetComponent<Transform>();
 		trans->SetPosition(Vec3(0, -2, 0));
-		trans->SetScale(Vec3(10.0f, 1, 10.0f));
+		trans->SetScale(Vec3(50.0f, 1, 50.0f));
 		auto ptrDraw = AddComponent<BcPNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 

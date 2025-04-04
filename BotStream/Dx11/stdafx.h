@@ -129,4 +129,10 @@ using namespace basecross::bsm;
 
 #include "resource.h"
 
+#pragma comment(lib, "Effekseer.lib")
+#pragma comment(lib, "EffekseerRendererDX11.lib")
+#include <Effekseer.h>
+#include <EffekseerRendererDX11.h>
+using namespace Effekseer;
+using namespace EffekseerRendererDX11;
 
