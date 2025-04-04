@@ -14,6 +14,7 @@ namespace basecross {
 		m_targetRange(targetRange),
 		m_lockOnFlag(false),
 		m_lockOnUse(false),
+		m_lockOnChangeFlag(false),
 		m_lockOnNum(-1),
 		m_meleeRange(meleeRange),
 		m_stickFlag(false)
@@ -177,6 +178,7 @@ namespace basecross {
 						min = difference;
 						m_targetObj->RemoveTag(L"ロックオン対象");
 						m_lockOnNum = i;
+						m_lockOnChangeFlag = true;
 					}
 				}
 
@@ -190,6 +192,7 @@ namespace basecross {
 				float min = 999999;
 				for (int i = 0; i <= m_targesDeta.size() - 1; i++)
 				{
+					m_targets;//デバック用
 					//今見ているターゲット候補が左側にいるわけでなければreturn
 					if (m_targesDeta[i].leftOrRight != Right) continue;
 
@@ -201,6 +204,7 @@ namespace basecross {
 						min = difference;
 						m_targetObj->RemoveTag(L"ロックオン対象");
 						m_lockOnNum = i;
+						m_lockOnChangeFlag = true;
 					}
 				}
 
@@ -214,8 +218,9 @@ namespace basecross {
 			}
 
 			//ロックオンしていいか判断する
-			if (m_lockOnNum >= 0)
+			if (m_lockOnChangeFlag)
 			{
+				m_lockOnChangeFlag = false;
 				m_lockOnUse = true;//ロックオン使用
 				m_targetObj = m_targets[m_lockOnNum];
 				m_targets[m_lockOnNum]->AddTag(L"ロックオン対象");

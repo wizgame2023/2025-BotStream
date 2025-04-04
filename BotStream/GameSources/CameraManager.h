@@ -57,6 +57,7 @@ namespace basecross{
 		shared_ptr<Enemy> m_targetObj;//ターゲット対象
 		bool m_lockOnFlag;//ロックオンできるかできないかの変数
 		bool m_lockOnUse;//ロックオンするかしないかの変数
+		bool m_lockOnChangeFlag;//ロックオンを変えたかのフラグ
 		int m_lockOnNum;//ロックオン対象を決めるための変数
 
 		bool m_stickFlag;//スティックを傾ける入力を受け取るかのフラグ
