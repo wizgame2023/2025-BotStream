@@ -43,6 +43,9 @@ namespace basecross {
 		//注視点はPlayerの位置よりも少し先にしたい
 		m_lockStageCamera->SetAt(playerPos);
 
+		//スプライト追加
+		m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
+
 		//Vec3 CameraPos = m_lockStageCamera->GetEye();
 		
 		////クォータニオンの値を取得してカメラとPlayerの差を見えるようにするオブジェクトを出そう！
@@ -105,7 +108,6 @@ namespace basecross {
 		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
-		//vector<shared_ptr<Enemy>> targetVec;//ロックオン候補配列
 
 		//ロックオン候補はどのオブジェクト達になるのか処理
 		LockOnCandidate(enemyVec, playerPos);
@@ -119,15 +121,10 @@ namespace basecross {
 		ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
-		//RBボタンを押す時の処理　
+
 		//ロックオンが出来てロックオンのしてないなら使う、使ってたら使わない どちらでもなければそうでないならプレイヤーの向いている方向に向く
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
-			for (auto enemy : enemyVec)
-			{
-				enemy->RemoveTag(L"ロックオン対象");
-			}
-
 			//ロックオンするか決める処理
 			if (m_lockOnFlag && !m_lockOnUse)
 			{
@@ -145,10 +142,7 @@ namespace basecross {
 					}
 				}
 
-
-				//m_lockOnNum++;
 				m_lockOnUse = true;//ロックオン使用
-				//m_targetObj = m_targets[m_lockOnNum];
 				m_targetObj->AddTag(L"ロックオン対象");
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
@@ -161,60 +155,19 @@ namespace basecross {
 				MovePlayerAngle(playerAngle);
 			}
 		}
-
 		//角度リセット(デバック用)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 		{
 			m_cameraAngle = XMConvertToRadians(270.0f);
 		}
 
-
 		//ロックオンするときの処理
 		if (m_lockOnUse)
 		{		
-			//ロックオンを切り替えるときにスティックを傾けてロックオン対象を変更する処理
-			Vec3 targetPos = m_targetObj->GetComponent<Transform>()->GetPosition();
-			//Playerから見てロックオン対象のいる方向ベクトルを求める
-			Vec3 lockOnVec = targetPos - playerPos;
-
-			m_targesDeta.clear();//初期化
-			//その前に前提条件としてロックオン候補が見ている方向から右か左か確認する
-			for (auto enemy : m_targets)
-			{
-				Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
-
-				//Playerから見てロックオン候補のいる方向ベクトルを求める
-				Vec3 lockOnCanVec = enemyPos - playerPos;
-
-				//外積を求める
-				Vec3 outsideCorner = Vec3(lockOnVec.y * 0.0f - lockOnCanVec.y * 0.0f,//x
-					lockOnVec.z * lockOnCanVec.x - lockOnCanVec.z * lockOnVec.x,//y
-					lockOnVec.x * 0.0f - lockOnCanVec.x * 0.0f//z
-				);
-				//左がマイナス右がプラス
-				auto cross = outsideCorner.y;
-				//crossが0より大きかったらfalse逆に小さかったらtrue
-				int leftOrRight;
-				if (cross < 0) leftOrRight = Left;
-				if (cross > 0) leftOrRight = Right;
-				if (cross == 0) leftOrRight = Middle;
-
-				//なす角を求める
-				float aSqrt = sqrt((lockOnVec.x * lockOnVec.x) + (lockOnVec.z * lockOnVec.z));
-				float bSqrt = sqrt((lockOnCanVec.x * lockOnCanVec.x) + (lockOnCanVec.z * lockOnCanVec.z));
-				//割られる数値
-				float divide = (lockOnVec.x * lockOnCanVec.x) + (lockOnVec.z * lockOnCanVec.z);
-
-				auto rad = divide / (aSqrt * bSqrt);
-				auto deg = XMConvertToDegrees(rad);
-
-				targetsDeta targetDeta = targetsDeta(deg, leftOrRight);
-				//プレイヤーから見て敵のいる角度を配列に入れる
-				m_targesDeta.push_back(targetDeta);
-			}
+			//ロックオンするときの材料作成
+			UpdateTargesDeta(playerPos);
 
 			float targetAngle;
-			float min = 999999;
 			//ターゲット対象のなす角を受け取る
 			for (auto enemy : m_targesDeta)
 			{
@@ -224,59 +177,24 @@ namespace basecross {
 				}
 			}
 
-			//ロックオン使用時に誰をロックオンするのか処理
-			//ターゲット対象からスティックを傾けている方向のターゲット候補に変わる
-			if (contrloerVec.x <= -0.9f && m_stickFlag)//ターゲットの左隣にいる候補に移す
+			//ターゲット対象からスティックを傾けている方向のターゲット候補に変える処理
+			if (contrloerVec.x <= -0.9f && m_stickFlag)//対象の左隣にいる候補に移す
 			{
-				//外角の差がマイナスで一番近いターゲット候補がターゲット対象となる
-				float targetdeg = XMConvertToDegrees(targetAngle);
-				for (int i = 0; i <= m_targesDeta.size()-1; i++)
-				{		
-					//今見ているターゲット候補が左側にいるわけでなければreturn
-					if (m_targesDeta[i].leftOrRight != Left) continue;
-
-					float targetsDeg = XMConvertToDegrees(m_targesDeta[i].lockOnAngle);
-					float difference = abs(m_targesDeta[i].lockOnAngle - targetAngle);
-
-					if (min > difference && difference != 0.0f)
-					{
-						min = difference;
-						m_targetObj->RemoveTag(L"ロックオン対象");
-						m_lockOnNum = i;
-						m_lockOnChangeFlag = true;
-					}
-				}
-
-				m_stickFlag = false;//スティックを受け取れないようにする
+				//現在の対象の方向と一番近い候補がターゲット対象になる
+				ChangeLockOn(Left, targetAngle);
+				m_stickFlag = false;//入力を受け付けない
 			}
-			if (contrloerVec.x >= 0.9f && m_stickFlag)//ターゲットの右隣にいる候補に移す
+			if (contrloerVec.x >= 0.9f && m_stickFlag)//対象の右隣にいる候補に移す
 			{
-				//外角の差がプラスで一番近いターゲット候補がターゲット対象となる
-				float targetdeg = XMConvertToDegrees(targetAngle);
-				for (int i = 0; i <= m_targesDeta.size() - 1; i++)
-				{
-					//今見ているターゲット候補が左側にいるわけでなければreturn
-					if (m_targesDeta[i].leftOrRight != Right) continue;
-
-					float targetsDeg = XMConvertToDegrees(m_targesDeta[i].lockOnAngle);
-					float difference = abs(m_targesDeta[i].lockOnAngle-targetAngle);
-
-					if (min > difference && difference != 0.0f)
-					{
-						min = difference;
-						m_targetObj->RemoveTag(L"ロックオン対象");
-						m_lockOnNum = i;
-						m_lockOnChangeFlag = true;
-					}
-				}
-
-				m_stickFlag = false;//スティックを受け取れないようにする
+				//現在の対象の方向と一番近い候補がターゲット対象になる
+				ChangeLockOn(Right, targetAngle);
+				m_stickFlag = false;//入力を受け付けない
 			}
 
 			//スティックを傾けた後スティックを元に戻したら入力を受け入れる
 			if (!m_stickFlag && contrloerVec.x == 0.0f)
 			{
-				m_stickFlag = true;
+				m_stickFlag = true;//入力を受け付ける
 			}
 
 			//ロックオンしていいか判断する
@@ -298,10 +216,8 @@ namespace basecross {
 
 		//カメラをPlayerに追従
 		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngle) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngle) * m_range)));
-
 		//角度の調整0~360度までしか出ないようにする
 		AdjustmentAngle();
-
 
 		////デバック用
 		wstringstream wss(L"");
@@ -391,14 +307,81 @@ namespace basecross {
 	//ロックオンの解除機能
 	void CameraManager::LockOff(vector<shared_ptr<Enemy>> enemyVec)
 	{
-		for (auto enemy : enemyVec)
-		{
-			enemy->RemoveTag(L"ロックオン対象");
-		}
+		m_targetObj->RemoveTag(L"ロックオン対象");
 		m_lockOnFlag = false;//ロックオンできない
 		m_lockOnUse = false;//ロックオンしない
 		m_lockOnNum = -1;
 		m_targetObj = NULL;
+	}
+
+	//ロックオン候補のデータを更新する処理
+	void CameraManager::UpdateTargesDeta(Vec3 playerPos)
+	{
+		m_targesDeta.clear();//初期化
+
+		//ロックオンを切り替えるときにスティックを傾けてロックオン対象を変更する処理
+		Vec3 targetPos = m_targetObj->GetComponent<Transform>()->GetPosition();
+		//Playerから見てロックオン対象のいる方向ベクトルを求める
+		Vec3 lockOnVec = targetPos - playerPos;
+
+		for (auto enemy : m_targets)
+		{
+			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
+
+			//Playerから見てロックオン候補のいる方向ベクトルを求める
+			Vec3 lockOnCanVec = enemyPos - playerPos;
+
+			//外積を求める
+			Vec3 outsideCorner = Vec3(lockOnVec.y * 0.0f - lockOnCanVec.y * 0.0f,//x
+				lockOnVec.z * lockOnCanVec.x - lockOnCanVec.z * lockOnVec.x,//y
+				lockOnVec.x * 0.0f - lockOnCanVec.x * 0.0f//z
+			);
+			//左がマイナス右がプラス
+			auto cross = outsideCorner.y;
+			//crossが0より大きかったらfalse逆に小さかったらtrue
+			int leftOrRight;
+			if (cross < 0) leftOrRight = Left;
+			if (cross > 0) leftOrRight = Right;
+			if (cross == 0) leftOrRight = Middle;
+
+			//なす角を求める
+			float aSqrt = sqrt((lockOnVec.x * lockOnVec.x) + (lockOnVec.z * lockOnVec.z));
+			float bSqrt = sqrt((lockOnCanVec.x * lockOnCanVec.x) + (lockOnCanVec.z * lockOnCanVec.z));
+			//割られる数値
+			float divide = (lockOnVec.x * lockOnCanVec.x) + (lockOnVec.z * lockOnCanVec.z);
+
+			auto rad = divide / (aSqrt * bSqrt);
+			auto deg = XMConvertToDegrees(rad);
+
+			targetsDeta targetDeta = targetsDeta(deg, leftOrRight);
+			//プレイヤーから見て敵のいる角度を配列に入れる
+			m_targesDeta.push_back(targetDeta);
+		}
+	}
+
+	//ロックオン対象を変更する処理
+	//第一引数 右か左か 第二引数 ターゲット対象のなす角
+	void CameraManager::ChangeLockOn(int leftOrRight,float targetAngle)
+	{
+		float min = 99999.9f;//最小値
+
+		//外角の差がマイナスで一番近いターゲット候補がターゲット対象となる
+		for (int i = 0; i <= m_targesDeta.size() - 1; i++)
+		{
+			//今見ているターゲット候補が左側にいるわけでなければreturn
+			if (m_targesDeta[i].leftOrRight != leftOrRight) continue;
+
+			float targetsDeg = XMConvertToDegrees(m_targesDeta[i].lockOnAngle);
+			float difference = abs(m_targesDeta[i].lockOnAngle - targetAngle);
+
+			if (min > difference && difference != 0.0f)
+			{
+				min = difference;
+				m_targetObj->RemoveTag(L"ロックオン対象");
+				m_lockOnNum = i;
+				m_lockOnChangeFlag = true;
+			}
+		}
 	}
 
 	//Playerの向いている方向の鏡合わせになるように角度を変更する
