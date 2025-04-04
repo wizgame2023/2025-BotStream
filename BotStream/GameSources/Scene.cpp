@@ -1,7 +1,7 @@
 
 /*!
 @file Scene.cpp
-@brief ƒV[ƒ“À‘Ì
+@brief ã‚·ãƒ¼ãƒ³å®Ÿä½“
 */
 
 #include "stdafx.h"
@@ -10,17 +10,19 @@
 namespace basecross{
 
 	//--------------------------------------------------------------------------------------
-	///	ƒQ[ƒ€ƒV[ƒ“
+	///	ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³
 	//--------------------------------------------------------------------------------------
 	void Scene::OnCreate(){
 		try {
-			//ƒNƒŠƒA‚·‚éF‚ğİ’è
+			EffectManager::Instance().CreateEfkInterface();
+			//ã‚¯ãƒªã‚¢ã™ã‚‹è‰²ã‚’è¨­å®š
 			Col4 Col;
 			Col.set(31.0f / 255.0f, 30.0f / 255.0f, 71.0f / 255.0f, 255.0f / 255.0f);
 			SetClearColor(Col);
-			//©•ª©g‚ÉƒCƒxƒ“ƒg‚ğ‘—‚é
-			//‚±‚ê‚É‚æ‚èŠeƒXƒe[ƒW‚âƒIƒuƒWƒFƒNƒg‚ªCreate‚ÉƒV[ƒ“‚ÉƒAƒNƒZƒX‚Å‚«‚é
+			//è‡ªåˆ†è‡ªèº«ã«ã‚¤ãƒ™ãƒ³ãƒˆã‚’é€ã‚‹
+			//ã“ã‚Œã«ã‚ˆã‚Šå„ã‚¹ãƒ†ãƒ¼ã‚¸ã‚„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒCreateæ™‚ã«ã‚·ãƒ¼ãƒ³ã«ã‚¢ã‚¯ã‚»ã‚¹ã§ãã‚‹
 			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"ToGameStage");
+
 			GameResourses();
 		}
 		catch (...) {
@@ -33,9 +35,11 @@ namespace basecross{
 
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
-			//Å‰‚ÌƒAƒNƒeƒBƒuƒXƒe[ƒW‚Ìİ’è
+			//æœ€åˆã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‚¹ãƒ†ãƒ¼ã‚¸ã®è¨­å®š
 			ResetActiveStage<StageTuboi>();
+
 		}
+
 	}
 
 	void Scene::GameResourses()
@@ -46,19 +50,25 @@ namespace basecross{
 		auto texPath = path + L"Textures/";
 		auto modPath = path + L"Models/";
 		auto SoundPath = path + L"Sounds/";
+		auto efkPath = path + L"Effect/";
 
-		//ƒeƒNƒXƒ`ƒƒ
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
 
-		//ƒ‚ƒfƒ‹
+		//ãƒ¢ãƒ‡ãƒ«
 
-		//ƒ{[ƒ“ƒ}ƒ‹ƒ`ƒƒbƒVƒ…
-		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//‰¼‚ÌƒvƒŒƒCƒ„[ƒƒbƒVƒ…(‘„•º)
+		//ãƒœãƒ¼ãƒ³ãƒãƒ«ãƒãƒ¡ãƒƒã‚·ãƒ¥
+		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//ä»®ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ¡ãƒƒã‚·ãƒ¥(æ§å…µ)
 		app->RegisterResource(L"Spearmen", boneMultiModelMesh);
-		//ƒ{[ƒ“ƒ}ƒ‹ƒ`ƒƒbƒVƒ…—pƒeƒNƒXƒ`ƒƒ
+		//ãƒœãƒ¼ãƒ³ãƒãƒ«ãƒãƒ¡ãƒƒã‚·ãƒ¥ç”¨ãƒ†ã‚¯ã‚¹ãƒãƒ£
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
+
+		// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ç™»éŒ²
+		EffectManager::Instance().RegisterEffect(L"Laser", efkPath + L"Laser01.efk");
+		EffectManager::Instance().RegisterEffect(L"Sword", efkPath + L"Sword.efk");
+		EffectManager::Instance().RegisterEffect(L"Landing", efkPath + L"Landing.efk");
 
 		//BGM
 		app->RegisterWav(L"Title", SoundPath + L"Title.wav");

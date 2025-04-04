@@ -5,7 +5,7 @@
 
 #pragma once
 #include "stdafx.h"
-
+#include "EffectManager.h"
 namespace basecross {
 
 	//--------------------------------------------------------------------------------------
@@ -14,12 +14,15 @@ namespace basecross {
 	class GameStage : public Stage {
 		//ƒrƒ…[‚Ìì¬
 		void CreateViewLight();
+
 	public:
 		//\’z‚Æ”jŠü
 		GameStage() :Stage() {}
 		virtual ~GameStage() {}
 		//‰Šú‰»
 		virtual void OnCreate()override;
+		virtual void OnUpdate()override;
+		virtual void OnDraw()override;
 	};
 
 
