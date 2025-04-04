@@ -49,6 +49,10 @@ namespace basecross{
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
 		AddTag(L"Player");//Player用のタグ
+		//着地判定の生成、子オブジェクトにする
+		m_LandDetect = GetStage()->AddGameObject<LandDetect>();
+		m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+
 	}
 
 	void Player::OnUpdate()
@@ -57,12 +61,46 @@ namespace basecross{
 		
 		//動く処理(仮)
 		PlayerMove();
+		
+		//着地判定(無効化時間中ならそれを減算する)
+		if (m_disableLandDetect > 0) {
+			m_disableLandDetect -= _delta;
+		}
+		else {
+			if (m_LandDetect->GetLand() != m_isLand) {
+				//着地した判定
+				if (!m_isLand) m_velocity.y = 0;
+				m_isLand = !m_isLand;
+			}
+		}
+
+		//処理
+		if (!m_isLand) {
+			Gravity();
+		}
+		else {
+			Friction();
+			Jump();
+		}
 
 		//デバック用文字列
-		//DebagLog();
-		// 
+		DebugLog();
+
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
+		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+	}
+
+	void Player::Jump() {
+		// 入力デバイス取得
+		auto inputDevice = App::GetApp()->GetInputDevice();
+		auto controller = inputDevice.GetControlerVec()[0];
+
+		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
+			m_velocity.y = m_jumpPower;
+			m_isLand = false;
+			m_disableLandDetect = 1.0f;
+		}
 	}
 
 	void Player::PlayerMove()
@@ -89,8 +127,6 @@ namespace basecross{
 		}
 
 		SpeedLimit(move.length());
-		Friction();
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 
 	}
 
@@ -115,7 +151,7 @@ namespace basecross{
 			}
 		}
 		//落下の終端速度
-		//if (m_moveVel.y < m_fallTerminal) m_moveVel.y = m_fallTerminal;
+		if (m_velocity.y < m_fallTerminal) m_velocity.y = m_fallTerminal;
 	}
 
 	//摩擦(地上のみ)
@@ -132,6 +168,11 @@ namespace basecross{
 			m_velocity.x -= m_velocity.x * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
 			m_velocity.z -= m_velocity.z * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
 		}
+	}
+
+	//重力
+	void Player::Gravity() {
+		m_velocity.y += m_gravity * _delta;
 	}
 
 	Vec3 Player::GetMoveVector() {
@@ -187,8 +228,9 @@ namespace basecross{
 		auto scene = App::GetApp()->GetScene<Scene>();
 
 		wss /* << L"デバッグ用文字列 "*/
-			<< L"\nPos.x " << m_pos.x << "\nPos.z " << m_pos.z
-			<< endl;
+			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
+			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
+			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand() << endl;
 
 		scene->SetDebugString(wss.str());
 	}
