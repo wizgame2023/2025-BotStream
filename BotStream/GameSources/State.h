@@ -8,11 +8,18 @@
 #include "Project.h"
 
 namespace basecross{
-	class State : public ObjectMove
+	class StateBase;
+
+	/// <summary>
+	/// ステートをまとめるためのオブジェクト
+	/// </summary>
+	class StateMachineBase : public MyGameObject
 	{
+
+
 	public:
-		State(const shared_ptr<Stage>& stagePtr);
-		~State();
+		StateMachineBase(const shared_ptr<Stage>& stagePtr);
+		~StateMachineBase();
 	};
 
 }

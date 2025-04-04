@@ -24,6 +24,7 @@ namespace basecross {
 		trans->SetScale(Vec3(10.0f, 1, 10.0f));
 		auto ptrDraw = AddComponent<BcPNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+		ptrDraw->SetDiffuse(Col4(0));
 
 		//OBBÕ“Ë”»’è‚ğ•t‚¯‚é
 		auto ptrColl = AddComponent<CollisionObb>();

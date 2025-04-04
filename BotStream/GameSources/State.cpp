@@ -5,14 +5,15 @@
 
 #include "stdafx.h"
 #include "Project.h"
+#include "State.h"
 
 namespace basecross {
-	State::State(const shared_ptr<Stage>& stagePtr) :
-		ObjectMove(stagePtr)
+	StateMachineBase::StateMachineBase(const shared_ptr<Stage>& stagePtr) :
+		MyGameObject(stagePtr)
 	{
 
 	}
-	State::~State()
+	StateMachineBase::~StateMachineBase()
 	{
 
 	}

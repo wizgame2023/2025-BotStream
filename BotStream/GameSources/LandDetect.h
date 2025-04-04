@@ -14,6 +14,9 @@ namespace basecross{
 		//空中判定になるまでのカウント
 		float m_CollideCount = 0;
 		float m_CollideCountMax = .05f;
+		Vec3 m_bindPos = Vec3(0, -.5f, 0);
+		float m_defaultRadius = .1f;
+		
 		//地上にいるかどうか
 		bool m_isLand = false;
 	public:
@@ -21,10 +24,9 @@ namespace basecross{
 		LandDetect(const shared_ptr<Stage>& stagePtr, float collidecnt);
 		~LandDetect();
 
-		//地面に接地していればtrueを返す
-		bool GetLand() {
-			return m_isLand;
-		}
+		bool GetLand();
+		void SetBindPos(Vec3 pos);
+		void SetCollScale(float scale);
 
 		void OnCreate() override;
 		void OnUpdate() override;
