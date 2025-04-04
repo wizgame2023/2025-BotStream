@@ -9,6 +9,8 @@
 #include "Actor.h"
 
 namespace basecross{
+	class EfkEffect;
+	class StageSato;
 	class Player : public Actor
 	{
 	private:
@@ -40,6 +42,10 @@ namespace basecross{
 
 		float m_angle;//Playerが向いている角度
 
+		// ほぼごり押しだからメンバー要確認
+		//shared_ptr<GameStage> m_Stage;
+		shared_ptr<StageSato> m_Stage;
+
 		//動く処理
 		void PlayerMove();
 		//スティック操作
@@ -53,6 +59,10 @@ namespace basecross{
 
 		void Jump();
 
+		// エフェクトの再生
+		void EfkPlaying(const wstring efkKey,const float rad, const Vec3 rotate);
+		// 地面着地
+		void OnLanding();
 	public:
 		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale);
 		~Player();

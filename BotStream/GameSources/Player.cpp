@@ -6,8 +6,8 @@
 #include "stdafx.h"
 #include "Project.h"
 
-namespace basecross{
-	Player::Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale) :
+namespace basecross {
+	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 		Actor(stagePtr, pos, rot, scale)
 	{
 
@@ -48,6 +48,7 @@ namespace basecross{
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
+
 		AddTag(L"Player");//Player用のタグ
 		//着地判定の生成、子オブジェクトにする
 		m_LandDetect = GetStage()->AddGameObject<LandDetect>();
@@ -57,22 +58,15 @@ namespace basecross{
 
 	void Player::OnUpdate()
 	{
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto angle = GetAngle();
 		_delta = App::GetApp()->GetElapsedTime();
-		
+
 		//動く処理(仮)
 		PlayerMove();
-		
+
 		//着地判定(無効化時間中ならそれを減算する)
-		if (m_disableLandDetect > 0) {
-			m_disableLandDetect -= _delta;
-		}
-		else {
-			if (m_LandDetect->GetLand() != m_isLand) {
-				//着地した判定
-				if (!m_isLand) m_velocity.y = 0;
-				m_isLand = !m_isLand;
-			}
-		}
+		OnLanding();
 
 		//処理
 		if (!m_isLand) {
@@ -81,6 +75,16 @@ namespace basecross{
 		else {
 			Friction();
 			Jump();
+		}
+
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		{
+			EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
+		}
+
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+		{
+			EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
 		}
 
 		//デバック用文字列
@@ -177,14 +181,14 @@ namespace basecross{
 
 	Vec3 Player::GetMoveVector() {
 		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice(); 
+		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
 
 		if (abs(stick.x) > m_stickDeadZone || abs(stick.z) > m_stickDeadZone) {
 			auto trans = GetTransform();
 			auto camera = OnGetDrawCamera();
-			
+
 			//スティックの向きと距離
 			float moveSize = stick.length();
 			float moveAngle = atan2(-stick.x, stick.z);
@@ -226,13 +230,47 @@ namespace basecross{
 		////デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
-
+		auto quat = GetComponent<Transform>()->GetQuaternion();
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
 			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
-			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand() << endl;
+			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
+			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
+			<< L"\nAngle : " << GetAngle() << endl;
 
 		scene->SetDebugString(wss.str());
+	}
+
+	// エフェクトのプレイ
+	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate)
+	{
+		rotate.normalize();
+		auto trans = GetComponent<Transform>();
+		auto plPos = trans->GetPosition();
+
+		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	}
+
+	void Player::OnLanding()
+	{
+		if (m_disableLandDetect > 0) {
+			m_disableLandDetect -= _delta;
+		}
+		else {
+			if (m_LandDetect->GetLand() != m_isLand) {
+				//着地した判定
+				if (!m_isLand)
+				{
+					m_velocity.y = 0;
+					EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
+
+				}
+
+				m_isLand = !m_isLand;
+			}
+		}
+
 	}
 }
 //end basecross

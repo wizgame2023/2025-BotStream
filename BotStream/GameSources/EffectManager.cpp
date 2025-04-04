@@ -1,166 +1,170 @@
-/*!
-@file EffectManager.cpp
-@brief エフェクトなど実体
+﻿/*!
+@file EffectManger.cpp
+@brief ポーズを管理するManager
 */
 
 #include "stdafx.h"
 #include "Project.h"
 
-namespace basecross {
-
+namespace basecross 
+{
 	//--------------------------------------------------------------------------------------
-	///	Effekseerエフェクトのエフェクト
+	//	class EffectManager
 	//--------------------------------------------------------------------------------------
-	EfkEffect::EfkEffect(const shared_ptr<EfkInterface>& iface, const wstring& filename) :
-		m_FileName(filename),
-		m_EfkInterface(iface),
-		m_Effect(nullptr)
+	EffectManager& EffectManager::Instance() 
 	{
-		try {
-			if (m_FileName == L"") {
-				throw BaseException(
-					L"",
-					L"if (m_FileName == L\"\")",
-					L"EfkEffect::EfkEffect()"
-					);
-			}
-			auto m_Efk = m_EfkInterface.lock();
-			m_manager = m_Efk->m_Manager;
-			// エフェクトの読込
-			m_Effect = ::Effekseer::Effect::Create(m_manager, (const char16_t*)filename.c_str());
-		}
-		catch (...) {
-			throw;
-		}
-	}
-	EfkEffect::~EfkEffect() {
+		static EffectManager instance;
+		return instance;
 	}
 
-	void EfkEffect::OnCreate() {
-	}
-
-	//--------------------------------------------------------------------------------------
-	///	EffekseerエフェクトのPlayオブジェクト
-	//--------------------------------------------------------------------------------------
-	EfkPlay::EfkPlay(const shared_ptr<EfkEffect>& effect, const bsm::Vec3& Emitter, const float freme) :
-		m_handle(-1)
+	void EffectManager::CreateEfkInterface()
 	{
-		try {
-			m_Manager = effect->m_manager;
-			int32_t Freme = freme;
-			m_handle = m_Manager->Play(effect->m_Effect, ::Effekseer::Vector3D(Emitter.x, Emitter.y, Emitter.z), Freme);
-		}
-		catch (...) {
-			throw;
-		}
-	}
+		if (m_isCreateEffectManager) return;
+		// デバイスの取得
+		auto dev = App::GetApp()->GetDeviceResources();
+		auto pDx11Device = dev->GetD3DDevice();
+		auto pID3D11DeviceContext = dev->GetD3DDeviceContext();
 
-	EfkPlay::~EfkPlay() {
-		StopEffect();
-	}
-
-	void EfkPlay::AddLocation(const bsm::Vec3& Location) {
-		if (m_handle != -1) {
-			m_Manager->AddLocation(m_handle, ::Effekseer::Vector3D(Location.x, Location.y, Location.z));
-		}
-	}
-
-
-	void EfkPlay::SetRotation(const bsm::Vec3& Location, const float angle)
-	{
-		m_Manager->SetRotation(m_handle, ::Effekseer::Vector3D(Location.x, Location.y, Location.z), angle);
-	}
-
-	void EfkPlay::SetLocation(const bsm::Vec3& Location) {
-		m_Manager->SetLocation(m_handle, Location.x, Location.y, Location.z);
-	}
-
-	void EfkPlay::SetScale(const bsm::Vec3& Scale)
-	{
-		m_Manager->SetScale(m_handle, Scale.x, Scale.y, Scale.z);
-	}
-
-	void EfkPlay::SetAllColor(const bsm::Col4 Color)
-	{
-		auto color = Col4(Color) * 255;
-		m_Manager->SetAllColor(m_handle, ::Effekseer::Color(color.x, color.y, color.z, color.w));
-	}
-
-	void EfkPlay::StopEffect() {
-		if (m_handle != -1) {
-			m_Manager->StopEffect(m_handle);
-		}
-	}
-
-	//--------------------------------------------------------------------------------------
-	///	Effekseerエフェクトのインターフェイス
-	//--------------------------------------------------------------------------------------
-	EfkInterface::EfkInterface() :
-		ObjectInterface(),
-		m_Manager(nullptr),
-		m_renderer(nullptr)
-	{}
-	EfkInterface::~EfkInterface() {
-		// 先にエフェクト管理用インスタンスを破棄
-		m_Manager.Reset();
-		// 次に描画用インスタンスを破棄
-		m_renderer.Reset();
-	}
-
-	void EfkInterface::OnCreate() {
-		//デバイスの取得
-		auto Dev = App::GetApp()->GetDeviceResources();
-		auto pDx11Device = Dev->GetD3DDevice();
-		auto pID3D11DeviceContext = Dev->GetD3DDeviceContext();
 		// 描画用インスタンスの生成
-		m_renderer = EffekseerRendererDX11::Renderer::Create(pDx11Device, pID3D11DeviceContext, 2000);
+		m_renderer = Renderer::Create(pDx11Device, pID3D11DeviceContext, 2000);
+		
 		// エフェクト管理用インスタンスの生成
-		m_Manager = Effekseer::Manager::Create(2000);
+		m_manager = Manager::Create(2000);
 
 		// 描画用インスタンスから描画機能を設定
-		m_Manager->SetSpriteRenderer(m_renderer->CreateSpriteRenderer());
-		m_Manager->SetRibbonRenderer(m_renderer->CreateRibbonRenderer());
-		m_Manager->SetRingRenderer(m_renderer->CreateRingRenderer());
-		m_Manager->SetTrackRenderer(m_renderer->CreateTrackRenderer());
-		m_Manager->SetModelRenderer(m_renderer->CreateModelRenderer());
+		m_manager->SetSpriteRenderer(m_renderer->CreateSpriteRenderer());
+		m_manager->SetRibbonRenderer(m_renderer->CreateRibbonRenderer());
+		m_manager->SetRingRenderer(m_renderer->CreateRingRenderer());
+		m_manager->SetTrackRenderer(m_renderer->CreateTrackRenderer());
+		m_manager->SetModelRenderer(m_renderer->CreateModelRenderer());
 
 		// 描画用インスタンスからテクスチャの読込機能を設定
 		// 独自拡張可能、現在はファイルから読み込んでいる。
-		m_Manager->SetTextureLoader(m_renderer->CreateTextureLoader());
-		m_Manager->SetModelLoader(m_renderer->CreateModelLoader());
+		m_manager->SetTextureLoader(m_renderer->CreateTextureLoader());
+		m_manager->SetModelLoader(m_renderer->CreateModelLoader());
+		
+		m_isCreateEffectManager = true;
 	}
 
-	void  EfkInterface::OnUpdate() {
-		// エフェクトの更新処理を行う
-		m_Manager->Update();
+	void EffectManager::InterfaceUpdate()
+	{
+		m_manager->Update();
+
+		auto stage = App::GetApp()->GetScene<Scene>()->GetActiveStage();
+		auto camera = stage->GetView()->GetTargetCamera();
+		SetViewProj(camera->GetViewMatrix(), camera->GetProjMatrix());
 	}
 
-	void EfkInterface::OnDraw() {
-		// エフェクトの描画開始処理を行う。
+	void EffectManager::InterfaceDraw()
+	{
 		m_renderer->BeginRendering();
 
-		// エフェクトの描画を行う。
-		m_Manager->Draw();
+		m_manager->Draw();
 
-		// エフェクトの描画終了処理を行う。
 		m_renderer->EndRendering();
-
 	}
-
-	void Mat4x4ToMatrix44(const bsm::Mat4x4& src, Effekseer::Matrix44& dest) {
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
+	
+	void Mat4x4ToMatrix44(const Mat4x4& src, Matrix44& dest)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
 				dest.Values[i][j] = src(i, j);
 			}
 		}
 	}
 
-	void  EfkInterface::SetViewProj(const bsm::Mat4x4& view, const bsm::Mat4x4& proj) {
-		Effekseer::Matrix44 v, p;
+	void EffectManager::SetViewProj(const Mat4x4& view, const Mat4x4& proj)
+	{
+		Matrix44 v, p;
 		Mat4x4ToMatrix44(view, v);
 		Mat4x4ToMatrix44(proj, p);
 		m_renderer->SetCameraMatrix(v);
 		m_renderer->SetProjectionMatrix(p);
 	}
+
+	void EffectManager::RegisterEffect(const wstring EfkKey, const wstring EfkFilePash)
+	{
+		// ファイルパスのnullチェック
+		try 
+		{
+			if (EfkFilePash == L"") 
+			{
+				throw BaseException
+				(
+					L"ファイルパスが空白です",
+					L"if (m_FileName == L\"\")",
+					L"EfkEffect::EfkEffect()"
+				);
+			}
+			// エフェクトを作成
+			auto effect = Effect::Create(m_manager, (const char16_t*)EfkFilePash.c_str());
+			// 重複キー登録を検査
+			map<wstring, EffectRef>::iterator it;
+			for (it = m_effectList.begin(); it != m_effectList.end(); it++)
+			{
+				if (it->first == EfkKey)
+				{
+					throw BaseException
+					(
+						L"重複したキーネームがあります",
+						L"if (it->first == EfkKey)",
+						L"EfkEffect::EfkEffect()"
+					);
+				}
+			}
+			// リストに登録
+			m_effectList[EfkKey] = effect;
+		}
+		catch (...) 
+		{
+			throw;
+		}
+	}
+
+	Handle EffectManager::PlayEffect(const wstring EfkKey, const Vec3 Emitter, const float StartFreme)
+	{
+		return m_manager->Play(m_effectList[EfkKey], Vector3D(Emitter.x, Emitter.y, Emitter.z), StartFreme);
+	}
+
+	void EffectManager::AddPosition(const Handle& EfkHandle, const Vec3 Position)
+	{
+		m_manager->AddLocation(EfkHandle, Vector3D(Position.x, Position.y, Position.z));
+	}
+
+	void EffectManager::SetPosition(const Handle& EfkHandle, const Vec3 Position)
+	{
+		m_manager->SetLocation(EfkHandle, Vector3D(Position.x, Position.y, Position.z));
+	}
+
+	void EffectManager::SetQuaternion(const Handle& EfkHandle, const Quat Quaternion)
+	{
+		m_manager->SetRotation(EfkHandle, Vector3D(Quaternion.x, Quaternion.y, Quaternion.z), Quaternion.w);
+	}
+
+	void EffectManager::SetRotation(const Handle& EfkHandle, Vec3 Rotation, const float Rad)
+	{
+		Rotation.normalize();
+		m_manager->SetRotation(EfkHandle, Vector3D(Rotation.x, Rotation.y, Rotation.z), Rad);
+	}
+	
+	void EffectManager::SetScale(const Handle& EfkHandle, const Vec3 Scale)
+	{
+		m_manager->SetScale(EfkHandle, Scale.x, Scale.y, Scale.z);
+	}
+	
+	void EffectManager::SetAllColor(const Handle& EfkHandle, const Col4 Col)
+	{
+		auto color = Col4(Col) * 255;
+		m_manager->SetAllColor(EfkHandle, Color(color.x, color.y, color.z, color.w));
+	}
+
+	void EffectManager::StopEffect(const Handle& EfkHandle)
+	{
+		if (EfkHandle != 1)
+		{
+			m_manager->StopEffect(EfkHandle);
+		}
+	}
 }
-//end basecross
