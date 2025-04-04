@@ -37,6 +37,12 @@ namespace basecross {
 		catch (...) {
 			throw;
 		}	
+
+		CreateSharedObjectGroup(L"Actor");
+
+		auto grond = AddGameObject<Ground>();
+		grond->GetComponent<Transform>()->SetScale(Vec3(50.0f, 1.0f, 50.0f));
+
 		
 		//PlayerçÏê¨
 		auto player = AddGameObject<Player>(Vec3(0.0f,0.0f,0.0f),Vec3(0.0f,0.0f,0.0f),Vec3(1.0f,1.0f,1.0f));
