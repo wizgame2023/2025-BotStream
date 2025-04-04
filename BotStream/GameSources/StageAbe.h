@@ -8,101 +8,28 @@
 
 namespace basecross {
 
-	//--------------------------------------------------------------------------------------
-	//	ゲームステージクラス
-	//--------------------------------------------------------------------------------------
+	class SoundManager : public GameObject {
+		shared_ptr<XAudio2Manager> m_ptrSound = App::GetApp()->GetXAudio2Manager();
+	
+		shared_ptr<SoundItem> m_BGM;
+		shared_ptr<SoundItem> m_SE;
 
-    class StageAbe : public Stage {
-        //ビューの作成
-        void CreateViewLight();
-        void CreateFloor();
-        void CreateWall();
-        void CreateCeiling();
-        void CreateDoor();
-        void CreateTestEnemy();
+	public:
+		SoundManager(const shared_ptr<Stage>& StagePtr);
+		virtual ~SoundManager();
 
-    public:
-        //構築と破棄
-        StageAbe() :Stage() {}
-        virtual ~StageAbe() {}
-        //初期化
-        virtual void OnCreate()override;
-        virtual void OnUpdate()override;
+		virtual void OnCreate() override;
 
+		void PlaySE(int sfx);
 
-    };
+		void PlayBGM(int sfx);
 
-    class Floor : public GameObject {
-        Vec3 m_Scale;
-        Vec3 m_Rotation;
-        Vec3 m_Position;
-    public:
-        Floor(const shared_ptr<Stage>& StagePtr,
-            const Vec3& Scale,
-            const Vec3& Rotation,
-            const Vec3& Position
-        );
-        virtual ~Floor();
-        virtual void OnCreate() override;
-    };
+		void StopSE();
 
-    class Wall : public GameObject {
-        Vec3 m_Scale;
-        Vec3 m_Rotation;
-        Vec3 m_Position;
-    public:
-        Wall(const shared_ptr<Stage>& StagePtr,
-            const Vec3& Scale,
-            const Vec3& Rotation,
-            const Vec3& Position
-        );
-        virtual ~Wall();
-        virtual void OnCreate() override;
-    };
+		void StopBGM();
+	
+	};
 
-    class Ceiling : public GameObject {
-        Vec3 m_Scale;
-        Vec3 m_Rotation;
-        Vec3 m_Position;
-    public:
-        Ceiling(const shared_ptr<Stage>& StagePtr,
-            const Vec3& Scale,
-            const Vec3& Rotation,
-            const Vec3& Position
-        );
-        virtual ~Ceiling();
-        virtual void OnCreate() override;
-    };
-
-    class Door : public GameObject {
-        Vec3 m_Scale;
-        Vec3 m_Rotation;
-        Vec3 m_Position;
-    public:
-        Door(const shared_ptr<Stage>& StagePtr,
-            const Vec3& Scale,
-            const Vec3& Rotation,
-            const Vec3& Position
-        );
-        virtual ~Door();
-        virtual void OnCreate() override;
-    };
-
-    class TestEnemy : public GameObject {
-        Vec3 m_Scale;
-        Vec3 m_Rotation;
-        Vec3 m_Position;
-    public:
-        TestEnemy(const shared_ptr<Stage>& StagePtr,
-            const Vec3& Scale,
-            const Vec3& Rotation,
-            const Vec3& Position
-        );
-        virtual ~TestEnemy();
-        virtual void OnCreate() override;
-        virtual void OnUpdate() override;
-
-    };
 
 }
 //end basecross

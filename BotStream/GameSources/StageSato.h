@@ -14,15 +14,7 @@ namespace basecross {
 	class StageSato : public Stage {
 		//ƒrƒ…[‚Ìì¬
 		void CreateViewLight();
-		shared_ptr<EfkEffect> m_EfkLaser;
-		shared_ptr<EfkEffect> m_EfkSword;
-		shared_ptr<EfkEffect> m_EfkLanding;
-
-		shared_ptr<EfkPlay> m_EfkPlay;
-		shared_ptr<Player> m_Player;
-
-		shared_ptr<EfkInterface> m_ShEfkInterface;
-
+		
 	public:
 		//\’z‚Æ”jŠü
 		StageSato() :Stage() {}
@@ -31,11 +23,6 @@ namespace basecross {
 		virtual void OnCreate()override;
 		virtual void OnUpdate()override;
 		virtual void OnDraw()override;
-
-		shared_ptr<EfkInterface> GetEfkInterface()
-		{
-			return m_ShEfkInterface;
-		}
 
 	};
 
