@@ -14,6 +14,7 @@ namespace basecross{
 	//--------------------------------------------------------------------------------------
 	void Scene::OnCreate(){
 		try {
+			EffectManager::Instance().CreateEfkInterface();
 			//クリアする色を設定
 			Col4 Col;
 			Col.set(31.0f / 255.0f, 30.0f / 255.0f, 71.0f / 255.0f, 255.0f / 255.0f);
@@ -21,6 +22,7 @@ namespace basecross{
 			//自分自身にイベントを送る
 			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
 			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"ToGameStage");
+
 			GameResourses();
 		}
 		catch (...) {
@@ -34,8 +36,10 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<StageTuboi>();
+			ResetActiveStage<StageSanpei>();
+
 		}
+
 	}
 
 	void Scene::GameResourses()
@@ -46,6 +50,7 @@ namespace basecross{
 		auto texPath = path + L"Textures/";
 		auto modPath = path + L"Models/";
 		auto SoundPath = path + L"Sounds/";
+		auto efkPath = path + L"Effect/";
 
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
@@ -60,6 +65,11 @@ namespace basecross{
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
 
+
+		// エフェクトの登録
+		EffectManager::Instance().RegisterEffect(L"Laser", efkPath + L"Laser01.efk");
+		EffectManager::Instance().RegisterEffect(L"Sword", efkPath + L"Sword.efk");
+		EffectManager::Instance().RegisterEffect(L"Landing", efkPath + L"Landing.efk");
 	}
 
 }

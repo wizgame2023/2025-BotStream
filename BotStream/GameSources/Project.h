@@ -21,10 +21,6 @@
 #include "Ground.h";//’n–Ê
 //#include "Actor.h"
 
-//Manager
-#include "CameraManager.h"
-#include "EffectManager.h"
-#include "EnemyManager.h"
 
 //Actor‚Ì’†‚É“ü‚Á‚Ä‚é‚â‚ÂH
 #include "AttackCollision.h"
@@ -41,3 +37,7 @@
 #include "StageSato.h"
 #include "StageTuboi.h"
 
+//Manager ‚ ‚Æ‚Å’¼‚·
+#include "CameraManager.h"
+#include "EffectManager.h"
+#include "EnemyManager.h"

@@ -32,11 +32,19 @@ namespace basecross {
 		try {
 			//ビューとライトの作成
 			CreateViewLight();
+
 		}
 		catch (...) {
 			throw;
 		}
 	}
 
+	void GameStage::OnUpdate()
+	{
+	}
+
+	void GameStage::OnDraw()
+	{
+	}
 }
 //end basecross
