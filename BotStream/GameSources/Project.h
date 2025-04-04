@@ -31,6 +31,9 @@
 #include "Player.h"
 #include "Enemy.h"
 
+//Sprite
+#include "Sprite.h"
+
 //開発ステージ用
 #include "StageAbe.h"
 #include "StageSanpei.h"
