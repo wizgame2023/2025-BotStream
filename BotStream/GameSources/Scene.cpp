@@ -20,7 +20,7 @@ namespace basecross{
 			SetClearColor(Col);
 			//自分自身にイベントを送る
 			//これにより各ステージやオブジェクトがCreate時にシーンにアクセスできる
-			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"ToWaveStage");
+			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"ToGameStage");
 			GameResourses();
 		}
 		catch (...) {
@@ -32,14 +32,10 @@ namespace basecross{
 	}
 
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
-		if (event->m_MsgStr == L"ToWaveStage") {
+		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<StageTuboi>();
 		}
-		//if (event->m_MsgStr == L"ToWaveStage") {
-		//	//最初のアクティブステージの設定
-		//	ResetActiveStage<StageSanpei>();
-		//}
 	}
 
 	void Scene::GameResourses()
@@ -88,14 +84,5 @@ namespace basecross{
 
 	}
 
-	Vec3 Scene::GetPlaTrans()
-	{
-		return m_PlaTrans;
-	}
-
-	void Scene::SetPlaTrans(Vec3 Trans)
-	{
-		m_PlaTrans = Trans;
-	}
 }
 //end basecross
