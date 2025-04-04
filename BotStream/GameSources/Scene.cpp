@@ -56,6 +56,12 @@ namespace basecross{
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
 
+		//使っている武器を表示するUIテクスチャ
+		strTexture = texPath + L"Katana.png";
+		app->RegisterTexture(L"KatanaTex", strTexture);
+		strTexture = texPath + L"Gun.png";
+		app->RegisterTexture(L"GunTex", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ
