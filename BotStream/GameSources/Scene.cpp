@@ -60,6 +60,28 @@ namespace basecross{
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
 
+		//BGM
+		app->RegisterWav(L"Title", SoundPath + L"Title.wav");
+		app->RegisterWav(L"Diagnosis", SoundPath + L"Diagnosis.wav");
+		app->RegisterWav(L"SelectStage", SoundPath + L"SelectStage.wav");
+		app->RegisterWav(L"EnemyWave", SoundPath + L"EnemyWave.wav");
+		app->RegisterWav(L"BossWave", SoundPath + L"BossWave.wav");
+		app->RegisterWav(L"Result", SoundPath + L"Result.wav");
+
+
+		//SE
+		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
+		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
+		app->RegisterWav(L"Landing", SoundPath + L"Landing.wav");
+		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
+		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
+		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
+		app->RegisterWav(L"Attack2", SoundPath + L"Attack2.wav");
+		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");
+		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
+		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
+		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
+
 	}
 
 }

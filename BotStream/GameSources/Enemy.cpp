@@ -68,6 +68,8 @@ namespace basecross {
 			SetDrawActive(m_used);
 		}
 		if (m_used == false) {
+			//m_LandDetect->SetDrawActive(false);
+			//m_LandDetect->SetUpdateActive(false);
 			SetUpdateActive(m_used);
 			return;
 		}
