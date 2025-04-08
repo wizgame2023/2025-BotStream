@@ -9,7 +9,8 @@
 namespace basecross {
 	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange) :
 		MyGameObject(stagePtr),
-		m_cameraAngle(XMConvertToRadians(270.0f)),
+		m_cameraAngleY(XMConvertToRadians(270.0f)),
+		m_cameraAngleX(XMConvertToRadians(45.0f)),
 		m_range(range),
 		m_targetRange(targetRange),
 		m_lockOnFlag(false),
@@ -39,7 +40,7 @@ namespace basecross {
 		Vec3 playerPos = player->GetComponent<Transform>()->GetPosition();
 		
 		//カメラをPlayerに追従
-		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngle) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngle) * m_range)));
+		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngleY) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngleY) * m_range)));
 		//注視点はPlayerの位置よりも少し先にしたい
 		m_lockStageCamera->SetAt(playerPos);
 
@@ -47,17 +48,7 @@ namespace basecross {
 		m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
-		
-		//クォータニオンの値を取得してカメラとPlayerの差を見えるようにするオブジェクトを出そう！
-		Vec3 CameraVec = CameraPos - playerPos;
-		float CameraRange = abs(CameraPos.x - playerPos.x) + abs(CameraPos.y - playerPos.y) + abs(CameraPos.z - playerPos.z);
-		Vec3 CameraScale = CameraVec = Vec3(abs(CameraVec.x), abs(CameraVec.y), abs(CameraVec.z));
-		Vec3 up = Vec3(0, 1, 0);
-		Mat4x4 CameraQt = (Mat4x4)XMMatrixLookAtLH(CameraPos, playerPos, -up);
-		
-		//カメラのレイキャスト表示
-		//m_cameraRayCast = m_stage->AddGameObject<CameraRayCast>(Vec3(1.0f, 1.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 0.0f));
-
+				
 		//ロックオンの有効範囲を可視化
 		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
@@ -74,7 +65,6 @@ namespace basecross {
 	{
 		m_delta = App::GetApp()->GetElapsedTime();
 		m_lockStageCamera = m_stageCamera.lock();
-		//shared_ptr<Stage> stage = GetStage();
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
@@ -83,34 +73,10 @@ namespace basecross {
 			return;
 		}
 
-
-
-
+		//プレイヤーを取得
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		m_playerPos = player->GetComponent<Transform>()->GetPosition();	
-		
-		//// レイと対象オブジェクトとの交差(衝突)判定 ■■【重要】■■今は受け取れない
-		//Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
-		//TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
-		//size_t triangleIndex; // レイが交差したポリゴンの番号
-		//auto drawComp = m_cameraRayCast->GetComponent<PCStaticDraw>(); // 対象オブジェクトに追加したドローコンポーネントと同じものを指定する(今回はPNTStaticDrawにしてある)
-		//bool hitFlag = drawComp->HitTestStaticMeshSegmentTriangles(playerPos, m_lockStageCamera->GetEye(), hitPos, triangle, triangleIndex);
-		//クォータニオンの値を取得してカメラとPlayerの差を見えるようにするオブジェクトを出そう！
-		auto CameraPos = m_lockStageCamera->GetEye();
-		Vec3 CameraVec = CameraPos - m_playerPos;
-		float CameraRange = abs(CameraPos.x - m_playerPos.x) + abs(CameraPos.y - m_playerPos.y) + abs(CameraPos.z - m_playerPos.z);
-		Vec3 CameraScale = CameraVec = Vec3(abs(CameraVec.x), abs(CameraVec.y), abs(CameraVec.z));
-		Vec3 up = Vec3(0, 1, 0);
-		Mat4x4 CameraQt = (Mat4x4)XMMatrixLookAtLH(CameraPos, m_playerPos, -up);
 
-		//カメラの位置更新
-		CameraPosUpdate();
-
-		//Vec3 hitPos;//当たった場所を保存する変数
-		//当たり判定テスト
-		//TRIANGLE testTriangle;
-		//size_t testsize;
-		//m_ptrDraw->HitTestStaticMeshSegmentTriangles(playerPos, m_lockStageCamera->GetEye(), hitPos,testTriangle,testsize);
 
 		// インプットデバイスオブジェクト
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
@@ -118,9 +84,15 @@ namespace basecross {
 		m_controler = inputDevice.GetControlerVec()[0];
 		Vec2 contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
-		//左スティックを傾けてカメラがPlayerの周りを回転する処理
+		//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
 		float addAngle = 3.0f * contrloerVec.x * m_delta;//追加する角度を決めて
-		m_cameraAngle += -addAngle;//追加
+		m_cameraAngleY += -addAngle;//追加
+
+		//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
+		addAngle = 3.0f * contrloerVec.y * m_delta;//追加する角度を決めて
+		m_cameraAngleX += -addAngle;//追加
+		//X軸回転の制限処理
+		CameraAngleXLimit();
 
 		//ロックオン処理
 		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
@@ -174,7 +146,7 @@ namespace basecross {
 		//角度リセット(デバック用)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 		{
-			m_cameraAngle = XMConvertToRadians(270.0f);
+			m_cameraAngleY = XMConvertToRadians(270.0f);
 		}
 
 		//ロックオンするときの処理
@@ -227,22 +199,24 @@ namespace basecross {
 		else if (!m_lockOnUse)
 		{
 			//注視点はPlayerの位置よりも少し先にしたい
-			m_lockStageCamera->SetAt(m_playerPos);
+			m_lockStageCamera->SetAt(m_playerPos+Vec3(0.0f,3.0f,0.0f));
 		}
 
-		//カメラをPlayerに追従		
-		//m_lockStageCamera->SetEye(Vec3(m_playerPos.x + (cos(m_cameraAngle) * m_range), m_playerPos.y + 10.0f, m_playerPos.z + (sin(m_cameraAngle) * m_range)));
 		//ロックオン候補はどのオブジェクト達になるのか処理
 		LockOnCandidate(enemyVec, m_playerPos);
 		//角度の調整0~360度までしか出ないようにする
 		AdjustmentAngle();
+		//カメラの位置更新
+		CameraPosUpdate();
 
-		////デバック用
+
+		//デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
-
+		
 		wss /* << L"デバッグ用文字列 "*/
-			<< L"\nPlayerから見てカメラの角度: " << XMConvertToDegrees(m_cameraAngle)
+			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
 			//<< L"\n当たった場所x: " << hitPos.x
 			//<< L"\n当たった場所y: " << hitPos.y
@@ -255,12 +229,26 @@ namespace basecross {
 			//{		
 			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
 			//	float a = targetAngle;
-	
 			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
 			//}
 
 		scene->SetDebugString(wss.str());
 
+	}
+
+	//カメラのX軸回転の制限
+	void CameraManager::CameraAngleXLimit(float maxRad,float minRad)
+	{
+		//もし今のX軸回転が最小値よりも大きかったら最小値にする
+		if (m_cameraAngleX < minRad)
+		{
+			m_cameraAngleX = minRad;
+		}
+		//もし、今のX軸回転が最大よりも大きかったら最大値にする
+		if (m_cameraAngleX > maxRad)
+		{
+			m_cameraAngleX = maxRad;
+		}
 	}
 
 	//カメラのポジションを決める関数
@@ -275,17 +263,22 @@ namespace basecross {
 		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
 
 		//まず、障害物がなかった時の位置を入れる
-		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngle) * m_range), m_playerPos.y + 10.0f, m_playerPos.z + (sin(m_cameraAngle) * m_range));
+		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
+			(m_playerPos.y + 10.0f) * cos(m_cameraAngleX),
+			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
 		{
-			auto obstacles = dynamic_pointer_cast<Cube>(obj);//当たり判定の対象		
+			auto obstacles = dynamic_pointer_cast<ObjectNotMove>(obj);//当たり判定の対象		
 			float hitLength = min;//Playerと障害物の距離の長さ
 
 			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
 			if (obstacles)
 			{
+				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+				if (!obstacles->FindTag(L"CameraObstacles")) continue;
+
 				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();
 				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
@@ -360,7 +353,7 @@ namespace basecross {
 		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
 
 		//計算した角度を入れてカメラを旋回させる
-		m_cameraAngle = m_targetRad + XMConvertToRadians(180.0f);
+		m_cameraAngleY = m_targetRad + XMConvertToRadians(180.0f);
 		m_lockStageCamera->SetAt(lockOnPos);
 	}
 
@@ -447,19 +440,19 @@ namespace basecross {
 	//Playerの向いている方向の鏡合わせになるように角度を変更する
 	void CameraManager::MovePlayerAngle(float playerAngle)
 	{
-		m_cameraAngle = -playerAngle + XMConvertToRadians(180.0f);
+		m_cameraAngleY = -playerAngle + XMConvertToRadians(180.0f);
 	}
 
 	//角度の調整0~360度までしか出ないようにする
 	void CameraManager::AdjustmentAngle()
 	{
-		if (m_cameraAngle >= XMConvertToRadians(360.0f))
+		if (m_cameraAngleY >= XMConvertToRadians(360.0f))
 		{
-			m_cameraAngle -= XMConvertToRadians(360.0f);
+			m_cameraAngleY -= XMConvertToRadians(360.0f);
 		}
-		else if (m_cameraAngle < XMConvertToRadians(0.0f))
+		else if (m_cameraAngleY < XMConvertToRadians(0.0f))
 		{
-			m_cameraAngle += XMConvertToRadians(360.0f);
+			m_cameraAngleY += XMConvertToRadians(360.0f);
 		}
 	}
 

@@ -40,7 +40,8 @@ namespace basecross{
 
 		CONTROLER_STATE m_controler;//コントローラー
 
-		float m_cameraAngle;  //Playerから見てカメラのいる角度
+		float m_cameraAngleY;  //Playerから見てカメラのいる角度Y軸
+		float m_cameraAngleX;  //Playerから見てカメラのいる角度X軸
 		float m_range;//Playerからどのくらい離れるか
 		float m_targetRange;//ロックオンの範囲
 
@@ -48,13 +49,6 @@ namespace basecross{
 		Vec3 m_playerPos;//プレイヤーポジション
 		Vec3 m_cameraPos;//カメラポジション
 
-		//右か左かそれとも真ん中か
-		enum LeftOrRight
-		{
-			Middle,
-			Left,
-			Right
-		};
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<Enemy>> m_targets;//ターゲット候補
@@ -72,7 +66,16 @@ namespace basecross{
 		/////////////////////////////////////////////////////////////////////////////
 
 		float m_meleeRange;//近接戦闘の範囲
-		bool m_meleeFlag;//近接戦闘していいかのフラグ
+		bool m_meleeFlag;//近接戦闘していいかのフラグ	
+		
+		//右か左かそれとも真ん中か
+		enum LeftOrRight
+		{
+			Middle,
+			Left,
+			Right
+		};
+
 	public:
 		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f);
 		~CameraManager();
@@ -92,6 +95,7 @@ namespace basecross{
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
 
+		void CameraAngleXLimit(float maxRad= XMConvertToRadians(90.0f), float minRad = XMConvertToRadians(10.0f));//カメラのX軸回転の制限
 		void CameraPosUpdate();//カメラのポジションの更新
 		
 		void GetMeleeRange();
