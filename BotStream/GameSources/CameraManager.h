@@ -28,6 +28,7 @@ namespace basecross{
 
 
 	class Enemy;
+	class CameraRayCast;
 	class CameraManager : public MyGameObject
 	{
 	private:
@@ -42,6 +43,10 @@ namespace basecross{
 		float m_cameraAngle;  //Playerから見てカメラのいる角度
 		float m_range;//Playerからどのくらい離れるか
 		float m_targetRange;//ロックオンの範囲
+
+		shared_ptr<CameraRayCast> m_cameraRayCast;
+		Vec3 m_playerPos;//プレイヤーポジション
+		Vec3 m_cameraPos;//カメラポジション
 
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
@@ -86,25 +91,11 @@ namespace basecross{
 		void LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec, Vec3 playerPos);
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
+
+		void CameraPosUpdate();//カメラのポジションの更新
 		
 		void GetMeleeRange();
 		void SetMeleeRange();
-	};
-
-	//カメラのレイキャスト
-	class CameraRayCast :public ObjectMove
-	{
-	private:
-		Vec3 m_pos;//位置
-		Vec3 m_rot;//回転
-		Vec3 m_scale;//大きさ
-
-	public:
-		CameraRayCast(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
-		~CameraRayCast();
-
-		void OnCreate()override;
-		void OnUpdate()override;
 	};
 
 	//カメラのロックオン範囲
