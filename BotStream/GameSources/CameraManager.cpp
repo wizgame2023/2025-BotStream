@@ -7,10 +7,10 @@
 #include "Project.h"
 
 namespace basecross {
-	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange) :
+	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange,float speedXAxis,float speedYAxis) :
 		MyGameObject(stagePtr),
 		m_cameraAngleY(XMConvertToRadians(270.0f)),
-		m_cameraAngleX(XMConvertToRadians(45.0f)),
+		m_cameraAngleX(XMConvertToRadians(85.0f)),
 		m_range(range),
 		m_targetRange(targetRange),
 		m_lockOnFlag(false),
@@ -18,7 +18,10 @@ namespace basecross {
 		m_lockOnChangeFlag(false),
 		m_lockOnNum(-1),
 		m_meleeRange(meleeRange),
-		m_stickFlag(false)
+		m_stickFlag(false),
+		m_speedXAxis(speedXAxis),
+		m_speedYAxis(speedYAxis),
+		m_contrloerVec(Vec2(0.0f,0.0f))
 	{
 
 	}
@@ -82,15 +85,17 @@ namespace basecross {
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
 		//コントローラーの取得
 		m_controler = inputDevice.GetControlerVec()[0];
-		Vec2 contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
+		m_contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
-		//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
-		float addAngle = 3.0f * contrloerVec.x * m_delta;//追加する角度を決めて
-		m_cameraAngleY += -addAngle;//追加
+		////左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
+		//m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x * m_delta;//追加する角度を決めて
+		//m_cameraAngleY += -m_addAngleYAxis;//追加
 
-		//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-		addAngle = 3.0f * contrloerVec.y * m_delta;//追加する角度を決めて
-		m_cameraAngleX += -addAngle;//追加
+		////左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
+		//m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y * m_delta;//追加する角度を決めて
+		//m_cameraAngleX += m_addAngleXAxis;//追加
+		//慣性付きの回転処理
+		InertialRotation();
 		//X軸回転の制限処理
 		CameraAngleXLimit();
 
@@ -166,13 +171,13 @@ namespace basecross {
 			}
 
 			//ターゲット対象からスティックを傾けている方向のターゲット候補に変える処理
-			if (contrloerVec.x <= -0.9f && m_stickFlag)//対象の左隣にいる候補に移す
+			if (m_contrloerVec.x <= -0.9f && m_stickFlag)//対象の左隣にいる候補に移す
 			{
 				//現在の対象の方向と一番近い候補がターゲット対象になる
 				ChangeLockOn(Left, targetAngle);
 				m_stickFlag = false;//入力を受け付けない
 			}
-			if (contrloerVec.x >= 0.9f && m_stickFlag)//対象の右隣にいる候補に移す
+			if (m_contrloerVec.x >= 0.9f && m_stickFlag)//対象の右隣にいる候補に移す
 			{
 				//現在の対象の方向と一番近い候補がターゲット対象になる
 				ChangeLockOn(Right, targetAngle);
@@ -180,7 +185,7 @@ namespace basecross {
 			}
 
 			//スティックを傾けた後スティックを元に戻したら入力を受け入れる
-			if (!m_stickFlag && contrloerVec.x == 0.0f)
+			if (!m_stickFlag && m_contrloerVec.x == 0.0f)
 			{
 				m_stickFlag = true;//入力を受け付ける
 			}
@@ -251,6 +256,102 @@ namespace basecross {
 		}
 	}
 
+	//カメラの慣性回転の処理
+	void CameraManager::InertialRotation()
+	{
+		//Y軸回転
+		if (m_contrloerVec.x != 0.0f)
+		{
+			//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
+			m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x;//追加する角度を決めて
+		}
+		else if(m_contrloerVec.x == 0.0f)
+		{
+			if (m_addAngleYAxis > 0)
+			{
+				m_addAngleYAxis -= 6.8f * m_delta;
+				if (m_addAngleYAxis <= 0)
+				{
+					m_addAngleYAxis = 0.0f;
+				}
+			}
+			else if (m_addAngleYAxis < 0)
+			{
+				m_addAngleYAxis += 6.8f * m_delta;
+				if (m_addAngleYAxis >= 0)
+				{
+					m_addAngleYAxis = 0.0f;
+				}
+			}
+		}
+
+		//X軸回転
+		if (m_contrloerVec.y != 0.0f)
+		{
+			//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
+			m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y;//追加する角度を決めて
+		}
+		else if (m_contrloerVec.y == 0.0f)
+		{
+			if (m_addAngleXAxis > 0)
+			{
+				m_addAngleXAxis -= 3.0f * m_delta;
+				if (m_addAngleXAxis <= 0)
+				{
+					m_addAngleXAxis = 0.0f;
+				}
+			}
+			else if (m_addAngleXAxis < 0)
+			{
+				m_addAngleXAxis += 3.0f * m_delta;
+				if (m_addAngleXAxis >= 0)
+				{
+					m_addAngleXAxis = 0.0f;
+				}
+			}
+		}
+
+		//右スティック入力がされていない方向はスピードが落ちていく
+		float maxAddAngleXAxis = 0.025f;
+		float maxAddAngleYAxis = 0.08f;
+		
+		////x軸回転の慣性処理
+		//if (m_addAngleXAxis > 0)
+		//{
+		//	if (m_addAngleXAxis > maxAddAngleXAxis)
+		//	{
+		//		m_addAngleXAxis = maxAddAngleXAxis;
+		//	}
+		//}
+		//else if (m_addAngleXAxis < 0)
+		//{
+		//	//x軸回転の慣性処理
+		//	if (m_addAngleXAxis < -maxAddAngleXAxis)
+		//	{
+		//		m_addAngleXAxis = -maxAddAngleXAxis;
+		//	}
+		//}
+		////Y軸回転の慣性処理
+		//if (m_addAngleYAxis > 0)
+		//{
+		//	if (m_addAngleYAxis > maxAddAngleYAxis)
+		//	{
+		//		m_addAngleYAxis = maxAddAngleYAxis;
+		//	}
+		//}
+		//else if (m_addAngleYAxis < 0)
+		//{
+		//	if (m_addAngleYAxis < -maxAddAngleYAxis)
+		//	{
+		//		m_addAngleYAxis = -maxAddAngleYAxis;
+		//	}
+		//}
+
+		m_cameraAngleX += m_addAngleXAxis * m_delta;//追加
+		m_cameraAngleY += -m_addAngleYAxis * m_delta;//追加
+
+	}
+
 	//カメラのポジションを決める関数
 	void CameraManager::CameraPosUpdate()
 	{
@@ -264,7 +365,7 @@ namespace basecross {
 
 		//まず、障害物がなかった時の位置を入れる
 		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
-			(m_playerPos.y + 10.0f) * cos(m_cameraAngleX),
+			(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
 			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る

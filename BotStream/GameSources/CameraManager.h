@@ -39,11 +39,17 @@ namespace basecross{
 		float m_delta;
 
 		CONTROLER_STATE m_controler;//コントローラー
+		Vec2 m_contrloerVec;//コントローラーの右スティック入力
 
 		float m_cameraAngleY;  //Playerから見てカメラのいる角度Y軸
 		float m_cameraAngleX;  //Playerから見てカメラのいる角度X軸
 		float m_range;//Playerからどのくらい離れるか
 		float m_targetRange;//ロックオンの範囲
+		float m_speedXAxis;//x軸の回転スピード
+		float m_speedYAxis;//y軸の回転スピード
+		float m_addAngleXAxis;//X軸の追加回転度
+		float m_addAngleYAxis;//Y軸の追加回転度
+
 
 		shared_ptr<CameraRayCast> m_cameraRayCast;
 		Vec3 m_playerPos;//プレイヤーポジション
@@ -77,7 +83,8 @@ namespace basecross{
 		};
 
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f);
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f,
+			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
 		void OnCreate()override;//作成
@@ -95,8 +102,9 @@ namespace basecross{
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
 
-		void CameraAngleXLimit(float maxRad= XMConvertToRadians(90.0f), float minRad = XMConvertToRadians(10.0f));//カメラのX軸回転の制限
+		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));//カメラのX軸回転の制限
 		void CameraPosUpdate();//カメラのポジションの更新
+		void InertialRotation();//慣性付きの回転処理
 		
 		void GetMeleeRange();
 		void SetMeleeRange();
