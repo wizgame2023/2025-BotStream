@@ -55,6 +55,21 @@ namespace basecross{
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
+		
+		// UISprite
+		// Player's
+		strTexture = texPath + L"PlayerGauge.png";
+		app->RegisterTexture(L"PLGauge", strTexture);
+
+		// Buttons
+		strTexture = texPath + L"Buttons.png";
+		app->RegisterTexture(L"Buttons", strTexture);
+		
+		// TextSprite
+		strTexture = texPath + L"Texts.png";
+		app->RegisterTexture(L"Texts", strTexture);
+		strTexture = texPath + L"Numbers.png";
+		app->RegisterTexture(L"Numbers", strTexture);
 
 		//モデル
 
