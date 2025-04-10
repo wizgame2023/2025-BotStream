@@ -50,9 +50,6 @@ namespace basecross {
 
 
 		AddTag(L"Player");//Player用のタグ
-		//着地判定の生成、子オブジェクトにする
-		m_LandDetect = GetStage()->AddGameObject<LandDetect>();
-		m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
 
 	}
 
