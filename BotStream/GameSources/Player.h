@@ -14,25 +14,8 @@ namespace basecross{
 	class Player : public Actor
 	{
 	private:
-		//経過時間
-		float _delta;
-		//速度
-		Vec3 m_velocity;
-		Vec3 m_accel;
 		//ジャンプ力ぅ…
 		const float m_jumpPower = 18.0f;
-		//最高速
-		const float m_speedMax = 10;
-		//加速度
-		const float m_baseAccel = 400.0f;
-		//重力
-		const float m_gravity = -32.0f;
-		//落下時の終端速度
-		const float m_fallTerminal = -120.0f;
-		//摩擦係数(静/動/完全停止)
-		const float m_friction = .75f;
-		const float m_frictionDynamic = .5f;
-		const float m_frictionThreshold = .5f;
 		//スティックのデッドゾーン(あとでmanager系に置くかも)
 		float m_stickDeadZone = .1f;
 		//地上にいるか否か
@@ -50,12 +33,6 @@ namespace basecross{
 		void PlayerMove();
 		//スティック操作
 		Vec3 GetMoveVector();
-		//摩擦
-		void Friction();
-		//速度制限
-		void SpeedLimit(float multiply);
-		//重力
-		void Gravity();
 
 		void Jump();
 
