@@ -28,6 +28,7 @@ namespace basecross{
 
 
 	class Enemy;
+	class CameraRayCast;
 	class CameraManager : public MyGameObject
 	{
 	private:
@@ -38,18 +39,24 @@ namespace basecross{
 		float m_delta;
 
 		CONTROLER_STATE m_controler;//コントローラー
+		Vec2 m_contrloerVec;//コントローラーの右スティック入力
 
-		float m_cameraAngle;  //Playerから見てカメラのいる角度
+		float m_cameraAngleY;  //Playerから見てカメラのいる角度Y軸
+		float m_cameraAngleX;  //Playerから見てカメラのいる角度X軸
 		float m_range;//Playerからどのくらい離れるか
 		float m_targetRange;//ロックオンの範囲
+		float m_speedXAxis;//x軸の回転スピード
+		float m_speedYAxis;//y軸の回転スピード
+		float m_addAngleXAxis;//X軸の追加回転度
+		float m_addAngleYAxis;//Y軸の追加回転度
 
-		//右か左かそれとも真ん中か
-		enum LeftOrRight
-		{
-			Middle,
-			Left,
-			Right
-		};
+
+		shared_ptr<CameraRayCast> m_cameraRayCast;
+		Vec3 m_playerPos;//プレイヤーポジション
+		Vec3 m_cameraPos;//カメラポジション
+
+		bool m_movePlayerAngleFlag;//プレイヤーの向いている方向に回転するかのフラグ
+		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<Enemy>> m_targets;//ターゲット候補
@@ -67,9 +74,19 @@ namespace basecross{
 		/////////////////////////////////////////////////////////////////////////////
 
 		float m_meleeRange;//近接戦闘の範囲
-		bool m_meleeFlag;//近接戦闘していいかのフラグ
+		bool m_meleeFlag;//近接戦闘していいかのフラグ	
+		
+		//右か左かそれとも真ん中か
+		enum LeftOrRight
+		{
+			Middle,
+			Left,
+			Right
+		};
+
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f);
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f,
+			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
 		void OnCreate()override;//作成
@@ -77,6 +94,8 @@ namespace basecross{
 
 		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
 		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
+		void MoveLockAt(Vec3 targetPos);//注視点の移動処理//ここを作業する
+		bool MoveAngle(float targetAngle,int XorY);//回転度の移動処理
 		void AdjustmentAngle();//角度の調整
 		
 		void UpdateTargesDeta(Vec3 playerPos);//ロックオン候補のデータを更新する関数
@@ -86,25 +105,13 @@ namespace basecross{
 		void LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec, Vec3 playerPos);
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
+
+		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));//カメラのX軸回転の制限
+		void CameraPosUpdate();//カメラのポジションの更新
+		void InertialRotation();//慣性付きの回転処理
 		
 		void GetMeleeRange();
 		void SetMeleeRange();
-	};
-
-	//カメラのレイキャスト
-	class CameraRayCast :public ObjectMove
-	{
-	private:
-		Vec3 m_pos;//位置
-		Vec3 m_rot;//回転
-		Vec3 m_scale;//大きさ
-
-	public:
-		CameraRayCast(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
-		~CameraRayCast();
-
-		void OnCreate()override;
-		void OnUpdate()override;
 	};
 
 	//カメラのロックオン範囲
