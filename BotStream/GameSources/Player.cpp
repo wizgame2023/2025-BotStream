@@ -55,9 +55,9 @@ namespace basecross {
 
 	void Player::OnUpdate()
 	{
+		Actor::OnUpdate();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
-		_delta = App::GetApp()->GetElapsedTime();
 
 		//動く処理(仮)
 		PlayerMove();
@@ -107,6 +107,7 @@ namespace basecross {
 	void Player::PlayerMove()
 	{
 		Vec3 move = GetMoveVector();
+		m_accel = move * m_baseAccel;
 		m_velocity += move;
 
 		//プレイヤーの向き
@@ -129,51 +130,6 @@ namespace basecross {
 
 		SpeedLimit(move.length());
 
-	}
-
-	//最高速度
-	void Player::SpeedLimit(float multiply) {
-		float limit = m_speedMax * multiply;
-		auto angle = m_velocity;
-		angle.y = 0;
-		if (angle.length() > 0) {
-			angle.normalize();
-			if (angle.x > 0) {
-				if (m_velocity.x > angle.x * limit) m_velocity.x = angle.x * limit;
-			}
-			else {
-				if (m_velocity.x < angle.x * limit) m_velocity.x = angle.x * limit;
-			}
-			if (angle.z > 0) {
-				if (m_velocity.z > angle.z * limit) m_velocity.z = angle.z * limit;
-			}
-			else {
-				if (m_velocity.z < angle.z * limit) m_velocity.z = angle.z * limit;
-			}
-		}
-		//落下の終端速度
-		if (m_velocity.y < m_fallTerminal) m_velocity.y = m_fallTerminal;
-	}
-
-	//摩擦(地上のみ)
-	void Player::Friction() {
-		//静摩擦
-		if (GetMoveVector() == Vec3(0)) {
-			m_velocity.x -= m_velocity.x * m_friction * (1000.0f / 60.0f) * _delta;
-			m_velocity.z -= m_velocity.z * m_friction * (1000.0f / 60.0f) * _delta;
-			if (m_velocity.length() > m_frictionThreshold) m_velocity.x = 0;
-			return;
-		}
-		//動摩擦
-		if (GetMoveVector() != Vec3(0)) {
-			m_velocity.x -= m_velocity.x * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
-			m_velocity.z -= m_velocity.z * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
-		}
-	}
-
-	//重力
-	void Player::Gravity() {
-		m_velocity.y += m_gravity * _delta;
 	}
 
 	Vec3 Player::GetMoveVector() {
