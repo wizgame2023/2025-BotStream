@@ -21,7 +21,8 @@ namespace basecross {
 		m_stickFlag(false),
 		m_speedXAxis(speedXAxis),
 		m_speedYAxis(speedYAxis),
-		m_contrloerVec(Vec2(0.0f,0.0f))
+		m_contrloerVec(Vec2(0.0f,0.0f)),
+		m_movePlayerAngleFlag(false)
 	{
 
 	}
@@ -114,7 +115,6 @@ namespace basecross {
 		ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
-
 		//ロックオンが出来てロックオンのしてないなら使う、使ってたら使わない どちらでもなければそうでないならプレイヤーの向いている方向に向く
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
@@ -142,11 +142,20 @@ namespace basecross {
 			{
 				LockOff(enemyVec);//ロックオンの解除
 			}
-			else if (!m_lockOnFlag)
+			else if (!m_lockOnFlag && !m_movePlayerAngleFlag)
 			{
-				//Playerの向いている方向の鏡合わせになるように角度を変更する
-				MovePlayerAngle(playerAngle);
+				//Playerの向いている方向に移動するフラグをオンにする
+				m_movePlayerAngleFlag = true;	
+				//向く座標を決める
+				m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+				auto a = 0;
 			}
+		}
+		//フラグがオンになったらPlayerの向きに移動する
+		if (m_movePlayerAngleFlag)
+		{
+			//Playerの向いている方向の鏡合わせになるように角度を変更する
+			MovePlayerAngle(m_targetAngleY);
 		}
 		//角度リセット(デバック用)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
@@ -303,7 +312,7 @@ namespace basecross {
 			}
 			else if (m_addAngleXAxis < 0)
 			{
-				m_addAngleXAxis += 3.0f * m_delta;
+				m_addAngleXAxis += 8.0f * m_delta;
 				if (m_addAngleXAxis >= 0)
 				{
 					m_addAngleXAxis = 0.0f;
@@ -454,8 +463,10 @@ namespace basecross {
 		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
 
 		//計算した角度を入れてカメラを旋回させる
-		m_cameraAngleY = m_targetRad + XMConvertToRadians(180.0f);
-		m_lockStageCamera->SetAt(lockOnPos);
+		//m_cameraAngleY = m_targetRad + XMConvertToRadians(180.0f);
+		MoveAngle(m_targetRad + XMConvertToRadians(180.0f), 1);
+		//m_lockStageCamera->SetAt(lockOnPos);
+		MoveLockAt(lockOnPos);//注視点移動
 	}
 
 	//ロックオンの解除機能
@@ -541,7 +552,121 @@ namespace basecross {
 	//Playerの向いている方向の鏡合わせになるように角度を変更する
 	void CameraManager::MovePlayerAngle(float playerAngle)
 	{
-		m_cameraAngleY = -playerAngle + XMConvertToRadians(180.0f);
+		//m_cameraAngleY = -playerAngle + XMConvertToRadians(180.0f);
+		//auto targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+		bool Movechage = false;
+		Movechage = MoveAngle(playerAngle, 1);//角度を移動させる
+
+		//移動が終わったのでフラグをfalseにする
+		if (Movechage) m_movePlayerAngleFlag = false;
+	}
+
+	//注視点の移動処理
+	void CameraManager::MoveLockAt(Vec3 targetPos)
+	{
+		auto lockAt = m_lockStageCamera->GetAt();
+		auto lockAtVec = targetPos - lockAt;
+		float lockAtSpeed = 30.0f;
+
+		//注視点が既に目標を示していたら動かない
+		if (lockAtVec == Vec3(0.0f,0.0f,0.0f)) return;
+
+		//X座標
+		if (lockAtVec.x > 0)//プラス方向に行くとき
+		{
+			lockAt.x += lockAtSpeed * m_delta;
+			//プラス方向に行きすぎたらターゲットPosと同じにする
+			if (lockAt.x > targetPos.x)
+			{
+				lockAt.x = targetPos.x;
+			}
+		}
+		else if (lockAtVec.x < 0)
+		{
+			lockAt.x -= lockAtSpeed * m_delta;
+			//マイナス方向に行きすぎたらターゲットPosと同じにする
+			if (lockAt.x < targetPos.x)
+			{
+				lockAt.x = targetPos.x;
+			}
+		}
+
+		//Y座標
+		if (lockAtVec.y > 0)//プラス方向に行くとき
+		{
+			lockAt.y += lockAtSpeed * m_delta;
+			//プラス方向に行きすぎたらターゲットPosと同じにする
+			if (lockAt.y > targetPos.y)
+			{
+				lockAt.y = targetPos.y;
+			}
+		}
+		else if (lockAtVec.y < 0)
+		{
+			lockAt.y -= lockAtSpeed * m_delta;
+			//マイナス方向に行きすぎたらターゲットPosと同じにする
+			if (lockAt.y < targetPos.y)
+			{
+				lockAt.y = targetPos.y;
+			}
+		}
+
+		//Z座標
+		if (lockAtVec.z > 0)//プラス方向に行くとき
+		{
+			lockAt.z += lockAtSpeed * m_delta;
+			//プラス方向に行きすぎたらターゲットPosと同じにする
+			if (lockAt.z > targetPos.z)
+			{
+				lockAt.z = targetPos.z;
+			}
+		}
+		else if (lockAtVec.z < 0)
+		{
+			lockAt.z -= lockAtSpeed * m_delta;
+			//マイナス方向に行きすぎたらターゲットPosと同じにする
+			if (lockAt.z < targetPos.z)
+			{
+				lockAt.z = targetPos.z;
+			}
+		}
+
+		//注視点移動処理
+		m_lockStageCamera->SetAt(lockAt);
+	}
+
+	//回転度の移動処理//ここを作業する
+	//第一引数 向きたい目標角度 第二引数　どの軸で移動するか(Xが0Yが1) 戻り値 移動処理が終わったか
+	bool CameraManager::MoveAngle(float targetAngle,int XorY)
+	{
+		//Y軸
+		auto angleNow = m_cameraAngleY;
+		auto addAngleSpeed = 10.0f;
+		auto angleDifference = targetAngle - angleNow;
+
+		if (angleDifference > 0)//プラス方向に行くとき
+		{
+			m_cameraAngleY += addAngleSpeed * m_delta;
+			//プラス方向に行きすぎたらターゲットの角度と同じにする
+			if (m_cameraAngleY > targetAngle)
+			{
+				m_cameraAngleY = targetAngle;
+				return true;//移動完了したことを知らせる
+			}
+		}
+		else if (angleDifference < 0)//プラス方向に行くとき
+		{
+			m_cameraAngleY -= addAngleSpeed * m_delta;
+			//プラス方向に行きすぎたらターゲットの角度と同じにする
+			if (m_cameraAngleY < targetAngle)
+			{
+				m_cameraAngleY = targetAngle;
+				return true;//移動完了したことを知らせる
+			}
+		}
+
+		//移動完了してないことを知らせる
+		return false;
 	}
 
 	//角度の調整0~360度までしか出ないようにする
@@ -723,8 +848,8 @@ namespace basecross {
 		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
 		//テスト用にコリジョン付けました
-		auto ptrCol = AddComponent<CollisionObb>();
-		ptrCol->SetFixed(true);
+		//auto ptrCol = AddComponent<CollisionObb>();
+		//ptrCol->SetFixed(true);
 
 		////影を付ける
 		//auto m_ptrShadow = AddComponent<Shadowmap>();

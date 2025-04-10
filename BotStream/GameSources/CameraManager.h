@@ -55,6 +55,8 @@ namespace basecross{
 		Vec3 m_playerPos;//プレイヤーポジション
 		Vec3 m_cameraPos;//カメラポジション
 
+		bool m_movePlayerAngleFlag;//プレイヤーの向いている方向に回転するかのフラグ
+		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<Enemy>> m_targets;//ターゲット候補
@@ -92,6 +94,8 @@ namespace basecross{
 
 		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
 		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
+		void MoveLockAt(Vec3 targetPos);//注視点の移動処理//ここを作業する
+		bool MoveAngle(float targetAngle,int XorY);//回転度の移動処理
 		void AdjustmentAngle();//角度の調整
 		
 		void UpdateTargesDeta(Vec3 playerPos);//ロックオン候補のデータを更新する関数
