@@ -106,5 +106,28 @@ namespace basecross {
 		GetStage()->RemoveGameObject<Sprite>(GetThis<Sprite>());
 	}
 
+	void Sprite::SetUVRect(Vec2 topLeft, Vec2 botRight)
+	{
+		vector<VertexPositionColorTexture> vertices = {
+		{Vec3(-m_size.x * 0.5f, +m_size.y * 0.5f, 0), m_color, topLeft},
+		{Vec3(+m_size.x * 0.5f, +m_size.y * 0.5f, 0), m_color, Vec2(botRight.x, topLeft.y)},
+		{Vec3(-m_size.x * 0.5f, -m_size.y * 0.5f, 0), m_color, Vec2(topLeft.x, botRight.y)},
+		{Vec3(+m_size.x * 0.5f, -m_size.y * 0.5f, 0), m_color, botRight},
+		};
+
+		vector<uint16_t> indices = { 0, 1, 2, 2, 1, 3 };
+
+		// 一旦コンポーネントを削除して作り直す
+		RemoveComponent<PCTSpriteDraw>();
+		m_drawComp = AddComponent<PCTSpriteDraw>(vertices, indices);
+		m_drawComp->SetTextureResource(m_textureName);
+		m_drawComp->SetSamplerState(SamplerState::LinearWrap);
+		m_drawComp->SetDiffuse(m_color);
+
+		SetAlphaActive(true);
+		SetDrawLayer(m_layer);
+
+	};
+
 }
 //end basecross
