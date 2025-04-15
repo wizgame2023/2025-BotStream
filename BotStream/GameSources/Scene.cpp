@@ -36,7 +36,7 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<StageSanpei>();
+			ResetActiveStage<StageTuboi>();
 
 		}
 
@@ -132,6 +132,8 @@ namespace basecross{
 		app->RegisterWav(L"StartVoice", SoundPath + L"StartVoice.wav");
 		app->RegisterWav(L"StatrVoice2", SoundPath + L"StartVoice2.wav");
 		app->RegisterWav(L"Lock-on", SoundPath + L"Lock-on.wav");
+		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
+		app->RegisterWav(L"EnemyAttack", SoundPath + L"EnemyAttack.wav");
 
 	}
 

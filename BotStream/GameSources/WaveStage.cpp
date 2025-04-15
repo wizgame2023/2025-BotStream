@@ -80,7 +80,7 @@ namespace basecross {
         auto KeyState = App::GetApp()->GetInputDevice().GetKeyState();
         auto pad = App::GetApp()->GetInputDevice().GetControlerVec()[0];
         //auto player = GetSharedGameObject<Player>(L"Player");
-        auto enemyMgr = AddGameObject<EnemyManager>();
+        //auto enemyMgr = AddGameObject<EnemyManager>();
 
 
 
