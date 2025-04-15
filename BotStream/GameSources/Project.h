@@ -27,6 +27,13 @@
 #include "State.h"
 #include "LandDetect.h"
 
+//BillBoard
+#include "BillBoard.h"
+
+//State
+#include "EnemyState.h"
+#include "PlayerState.h"
+
 //Actor
 #include "Player.h"
 #include "Enemy.h"

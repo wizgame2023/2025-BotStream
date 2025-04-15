@@ -16,10 +16,12 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Actor.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)AttackCollision.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)BillBoard.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)CameraManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Character.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h" />
@@ -27,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PlayerState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ProjectBehavior.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ProjectShader.h" />
@@ -43,10 +46,12 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Actor.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)AttackCollision.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)BillBoard.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EffectManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyManager.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EnemyState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LandDetect.cpp" />
@@ -54,6 +59,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ObjectMove.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ObjectNotMove.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PlayerState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageAbe.cpp" />
