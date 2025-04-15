@@ -114,6 +114,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)BillBoard.h">
       <Filter>ObjectNotMove</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PlayerState.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">

@@ -29,6 +29,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PlayerState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ProjectBehavior.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ProjectShader.h" />
