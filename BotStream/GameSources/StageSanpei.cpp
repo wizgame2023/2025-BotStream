@@ -42,7 +42,7 @@ namespace basecross {
 
 		auto grond = AddGameObject<Ground>();
 		grond->AddTag(L"CameraObstacles");//カメラの障害になりえる物に付けられるタグ
-		grond->GetComponent<Transform>()->SetScale(Vec3(50.0f, 1.0f, 50.0f));
+		grond->GetComponent<Transform>()->SetScale(Vec3(500.0f, 1.0f, 500.0f));
 
 		
 		//Player作成
