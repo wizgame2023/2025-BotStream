@@ -57,9 +57,15 @@ namespace basecross{
 		app->RegisterTexture(L"StoneBrick", strTexture);
 		
 		// UISprite
-		// Player's
+		// Gauge
 		strTexture = texPath + L"PlayerGauge.png";
 		app->RegisterTexture(L"PLGauge", strTexture);
+
+		strTexture = texPath + L"PlayerHPMater.png";
+		app->RegisterTexture(L"PLHP", strTexture);
+
+		strTexture = texPath + L"PlayerSPMater.png";
+		app->RegisterTexture(L"PLSP", strTexture);
 
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
@@ -85,6 +91,14 @@ namespace basecross{
 		//ボーンマルチメッシュ用テクスチャ
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
+
+		//ボーンモデルの通常リソース
+		auto modelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Boss_1.bmf");
+		app->RegisterResource(L"Boss1", modelMesh);
+
+		//ボーンマルチメッシュ用テクスチャ
+		auto texture = modPath + L"Boss_1_T.png";
+		app->RegisterTexture(L"Tx_Boss1", texture);
 
 		// エフェクトの登録
 		EffectManager::Instance().RegisterEffect(L"Laser", efkPath + L"Laser01.efk");

@@ -45,19 +45,17 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"Spearmen");//仮のメッシュ
+		ptrDraw->SetMeshResource(L"Boss1");//仮のメッシュ
 		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
 		ptrDraw->SetDiffuse(Col4(0));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		ptrDraw->SetTextureResource(L"SpearmenTexture");
+		ptrDraw->SetTextureResource(L"Tx_Boss1");
 		
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-
-		AddTag(L"Player");//Player用のタグ
 
 		AddTag(L"Enemy");
 
