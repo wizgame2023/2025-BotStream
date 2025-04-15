@@ -49,6 +49,9 @@ namespace basecross{
 		//shared_ptr<GameStage> m_Stage;
 		shared_ptr<StageSato> m_Stage;
 
+		//ステートマシン
+		shared_ptr<PlayerStateMachine> m_stateMachine;
+
 		//動く処理
 		void PlayerMove();
 		//スティック操作

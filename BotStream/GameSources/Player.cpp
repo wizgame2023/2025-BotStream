@@ -218,12 +218,12 @@ namespace basecross {
 		if (m_dodgeFlag && !m_dashFlag)
 		{
 			//‰ñ”ğˆ—
-			float timeSpeed = 40.0f;
+			float timeSpeed = 80.0f;
 			m_dodgeTime += XMConvertToRadians(_delta * timeSpeed);
 
 			//“ñŸŠÖ”“I‚È“®‚«‚Å‰ñ”ğs“®‚ğ‚·‚é
 			//¡‚ÍŒü‚¢‚Ä‚¢‚é•ûŒü‚É‘O•û‰ñ”ğ‚ğ‚·‚é
-			float dodge = 12.0f;
+			float dodge = 8.0f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
