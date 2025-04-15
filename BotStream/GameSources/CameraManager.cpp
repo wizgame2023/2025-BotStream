@@ -1,15 +1,16 @@
-/*!
+ï»¿/*!
 @file CameraManager.cpp
-@brief ƒJƒƒ‰‚Ì§Œäˆ—
+@brief ã‚«ãƒ¡ãƒ©ã®åˆ¶å¾¡å‡¦ç†
 */
 
 #include "stdafx.h"
 #include "Project.h"
 
 namespace basecross {
-	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange) :
+	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange,float speedXAxis,float speedYAxis) :
 		MyGameObject(stagePtr),
-		m_cameraAngle(XMConvertToRadians(270.0f)),
+		m_cameraAngleY(XMConvertToRadians(270.0f)),
+		m_cameraAngleX(XMConvertToRadians(85.0f)),
 		m_range(range),
 		m_targetRange(targetRange),
 		m_lockOnFlag(false),
@@ -17,7 +18,11 @@ namespace basecross {
 		m_lockOnChangeFlag(false),
 		m_lockOnNum(-1),
 		m_meleeRange(meleeRange),
-		m_stickFlag(false)
+		m_stickFlag(false),
+		m_speedXAxis(speedXAxis),
+		m_speedYAxis(speedYAxis),
+		m_contrloerVec(Vec2(0.0f,0.0f)),
+		m_movePlayerAngleFlag(false)
 	{
 
 	}
@@ -26,43 +31,32 @@ namespace basecross {
 
 	}
 
-	//ì¬
+	//ä½œæˆ
 	void CameraManager::OnCreate()
 	{
-		//ƒXƒe[ƒWã‚Åg‚í‚ê‚éƒJƒƒ‰‚ğæ“¾‚·‚é
+		//ã‚¹ãƒ†ãƒ¼ã‚¸ä¸Šã§ä½¿ã‚ã‚Œã‚‹ã‚«ãƒ¡ãƒ©ã‚’å–å¾—ã™ã‚‹
 		m_stage = GetStage();
-		m_stageCamera = OnGetDrawCamera();//ƒXƒe[ƒW‚ÌƒJƒƒ‰æ“¾
+		m_stageCamera = OnGetDrawCamera();//ã‚¹ãƒ†ãƒ¼ã‚¸ã®ã‚«ãƒ¡ãƒ©å–å¾—
 		m_lockStageCamera = m_stageCamera.lock();	
 
-		//ƒJƒƒ‰‚ÆPlayer‚Ì‹——£ƒxƒNƒgƒ‹‚ğ‘ª‚Á‚Ä‘å‚«‚³‚ğŒˆ‚ß‚é
+		//ã‚«ãƒ¡ãƒ©ã¨Playerã®è·é›¢ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ¸¬ã£ã¦å¤§ãã•ã‚’æ±ºã‚ã‚‹
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		Vec3 playerPos = player->GetComponent<Transform>()->GetPosition();
 		
-		//ƒJƒƒ‰‚ğPlayer‚É’Ç]
-		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngle) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngle) * m_range)));
-		//’‹“_‚ÍPlayer‚ÌˆÊ’u‚æ‚è‚à­‚µæ‚É‚µ‚½‚¢
+		//ã‚«ãƒ¡ãƒ©ã‚’Playerã«è¿½å¾“
+		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngleY) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngleY) * m_range)));
+		//æ³¨è¦–ç‚¹ã¯Playerã®ä½ç½®ã‚ˆã‚Šã‚‚å°‘ã—å…ˆã«ã—ãŸã„
 		m_lockStageCamera->SetAt(playerPos);
 
-		//ƒXƒvƒ‰ƒCƒg’Ç‰Á
+		//ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆè¿½åŠ 
 		m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
 
-		//Vec3 CameraPos = m_lockStageCamera->GetEye();
-		
-		////ƒNƒH[ƒ^ƒjƒIƒ“‚Ì’l‚ğæ“¾‚µ‚ÄƒJƒƒ‰‚ÆPlayer‚Ì·‚ğŒ©‚¦‚é‚æ‚¤‚É‚·‚éƒIƒuƒWƒFƒNƒg‚ğo‚»‚¤I
-		//Vec3 CameraVec = CameraPos - playerPos;
-		//Vec3 CameraScale = CameraVec = Vec3(abs(CameraVec.x), abs(CameraVec.y), abs(CameraVec.z));
-		//Vec3 up = Vec3(0, 1, 0);
-		//Mat4x4 CameraQt = (Mat4x4)XMMatrixLookAtLH(CameraPos, playerPos, -up);
-		
-		////ƒŒƒCƒLƒƒƒXƒg¶¬
-		//auto raycast = stage->AddGameObject<CameraRayCast>(Vec3(CameraVec.x/2, CameraVec.y / 2, -CameraVec.z / 2), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f,1.0f,CameraScale.z));
-		//raycast->GetComponent<Transform>()->SetQuaternion((Quat)CameraQt);
-
-
-		//ƒƒbƒNƒIƒ“‚Ì—LŒø”ÍˆÍ‚ğ‰Â‹‰»
+		Vec3 CameraPos = m_lockStageCamera->GetEye();
+				
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®æœ‰åŠ¹ç¯„å›²ã‚’å¯è¦–åŒ–
 		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
-		//‚à‚µƒXƒe[ƒW—p‚ÌƒJƒƒ‰‚ğæ“¾‚Å‚«‚È‚©‚Á‚½‚çreturn‚µ‚Ä©•ª‚ğíœ‚µ‚Ü‚·
+		//ã‚‚ã—ã‚¹ãƒ†ãƒ¼ã‚¸ç”¨ã®ã‚«ãƒ¡ãƒ©ã‚’å–å¾—ã§ããªã‹ã£ãŸã‚‰returnã—ã¦è‡ªåˆ†ã‚’å‰Šé™¤ã—ã¾ã™
 		if (!m_lockStageCamera)
 		{
 			GetStage()->RemoveGameObject<CameraManager>(GetThis<CameraManager>());
@@ -70,105 +64,113 @@ namespace basecross {
 		}
 	}
 
-	//XV
+	//æ›´æ–°
 	void CameraManager::OnUpdate()
 	{
 		m_delta = App::GetApp()->GetElapsedTime();
 		m_lockStageCamera = m_stageCamera.lock();
-		//shared_ptr<Stage> stage = GetStage();
 
-		//‚à‚µƒXƒe[ƒW—p‚ÌƒJƒƒ‰‚ğæ“¾‚Å‚«‚È‚©‚Á‚½‚çreturn‚µ‚Ä©•ª‚ğíœ‚µ‚Ü‚·
+		//ã‚‚ã—ã‚¹ãƒ†ãƒ¼ã‚¸ç”¨ã®ã‚«ãƒ¡ãƒ©ã‚’å–å¾—ã§ããªã‹ã£ãŸã‚‰returnã—ã¦è‡ªåˆ†ã‚’å‰Šé™¤ã—ã¾ã™
 		if (!m_lockStageCamera)
 		{
 			GetStage()->RemoveGameObject<CameraManager>(GetThis<CameraManager>());
 			return;
 		}
 
-
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å–å¾—
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
-		Vec3 playerPos = player->GetComponent<Transform>()->GetPosition();
+		m_playerPos = player->GetComponent<Transform>()->GetPosition();	
 
-		Vec3 hitPos;//“–‚½‚Á‚½êŠ‚ğ•Û‘¶‚·‚é•Ï”
-		//“–‚½‚è”»’èƒeƒXƒg
-		TRIANGLE testTriangle;
-		size_t testsize;
-		//m_ptrDraw->HitTestStaticMeshSegmentTriangles(playerPos, m_lockStageCamera->GetEye(), hitPos,testTriangle,testsize);
 
-		// ƒCƒ“ƒvƒbƒgƒfƒoƒCƒXƒIƒuƒWƒFƒNƒg
-		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // —lX‚È“ü—ÍƒfƒoƒCƒX‚ğŠÇ—‚µ‚Ä‚¢‚éƒIƒuƒWƒFƒNƒg‚ğæ“¾
-		//ƒRƒ“ƒgƒ[ƒ‰[‚Ìæ“¾
+		// ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ‡ãƒã‚¤ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // æ§˜ã€…ãªå…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹ã‚’ç®¡ç†ã—ã¦ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—
+		//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å–å¾—
 		m_controler = inputDevice.GetControlerVec()[0];
-		Vec2 contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
+		m_contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
-		//¶ƒXƒeƒBƒbƒN‚ğŒX‚¯‚ÄƒJƒƒ‰‚ªPlayer‚Ìü‚è‚ğ‰ñ“]‚·‚éˆ—
-		float addAngle = 3.0f * contrloerVec.x * m_delta;//’Ç‰Á‚·‚éŠp“x‚ğŒˆ‚ß‚Ä
-		m_cameraAngle += -addAngle;//’Ç‰Á
+		////å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’Xæ–¹é¢ã«å‚¾ã‘ã¦ã‚«ãƒ¡ãƒ©ãŒPlayerã®Yè»¸æ–¹å‘ã«å›è»¢ã™ã‚‹å‡¦ç†
+		//m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x * m_delta;//è¿½åŠ ã™ã‚‹è§’åº¦ã‚’æ±ºã‚ã¦
+		//m_cameraAngleY += -m_addAngleYAxis;//è¿½åŠ 
 
-		//ƒƒbƒNƒIƒ“ˆ—
+		////å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’Yæ–¹é¢ã«å‚¾ã‘ã¦ã‚«ãƒ¡ãƒ©ãŒPlayerã®Xè»¸æ–¹å‘ã«å›è»¢ã™ã‚‹å‡¦ç†
+		//m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y * m_delta;//è¿½åŠ ã™ã‚‹è§’åº¦ã‚’æ±ºã‚ã¦
+		//m_cameraAngleX += m_addAngleXAxis;//è¿½åŠ 
+		//æ…£æ€§ä»˜ãã®å›è»¢å‡¦ç†
+		InertialRotation();
+		//Xè»¸å›è»¢ã®åˆ¶é™å‡¦ç†
+		CameraAngleXLimit();
+
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å‡¦ç†
 		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
-		//‚±‚±‚Ìshared_ptr‚ğweak_ptr‚É‚µ‚½‚¢‚ñ‚¾‚¯‚Ç‚Ç‚¤‚·‚ê‚Î‚¢‚¢‚ñ‚¾‚ë‚¤H
-		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//‚Ü‚¸AŒ©‚¦‚Ä‚¢‚éó‘Ô‚ÌEnemy‚ğó‚¯æ‚é
+		//ã“ã“ã®shared_ptrã‚’weak_ptrã«ã—ãŸã„ã‚“ã ã‘ã©ã©ã†ã™ã‚Œã°ã„ã„ã‚“ã ã‚ã†ï¼Ÿ
+		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//ã¾ãšã€è¦‹ãˆã¦ã„ã‚‹çŠ¶æ…‹ã®Enemyã‚’å—ã‘å–ã‚‹
 
-		//ƒƒbƒNƒIƒ“Œó•â‚Í‚Ç‚ÌƒIƒuƒWƒFƒNƒg’B‚É‚È‚é‚Ì‚©ˆ—
-		LockOnCandidate(enemyVec, playerPos);
 
-		//ƒƒbƒNƒIƒ“Œó•â‚ª‚¢‚È‚¢‚È‚çƒƒbƒNƒIƒ“‚Å‚«‚È‚¢•‘I‘ğ‚ğ‰Šú‰»
-		if (m_targets.size() <= 0)
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œãŒã„ãªã„ãªã‚‰ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã§ããªã„ï¼†é¸æŠã‚’åˆæœŸåŒ–
+		if (m_targets.size() <= 0 && m_targetObj)
 		{
-			LockOff(enemyVec);//ƒƒbƒNƒIƒ“‚Ì‰ğœ
+			LockOff(enemyVec);//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®è§£é™¤
 		}
 
 		ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
-
-		//ƒƒbƒNƒIƒ“‚ªo—ˆ‚ÄƒƒbƒNƒIƒ“‚Ì‚µ‚Ä‚È‚¢‚È‚çg‚¤Ag‚Á‚Ä‚½‚çg‚í‚È‚¢ ‚Ç‚¿‚ç‚Å‚à‚È‚¯‚ê‚Î‚»‚¤‚Å‚È‚¢‚È‚çƒvƒŒƒCƒ„[‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚ÉŒü‚­
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ãŒå‡ºæ¥ã¦ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®ã—ã¦ãªã„ãªã‚‰ä½¿ã†ã€ä½¿ã£ã¦ãŸã‚‰ä½¿ã‚ãªã„ ã©ã¡ã‚‰ã§ã‚‚ãªã‘ã‚Œã°ãã†ã§ãªã„ãªã‚‰ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã«å‘ã
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
-			//ƒƒbƒNƒIƒ“‚·‚é‚©Œˆ‚ß‚éˆ—
+			//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã™ã‚‹ã‹æ±ºã‚ã‚‹å‡¦ç†
 			if (m_lockOnFlag && !m_lockOnUse)
 			{
 				float min = 99999;
-				//‹——£‚ğ‘ª‚Á‚ÄPlayer‚©‚çˆê”Ô‹ß‚¢“G‚ğƒƒbƒNƒIƒ“‚·‚é
+				//è·é›¢ã‚’æ¸¬ã£ã¦Playerã‹ã‚‰ä¸€ç•ªè¿‘ã„æ•µã‚’ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã™ã‚‹
 				for (auto enemy : m_targets)
 				{
 					Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
-					Vec3 distanceVec = enemyPos - playerPos;//“G‚ÆƒvƒŒƒCƒ„[‚Æ‚Ì‹——£ƒxƒNƒgƒ‹
+					Vec3 distanceVec = enemyPos - m_playerPos;//æ•µã¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ã®è·é›¢ãƒ™ã‚¯ãƒˆãƒ«
 					float ditance = abs(distanceVec.x) + abs(distanceVec.z);
 					if (min > ditance)
 					{
 						min = ditance;
-						m_targetObj = enemy;//ƒƒbƒNƒIƒ“‘ÎÛ‚ğŒˆ‚ß‚é
+						m_targetObj = enemy;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã‚’æ±ºã‚ã‚‹
 					}
 				}
 
-				m_lockOnUse = true;//ƒƒbƒNƒIƒ“g—p
-				m_targetObj->AddTag(L"ƒƒbƒNƒIƒ“‘ÎÛ");
+				m_lockOnUse = true;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ä½¿ç”¨
+				m_targetObj->AddTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡");
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
 			{
-				LockOff(enemyVec);//ƒƒbƒNƒIƒ“‚Ì‰ğœ
+				LockOff(enemyVec);//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®è§£é™¤
 			}
-			else if (!m_lockOnFlag)
+			else if (!m_lockOnFlag && !m_movePlayerAngleFlag)
 			{
-				//Player‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚Ì‹¾‡‚í‚¹‚É‚È‚é‚æ‚¤‚ÉŠp“x‚ğ•ÏX‚·‚é
-				MovePlayerAngle(playerAngle);
+				//Playerã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã«ç§»å‹•ã™ã‚‹ãƒ•ãƒ©ã‚°ã‚’ã‚ªãƒ³ã«ã™ã‚‹
+				m_movePlayerAngleFlag = true;	
+				//å‘ãåº§æ¨™ã‚’æ±ºã‚ã‚‹
+				m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+				auto a = 0;
 			}
 		}
-		//Šp“xƒŠƒZƒbƒg(ƒfƒoƒbƒN—p)
+		//ãƒ•ãƒ©ã‚°ãŒã‚ªãƒ³ã«ãªã£ãŸã‚‰Playerã®å‘ãã«ç§»å‹•ã™ã‚‹
+		if (m_movePlayerAngleFlag)
+		{
+			//Playerã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®é¡åˆã‚ã›ã«ãªã‚‹ã‚ˆã†ã«è§’åº¦ã‚’å¤‰æ›´ã™ã‚‹
+			MovePlayerAngle(m_targetAngleY);
+		}
+		//è§’åº¦ãƒªã‚»ãƒƒãƒˆ(ãƒ‡ãƒãƒƒã‚¯ç”¨)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 		{
-			m_cameraAngle = XMConvertToRadians(270.0f);
+			m_cameraAngleY = XMConvertToRadians(270.0f);
 		}
 
-		//ƒƒbƒNƒIƒ“‚·‚é‚Æ‚«‚Ìˆ—
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã™ã‚‹ã¨ãã®å‡¦ç†
 		if (m_lockOnUse)
 		{		
-			//ƒƒbƒNƒIƒ“‚·‚é‚Æ‚«‚ÌŞ—¿ì¬
-			UpdateTargesDeta(playerPos);
+			//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã™ã‚‹ã¨ãã®ææ–™ä½œæˆ
+			UpdateTargesDeta(m_playerPos);
 
 			float targetAngle;
-			//ƒ^[ƒQƒbƒg‘ÎÛ‚Ì‚È‚·Šp‚ğó‚¯æ‚é
+			//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã®ãªã™è§’ã‚’å—ã‘å–ã‚‹
 			for (auto enemy : m_targesDeta)
 			{
 				if (enemy.leftOrRight == Middle)
@@ -177,109 +179,270 @@ namespace basecross {
 				}
 			}
 
-			//ƒ^[ƒQƒbƒg‘ÎÛ‚©‚çƒXƒeƒBƒbƒN‚ğŒX‚¯‚Ä‚¢‚é•ûŒü‚Ìƒ^[ƒQƒbƒgŒó•â‚É•Ï‚¦‚éˆ—
-			if (contrloerVec.x <= -0.9f && m_stickFlag)//‘ÎÛ‚Ì¶—×‚É‚¢‚éŒó•â‚ÉˆÚ‚·
+			//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã‹ã‚‰ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’å‚¾ã‘ã¦ã„ã‚‹æ–¹å‘ã®ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå€™è£œã«å¤‰ãˆã‚‹å‡¦ç†
+			if (m_contrloerVec.x <= -0.9f && m_stickFlag)//å¯¾è±¡ã®å·¦éš£ã«ã„ã‚‹å€™è£œã«ç§»ã™
 			{
-				//Œ»İ‚Ì‘ÎÛ‚Ì•ûŒü‚Æˆê”Ô‹ß‚¢Œó•â‚ªƒ^[ƒQƒbƒg‘ÎÛ‚É‚È‚é
+				//ç¾åœ¨ã®å¯¾è±¡ã®æ–¹å‘ã¨ä¸€ç•ªè¿‘ã„å€™è£œãŒã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã«ãªã‚‹
 				ChangeLockOn(Left, targetAngle);
-				m_stickFlag = false;//“ü—Í‚ğó‚¯•t‚¯‚È‚¢
+				m_stickFlag = false;//å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ãªã„
 			}
-			if (contrloerVec.x >= 0.9f && m_stickFlag)//‘ÎÛ‚Ì‰E—×‚É‚¢‚éŒó•â‚ÉˆÚ‚·
+			if (m_contrloerVec.x >= 0.9f && m_stickFlag)//å¯¾è±¡ã®å³éš£ã«ã„ã‚‹å€™è£œã«ç§»ã™
 			{
-				//Œ»İ‚Ì‘ÎÛ‚Ì•ûŒü‚Æˆê”Ô‹ß‚¢Œó•â‚ªƒ^[ƒQƒbƒg‘ÎÛ‚É‚È‚é
+				//ç¾åœ¨ã®å¯¾è±¡ã®æ–¹å‘ã¨ä¸€ç•ªè¿‘ã„å€™è£œãŒã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã«ãªã‚‹
 				ChangeLockOn(Right, targetAngle);
-				m_stickFlag = false;//“ü—Í‚ğó‚¯•t‚¯‚È‚¢
+				m_stickFlag = false;//å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ãªã„
 			}
 
-			//ƒXƒeƒBƒbƒN‚ğŒX‚¯‚½ŒãƒXƒeƒBƒbƒN‚ğŒ³‚É–ß‚µ‚½‚ç“ü—Í‚ğó‚¯“ü‚ê‚é
-			if (!m_stickFlag && contrloerVec.x == 0.0f)
+			//ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’å‚¾ã‘ãŸå¾Œã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’å…ƒã«æˆ»ã—ãŸã‚‰å…¥åŠ›ã‚’å—ã‘å…¥ã‚Œã‚‹
+			if (!m_stickFlag && m_contrloerVec.x == 0.0f)
 			{
-				m_stickFlag = true;//“ü—Í‚ğó‚¯•t‚¯‚é
+				m_stickFlag = true;//å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ã‚‹
 			}
 
-			//ƒƒbƒNƒIƒ“‚µ‚Ä‚¢‚¢‚©”»’f‚·‚é
+			//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã—ã¦ã„ã„ã‹åˆ¤æ–­ã™ã‚‹
 			if (m_lockOnChangeFlag)
 			{
 				m_lockOnChangeFlag = false;
-				m_lockOnUse = true;//ƒƒbƒNƒIƒ“g—p
+				m_lockOnUse = true;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ä½¿ç”¨
 				m_targetObj = m_targets[m_lockOnNum];
-				m_targets[m_lockOnNum]->AddTag(L"ƒƒbƒNƒIƒ“‘ÎÛ");
+				m_targets[m_lockOnNum]->AddTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡");
 			}
 
-			LockOn(m_targetObj, player);//ƒƒbƒNƒIƒ“
-		}//ƒƒbƒNƒIƒ“‚Å‚«‚È‚¢
+			LockOn(m_targetObj, player);//ãƒ­ãƒƒã‚¯ã‚ªãƒ³
+		}//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã§ããªã„æ™‚
 		else if (!m_lockOnUse)
 		{
-			//’‹“_‚ÍPlayer‚ÌˆÊ’u‚æ‚è‚à­‚µæ‚É‚µ‚½‚¢
-			m_lockStageCamera->SetAt(playerPos);
+			//æ³¨è¦–ç‚¹ã¯Playerã®ä½ç½®ã‚ˆã‚Šã‚‚å°‘ã—å…ˆã«ã—ãŸã„
+			m_lockStageCamera->SetAt(m_playerPos+Vec3(0.0f,3.0f,0.0f));
 		}
 
-		//ƒJƒƒ‰‚ğPlayer‚É’Ç]
-		m_lockStageCamera->SetEye(Vec3(playerPos.x + (cos(m_cameraAngle) * m_range), playerPos.y + 10.0f, playerPos.z + (sin(m_cameraAngle) * m_range)));
-		//Šp“x‚Ì’²®0~360“x‚Ü‚Å‚µ‚©o‚È‚¢‚æ‚¤‚É‚·‚é
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã¯ã©ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆé”ã«ãªã‚‹ã®ã‹å‡¦ç†
+		LockOnCandidate(enemyVec, m_playerPos);
+		//è§’åº¦ã®èª¿æ•´0~360åº¦ã¾ã§ã—ã‹å‡ºãªã„ã‚ˆã†ã«ã™ã‚‹
 		AdjustmentAngle();
+		//ã‚«ãƒ¡ãƒ©ã®ä½ç½®æ›´æ–°
+		CameraPosUpdate();
 
-		////ƒfƒoƒbƒN—p
-		wstringstream wss(L"");
-		auto scene = App::GetApp()->GetScene<Scene>();
 
-		wss /* << L"ƒfƒoƒbƒO—p•¶š—ñ "*/
-			<< L"\nPlayer‚©‚çŒ©‚ÄƒJƒƒ‰‚ÌŠp“x: " << XMConvertToDegrees(m_cameraAngle)
-			<< L"\nPlayer‚ÌŒü‚¢‚Ä‚¢‚éŠp“x: " << XMConvertToDegrees(-playerAngle)
-			<< L"\n“–‚½‚Á‚½êŠx: " << hitPos.x
-			<< L"\n“–‚½‚Á‚½êŠy: " << hitPos.y
-			<< L"\n“–‚½‚Á‚½êŠz: " << hitPos.z
-			//<<L"\nƒRƒ“ƒgƒ[ƒ‰[‚Ì“ü—Í x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-			//<<L"\nFPS:"<< 1.0f/delta
-			<< endl;
+		////ãƒ‡ãƒãƒƒã‚¯ç”¨
+		//wstringstream wss(L"");
+		//auto scene = App::GetApp()->GetScene<Scene>();
+		//
+		//wss /* << L"ãƒ‡ãƒãƒƒã‚°ç”¨æ–‡å­—åˆ— "*/
+		//	<< L"\nPlayerã‹ã‚‰è¦‹ã¦ã‚«ãƒ¡ãƒ©ã®è§’åº¦Yè»¸: " << XMConvertToDegrees(m_cameraAngleY)
+		//	<< L"\nPlayerã‹ã‚‰è¦‹ã¦ã‚«ãƒ¡ãƒ©ã®è§’åº¦Xè»¸: " << XMConvertToDegrees(m_cameraAngleX)
+		//	<< L"\nPlayerã®å‘ã„ã¦ã„ã‚‹è§’åº¦: " << XMConvertToDegrees(-playerAngle)
+		//	//<< L"\nå½“ãŸã£ãŸå ´æ‰€x: " << hitPos.x
+		//	//<< L"\nå½“ãŸã£ãŸå ´æ‰€y: " << hitPos.y
+		//	//<< L"\nå½“ãŸã£ãŸå ´æ‰€z: " << hitPos.z
+		//	//<<L"\nã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å…¥åŠ› x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+		//	//<<L"\nFPS:"<< 1.0f/delta
+		//	<< endl;
 
-			//if (m_lockOnNum >= 0)
-			//{		
-			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-			//	float a = targetAngle;
-	
-			//	wss << L"ƒƒbƒNƒIƒ“Šp“x " << XMConvertToDegrees(targetAngle);
-			//}
+		//	//if (m_lockOnNum >= 0)
+		//	//{		
+		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+		//	//	float a = targetAngle;
+		//	//	wss << L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³è§’åº¦ " << XMConvertToDegrees(targetAngle);
+		//	//}
 
-		scene->SetDebugString(wss.str());
+		//scene->SetDebugString(wss.str());
 
 	}
 
-	//ƒƒbƒNƒIƒ“Œó•â‚ğŒˆ‚ß‚éŠÖ”
+	//ã‚«ãƒ¡ãƒ©ã®Xè»¸å›è»¢ã®åˆ¶é™
+	void CameraManager::CameraAngleXLimit(float maxRad,float minRad)
+	{
+		//ã‚‚ã—ä»Šã®Xè»¸å›è»¢ãŒæœ€å°å€¤ã‚ˆã‚Šã‚‚å¤§ãã‹ã£ãŸã‚‰æœ€å°å€¤ã«ã™ã‚‹
+		if (m_cameraAngleX < minRad)
+		{
+			m_cameraAngleX = minRad;
+		}
+		//ã‚‚ã—ã€ä»Šã®Xè»¸å›è»¢ãŒæœ€å¤§ã‚ˆã‚Šã‚‚å¤§ãã‹ã£ãŸã‚‰æœ€å¤§å€¤ã«ã™ã‚‹
+		if (m_cameraAngleX > maxRad)
+		{
+			m_cameraAngleX = maxRad;
+		}
+	}
+
+	//ã‚«ãƒ¡ãƒ©ã®æ…£æ€§å›è»¢ã®å‡¦ç†
+	void CameraManager::InertialRotation()
+	{
+		//Yè»¸å›è»¢
+		if (m_contrloerVec.x != 0.0f)
+		{
+			//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’Xæ–¹é¢ã«å‚¾ã‘ã¦ã‚«ãƒ¡ãƒ©ãŒPlayerã®Yè»¸æ–¹å‘ã«å›è»¢ã™ã‚‹å‡¦ç†
+			m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x;//è¿½åŠ ã™ã‚‹è§’åº¦ã‚’æ±ºã‚ã¦
+		}
+		else if(m_contrloerVec.x == 0.0f)
+		{
+			if (m_addAngleYAxis > 0)
+			{
+				m_addAngleYAxis -= 6.8f * m_delta;
+				if (m_addAngleYAxis <= 0)
+				{
+					m_addAngleYAxis = 0.0f;
+				}
+			}
+			else if (m_addAngleYAxis < 0)
+			{
+				m_addAngleYAxis += 6.8f * m_delta;
+				if (m_addAngleYAxis >= 0)
+				{
+					m_addAngleYAxis = 0.0f;
+				}
+			}
+		}
+
+		//Xè»¸å›è»¢
+		if (m_contrloerVec.y != 0.0f)
+		{
+			//å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’Yæ–¹é¢ã«å‚¾ã‘ã¦ã‚«ãƒ¡ãƒ©ãŒPlayerã®Xè»¸æ–¹å‘ã«å›è»¢ã™ã‚‹å‡¦ç†
+			m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y;//è¿½åŠ ã™ã‚‹è§’åº¦ã‚’æ±ºã‚ã¦
+		}
+		else if (m_contrloerVec.y == 0.0f)
+		{
+			if (m_addAngleXAxis > 0)
+			{
+				m_addAngleXAxis -= 3.0f * m_delta;
+				if (m_addAngleXAxis <= 0)
+				{
+					m_addAngleXAxis = 0.0f;
+				}
+			}
+			else if (m_addAngleXAxis < 0)
+			{
+				m_addAngleXAxis += 8.0f * m_delta;
+				if (m_addAngleXAxis >= 0)
+				{
+					m_addAngleXAxis = 0.0f;
+				}
+			}
+		}
+
+		//å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›ãŒã•ã‚Œã¦ã„ãªã„æ–¹å‘ã¯ã‚¹ãƒ”ãƒ¼ãƒ‰ãŒè½ã¡ã¦ã„ã
+		float maxAddAngleXAxis = 0.025f;
+		float maxAddAngleYAxis = 0.08f;
+		
+		////xè»¸å›è»¢ã®æ…£æ€§å‡¦ç†
+		//if (m_addAngleXAxis > 0)
+		//{
+		//	if (m_addAngleXAxis > maxAddAngleXAxis)
+		//	{
+		//		m_addAngleXAxis = maxAddAngleXAxis;
+		//	}
+		//}
+		//else if (m_addAngleXAxis < 0)
+		//{
+		//	//xè»¸å›è»¢ã®æ…£æ€§å‡¦ç†
+		//	if (m_addAngleXAxis < -maxAddAngleXAxis)
+		//	{
+		//		m_addAngleXAxis = -maxAddAngleXAxis;
+		//	}
+		//}
+		////Yè»¸å›è»¢ã®æ…£æ€§å‡¦ç†
+		//if (m_addAngleYAxis > 0)
+		//{
+		//	if (m_addAngleYAxis > maxAddAngleYAxis)
+		//	{
+		//		m_addAngleYAxis = maxAddAngleYAxis;
+		//	}
+		//}
+		//else if (m_addAngleYAxis < 0)
+		//{
+		//	if (m_addAngleYAxis < -maxAddAngleYAxis)
+		//	{
+		//		m_addAngleYAxis = -maxAddAngleYAxis;
+		//	}
+		//}
+
+		m_cameraAngleX += m_addAngleXAxis * m_delta;//è¿½åŠ 
+		m_cameraAngleY += -m_addAngleYAxis * m_delta;//è¿½åŠ 
+
+	}
+
+	//ã‚«ãƒ¡ãƒ©ã®ãƒã‚¸ã‚·ãƒ§ãƒ³ã‚’æ±ºã‚ã‚‹é–¢æ•°
+	void CameraManager::CameraPosUpdate()
+	{
+		auto objVec = m_stage->GetGameObjectVec();
+		m_cameraPos = m_lockStageCamera->GetEye();
+
+		Vec3 hitPos; // å‡ºåŠ›ç”¨ï¼šãƒ¬ã‚¤ã®äº¤å·®åœ°ç‚¹(è¡çªç‚¹)
+		TRIANGLE triangle; // ãƒ¬ã‚¤ãŒäº¤å·®ã—ãŸãƒãƒªã‚´ãƒ³ã‚’æ§‹æˆã™ã‚‹é ‚ç‚¹ã®åº§æ¨™
+		size_t triangleNumber; // ãƒ¬ã‚¤ãŒäº¤å·®ã—ãŸãƒãƒªã‚´ãƒ³ã®ç•ªå·
+		float min = 9999999.9f;//Playerã‹ã‚‰è¦‹ã¦ã‚«ãƒ¡ãƒ©ã®éšœå®³ã¨ãªã‚‹è·é›¢ã®æœ€å°å€¤
+
+		//ã¾ãšã€éšœå®³ç‰©ãŒãªã‹ã£ãŸæ™‚ã®ä½ç½®ã‚’å…¥ã‚Œã‚‹
+		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
+			(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
+			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+
+		//éšœå®³ç‰©ã«ãªã‚Šãˆã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆé”ã«ã‚«ãƒ¡ãƒ©ã®æ©Ÿèƒ½ã‚’é‚ªé­”ã—ã¦ã„ãªã„ã‹è¦‹ã‚‹
+		for (auto obj : objVec)
+		{
+			auto obstacles = dynamic_pointer_cast<ObjectNotMove>(obj);//å½“ãŸã‚Šåˆ¤å®šã®å¯¾è±¡		
+			float hitLength = min;//Playerã¨éšœå®³ç‰©ã®è·é›¢ã®é•·ã•
+
+			//éšœå®³ç‰©ã«ãªã‚Šãˆãã†ãªã‚‰ã‚«ãƒ¡ãƒ©ã®è¡¨ç¤ºã«é‚ªé­”ã‚’ã—ã¦ã„ãªã„ã‹ç¢ºèªã‚’ã™ã‚‹
+			if (obstacles)
+			{
+				//ã‚«ãƒ¡ãƒ©ã®éšœå®³ã«ãªã‚Šãˆã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã—ã‹ã‚«ãƒ¡ãƒ©ã‚’é‚ªé­”ã‚’ã—ã¦ã„ã‚‹ã‹è©•ä¾¡ã—ãªã„
+				if (!obstacles->FindTag(L"CameraObstacles")) continue;
+
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();
+				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
+				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
+				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
+			}
+
+			//minã‚ˆã‚ŠhitLengthãŒçŸ­ã‹ã£ãŸã‚‰ä½ç½®æ›´æ–°ã™ã‚‹
+			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
+			{
+				min = hitLength;
+				m_cameraPos = hitPos;
+			}
+		}
+
+		//ã‚«ãƒ¡ãƒ©ã®ä½ç½®æ›´æ–°
+		m_lockStageCamera->SetEye(m_cameraPos);
+
+	}
+
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã‚’æ±ºã‚ã‚‹é–¢æ•°
 	void CameraManager::LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec,Vec3 playerPos)
 	{
-		m_targets.clear();//”z—ñ‚Ì‰Šú‰»
-		m_lockOnFlag = false;//ƒtƒ‰ƒO‚Ì‰Šú‰»
+		m_targets.clear();//é…åˆ—ã®åˆæœŸåŒ–
+		m_lockOnFlag = false;//ãƒ•ãƒ©ã‚°ã®åˆæœŸåŒ–
 		vector<shared_ptr<Enemy>> kariTargetsVec;
 
 		for (auto enemy : enemyVec)
 		{
 			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
 
-			//ƒƒbƒNƒIƒ“”ÍˆÍ‚Ì‰~‚Ì’†‚É‚¢‚é‚©ŒvZ‚·‚é
+			//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ç¯„å›²ã®å††ã®ä¸­ã«ã„ã‚‹ã‹è¨ˆç®—ã™ã‚‹
 			float targetRange = (enemyPos.x - playerPos.x) * (enemyPos.x - playerPos.x) +
 				(enemyPos.z - playerPos.z) * (enemyPos.z - playerPos.z);
 			float radiusRange = m_targetRange * m_targetRange;
 
-			//ƒƒbƒNƒIƒ“Œó•â‚È‚ç”z—ñ‚ÉƒIƒuƒWƒFƒNƒg‚ÆPos‚ğ“ü‚ê‚é
+			//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œãªã‚‰é…åˆ—ã«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨Posã‚’å…¥ã‚Œã‚‹
 			if (targetRange <= radiusRange)
 			{
-				if (!enemy->FindTag(L"ƒƒbƒNƒIƒ“Œó•â"))
+				if (!enemy->FindTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œ"))
 				{
 					m_stage->AddGameObject<LockOnLook>(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), enemy, Vec3(0.0f, 4.0f, 0.0f));
 				}
 
-				m_targetsPos.push_back(enemyPos);//ƒƒbƒNƒIƒ“Œó•â‚ÌPos‚ğ”z—ñ‚É“ü‚ê‚é
+				m_targetsPos.push_back(enemyPos);//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã®Posã‚’é…åˆ—ã«å…¥ã‚Œã‚‹
 				m_targets.push_back(enemy);
-				enemy->AddTag(L"ƒƒbƒNƒIƒ“Œó•â");//ƒƒbƒNƒIƒ“Œó•â‚Ìƒ^ƒO’Ç‰Á
-				m_lockOnFlag = true;//ƒƒbƒNƒIƒ“g—p‰Â”\
+				enemy->AddTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œ");//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã®ã‚¿ã‚°è¿½åŠ 
+				m_lockOnFlag = true;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ä½¿ç”¨å¯èƒ½
 			}
-			else if (enemy->FindTag(L"ƒƒbƒNƒIƒ“Œó•â"))//ƒƒbƒNƒIƒ“Œó•â‚©‚çŠO‚ê‚½‚Ì‚ªƒƒbƒNƒIƒ“‘ÎÛ‚È‚çƒƒbƒNƒIƒ“‚ğ‚â‚ß‚é
+			else if (enemy->FindTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œ"))//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã‹ã‚‰å¤–ã‚ŒãŸã®ãŒãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ãªã‚‰ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã‚’ã‚„ã‚ã‚‹
 			{
-				enemy->RemoveTag(L"ƒƒbƒNƒIƒ“Œó•â");
-				if (enemy->FindTag(L"ƒƒbƒNƒIƒ“‘ÎÛ"))
+				enemy->RemoveTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œ");
+				if (enemy->FindTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡"))
 				{
-					LockOff(enemyVec);//ƒƒbƒNƒIƒ“‚Ì‰ğœ
+					LockOff(enemyVec);//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®è§£é™¤
 				}
 			}
 
@@ -289,86 +452,88 @@ namespace basecross {
 
 	}
 
-	//ƒƒbƒNƒIƒ“‹@”\ ‘ÎÛ‚ÌƒIƒuƒWƒFƒNƒg‚ğ’†S“_‚Æ‚·‚é
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³æ©Ÿèƒ½ å¯¾è±¡ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä¸­å¿ƒç‚¹ã¨ã™ã‚‹
 	void CameraManager::LockOn(shared_ptr<GameObject> lockOnObj,shared_ptr<Player> originObj)
 	{
 		Vec3 lockOnPos = lockOnObj->GetComponent<Transform>()->GetPosition();
 		Vec3 originPos = originObj->GetComponent<Transform>()->GetPosition();
 
-		//ƒƒbƒNƒIƒ“‘ÎÛ‚ğPlayer‚Ì‹——£ƒxƒNƒgƒ‹‚ğ‘ª‚Á‚ÄŠp“xæ“¾
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã‚’Playerã®è·é›¢ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ¸¬ã£ã¦è§’åº¦å–å¾—
 		Vec3 lockOnVec = lockOnPos - originPos;
 		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
 
-		//ŒvZ‚µ‚½Šp“x‚ğ“ü‚ê‚ÄƒJƒƒ‰‚ğù‰ñ‚³‚¹‚é
-		m_cameraAngle = m_targetRad + XMConvertToRadians(180.0f);
-		m_lockStageCamera->SetAt(lockOnPos);
+		//è¨ˆç®—ã—ãŸè§’åº¦ã‚’å…¥ã‚Œã¦ã‚«ãƒ¡ãƒ©ã‚’æ—‹å›ã•ã›ã‚‹
+		//m_cameraAngleY = m_targetRad + XMConvertToRadians(180.0f);
+		MoveAngle(m_targetRad + XMConvertToRadians(180.0f), 1);
+		//m_lockStageCamera->SetAt(lockOnPos);
+		MoveLockAt(lockOnPos);//æ³¨è¦–ç‚¹ç§»å‹•
 	}
 
-	//ƒƒbƒNƒIƒ“‚Ì‰ğœ‹@”\
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®è§£é™¤æ©Ÿèƒ½
 	void CameraManager::LockOff(vector<shared_ptr<Enemy>> enemyVec)
 	{
-		m_targetObj->RemoveTag(L"ƒƒbƒNƒIƒ“‘ÎÛ");
-		m_lockOnFlag = false;//ƒƒbƒNƒIƒ“‚Å‚«‚È‚¢
-		m_lockOnUse = false;//ƒƒbƒNƒIƒ“‚µ‚È‚¢
+		m_targetObj->RemoveTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡");
+		m_lockOnFlag = false;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã§ããªã„
+		m_lockOnUse = false;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã—ãªã„
 		m_lockOnNum = -1;
 		m_targetObj = NULL;
 	}
 
-	//ƒƒbƒNƒIƒ“Œó•â‚Ìƒf[ƒ^‚ğXV‚·‚éˆ—
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã®ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°ã™ã‚‹å‡¦ç†
 	void CameraManager::UpdateTargesDeta(Vec3 playerPos)
 	{
-		m_targesDeta.clear();//‰Šú‰»
+		m_targesDeta.clear();//åˆæœŸåŒ–
 
-		//ƒƒbƒNƒIƒ“‚ğØ‚è‘Ö‚¦‚é‚Æ‚«‚ÉƒXƒeƒBƒbƒN‚ğŒX‚¯‚ÄƒƒbƒNƒIƒ“‘ÎÛ‚ğ•ÏX‚·‚éˆ—
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹ã¨ãã«ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’å‚¾ã‘ã¦ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã‚’å¤‰æ›´ã™ã‚‹å‡¦ç†
 		Vec3 targetPos = m_targetObj->GetComponent<Transform>()->GetPosition();
-		//Player‚©‚çŒ©‚ÄƒƒbƒNƒIƒ“‘ÎÛ‚Ì‚¢‚é•ûŒüƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+		//Playerã‹ã‚‰è¦‹ã¦ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã®ã„ã‚‹æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 		Vec3 lockOnVec = targetPos - playerPos;
 
 		for (auto enemy : m_targets)
 		{
 			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
 
-			//Player‚©‚çŒ©‚ÄƒƒbƒNƒIƒ“Œó•â‚Ì‚¢‚é•ûŒüƒxƒNƒgƒ‹‚ğ‹‚ß‚é
+			//Playerã‹ã‚‰è¦‹ã¦ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œã®ã„ã‚‹æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ±‚ã‚ã‚‹
 			Vec3 lockOnCanVec = enemyPos - playerPos;
 
-			//ŠOÏ‚ğ‹‚ß‚é
+			//å¤–ç©ã‚’æ±‚ã‚ã‚‹
 			Vec3 outsideCorner = Vec3(lockOnVec.y * 0.0f - lockOnCanVec.y * 0.0f,//x
 				lockOnVec.z * lockOnCanVec.x - lockOnCanVec.z * lockOnVec.x,//y
 				lockOnVec.x * 0.0f - lockOnCanVec.x * 0.0f//z
 			);
-			//¶‚ªƒ}ƒCƒiƒX‰E‚ªƒvƒ‰ƒX
+			//å·¦ãŒãƒã‚¤ãƒŠã‚¹å³ãŒãƒ—ãƒ©ã‚¹
 			auto cross = outsideCorner.y;
-			//cross‚ª0‚æ‚è‘å‚«‚©‚Á‚½‚çfalse‹t‚É¬‚³‚©‚Á‚½‚çtrue
+			//crossãŒ0ã‚ˆã‚Šå¤§ãã‹ã£ãŸã‚‰falseé€†ã«å°ã•ã‹ã£ãŸã‚‰true
 			int leftOrRight;
 			if (cross < 0) leftOrRight = Left;
 			if (cross > 0) leftOrRight = Right;
 			if (cross == 0) leftOrRight = Middle;
 
-			//‚È‚·Šp‚ğ‹‚ß‚é
+			//ãªã™è§’ã‚’æ±‚ã‚ã‚‹
 			float aSqrt = sqrt((lockOnVec.x * lockOnVec.x) + (lockOnVec.z * lockOnVec.z));
 			float bSqrt = sqrt((lockOnCanVec.x * lockOnCanVec.x) + (lockOnCanVec.z * lockOnCanVec.z));
-			//Š„‚ç‚ê‚é”’l
+			//å‰²ã‚‰ã‚Œã‚‹æ•°å€¤
 			float divide = (lockOnVec.x * lockOnCanVec.x) + (lockOnVec.z * lockOnCanVec.z);
 
 			auto rad = divide / (aSqrt * bSqrt);
 			auto deg = XMConvertToDegrees(rad);
 
 			targetsDeta targetDeta = targetsDeta(deg, leftOrRight);
-			//ƒvƒŒƒCƒ„[‚©‚çŒ©‚Ä“G‚Ì‚¢‚éŠp“x‚ğ”z—ñ‚É“ü‚ê‚é
+			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰è¦‹ã¦æ•µã®ã„ã‚‹è§’åº¦ã‚’é…åˆ—ã«å…¥ã‚Œã‚‹
 			m_targesDeta.push_back(targetDeta);
 		}
 	}
 
-	//ƒƒbƒNƒIƒ“‘ÎÛ‚ğ•ÏX‚·‚éˆ—
-	//‘æˆêˆø” ‰E‚©¶‚© ‘æ“ñˆø” ƒ^[ƒQƒbƒg‘ÎÛ‚Ì‚È‚·Šp
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã‚’å¤‰æ›´ã™ã‚‹å‡¦ç†
+	//ç¬¬ä¸€å¼•æ•° å³ã‹å·¦ã‹ ç¬¬äºŒå¼•æ•° ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã®ãªã™è§’
 	void CameraManager::ChangeLockOn(int leftOrRight,float targetAngle)
 	{
-		float min = 99999.9f;//Å¬’l
+		float min = 99999.9f;//æœ€å°å€¤
 
-		//ŠOŠp‚Ì·‚ªƒ}ƒCƒiƒX‚Åˆê”Ô‹ß‚¢ƒ^[ƒQƒbƒgŒó•â‚ªƒ^[ƒQƒbƒg‘ÎÛ‚Æ‚È‚é
+		//å¤–è§’ã®å·®ãŒãƒã‚¤ãƒŠã‚¹ã§ä¸€ç•ªè¿‘ã„ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå€™è£œãŒã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã¨ãªã‚‹
 		for (int i = 0; i <= m_targesDeta.size() - 1; i++)
 		{
-			//¡Œ©‚Ä‚¢‚éƒ^[ƒQƒbƒgŒó•â‚ª¶‘¤‚É‚¢‚é‚í‚¯‚Å‚È‚¯‚ê‚Îreturn
+			//ä»Šè¦‹ã¦ã„ã‚‹ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå€™è£œãŒå·¦å´ã«ã„ã‚‹ã‚ã‘ã§ãªã‘ã‚Œã°return
 			if (m_targesDeta[i].leftOrRight != leftOrRight) continue;
 
 			float targetsDeg = XMConvertToDegrees(m_targesDeta[i].lockOnAngle);
@@ -377,72 +542,159 @@ namespace basecross {
 			if (min > difference && difference != 0.0f)
 			{
 				min = difference;
-				m_targetObj->RemoveTag(L"ƒƒbƒNƒIƒ“‘ÎÛ");
+				m_targetObj->RemoveTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡");
 				m_lockOnNum = i;
 				m_lockOnChangeFlag = true;
 			}
 		}
 	}
 
-	//Player‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚Ì‹¾‡‚í‚¹‚É‚È‚é‚æ‚¤‚ÉŠp“x‚ğ•ÏX‚·‚é
+	//Playerã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®é¡åˆã‚ã›ã«ãªã‚‹ã‚ˆã†ã«è§’åº¦ã‚’å¤‰æ›´ã™ã‚‹
 	void CameraManager::MovePlayerAngle(float playerAngle)
 	{
-		m_cameraAngle = -playerAngle + XMConvertToRadians(180.0f);
+		//m_cameraAngleY = -playerAngle + XMConvertToRadians(180.0f);
+		//auto targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+		bool Movechage = false;
+		Movechage = MoveAngle(playerAngle, 1);//è§’åº¦ã‚’ç§»å‹•ã•ã›ã‚‹
+
+		//ç§»å‹•ãŒçµ‚ã‚ã£ãŸã®ã§ãƒ•ãƒ©ã‚°ã‚’falseã«ã™ã‚‹
+		if (Movechage) m_movePlayerAngleFlag = false;
 	}
 
-	//Šp“x‚Ì’²®0~360“x‚Ü‚Å‚µ‚©o‚È‚¢‚æ‚¤‚É‚·‚é
+	//æ³¨è¦–ç‚¹ã®ç§»å‹•å‡¦ç†
+	void CameraManager::MoveLockAt(Vec3 targetPos)
+	{
+		auto lockAt = m_lockStageCamera->GetAt();
+		auto lockAtVec = targetPos - lockAt;
+		float lockAtSpeed = 30.0f;
+
+		//æ³¨è¦–ç‚¹ãŒæ—¢ã«ç›®æ¨™ã‚’ç¤ºã—ã¦ã„ãŸã‚‰å‹•ã‹ãªã„
+		if (lockAtVec == Vec3(0.0f,0.0f,0.0f)) return;
+
+		//Xåº§æ¨™
+		if (lockAtVec.x > 0)//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã¨ã
+		{
+			lockAt.x += lockAtSpeed * m_delta;
+			//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆPosã¨åŒã˜ã«ã™ã‚‹
+			if (lockAt.x > targetPos.x)
+			{
+				lockAt.x = targetPos.x;
+			}
+		}
+		else if (lockAtVec.x < 0)
+		{
+			lockAt.x -= lockAtSpeed * m_delta;
+			//ãƒã‚¤ãƒŠã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆPosã¨åŒã˜ã«ã™ã‚‹
+			if (lockAt.x < targetPos.x)
+			{
+				lockAt.x = targetPos.x;
+			}
+		}
+
+		//Yåº§æ¨™
+		if (lockAtVec.y > 0)//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã¨ã
+		{
+			lockAt.y += lockAtSpeed * m_delta;
+			//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆPosã¨åŒã˜ã«ã™ã‚‹
+			if (lockAt.y > targetPos.y)
+			{
+				lockAt.y = targetPos.y;
+			}
+		}
+		else if (lockAtVec.y < 0)
+		{
+			lockAt.y -= lockAtSpeed * m_delta;
+			//ãƒã‚¤ãƒŠã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆPosã¨åŒã˜ã«ã™ã‚‹
+			if (lockAt.y < targetPos.y)
+			{
+				lockAt.y = targetPos.y;
+			}
+		}
+
+		//Zåº§æ¨™
+		if (lockAtVec.z > 0)//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã¨ã
+		{
+			lockAt.z += lockAtSpeed * m_delta;
+			//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆPosã¨åŒã˜ã«ã™ã‚‹
+			if (lockAt.z > targetPos.z)
+			{
+				lockAt.z = targetPos.z;
+			}
+		}
+		else if (lockAtVec.z < 0)
+		{
+			lockAt.z -= lockAtSpeed * m_delta;
+			//ãƒã‚¤ãƒŠã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆPosã¨åŒã˜ã«ã™ã‚‹
+			if (lockAt.z < targetPos.z)
+			{
+				lockAt.z = targetPos.z;
+			}
+		}
+
+		//æ³¨è¦–ç‚¹ç§»å‹•å‡¦ç†
+		m_lockStageCamera->SetAt(lockAt);
+	}
+
+	//å›è»¢åº¦ã®ç§»å‹•å‡¦ç†//ã“ã“ã‚’ä½œæ¥­ã™ã‚‹
+	//ç¬¬ä¸€å¼•æ•° å‘ããŸã„ç›®æ¨™è§’åº¦ ç¬¬äºŒå¼•æ•°ã€€ã©ã®è»¸ã§ç§»å‹•ã™ã‚‹ã‹(XãŒ0YãŒ1) æˆ»ã‚Šå€¤ ç§»å‹•å‡¦ç†ãŒçµ‚ã‚ã£ãŸã‹
+	bool CameraManager::MoveAngle(float targetAngle,int XorY)
+	{
+		//Yè»¸
+		auto angleNow = m_cameraAngleY;
+		auto addAngleSpeed = 10.0f;
+		auto angleDifference = targetAngle - angleNow;
+		//è§’åº¦ã®å·®ãŒ181ä»¥ä¸Šãªã‚‰ãƒã‚¤ãƒŠã‚¹ã«ã—ã¦è¨ˆç®—ã—ãŸã»ã†ãŒé€²ã‚€æ–¹å‘ã¨ã—ã¦æ—©ã„
+		if (angleDifference >= XMConvertToRadians(181.0f))
+		{
+			targetAngle -= XMConvertToRadians(360.0f);
+			angleDifference = targetAngle - angleNow;
+		}
+		if (angleDifference <= XMConvertToRadians(-181.0f))
+		{
+			targetAngle += XMConvertToRadians(360.0f);
+			angleDifference = targetAngle - angleNow;
+		}
+
+		if (angleDifference > 0)//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã¨ã
+		{
+			m_cameraAngleY += addAngleSpeed * m_delta;
+			//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®è§’åº¦ã¨åŒã˜ã«ã™ã‚‹
+			if (m_cameraAngleY > targetAngle)
+			{
+				m_cameraAngleY = targetAngle;
+				return true;//ç§»å‹•å®Œäº†ã—ãŸã“ã¨ã‚’çŸ¥ã‚‰ã›ã‚‹
+			}
+		}
+		else if (angleDifference < 0)//ãƒã‚¤ãƒŠã‚¹æ–¹å‘ã«è¡Œãã¨ã
+		{
+			m_cameraAngleY -= addAngleSpeed * m_delta;
+			//ãƒ—ãƒ©ã‚¹æ–¹å‘ã«è¡Œãã™ããŸã‚‰ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®è§’åº¦ã¨åŒã˜ã«ã™ã‚‹
+			if (m_cameraAngleY < targetAngle)
+			{
+				m_cameraAngleY = targetAngle;
+				return true;//ç§»å‹•å®Œäº†ã—ãŸã“ã¨ã‚’çŸ¥ã‚‰ã›ã‚‹
+			}
+		}
+
+		//ç§»å‹•å®Œäº†ã—ã¦ãªã„ã“ã¨ã‚’çŸ¥ã‚‰ã›ã‚‹
+		return false;
+	}
+
+	//è§’åº¦ã®èª¿æ•´0~360åº¦ã¾ã§ã—ã‹å‡ºãªã„ã‚ˆã†ã«ã™ã‚‹
 	void CameraManager::AdjustmentAngle()
 	{
-		if (m_cameraAngle >= XMConvertToRadians(360.0f))
+		if (m_cameraAngleY >= XMConvertToRadians(360.0f))
 		{
-			m_cameraAngle -= XMConvertToRadians(360.0f);
+			m_cameraAngleY -= XMConvertToRadians(360.0f);
 		}
-		else if (m_cameraAngle < XMConvertToRadians(0.0f))
+		else if (m_cameraAngleY < XMConvertToRadians(0.0f))
 		{
-			m_cameraAngle += XMConvertToRadians(360.0f);
+			m_cameraAngleY += XMConvertToRadians(360.0f);
 		}
 	}
 
-
-
-	//ƒJƒƒ‰‚ÌƒŒƒCƒLƒƒƒXƒg—p
-	CameraRayCast::CameraRayCast(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
-		ObjectMove(stagePtr),
-		m_pos(pos),
-		m_rot(rot),
-		m_scale(scale)
-	{
-
-	}
-	CameraRayCast::~CameraRayCast()
-	{
-
-	}
-
-	void CameraRayCast::OnCreate()
-	{
-		//Transformİ’è
-		auto m_trans = GetComponent<Transform>();
-		m_trans->SetPosition(m_pos);
-		m_trans->SetRotation(m_rot);
-		m_trans->SetScale(m_scale);
-
-		//ƒhƒ[ƒƒbƒVƒ…‚Ìİ’è
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-		ptrDraw->SetTextureResource(L"StoneBrick");
-		//ptrDraw->SetDiffuse(m_color);
-		//ptrDraw->SetOwnShadowActive(false);//‰e‚ÍÁ‚·
-		ptrDraw->SetDrawActive(true);
-
-	}
-	void CameraRayCast::OnUpdate()
-	{
-
-	}
-
-	//ƒƒbƒNƒIƒ“”ÍˆÍ‚ğ’m‚ç‚¹‚é‚½‚ß‚ÌƒIƒuƒWƒFƒNƒg
-	//‘æˆêˆø”@ƒƒbƒNƒIƒ“—LŒø”ÍˆÍ,‘æ“ñˆø”@ƒƒbƒNƒIƒ“”ÍˆÍ‚Ì’†S‚Æ‚È‚éƒIƒuƒWƒFƒNƒg
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ç¯„å›²ã‚’çŸ¥ã‚‰ã›ã‚‹ãŸã‚ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	//ç¬¬ä¸€å¼•æ•°ã€€ãƒ­ãƒƒã‚¯ã‚ªãƒ³æœ‰åŠ¹ç¯„å›²,ç¬¬äºŒå¼•æ•°ã€€ãƒ­ãƒƒã‚¯ã‚ªãƒ³ç¯„å›²ã®ä¸­å¿ƒã¨ãªã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	LockOnRange::LockOnRange(const shared_ptr<Stage>& stagePtr,float range,shared_ptr<Player> player):
 		ObjectMove(stagePtr),
 		m_pos(Vec3(0.0f)),
@@ -460,16 +712,16 @@ namespace basecross {
 
 	void LockOnRange::OnCreate()
 	{
-		//Transformİ’è
+		//Transformè¨­å®š
 		m_trans = GetComponent<Transform>();
 		m_trans->SetPosition(m_pos);
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		//ƒhƒ[ƒƒbƒVƒ…‚Ìİ’è
+		//ãƒ‰ãƒ­ãƒ¼ãƒ¡ãƒƒã‚·ãƒ¥ã®è¨­å®š
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
-		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		m_ptrDraw->SetOwnShadowActive(false);//‰e‚ÍÁ‚·
+		//m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetOwnShadowActive(false);//å½±ã¯æ¶ˆã™
 		m_ptrDraw->SetDrawActive(true);
 
 	}
@@ -480,14 +732,15 @@ namespace basecross {
 		auto stage = GetStage();
 		auto playerLock = m_player.lock();
 
-		//Player‚ªÁ‚¦‚Ä‚¢‚½‚ç©•ª‚àÁ‚¦‚é
+		//PlayerãŒæ¶ˆãˆã¦ã„ãŸã‚‰è‡ªåˆ†ã‚‚æ¶ˆãˆã‚‹
 		if (!playerLock)
 		{
 			GetStage()->RemoveGameObject<LockOnRange>(GetThis<LockOnRange>());
 			return;
 		}
+		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
-		//‚¢‚Â‚àPlayer‚É‚Â‚¢‚Ä‚¢‚­‚æ‚¤‚É‚·‚é
+		//ã„ã¤ã‚‚Playerã«ã¤ã„ã¦ã„ãã‚ˆã†ã«ã™ã‚‹
 		Vec3 PlayerPos = playerLock->GetComponent<Transform>()->GetPosition();
 		m_pos = PlayerPos;
 		m_pos.y = PlayerPos.y - 0.5f;
@@ -495,7 +748,7 @@ namespace basecross {
 		
 	}
 
-	//ƒƒbƒNƒIƒ“‚µ‚Ä‚¢‚é‘ÎÛ‚ğ•ª‚©‚é‚æ‚¤‚É‚·‚éˆ—
+	//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã—ã¦ã„ã‚‹å¯¾è±¡ã‚’åˆ†ã‹ã‚‹ã‚ˆã†ã«ã™ã‚‹å‡¦ç†
 	LockOnLook::LockOnLook(const shared_ptr<Stage>& stagePtr,Vec3 rot, Vec3 scale,weak_ptr<Actor> parentObj,Vec3 pushPos) :
 		ObjectMove(stagePtr),
 		m_rot(rot),
@@ -523,57 +776,57 @@ namespace basecross {
 			Vec3(0.0f, 0.0f, 0.0f)
 		);
 
-		//Transformİ’è
+		//Transformè¨­å®š
 		m_trans = GetComponent<Transform>();
 		m_trans->SetPosition(parentPos);
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		//ƒhƒ[ƒƒbƒVƒ…‚Ìİ’è
+		//ãƒ‰ãƒ­ãƒ¼ãƒ¡ãƒƒã‚·ãƒ¥ã®è¨­å®š
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_CONE");
 		ptrDraw->SetDiffuse(Col4(0.0f,1.0f,0.0f,1.0f));
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		ptrDraw->SetOwnShadowActive(false);//‰e‚ÍÁ‚·
+		ptrDraw->SetOwnShadowActive(false);//å½±ã¯æ¶ˆã™
 		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(Col4(0.0f, 1.0f, 0.0f, 1.0f)); // ©ŒÈ”­ŒõƒJƒ‰[iƒ‰ƒCƒeƒBƒ“ƒO‚É‚æ‚é‰A‰e‚ğÁ‚·Œø‰Ê‚ª‚ ‚éj
+		ptrDraw->SetEmissive(Col4(0.0f, 1.0f, 0.0f, 1.0f)); // è‡ªå·±ç™ºå…‰ã‚«ãƒ©ãƒ¼ï¼ˆãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã«ã‚ˆã‚‹é™°å½±ã‚’æ¶ˆã™åŠ¹æœãŒã‚ã‚‹ï¼‰
 	}
 	void LockOnLook::OnUpdate()
 	{
 		auto parentLock = m_parentObj.lock();
-		//’ÇÕ‘ÎÛ‚ªÁ‚¦‚Ä‚¢‚½‚ç©•ª‚àÁ‚¦‚é
+		//è¿½è·¡å¯¾è±¡ãŒæ¶ˆãˆã¦ã„ãŸã‚‰è‡ªåˆ†ã‚‚æ¶ˆãˆã‚‹
 		if (!parentLock)
 		{
 			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
 			return;
 		}
-		//‚±‚±‚Å’ÇÕ‘ÎÛ‚Ìƒ^ƒO‚ÉƒƒbƒNƒIƒ“‘ÎÛ‚âƒƒbƒNƒIƒ“Œó•â‚È‚Ç‚Ìƒ^ƒO‚ª‚È‚¯‚ê‚ÎÁ‹‚³‚ê‚é
-		if (!parentLock->FindTag(L"ƒƒbƒNƒIƒ“Œó•â"))
+		//ã“ã“ã§è¿½è·¡å¯¾è±¡ã®ã‚¿ã‚°ã«ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã‚„ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œãªã©ã®ã‚¿ã‚°ãŒãªã‘ã‚Œã°æ¶ˆå»ã•ã‚Œã‚‹
+		if (!parentLock->FindTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å€™è£œ"))
 		{
 			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
 			return;
 		}
 
 
-		if (parentLock->FindTag(L"ƒƒbƒNƒIƒ“‘ÎÛ"))
+		if (parentLock->FindTag(L"ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡"))
 		{
 			auto ptrDraw = GetComponent<PNTStaticDraw>();
 			ptrDraw->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));
-			ptrDraw->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 1.0f)); // ©ŒÈ”­ŒõƒJƒ‰[iƒ‰ƒCƒeƒBƒ“ƒO‚É‚æ‚é‰A‰e‚ğÁ‚·Œø‰Ê‚ª‚ ‚éj
+			ptrDraw->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 1.0f)); // è‡ªå·±ç™ºå…‰ã‚«ãƒ©ãƒ¼ï¼ˆãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã«ã‚ˆã‚‹é™°å½±ã‚’æ¶ˆã™åŠ¹æœãŒã‚ã‚‹ï¼‰
 		}
 		else
 		{
 			auto ptrDraw = GetComponent<PNTStaticDraw>();
 			ptrDraw->SetDiffuse(Col4(0.0f, 1.0f, 0.0f, 1.0f));
-			ptrDraw->SetEmissive(Col4(0.0f, 1.0f, 0.0f, 1.0f)); // ©ŒÈ”­ŒõƒJƒ‰[iƒ‰ƒCƒeƒBƒ“ƒO‚É‚æ‚é‰A‰e‚ğÁ‚·Œø‰Ê‚ª‚ ‚éj
+			ptrDraw->SetEmissive(Col4(0.0f, 1.0f, 0.0f, 1.0f)); // è‡ªå·±ç™ºå…‰ã‚«ãƒ©ãƒ¼ï¼ˆãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã«ã‚ˆã‚‹é™°å½±ã‚’æ¶ˆã™åŠ¹æœãŒã‚ã‚‹ï¼‰
 		}
-		//’ÇÕ‘ÎÛ‚Æ“¯‚¶À•W‚É‚¢‚é(PushPos‚Æ‚¢‚¤—áŠO‚ ‚è)
+		//è¿½è·¡å¯¾è±¡ã¨åŒã˜åº§æ¨™ã«ã„ã‚‹(PushPosã¨ã„ã†ä¾‹å¤–ã‚ã‚Š)
 		auto parentPos = parentLock->GetComponent<Transform>()->GetPosition();
 		m_trans->SetPosition(parentPos + m_pushPos);
 	}
 
 
-	//ƒfƒoƒbƒN—p‚Ì‚½‚¾‚ÌlŠp‚¢“z
+	//ãƒ‡ãƒãƒƒã‚¯ç”¨ã®ãŸã ã®å››è§’ã„å¥´
 	Cube::Cube(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot, Vec3 scale,Col4 color) :
 		ObjectNotMove(stagePtr),
 		m_pos(pos),
@@ -590,22 +843,26 @@ namespace basecross {
 
 	void Cube::OnCreate()
 	{
-		//Transformİ’è
+		//Transformè¨­å®š
 		auto m_trans = GetComponent<Transform>();
 		m_trans->SetPosition(m_pos);
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		//ƒhƒ[ƒƒbƒVƒ…‚Ìİ’è
+		//ãƒ‰ãƒ­ãƒ¼ãƒ¡ãƒƒã‚·ãƒ¥ã®è¨­å®š
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 		ptrDraw->SetDiffuse(m_color);
-		ptrDraw->SetOwnShadowActive(false);//‰e‚ÍÁ‚·
+		ptrDraw->SetOwnShadowActive(false);//å½±ã¯æ¶ˆã™
 		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(m_color); // ©ŒÈ”­ŒõƒJƒ‰[iƒ‰ƒCƒeƒBƒ“ƒO‚É‚æ‚é‰A‰e‚ğÁ‚·Œø‰Ê‚ª‚ ‚éj
-		ptrDraw->SetOwnShadowActive(true); // ‰e‚Ì‰f‚è‚İ‚ğ”½‰f‚³‚¹‚é
+		ptrDraw->SetEmissive(m_color); // è‡ªå·±ç™ºå…‰ã‚«ãƒ©ãƒ¼ï¼ˆãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã«ã‚ˆã‚‹é™°å½±ã‚’æ¶ˆã™åŠ¹æœãŒã‚ã‚‹ï¼‰
+		ptrDraw->SetOwnShadowActive(true); // å½±ã®æ˜ ã‚Šè¾¼ã¿ã‚’åæ˜ ã•ã›ã‚‹
 
-		////‰e‚ğ•t‚¯‚é
+		//ãƒ†ã‚¹ãƒˆç”¨ã«ã‚³ãƒªã‚¸ãƒ§ãƒ³ä»˜ã‘ã¾ã—ãŸ
+		//auto ptrCol = AddComponent<CollisionObb>();
+		//ptrCol->SetFixed(true);
+
+		////å½±ã‚’ä»˜ã‘ã‚‹
 		//auto m_ptrShadow = AddComponent<Shadowmap>();
 		//m_ptrShadow->SetMeshResource(L"DEFAULT_CUBE");
 		////m_ptrShadow->SetMeshToTransformMatrix(spanMat);

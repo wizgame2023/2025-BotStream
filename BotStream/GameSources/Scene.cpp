@@ -55,6 +55,27 @@ namespace basecross{
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
+		
+		// UISprite
+		// Gauge
+		strTexture = texPath + L"PlayerGauge.png";
+		app->RegisterTexture(L"PLGauge", strTexture);
+
+		strTexture = texPath + L"PlayerHPMater.png";
+		app->RegisterTexture(L"PLHP", strTexture);
+
+		strTexture = texPath + L"PlayerSPMater.png";
+		app->RegisterTexture(L"PLSP", strTexture);
+
+		// Buttons
+		strTexture = texPath + L"Buttons.png";
+		app->RegisterTexture(L"Buttons", strTexture);
+		
+		// TextSprite
+		strTexture = texPath + L"Texts.png";
+		app->RegisterTexture(L"Texts", strTexture);
+		strTexture = texPath + L"Numbers.png";
+		app->RegisterTexture(L"Numbers", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
 		strTexture = texPath + L"Katana.png";
