@@ -38,7 +38,7 @@ namespace basecross {
 		float m_frictionDynamic = .5f;
 		float m_frictionThreshold = .5f;
 
-		//shared_ptr<AttackCollision> m_AttackCol;
+		shared_ptr<AttackCollision> m_AttackCol;
 		//shared_ptr<State> m_State;
 
 		shared_ptr<LandDetect> m_LandDetect;
@@ -49,6 +49,11 @@ namespace basecross {
 		void SpeedLimit(float multiply);
 		//d—Í
 		void Gravity();
+
+		//UŒ‚‚ğó‚¯‚½‚Ìˆ—(Œp³—p)
+		virtual void OnDamaged() {
+
+		}
 	public:
 		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		~Actor();
