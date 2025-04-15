@@ -8,7 +8,8 @@
 
 namespace basecross {
 	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
-		Actor(stagePtr, pos, rot, scale)
+		Actor(stagePtr, pos, rot, scale),
+		m_dodgeTime(0.0f)
 	{
 
 	}
@@ -48,6 +49,10 @@ namespace basecross {
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
+		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
+		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+
+		m_AttackCol->GetComponent<Transform>()->SetPosition(Vec3(0, 1, 0));
 
 		AddTag(L"Player");//Player用のタグ
 
@@ -71,7 +76,9 @@ namespace basecross {
 		}
 		else {
 			Friction();
-			Jump();
+			//Jump();
+			//Dash();
+			Dodge();
 		}
 
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
@@ -104,6 +111,36 @@ namespace basecross {
 		}
 	}
 
+	//ダッシュ処理
+	void Player::Dash()
+	{
+		// 入力デバイス取得
+		auto inputDevice = App::GetApp()->GetInputDevice();
+		auto controller = inputDevice.GetControlerVec()[0];
+
+		//回避した後にA長押しでダッシュ
+		if (controller.wButtons & XINPUT_GAMEPAD_A && m_dodgeFlag) {
+			m_dashFlag = true;
+		}
+		//ダッシュしている際Aボタンを離したらでダッシュ解除
+		if (controller.wPressedButtons & XINPUT_GAMEPAD_A && m_dashFlag) {
+			m_dashFlag = false;
+		}
+	}
+
+	//回避のフラグを渡す処理
+	void Player::Dodge()
+	{
+		// 入力デバイス取得
+		auto inputDevice = App::GetApp()->GetInputDevice();
+		auto controller = inputDevice.GetControlerVec()[0];
+
+		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
+			m_dodgeFlag = true;//回避した
+		}
+
+	}
+
 	void Player::PlayerMove()
 	{
 		Vec3 move = GetMoveVector();
@@ -113,8 +150,8 @@ namespace basecross {
 		//プレイヤーの向き
 		if (move.length() != 0)
 		{
-			m_angle = -atan2(move.z, move.x);
-			m_rot.y = m_angle;
+			m_angle = atan2(move.z, move.x);
+			m_rot.y = -m_angle;
 
 			m_trans->SetRotation(m_rot);
 		}
@@ -137,8 +174,11 @@ namespace basecross {
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
+		Vec3 totalVec;
 
-		if (abs(stick.x) > m_stickDeadZone || abs(stick.z) > m_stickDeadZone) {
+		//if (abs(stick.x) > m_stickDeadZone || abs(stick.z) > m_stickDeadZone) {
+		if (m_dashFlag || !m_dodgeFlag)//移動処理
+		{
 			auto trans = GetTransform();
 			auto camera = OnGetDrawCamera();
 
@@ -153,19 +193,69 @@ namespace basecross {
 			float frontAngle = atan2(front.z, front.x);
 
 			float totalAngle = frontAngle + moveAngle;
-			Vec3 totalVec = Vec3(cos(totalAngle), 0, sin(totalAngle));
+			totalVec = Vec3(cos(totalAngle), 0, sin(totalAngle));
 			totalVec.normalize();
-			totalVec *= moveSize;
 
-			return totalVec;
+			if (!m_dodgeFlag)//ダッシュ回避処理をしてない時
+			{
+				totalVec *= moveSize;
+			}
+			if (m_dashFlag)//回避してからダッシュをする処理
+			{
+				if (controller.bConnected && controller.wButtons & XINPUT_GAMEPAD_A)
+				{		
+					totalVec *= moveSize * 2.5f;
+				}
+				if (controller.bConnected && controller.wReleasedButtons & XINPUT_GAMEPAD_A)
+				{
+					m_dashFlag = false;
+				}
+
+			}
+
 		}
-		return Vec3(0);
+		//回避処理
+		if (m_dodgeFlag && !m_dashFlag)
+		{
+			//回避処理
+			float timeSpeed = 40.0f;
+			m_dodgeTime += XMConvertToRadians(_delta * timeSpeed);
+
+			//二次関数的な動きで回避行動をする
+			//今は向いている方向に前方回避をする
+			float dodge = 12.0f;
+			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
+			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
+
+			//回避が終わったらダッシュ処理ができる
+			if (m_dodgeTime > XMConvertToRadians(20.0f))
+			{
+				//Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
+				if (controller.bConnected&&controller.wButtons & XINPUT_GAMEPAD_A)
+				{
+					m_dashFlag = true;
+				}
+				else 
+				{
+					m_dodgeTime = 0.0f;
+					m_dodgeFlag = false;//回避処理終了
+				}
+
+			}
+		}
+
+
+		return totalVec;
+		//}	
+
+
+		//return Vec3(0);
 	}
 
 	//Playerの向いている方向のゲッター
 	float Player::GetAngle()
 	{
-		return m_angle;
+		return -m_angle;
 	}
 
 	//Playerの向いている方向のセッター

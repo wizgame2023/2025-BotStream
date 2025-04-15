@@ -1,6 +1,6 @@
 /*!
-@file EnemyState.cpp
-@brief 敵のステート
+@file PlayerState.cpp
+@brief プレイヤーのステート
 */
 
 #include "stdafx.h"
