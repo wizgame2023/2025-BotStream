@@ -55,6 +55,8 @@ namespace basecross{
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
+		app->RegisterTexture(L"Wall", texPath + L"WallTexture.png");
+
 		
 		// UISprite
 		// Gauge
@@ -126,6 +128,10 @@ namespace basecross{
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
+		app->RegisterWav(L"DamageVoice", SoundPath + L"DamageVoice.wav");
+		app->RegisterWav(L"StartVoice", SoundPath + L"StartVoice.wav");
+		app->RegisterWav(L"StatrVoice2", SoundPath + L"StartVoice2.wav");
+		app->RegisterWav(L"Lock-on", SoundPath + L"Lock-on.wav");
 
 	}
 
