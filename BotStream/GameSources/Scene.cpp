@@ -36,7 +36,7 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<StageTuboi>();
+			ResetActiveStage<StageSato>();
 
 		}
 
@@ -76,6 +76,10 @@ namespace basecross{
 		app->RegisterTexture(L"Texts", strTexture);
 		strTexture = texPath + L"Numbers.png";
 		app->RegisterTexture(L"Numbers", strTexture);
+		strTexture = texPath + L"Questions.png";
+		app->RegisterTexture(L"Questions", strTexture);
+		strTexture = texPath + L"Answer.png";
+		app->RegisterTexture(L"Answer", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
 		strTexture = texPath + L"Katana.png";
@@ -101,9 +105,19 @@ namespace basecross{
 		app->RegisterTexture(L"Tx_Boss1", texture);
 
 		// エフェクトの登録
+		// 仮置き--------------------------
 		EffectManager::Instance().RegisterEffect(L"Laser", efkPath + L"Laser01.efk");
 		EffectManager::Instance().RegisterEffect(L"Sword", efkPath + L"Sword.efk");
 		EffectManager::Instance().RegisterEffect(L"Landing", efkPath + L"Landing.efk");
+		// ---------------------------------
+
+		// 本編-----------------------------
+		EffectManager::Instance().RegisterEffect(L"Beam", efkPath + L"beam.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Dodge", efkPath + L"avoidance.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Dash", efkPath + L"dash.efkefc");
+		EffectManager::Instance().RegisterEffect(L"PathBullet", efkPath + L"guntrajectory.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
+		// ---------------------------------
 
 		//BGM
 		app->RegisterWav(L"Title", SoundPath + L"Title.wav");
