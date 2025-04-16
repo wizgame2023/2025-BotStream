@@ -36,6 +36,12 @@ namespace basecross {
 		//着地判定の生成、子オブジェクトにする
 		m_LandDetect = stage->AddGameObject<LandDetect>();
 		m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+
+		//攻撃判定の生成
+		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
+		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+
+
 	}
 
 	void Actor::OnUpdate() {
@@ -85,6 +91,23 @@ namespace basecross {
 	//重力
 	void Actor::Gravity() {
 		m_velocity.y += m_gravity * _delta;
+	}
+
+	//OnCollisionEnterに置く
+	void Actor::DetectBeingAttacked(shared_ptr<GameObject>& other) {
+		bool isAttacked = false;
+		auto atk = dynamic_pointer_cast<AttackCollision>(other);
+		HitInfo info = atk->GetHitInfo();
+
+		isAttacked = isAttacked | FindTag(L"Enemy") && info.Type == AttackType::Player;
+		isAttacked = isAttacked | FindTag(L"Player") && info.Type == AttackType::Enemy;
+		if (isAttacked) {
+			//攻撃判定から攻撃のデータを取得
+			m_GetHitInfo = info;
+
+			//被弾処理へ
+			OnDamaged();
+		}
 	}
 
 }
