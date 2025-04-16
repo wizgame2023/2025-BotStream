@@ -20,7 +20,7 @@ namespace basecross {
 		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
 		
 		//移動処理
-		Vec3 move = m_player->GetMoveVector();
+		Vec3 move = m_player->GetMoveVector(PlayerState_Walk);
 		m_player->PlayerMove(PlayerState_Walk);
 
 		//歩きアニメーション再生
@@ -66,7 +66,7 @@ namespace basecross {
 		m_controller = inputDevice.GetControlerVec()[0];
 
 		//移動処理
-		Vec3 move = m_player->GetMoveVector();
+		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
 		m_player->PlayerMove(PlayerState_Dodge);
 
 		bool dodgeFlag = m_player->GetDodgeFlag();
@@ -78,10 +78,6 @@ namespace basecross {
 	}
 	void PlayerDodgeState::Exit(int a)//終了処理
 	{
-		//// 入力デバイス取得
-		//auto inputDevice = App::GetApp()->GetInputDevice();
-		//auto controller = inputDevice.GetControlerVec()[0];
-
 		//ダッシュステートにするか歩くステートにするか
 		if (m_controller.wButtons & XINPUT_GAMEPAD_A)
 		{
@@ -91,7 +87,6 @@ namespace basecross {
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
-
 	}
 
 	//ダッシュステート
@@ -106,7 +101,7 @@ namespace basecross {
 		auto controller = inputDevice.GetControlerVec()[0];
 
 		//移動処理
-		Vec3 move = m_player->GetMoveVector();
+		Vec3 move = m_player->GetMoveVector(PlayerState_Dash);
 		m_player->PlayerMove(PlayerState_Dash);
 
 		//歩きアニメーション再生
