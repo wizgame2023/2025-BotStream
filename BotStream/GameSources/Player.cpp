@@ -1,6 +1,6 @@
 /*!
 @file Player.cpp
-@brief ƒvƒŒƒCƒ„[‚È‚ÇÀ‘Ì
+@brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãªã©å®Ÿä½“
 */
 
 #include "stdafx.h"
@@ -18,11 +18,11 @@ namespace basecross {
 
 	}
 
-	//ì¬
+	//ä½œæˆ
 	void Player::OnCreate()
 	{
 		Actor::OnCreate();
-		//Transformİ’è
+		//Transformè¨­å®š
 		m_trans = GetComponent<Transform>();
 		m_trans->SetPosition(m_pos);
 		m_trans->SetRotation(m_rot);
@@ -36,20 +36,21 @@ namespace basecross {
 			Vec3(0.0f, 0.0f, 0.0f)
 		);
 
-		//ƒhƒ[ƒƒbƒVƒ…‚Ìİ’è
+		//ãƒ‰ãƒ­ãƒ¼ãƒ¡ãƒƒã‚·ãƒ¥ã®è¨­å®š
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"Spearmen");//‰¼‚ÌƒƒbƒVƒ…
-		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//•à‚«ó‘Ô
-		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//•à‚«ó‘Ô
+		ptrDraw->SetMultiMeshResource(L"Spearmen");//ä»®ã®ãƒ¡ãƒƒã‚·ãƒ¥
+		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//æ­©ãçŠ¶æ…‹
+		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//æ­©ãçŠ¶æ…‹
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetTextureResource(L"SpearmenTexture");
 
-		//ƒRƒŠƒWƒ‡ƒ“ì¬
-		auto ptrColl = AddComponent<CollisionSphere>();//ƒRƒŠƒWƒ‡ƒ“ƒXƒtƒBƒA‚Ì•û‚ª•Ç‚É‚Ô‚Â‚©‚é”»’è‚Éˆá˜aŠ´‚ª‚È‚¢
+		//ã‚³ãƒªã‚¸ãƒ§ãƒ³ä½œæˆ
+		auto ptrColl = AddComponent<CollisionSphere>();//ã‚³ãƒªã‚¸ãƒ§ãƒ³ã‚¹ãƒ•ã‚£ã‚¢ã®æ–¹ãŒå£ã«ã¶ã¤ã‹ã‚‹åˆ¤å®šã«é•å’Œæ„ŸãŒãªã„
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
-		AddTag(L"Player");//Player—p‚Ìƒ^ƒO
+		AddTag(L"Player");//Playerç”¨ã®ã‚¿ã‚°
+		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 	}
 
 	void Player::OnUpdate()
@@ -58,13 +59,17 @@ namespace basecross {
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 
-		//“®‚­ˆ—(‰¼)
-		PlayerMove();
+		//ã‚¹ãƒ†ãƒ¼ãƒˆå‡¦ç†
+		m_stateMachine->Update();
+		//m_stateMachine->ChangeState(L"Walk");//ã‚¹ãƒ†ãƒ¼ãƒˆå¤‰æ›´
 
-		//’…’n”»’è(–³Œø‰»ŠÔ’†‚È‚ç‚»‚ê‚ğŒ¸Z‚·‚é)
+		//å‹•ãå‡¦ç†(ä»®)
+		//PlayerMove();
+
+		//ç€åœ°åˆ¤å®š(ç„¡åŠ¹åŒ–æ™‚é–“ä¸­ãªã‚‰ãã‚Œã‚’æ¸›ç®—ã™ã‚‹)
 		OnLanding();
 
-		//ˆ—
+		//å‡¦ç†
 		if (!m_isLand) {
 			Gravity();
 		}
@@ -75,26 +80,26 @@ namespace basecross {
 			Dodge();
 		}
 
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
+		//}
 
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		{
-			EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+		//{
+		//	EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
+		//}
 
-		//ƒfƒoƒbƒN—p•¶š—ñ
+		//ãƒ‡ãƒãƒƒã‚¯ç”¨æ–‡å­—åˆ—
 		DebugLog();
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
-		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
+		//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
+		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
 	void Player::Jump() {
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 
@@ -105,43 +110,50 @@ namespace basecross {
 		}
 	}
 
-	//ƒ_ƒbƒVƒ…ˆ—
+	//ã‚¹ãƒ†ãƒ¼ãƒˆå¤‰æ›´å‡¦ç† å¼•æ•°ã«å…¥ã‚ŒãŸã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
+	void Player::ChangeState(wstring stateName)
+	{
+		m_stateMachine->ChangeState(stateName);
+	}
+
+	//ãƒ€ãƒƒã‚·ãƒ¥å‡¦ç†
 	void Player::Dash()
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 
-		//‰ñ”ğ‚µ‚½Œã‚ÉA’·‰Ÿ‚µ‚Åƒ_ƒbƒVƒ…
+		//å›é¿ã—ãŸå¾Œã«Aé•·æŠ¼ã—ã§ãƒ€ãƒƒã‚·ãƒ¥
 		if (controller.wButtons & XINPUT_GAMEPAD_A && m_dodgeFlag) {
 			m_dashFlag = true;
 		}
-		//ƒ_ƒbƒVƒ…‚µ‚Ä‚¢‚éÛAƒ{ƒ^ƒ“‚ğ—£‚µ‚½‚ç‚Åƒ_ƒbƒVƒ…‰ğœ
+		//ãƒ€ãƒƒã‚·ãƒ¥ã—ã¦ã„ã‚‹éš›Aãƒœã‚¿ãƒ³ã‚’é›¢ã—ãŸã‚‰ã§ãƒ€ãƒƒã‚·ãƒ¥è§£é™¤
 		if (controller.wPressedButtons & XINPUT_GAMEPAD_A && m_dashFlag) {
 			m_dashFlag = false;
 		}
 	}
 
-	//‰ñ”ğ‚Ìƒtƒ‰ƒO‚ğ“n‚·ˆ—
+	//å›é¿ã®ãƒ•ãƒ©ã‚°ã‚’æ¸¡ã™å‡¦ç†
 	void Player::Dodge()
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 
 		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
-			m_dodgeFlag = true;//‰ñ”ğ‚µ‚½
+			m_dodgeFlag = true;//å›é¿ã—ãŸ
 		}
 
 	}
 
-	void Player::PlayerMove()
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•å‡¦ç†
+	void Player::PlayerMove(int playerState)
 	{
-		Vec3 move = GetMoveVector();
+		Vec3 move = GetMoveVector(playerState);
 		m_accel = move * m_baseAccel;
 		m_velocity += move;
 
-		//ƒvƒŒƒCƒ„[‚ÌŒü‚«
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ã
 		if (move.length() != 0)
 		{
 			m_angle = atan2(move.z, move.x);
@@ -150,37 +162,28 @@ namespace basecross {
 			m_trans->SetRotation(m_rot);
 		}
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
-		if (move.length() != 0)
-		{
-			ChangeAnim(L"Walk");
-		}
-		else {
-			ChangeAnim(L"Idle");
-		}
-
 		SpeedLimit(move.length());
-
 	}
 
-	Vec3 Player::GetMoveVector() {
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+	//ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã®è¨ˆç®—å‡¦ç†
+	Vec3 Player::GetMoveVector(int playerState) 
+	{
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
 		Vec3 totalVec;
 
-		//if (abs(stick.x) > m_stickDeadZone || abs(stick.z) > m_stickDeadZone) {
-		if (m_dashFlag || !m_dodgeFlag)//ˆÚ“®ˆ—
+		if (playerState == PlayerState_Walk || playerState == PlayerState_Dash)//å¾’æ­©ã€ãƒ€ãƒƒã‚·ãƒ¥å‡¦ç†
 		{
 			auto trans = GetTransform();
 			auto camera = OnGetDrawCamera();
 
-			//ƒXƒeƒBƒbƒN‚ÌŒü‚«‚Æ‹——£
+			//ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å‘ãã¨è·é›¢
 			float moveSize = stick.length();
 			float moveAngle = atan2(-stick.x, stick.z);
 
-			//©•ª‚ÌˆÊ’u‚ÆƒJƒƒ‰‚ÌˆÊ’u‚©‚çƒJƒƒ‰‚ÌŠp“x‚ğZo
+			//è‡ªåˆ†ã®ä½ç½®ã¨ã‚«ãƒ¡ãƒ©ã®ä½ç½®ã‹ã‚‰ã‚«ãƒ¡ãƒ©ã®è§’åº¦ã‚’ç®—å‡º
 			auto front = trans->GetPosition() - camera->GetEye();
 			front.y = 0;
 			front.normalize();
@@ -190,85 +193,103 @@ namespace basecross {
 			totalVec = Vec3(cos(totalAngle), 0, sin(totalAngle));
 			totalVec.normalize();
 
-			if (!m_dodgeFlag)//ƒ_ƒbƒVƒ…‰ñ”ğˆ—‚ğ‚µ‚Ä‚È‚¢
+			//ã‚¹ãƒ†ãƒ¼ãƒˆã«ã‚ˆã£ã¦ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã®å¤§ãã•ã‚’å¤‰ãˆã‚‹
+			switch (playerState)
 			{
+			case PlayerState_Walk:
 				totalVec *= moveSize;
-			}
-			if (m_dashFlag)//‰ñ”ğ‚µ‚Ä‚©‚çƒ_ƒbƒVƒ…‚ğ‚·‚éˆ—
-			{
-				if (controller.bConnected && controller.wButtons & XINPUT_GAMEPAD_A)
-				{		
-					totalVec *= moveSize * 2.5f;
-				}
-				if (controller.bConnected && controller.wReleasedButtons & XINPUT_GAMEPAD_A)
-				{
-					m_dashFlag = false;
-				}
-
+				break;
+			case PlayerState_Dash:
+				totalVec *= moveSize * 2.5f;
+				break;
+			default:
+				break;
 			}
 
 		}
-		//‰ñ”ğˆ—
-		if (m_dodgeFlag && !m_dashFlag)
+		//å›é¿å‡¦ç†
+		if (playerState == PlayerState_Dodge)
 		{
-			//‰ñ”ğˆ—
-			float timeSpeed = 40.0f;
+			//å›é¿å‡¦ç†
+			float timeSpeed = 80.0f;
 			m_dodgeTime += XMConvertToRadians(_delta * timeSpeed);
 
-			//“ñŸŠÖ”“I‚È“®‚«‚Å‰ñ”ğs“®‚ğ‚·‚é
-			//¡‚ÍŒü‚¢‚Ä‚¢‚é•ûŒü‚É‘O•û‰ñ”ğ‚ğ‚·‚é
-			float dodge = 12.0f;
+			//äºŒæ¬¡é–¢æ•°çš„ãªå‹•ãã§å›é¿è¡Œå‹•ã‚’ã™ã‚‹
+			//ä»Šã¯å‘ã„ã¦ã„ã‚‹æ–¹å‘ã«å‰æ–¹å›é¿ã‚’ã™ã‚‹
+			float dodge = 8.0f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
-			//‰ñ”ğ‚ªI‚í‚Á‚½‚çƒ_ƒbƒVƒ…ˆ—‚ª‚Å‚«‚é
+			//å›é¿ãŒçµ‚ã‚ã£ãŸã‚‰ãƒ€ãƒƒã‚·ãƒ¥å‡¦ç†ãŒã§ãã‚‹
 			if (m_dodgeTime > XMConvertToRadians(20.0f))
 			{
-				//Aƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‘±‚¯‚éŒÀ‚è‘–‚é‚»‚¤‚Å‚È‚¯‚ê‚Îƒ_ƒbƒVƒ…‰ñ”ğˆ—‚ğ‚µ‚È‚¢
-				if (controller.bConnected&&controller.wButtons & XINPUT_GAMEPAD_A)
+				//Aãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ç¶šã‘ã‚‹é™ã‚Šèµ°ã‚‹ãã†ã§ãªã‘ã‚Œã°ãƒ€ãƒƒã‚·ãƒ¥å›é¿å‡¦ç†ã‚’ã—ãªã„
+				if (controller.bConnected && controller.wButtons & XINPUT_GAMEPAD_A)
 				{
 					m_dashFlag = true;
+					m_dodgeTime = 0.0f;
+					m_dodgeFlag = false;//å›é¿å‡¦ç†çµ‚äº†
 				}
-				else 
+				else
 				{
 					m_dodgeTime = 0.0f;
-					m_dodgeFlag = false;//‰ñ”ğˆ—I—¹
+					m_dodgeFlag = false;//å›é¿å‡¦ç†çµ‚äº†
 				}
 
 			}
 		}
-
-
 		return totalVec;
-		//}	
-
-
-		//return Vec3(0);
 	}
 
-	//Player‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚ÌƒQƒbƒ^[
+	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™å‡¦ç†
+	void Player::AddEffect(int addEffect)
+	{
+		switch (addEffect)
+		{
+		case PlayerEffect_Attack1:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			break;
+		case PlayerEffect_Attack2:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			break;
+		case PlayerEffect_Beam:
+			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			break;
+		default:
+			break;
+		}
+	}
+
+
+	//Playerã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®ã‚²ãƒƒã‚¿ãƒ¼
 	float Player::GetAngle()
 	{
 		return -m_angle;
 	}
 
-	//Player‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚ÌƒZƒbƒ^[
+	//å›é¿ãƒ•ãƒ©ã‚°ã®ã‚²ãƒƒã‚¿ãƒ¼
+	bool Player::GetDodgeFlag()
+	{
+		return m_dodgeFlag;
+	}
+
+	//Playerã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®ã‚»ãƒƒã‚¿ãƒ¼
 	void Player::SetAngle(float angle)
 	{
 		m_angle = angle;
 	}
 
-	//ƒfƒoƒbƒN—p•¶š—ñ•\¦ŠÖ”
+	//ãƒ‡ãƒãƒƒã‚¯ç”¨æ–‡å­—åˆ—è¡¨ç¤ºé–¢æ•°
 	void Player::DebugLog()
 	{
-		// ƒCƒ“ƒvƒbƒgƒfƒoƒCƒXƒIƒuƒWƒFƒNƒg
-		auto inputDevice = App::GetApp()->GetInputDevice(); // —lX‚È“ü—ÍƒfƒoƒCƒX‚ğŠÇ—‚µ‚Ä‚¢‚éƒIƒuƒWƒFƒNƒg‚ğæ“¾
+		// ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ‡ãƒã‚¤ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+		auto inputDevice = App::GetApp()->GetInputDevice(); // æ§˜ã€…ãªå…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹ã‚’ç®¡ç†ã—ã¦ã„ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—
 
-		////ƒfƒoƒbƒN—p
+		////ãƒ‡ãƒãƒƒã‚¯ç”¨
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
-		wss /* << L"ƒfƒoƒbƒO—p•¶š—ñ "*/
+		wss /* << L"ãƒ‡ãƒãƒƒã‚°ç”¨æ–‡å­—åˆ— "*/
 			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
 			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
@@ -278,7 +299,7 @@ namespace basecross {
 		scene->SetDebugString(wss.str());
 	}
 
-	// ƒGƒtƒFƒNƒg‚ÌƒvƒŒƒC
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ—ãƒ¬ã‚¤
 	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate)
 	{
 		rotate.normalize();
@@ -286,6 +307,16 @@ namespace basecross {
 		auto plPos = trans->GetPosition();
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	}
+	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Col4 changeColor)
+	{
+		rotate.normalize();
+		auto trans = GetComponent<Transform>();
+		auto plPos = trans->GetPosition();
+
+		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®è‰²ã‚’å¤‰ãˆã‚‹
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
 
@@ -296,7 +327,7 @@ namespace basecross {
 		}
 		else {
 			if (m_LandDetect->GetLand() != m_isLand) {
-				//’…’n‚µ‚½”»’è
+				//ç€åœ°ã—ãŸåˆ¤å®š
 				if (!m_isLand)
 				{
 					m_velocity.y = 0;

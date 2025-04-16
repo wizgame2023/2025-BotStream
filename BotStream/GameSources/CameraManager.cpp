@@ -869,8 +869,11 @@ namespace basecross {
 
 
 		//ptrDraw->HitTestSkinedMeshSegmentTriangles();
-
 		//ptrDraw->HitT
+	}
+
+	void Cube::OnUpdate()
+	{
 	}
 
 
