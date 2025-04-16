@@ -11,6 +11,17 @@
 namespace basecross{
 	class EfkEffect;
 	class StageSato;
+	enum PlayerState
+	{
+		PlayerState_Walk,
+		PlayerState_Dodge,
+		PlayerState_Dash,
+		PlayerState_Attack1,
+		PlayerState_Attack2,
+		PlayerState_Attack3,
+		PlayerState_AttackEx
+	};
+
 	class Player : public Actor
 	{
 	private:
@@ -52,10 +63,6 @@ namespace basecross{
 		//ステートマシン
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
-		//動く処理
-		void PlayerMove();
-		//スティック操作
-		Vec3 GetMoveVector();
 
 		void Jump();
 
@@ -76,8 +83,19 @@ namespace basecross{
 		void OnCreate()override;//作成
 		void OnUpdate()override;//更新
 
+		void ChangeState(wstring stateName);//ステート変更
+
 		float GetAngle();   //今プレイヤーが向いている方向のゲッター
 		void SetAngle(float angle);	//プレイヤーの向いている方向のセッター
+
+		//プレイヤーの移動処理
+		void PlayerMove(int playerState);
+		//移動ベクトルの計算処理
+		Vec3 GetMoveVector(int playerState);
+
+		//回避フラグのゲッター
+		bool GetDodgeFlag();
+
 
 		shared_ptr<PNTBoneModelDraw> GetBoneModelDraw() {
 			return GetComponent<PNTBoneModelDraw>();
@@ -102,6 +120,7 @@ namespace basecross{
 
 		//デバック用の文字列
 		void DebugLog();
+
 
 	};
 
