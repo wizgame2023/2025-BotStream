@@ -103,7 +103,7 @@ namespace basecross {
 		//ロックオン処理
 		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
-		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
+		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
 
 		//ロックオン候補がいないならロックオンできない＆選択を初期化
@@ -409,11 +409,11 @@ namespace basecross {
 	}
 
 	//ロックオン候補を決める関数
-	void CameraManager::LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec,Vec3 playerPos)
+	void CameraManager::LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec,Vec3 playerPos)
 	{
 		m_targets.clear();//配列の初期化
 		m_lockOnFlag = false;//フラグの初期化
-		vector<shared_ptr<Enemy>> kariTargetsVec;
+		vector<shared_ptr<EnemyBase>> kariTargetsVec;
 
 		for (auto enemy : enemyVec)
 		{
@@ -470,7 +470,7 @@ namespace basecross {
 	}
 
 	//ロックオンの解除機能
-	void CameraManager::LockOff(vector<shared_ptr<Enemy>> enemyVec)
+	void CameraManager::LockOff(vector<shared_ptr<EnemyBase>> enemyVec)
 	{
 		m_targetObj->RemoveTag(L"ロックオン対象");
 		m_lockOnFlag = false;//ロックオンできない

@@ -1,6 +1,6 @@
 /*!
 @file Player.h
-@brief ƒvƒŒƒCƒ„[‚È‚Ç
+@brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãªã©
 */
 
 #pragma once
@@ -34,102 +34,81 @@ namespace basecross{
 	class Player : public Actor
 	{
 	private:
-		//ƒWƒƒƒ“ƒv—Í‚£c
+		//ã‚¸ãƒ£ãƒ³ãƒ—åŠ›ã…â€¦
 		const float m_jumpPower = 18.0f;
-		//Å‚‘¬
+		//æœ€é«˜é€Ÿ
 		const float m_speedMax = 10;
-		//ƒ_ƒbƒVƒ…‚ÌÅ‚‘¬
+		//ãƒ€ãƒƒã‚·ãƒ¥æ™‚ã®æœ€é«˜é€Ÿ
 		const float m_speedMaxDash = 20.0f;
-		//‰Á‘¬“x
+		//åŠ é€Ÿåº¦
 		const float m_baseAccel = 400.0f;
-		//d—Í
+		//é‡åŠ›
 		const float m_gravity = -32.0f;
-		//—‰º‚ÌI’[‘¬“x
+		//è½ä¸‹æ™‚ã®çµ‚ç«¯é€Ÿåº¦
 		const float m_fallTerminal = -120.0f;
-		//–€CŒW”(Ã/“®/Š®‘S’â~)
+		//æ‘©æ“¦ä¿‚æ•°(é™/å‹•/å®Œå…¨åœæ­¢)
 		const float m_friction = .75f;
 		const float m_frictionDynamic = .5f;
 		const float m_frictionThreshold = .5f;
-		//ƒXƒeƒBƒbƒN‚Ìƒfƒbƒhƒ][ƒ“(‚ ‚Æ‚ÅmanagerŒn‚É’u‚­‚©‚à)
+		//ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³(ã‚ã¨ã§managerç³»ã«ç½®ãã‹ã‚‚)
 		float m_stickDeadZone = .1f;
-		//’nã‚É‚¢‚é‚©”Û‚©
+		//åœ°ä¸Šã«ã„ã‚‹ã‹å¦ã‹
 		bool m_isLand = false;
-		//‰ñ”ğ‚µ‚½‚©‚Ìƒtƒ‰ƒO
+		//å›é¿ã—ãŸã‹ã®ãƒ•ãƒ©ã‚°
 		bool m_dodgeFlag = false;
-		//‰ñ”ğŠÔ‚ğ‘ª‚é•Ï”
+		//å›é¿æ™‚é–“ã‚’æ¸¬ã‚‹å¤‰æ•°
 		float m_dodgeTime;
-		//ƒ_ƒbƒVƒ…‚Ìƒtƒ‰ƒO
+		//ãƒ€ãƒƒã‚·ãƒ¥ã®ãƒ•ãƒ©ã‚°
 		bool m_dashFlag = false;
-		//’…’n”»’è‚ğ–³Œø‰»‚·‚éŠÔ
+		//ç€åœ°åˆ¤å®šã‚’ç„¡åŠ¹åŒ–ã™ã‚‹æ™‚é–“
 		float m_disableLandDetect = 0.0f;
 
-		float m_angle;//Player‚ªŒü‚¢‚Ä‚¢‚éŠp“x
+		float m_angle;//PlayerãŒå‘ã„ã¦ã„ã‚‹è§’åº¦
 
-		// ‚Ù‚Ú‚²‚è‰Ÿ‚µ‚¾‚©‚çƒƒ“ƒo[—vŠm”F
+		// ã»ã¼ã”ã‚ŠæŠ¼ã—ã ã‹ã‚‰ãƒ¡ãƒ³ãƒãƒ¼è¦ç¢ºèª
 		//shared_ptr<GameStage> m_Stage;
 		shared_ptr<StageSato> m_Stage;
 
-		//ƒXƒe[ƒgƒ}ƒVƒ“
+		//ã‚¹ãƒ†ãƒ¼ãƒˆãƒã‚·ãƒ³
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
 
 		void Jump();
 
-		//ƒ_ƒbƒVƒ…ˆ—
+		//ãƒ€ãƒƒã‚·ãƒ¥å‡¦ç†
 		void Dash();
 
-		//‰ñ”ğˆ—
+		//å›é¿å‡¦ç†
 		void Dodge();
 
-		// ƒGƒtƒFƒNƒg‚ÌÄ¶
+		// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å†ç”Ÿ
 		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
 		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
-		// ’n–Ê’…’n
+		// åœ°é¢ç€åœ°
 		void OnLanding();
 	public:
 		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale);
 		~Player();
 
-		void OnCreate()override;//ì¬
-		void OnUpdate()override;//XV
+		void OnCreate()override;//ä½œæˆ
+		void OnUpdate()override;//æ›´æ–°
 
-		void ChangeState(wstring stateName);//ƒXƒe[ƒg•ÏX
-		void AddEffect(int addEffect);//ƒGƒtƒFƒNƒg‚ğo‚·ˆ—
+		void ChangeState(wstring stateName);//ã‚¹ãƒ†ãƒ¼ãƒˆå¤‰æ›´
+		void AddEffect(int addEffect);//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™å‡¦ç†
 
-		float GetAngle();   //¡ƒvƒŒƒCƒ„[‚ªŒü‚¢‚Ä‚¢‚é•ûŒü‚ÌƒQƒbƒ^[
-		void SetAngle(float angle);	//ƒvƒŒƒCƒ„[‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚ÌƒZƒbƒ^[
+		float GetAngle();   //ä»Šãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒå‘ã„ã¦ã„ã‚‹æ–¹å‘ã®ã‚²ãƒƒã‚¿ãƒ¼
+		void SetAngle(float angle);	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®ã‚»ãƒƒã‚¿ãƒ¼
 
-		//ƒvƒŒƒCƒ„[‚ÌˆÚ“®ˆ—
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•å‡¦ç†
 		void PlayerMove(int playerState);
-		//ˆÚ“®ƒxƒNƒgƒ‹‚ÌŒvZˆ—
+		//ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã®è¨ˆç®—å‡¦ç†
 		Vec3 GetMoveVector(int playerState);
 
-		//‰ñ”ğƒtƒ‰ƒO‚ÌƒQƒbƒ^[
+		//å›é¿ãƒ•ãƒ©ã‚°ã®ã‚²ãƒƒã‚¿ãƒ¼
 		bool GetDodgeFlag();
 
 
-		shared_ptr<PNTBoneModelDraw> GetBoneModelDraw() {
-			return GetComponent<PNTBoneModelDraw>();
-		}
-		shared_ptr<Transform> GetTransform() {
-			return GetComponent<Transform>();
-		}
-
-		//ƒAƒjƒ[ƒVƒ‡ƒ“•ÏX(¬Œ÷‚µ‚½ê‡true‚ğ•Ô‚·)
-		bool ChangeAnim(wstring anim, bool forceChange = false) {
-			auto drawPtr = GetBoneModelDraw();
-			//Šù‚ÉÄ¶’†‚È‚ç•ÏX‚µ‚È‚¢@forceChange‚Ìê‡‚Í—áŠO
-			if (drawPtr->GetCurrentAnimation() != anim || forceChange)
-			{
-				drawPtr->ChangeCurrentAnimation(anim);
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-
-		//ƒfƒoƒbƒN—p‚Ì•¶š—ñ
+		//ãƒ‡ãƒãƒƒã‚¯ç”¨ã®æ–‡å­—åˆ—
 		void DebugLog();
 
 
