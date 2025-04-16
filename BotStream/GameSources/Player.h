@@ -22,6 +22,15 @@ namespace basecross{
 		PlayerState_AttackEx
 	};
 
+	enum PlayerEffect
+	{
+		PlayerEffect_Attack1,
+		PlayerEffect_Attack2,
+		PlayerEffect_Attack3,
+		PlayerEffect_AttackEx,
+		PlayerEffect_Beam
+	};
+
 	class Player : public Actor
 	{
 	private:
@@ -73,7 +82,8 @@ namespace basecross{
 		void Dodge();
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey,const float rad, const Vec3 rotate);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
 		// 地面着地
 		void OnLanding();
 	public:
@@ -84,6 +94,7 @@ namespace basecross{
 		void OnUpdate()override;//更新
 
 		void ChangeState(wstring stateName);//ステート変更
+		void AddEffect(int addEffect);//エフェクトを出す処理
 
 		float GetAngle();   //今プレイヤーが向いている方向のゲッター
 		void SetAngle(float angle);	//プレイヤーの向いている方向のセッター

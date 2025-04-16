@@ -87,15 +87,15 @@ namespace basecross {
 			Dodge();
 		}
 
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
+		//}
 
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		{
-			EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+		//{
+		//	EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
+		//}
 
 		//デバック用文字列
 		DebugLog();
@@ -248,6 +248,25 @@ namespace basecross {
 		return totalVec;
 	}
 
+	//エフェクトを出す処理
+	void Player::AddEffect(int addEffect)
+	{
+		switch (addEffect)
+		{
+		case PlayerEffect_Attack1:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			break;
+		case PlayerEffect_Attack2:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			break;
+		case PlayerEffect_Beam:
+			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			break;
+		default:
+			break;
+		}
+	}
+
 
 	//Playerの向いている方向のゲッター
 	float Player::GetAngle()
@@ -295,6 +314,16 @@ namespace basecross {
 		auto plPos = trans->GetPosition();
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	}
+	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Col4 changeColor)
+	{
+		rotate.normalize();
+		auto trans = GetComponent<Transform>();
+		auto plPos = trans->GetPosition();
+
+		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
 
