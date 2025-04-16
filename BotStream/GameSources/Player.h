@@ -76,26 +76,6 @@ namespace basecross{
 		float GetAngle();   //今プレイヤーが向いている方向のゲッター
 		void SetAngle(float angle);	//プレイヤーの向いている方向のセッター
 
-		shared_ptr<PNTBoneModelDraw> GetBoneModelDraw() {
-			return GetComponent<PNTBoneModelDraw>();
-		}
-		shared_ptr<Transform> GetTransform() {
-			return GetComponent<Transform>();
-		}
-
-		//アニメーション変更(成功した場合trueを返す)
-		bool ChangeAnim(wstring anim, bool forceChange = false) {
-			auto drawPtr = GetBoneModelDraw();
-			//既に再生中なら変更しない　forceChangeの場合は例外
-			if (drawPtr->GetCurrentAnimation() != anim || forceChange)
-			{
-				drawPtr->ChangeCurrentAnimation(anim);
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
 
 		//デバック用の文字列
 		void DebugLog();

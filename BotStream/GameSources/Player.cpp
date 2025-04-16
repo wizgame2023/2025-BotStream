@@ -49,13 +49,7 @@ namespace basecross {
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
-		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
-		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
-
-		m_AttackCol->GetComponent<Transform>()->SetPosition(Vec3(0, 1, 0));
-
 		AddTag(L"Player");//Player用のタグ
-
 	}
 
 	void Player::OnUpdate()

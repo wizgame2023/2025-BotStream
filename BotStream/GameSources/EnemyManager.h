@@ -13,21 +13,23 @@ namespace basecross {
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体)
-		shared_ptr<Enemy> m_enemies[10];
+		shared_ptr<EnemyBase> m_enemies[10];
+		//ボス
+		shared_ptr<EnemyBase> m_boss;
 	public:
 		EnemyManager(const shared_ptr<Stage>& stagePtr) : 
 			MyGameObject(stagePtr)
 		{
 			//あらかじめ生成
 			for (auto& e : m_enemies) {
-				e = GetStage()->AddGameObject<Enemy>(Vec3(0), Vec3(0), Vec3(0));
+				e = GetStage()->AddGameObject<EnemyBase>(Vec3(0), Vec3(0), Vec3(0));
 			}
 		}
 		~EnemyManager() {}
 
 		//敵の配列を返す(trueならアクティブなもののみ)
-		vector<shared_ptr<Enemy>> GetEnemyVec(bool onlyActives) {
-			vector<shared_ptr<Enemy>> ret;
+		vector<shared_ptr<EnemyBase>> GetEnemyVec(bool onlyActives) {
+			vector<shared_ptr<EnemyBase>> ret;
 			for (auto e : m_enemies) {
 				if (e->GetUsed() || !onlyActives) {
 					ret.push_back(e);
@@ -37,7 +39,7 @@ namespace basecross {
 		}
 
 		//アクティブな敵の中で最も生成順の若いものを返す
-		shared_ptr<Enemy> GetActiveEnemy() {
+		shared_ptr<EnemyBase> GetActiveEnemy() {
 			for (auto e : m_enemies) {
 				if (e->GetUsed() == false) {
 					return e;
@@ -46,7 +48,7 @@ namespace basecross {
 		}
 
 		//番号で指定
-		shared_ptr<Enemy> GetActiveEnemy(int element) {
+		shared_ptr<EnemyBase> GetActiveEnemy(int element) {
 			for (auto e : m_enemies) {
 				if (e->GetUsed() == false) {
 					return e;
