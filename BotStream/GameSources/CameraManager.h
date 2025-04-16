@@ -165,7 +165,7 @@ namespace basecross{
 		Cube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		~Cube();
 		void OnCreate()override;//çÏê¨
-		//void OnUpdate()override;
+		void OnUpdate()override;
 	};
 
 

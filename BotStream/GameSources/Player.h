@@ -11,6 +11,26 @@
 namespace basecross{
 	class EfkEffect;
 	class StageSato;
+	enum PlayerState
+	{
+		PlayerState_Walk,
+		PlayerState_Dodge,
+		PlayerState_Dash,
+		PlayerState_Attack1,
+		PlayerState_Attack2,
+		PlayerState_Attack3,
+		PlayerState_AttackEx
+	};
+
+	enum PlayerEffect
+	{
+		PlayerEffect_Attack1,
+		PlayerEffect_Attack2,
+		PlayerEffect_Attack3,
+		PlayerEffect_AttackEx,
+		PlayerEffect_Beam
+	};
+
 	class Player : public Actor
 	{
 	private:
@@ -49,10 +69,9 @@ namespace basecross{
 		//shared_ptr<GameStage> m_Stage;
 		shared_ptr<StageSato> m_Stage;
 
-		//動く処理
-		void PlayerMove();
-		//スティック操作
-		Vec3 GetMoveVector();
+		//ステートマシン
+		shared_ptr<PlayerStateMachine> m_stateMachine;
+
 
 		void Jump();
 
@@ -63,7 +82,8 @@ namespace basecross{
 		void Dodge();
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey,const float rad, const Vec3 rotate);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
 		// 地面着地
 		void OnLanding();
 	public:
@@ -73,8 +93,20 @@ namespace basecross{
 		void OnCreate()override;//作成
 		void OnUpdate()override;//更新
 
+		void ChangeState(wstring stateName);//ステート変更
+		void AddEffect(int addEffect);//エフェクトを出す処理
+
 		float GetAngle();   //今プレイヤーが向いている方向のゲッター
 		void SetAngle(float angle);	//プレイヤーの向いている方向のセッター
+
+		//プレイヤーの移動処理
+		void PlayerMove(int playerState);
+		//移動ベクトルの計算処理
+		Vec3 GetMoveVector(int playerState);
+
+		//回避フラグのゲッター
+		bool GetDodgeFlag();
+
 
 		shared_ptr<PNTBoneModelDraw> GetBoneModelDraw() {
 			return GetComponent<PNTBoneModelDraw>();
@@ -99,6 +131,7 @@ namespace basecross{
 
 		//デバック用の文字列
 		void DebugLog();
+
 
 	};
 

@@ -56,6 +56,8 @@ namespace basecross {
 
 		AddTag(L"Player");//Player用のタグ
 
+		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
+
 	}
 
 	void Player::OnUpdate()
@@ -64,8 +66,12 @@ namespace basecross {
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 
+		//ステート処理
+		m_stateMachine->Update();
+		//m_stateMachine->ChangeState(L"Walk");//ステート変更
+
 		//動く処理(仮)
-		PlayerMove();
+		//PlayerMove();
 
 		//着地判定(無効化時間中ならそれを減算する)
 		OnLanding();
@@ -81,21 +87,21 @@ namespace basecross {
 			Dodge();
 		}
 
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
+		//}
 
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		{
-			EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+		//{
+		//	EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
+		//}
 
 		//デバック用文字列
 		DebugLog();
 
 		//アニメーション再生
-		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
+		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
@@ -109,6 +115,12 @@ namespace basecross {
 			m_isLand = false;
 			m_disableLandDetect = 1.0f;
 		}
+	}
+
+	//ステート変更処理 引数に入れたステートに変更する
+	void Player::ChangeState(wstring stateName)
+	{
+		m_stateMachine->ChangeState(stateName);
 	}
 
 	//ダッシュ処理
@@ -141,9 +153,10 @@ namespace basecross {
 
 	}
 
-	void Player::PlayerMove()
+	//プレイヤーの移動処理
+	void Player::PlayerMove(int playerState)
 	{
-		Vec3 move = GetMoveVector();
+		Vec3 move = GetMoveVector(playerState);
 		m_accel = move * m_baseAccel;
 		m_velocity += move;
 
@@ -156,28 +169,19 @@ namespace basecross {
 			m_trans->SetRotation(m_rot);
 		}
 
-		//アニメーション再生
-		if (move.length() != 0)
-		{
-			ChangeAnim(L"Walk");
-		}
-		else {
-			ChangeAnim(L"Idle");
-		}
-
 		SpeedLimit(move.length());
-
 	}
 
-	Vec3 Player::GetMoveVector() {
+	//移動ベクトルの計算処理
+	Vec3 Player::GetMoveVector(int playerState) 
+	{
 		// 入力デバイス取得
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		auto controller = inputDevice.GetControlerVec()[0];
 		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
 		Vec3 totalVec;
 
-		//if (abs(stick.x) > m_stickDeadZone || abs(stick.z) > m_stickDeadZone) {
-		if (m_dashFlag || !m_dodgeFlag)//移動処理
+		if (playerState == PlayerState_Walk || playerState == PlayerState_Dash)//徒歩、ダッシュ処理
 		{
 			auto trans = GetTransform();
 			auto camera = OnGetDrawCamera();
@@ -196,34 +200,30 @@ namespace basecross {
 			totalVec = Vec3(cos(totalAngle), 0, sin(totalAngle));
 			totalVec.normalize();
 
-			if (!m_dodgeFlag)//ダッシュ回避処理をしてない時
+			//ステートによって移動ベクトルの大きさを変える
+			switch (playerState)
 			{
+			case PlayerState_Walk:
 				totalVec *= moveSize;
-			}
-			if (m_dashFlag)//回避してからダッシュをする処理
-			{
-				if (controller.bConnected && controller.wButtons & XINPUT_GAMEPAD_A)
-				{		
-					totalVec *= moveSize * 2.5f;
-				}
-				if (controller.bConnected && controller.wReleasedButtons & XINPUT_GAMEPAD_A)
-				{
-					m_dashFlag = false;
-				}
-
+				break;
+			case PlayerState_Dash:
+				totalVec *= moveSize * 2.5f;
+				break;
+			default:
+				break;
 			}
 
 		}
 		//回避処理
-		if (m_dodgeFlag && !m_dashFlag)
+		if (playerState == PlayerState_Dodge)
 		{
 			//回避処理
-			float timeSpeed = 40.0f;
+			float timeSpeed = 80.0f;
 			m_dodgeTime += XMConvertToRadians(_delta * timeSpeed);
 
 			//二次関数的な動きで回避行動をする
 			//今は向いている方向に前方回避をする
-			float dodge = 12.0f;
+			float dodge = 8.0f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
@@ -231,11 +231,13 @@ namespace basecross {
 			if (m_dodgeTime > XMConvertToRadians(20.0f))
 			{
 				//Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
-				if (controller.bConnected&&controller.wButtons & XINPUT_GAMEPAD_A)
+				if (controller.bConnected && controller.wButtons & XINPUT_GAMEPAD_A)
 				{
 					m_dashFlag = true;
+					m_dodgeTime = 0.0f;
+					m_dodgeFlag = false;//回避処理終了
 				}
-				else 
+				else
 				{
 					m_dodgeTime = 0.0f;
 					m_dodgeFlag = false;//回避処理終了
@@ -243,19 +245,39 @@ namespace basecross {
 
 			}
 		}
-
-
 		return totalVec;
-		//}	
-
-
-		//return Vec3(0);
 	}
+
+	//エフェクトを出す処理
+	void Player::AddEffect(int addEffect)
+	{
+		switch (addEffect)
+		{
+		case PlayerEffect_Attack1:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			break;
+		case PlayerEffect_Attack2:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			break;
+		case PlayerEffect_Beam:
+			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			break;
+		default:
+			break;
+		}
+	}
+
 
 	//Playerの向いている方向のゲッター
 	float Player::GetAngle()
 	{
 		return -m_angle;
+	}
+
+	//回避フラグのゲッター
+	bool Player::GetDodgeFlag()
+	{
+		return m_dodgeFlag;
 	}
 
 	//Playerの向いている方向のセッター
@@ -292,6 +314,16 @@ namespace basecross {
 		auto plPos = trans->GetPosition();
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	}
+	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Col4 changeColor)
+	{
+		rotate.normalize();
+		auto trans = GetComponent<Transform>();
+		auto plPos = trans->GetPosition();
+
+		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
 
