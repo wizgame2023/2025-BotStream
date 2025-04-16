@@ -9,25 +9,25 @@
 #include "Enemy.h"
 
 namespace basecross {
-	Enemy::Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(false)
 	{
 
 	}
 
-	Enemy::Enemy(const shared_ptr<Stage>&stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>&stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(use)
 	{
 
 	}
-	Enemy::~Enemy()
+	EnemyBase::~EnemyBase()
 	{
 
 	}
 
-	void Enemy::OnCreate() {
+	void EnemyBase::OnCreate() {
 		Actor::OnCreate();
 		//Transform設定
 		m_trans = GetComponent<Transform>();
@@ -45,9 +45,7 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMeshResource(L"Boss1");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//歩き状態
-		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
+		ptrDraw->SetMeshResource(L"Boss1");
 		ptrDraw->SetDiffuse(Col4(0));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
@@ -62,7 +60,7 @@ namespace basecross {
 		m_state = shared_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
 	}
 
-	void Enemy::OnUpdate() {
+	void EnemyBase::OnUpdate() {
 		//m_used=falseなら表示を消してUpdateをreturn
 		if (GetDrawActive() != m_used) {
 			SetDrawActive(m_used);
@@ -79,5 +77,60 @@ namespace basecross {
 
 	}
 
+	void BossFirst::OnCreate() {
+		Actor::OnCreate();
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, 0.0f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		ptrDraw->SetMeshResource(L"Boss1");
+		ptrDraw->SetDiffuse(Col4(0));
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		ptrDraw->SetTextureResource(L"Tx_Boss1");
+
+		RegisterAnim();
+		ChangeAnim(L"Rotate");
+
+		//コリジョン作成
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+
+		AddTag(L"Enemy");
+	}
+
+	void BossFirst::OnUpdate() {
+		EnemyBase::OnUpdate();
+		//アニメーション再生
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
+	}
+
+	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
+
+	}
+
+	void BossFirst::OnDamaged() {
+
+	}
+
+	void BossFirst::RegisterAnim() {
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		//立
+		ptrDraw->AddAnimation(L"Idle", 0, 25, true, 30.0f);
+		//回転
+		ptrDraw->AddAnimation(L"Rotate", 26, 180, true, 30.0f);
+	}
 }
 //end basecross

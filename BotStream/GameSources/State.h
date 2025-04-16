@@ -7,7 +7,7 @@
 #include "stdafx.h"
 #include "Project.h"
 
-namespace basecross{
+namespace basecross {
 	class StateBase;
 
 	//--------------------------------------------------------------------
@@ -31,9 +31,9 @@ namespace basecross{
 	public:
 		//AddStateは継承先のコンストラクタで行ってください
 		//また、必ず最初にChangeStateを呼び出してcurrentStateを初期化すること
-		StateMachineBase() { }
-		~StateMachineBase() { }
-		
+		StateMachineBase() {}
+		~StateMachineBase() {}
+
 		bool ChangeState(wstring stateName);
 
 		void Update();
@@ -51,36 +51,12 @@ namespace basecross{
 		StateBase(const shared_ptr<GameObject>& obj) {
 			_obj = obj;
 		}
-		~StateBase() { }
+		~StateBase() {}
 
-		virtual void Enter() { }
-		virtual void Update(float deltatime) { }
-		virtual void Exit() { }
+		virtual void Enter() {}
+		virtual void Update(float deltatime) {}
+		virtual void Exit() {}
 	};
-
-	//--------------------------------------------------------------------
-
-	class EnemyWalkState : public StateBase {
-	public:
-		EnemyWalkState(shared_ptr<GameObject>& obj) :
-			StateBase(obj) { }
-
-		virtual void Enter();
-		virtual void Update(float deltatime);
-		virtual void Exit();
-	};
-
-	class EnemyStateMachine : public StateMachineBase {
-	public:
-		EnemyStateMachine(shared_ptr<GameObject>& obj)
-		{
-			AddState(L"Walk", shared_ptr<EnemyWalkState>(new EnemyWalkState(obj)));
-
-			ChangeState(L"Walk");
-		}
-
-	};
-
 }
 //end basecross
 
