@@ -39,11 +39,12 @@ namespace basecross {
 		{
 			m_player->ChangeState(L"Dodge");
 		}
-		////攻撃ステートに変更する 攻撃が実装されていないのでコメントアウト
-		//if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
-		//{
-		//	m_player->ChangeState(L"Attack1");
-		//}
+		//攻撃ステートに変更する 攻撃が実装されていないのでコメントアウト
+		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+		{
+			m_player->ChangeState(L"Attack1");
+			m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
+		}
 
 	
 	}
@@ -118,11 +119,12 @@ namespace basecross {
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
-		////攻撃ステートに変更する 攻撃が実装されていないのでコメントアウト
-		//if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
-		//{
-		//	m_player->ChangeState(L"Attack1");
-		//}
+		//攻撃ステートに変更する 攻撃が実装されていないのでコメントアウト
+		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+		{
+			m_player->ChangeState(L"Attack1");
+			m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
+		}
 
 	}
 	void PlayerDashState::Exit()
@@ -134,17 +136,87 @@ namespace basecross {
 	//攻撃ステート(一番最初に出てくる攻撃)
 	void PlayerAttack1State::Enter()
 	{
-
+		//攻撃の当たり判定を出す
+		auto stage = m_player->GetStage();
+		//攻撃の当たり判定(仮)
+		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 	}
 	void PlayerAttack1State::Update(float deltaTime)
 	{
+		//攻撃の時間計測
+		m_timeOfAttack += deltaTime;
+
+		//猶予時間以内に攻撃ボタンを押せたら次の攻撃ステートに遷移できる
+		if (m_timeOfAttack < m_graceTimeOfNextAttack)
+		{
+			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			{
+				m_nestAttackFlag = true;
+				m_player->AddEffect(PlayerEffect_Attack2);//攻撃エフェクトを出す
+			}
+		}
+		//次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
+		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
+		{
+			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));
+			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		//攻撃の時間を越えたら別のステートに移動する
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			Exit(0);
+		}
 		
 	}
-	void PlayerAttack1State::Exit()
+	void PlayerAttack1State::Exit(int a)
+	{
+		auto stage = m_player->GetStage();
+
+		//ステート遷移
+		if (m_nestAttackFlag)
+		{
+			m_player->ChangeState(L"Attack2");//まだAttack2ステート作成してない			
+		}
+		else
+		{
+			m_timeOfAttack = 0.0f;//リセット
+			stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+			m_player->ChangeState(L"PlayerWalk");
+		}
+	}
+
+
+	//攻撃ステート(２番目に出る攻撃)
+	void PlayerAttack2State::Enter()
 	{
 
 	}
+	void PlayerAttack2State::Update(float deltaTime)
+	{
+		//攻撃の時間計測
+		m_timeOfAttack += deltaTime;
 
+		//猶予時間以内に攻撃ボタンを押せたら次の攻撃ステートに遷移できる
+		if (m_timeOfAttack < m_graceTimeOfNextAttack)
+		{
+			//m_nestAttackFlag = true;
+		}
+		//次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
+		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
+		{
+			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));
+			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 1.0f));
+		}
+		//攻撃の時間を越えたら別のステートに移動する
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			Exit(0);
+		}
+	}
+	void PlayerAttack2State::Exit(int a)
+	{
+		m_player->ChangeState(L"PlayerWalk");
+	}
 
 }
 //end basecross
