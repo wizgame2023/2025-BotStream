@@ -57,6 +57,7 @@ namespace basecross{
 
 		bool m_movePlayerAngleFlag;//プレイヤーの向いている方向に回転するかのフラグ
 		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
+		float m_targetDis;//ロックオン対象の距離デバック用
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<Enemy>> m_targets;//ターゲット候補
@@ -112,6 +113,12 @@ namespace basecross{
 		
 		void GetMeleeRange();
 		void SetMeleeRange();
+
+		//ターゲット対象との距離を渡す
+		float GetTargetDis();
+
+		//ターゲット対象を渡す関数
+		shared_ptr<Actor> GetTargetObj();
 	};
 
 	//カメラのロックオン範囲
