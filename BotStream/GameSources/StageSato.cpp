@@ -218,10 +218,10 @@ namespace basecross {
 
 		//質問表示関係--------------------------------------------------------
 
-		const float quesSizeY = 150, quesSizeX = quesSizeY * 10,answerX = 150,answerY = answerX * 0.5625f;
-		const Vec3 questionPos(0, 200, 0),answerPos(questionPos.x, questionPos.y - 400, questionPos.z);
-		const Vec2 questionSize(quesSizeX, quesSizeY),answerSize(answerX, answerY);
-
+		const float quesSizeY = 120, quesSizeX = quesSizeY * 10, answerX = 150, answerY = answerX * 0.5625f;
+		const Vec3 questionPos(0, 200, 0), answerPos(questionPos.x - 350, questionPos.y - 400, questionPos.z);
+		const Vec2 questionSize(quesSizeX, quesSizeY), answerSize(answerX, answerY);
+		int questionIndex = 0;
 		// 重複しない乱数を格納するセット
 		std::set<int> uniqueNumbers;
 
@@ -237,34 +237,45 @@ namespace basecross {
 		}
 
 		for (const auto& number : uniqueNumbers) {
+			// ランダムに選ばれた質問を記憶
+			m_questionOrder.push_back(number);
+
 			//質問
-			m_questionSprite[m_switchQues] = AddGameObject<Sprite>(
+			m_questionSprite[questionIndex] = AddGameObject<Sprite>(
 				L"Questions",  			//テクスチャ名
 				questionSize,       // サイズ
 				questionPos);	//表示位置
-			m_questionSprite[m_switchQues]->SetUVRect(Vec2(0.0f, number * 0.1f), Vec2(1.0f, (number * 0.1f) + 0.1f));
+			m_questionSprite[questionIndex]->SetUVRect(Vec2(0.0f, number * 0.1f), Vec2(1.0f, (number * 0.1f) + 0.1f));
 
+			//回答
 			for (int i = 0; i < 3; i++)
 			{
-				//回答
-				m_answerSprite[m_switchQues][i] = AddGameObject<Sprite>(
+				m_answerSprite[questionIndex][i] = AddGameObject<Sprite>(
 					L"Answer",  			//テクスチャ名
 					answerSize,       // サイズ
-					answerPos);	//表示位置
-				m_answerSprite[m_switchQues][i]->SetUVRect(Vec2(0.333f * i, number * 0.1f), Vec2(0.333f * (i + 1), (number * 0.1f) + 0.1f));
+					answerPos + Vec3(i * 375, 0.0f, 0.0f));	//表示位置
+				m_answerSprite[questionIndex][i]->SetUVRect(Vec2(0.333f * i, number * 0.1f), Vec2(0.333f * (i + 1), (number * 0.1f) + 0.1f));
 			}
 
-			if (m_switchQues != 0)
+			if (questionIndex != 0)
 			{
-				m_questionSprite[m_switchQues]->OnClear(true);
+				m_questionSprite[questionIndex]->OnClear(true);
 				for (int i = 0; i < 3; i++)
 				{
-					m_answerSprite[m_switchQues][i]->OnClear(true);
+					m_answerSprite[questionIndex][i]->OnClear(true);
 				}
 			}
-			m_switchQues++;
-
+			questionIndex++;
 		}
+		m_switchQues = 0;
+
+		Vec2 selectSize(275, 200);
+		m_selectPos = answerPos;
+		// 選択してるところのやつ
+		m_selectSprite = AddGameObject<Sprite>(
+			L"Select",			//テクスチャ名
+			selectSize,      // サイズ
+			m_selectPos);        // 表示位置
 
 		//--------------------------------------------------------------------
 	}
@@ -279,26 +290,94 @@ namespace basecross {
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
-		int a;
+
+		Vec2 ret;
+		if (cntl[0].bConnected)
+		{
+			ret.x = cntl[0].fThumbLX;
+			ret.y = cntl[0].fThumbLY;
+		}
+		else if (!cntl[0].bConnected)
+		{
+			if (keybord.m_bPushKeyTbl[VK_UP])
+				ret.y = 1;
+
+			if (keybord.m_bPushKeyTbl[VK_LEFT])
+				ret.x = -1;
+
+			if (keybord.m_bPushKeyTbl[VK_DOWN])
+				ret.y = -1;
+
+			if (keybord.m_bPushKeyTbl[VK_RIGHT])
+				ret.x = 1;
+
+		}
+
+		// Lスティックを左右に倒すと選択できる
+		if (ret.x >= 0.3f && !m_selectFlag && m_select < 2)
+		{
+			m_select++;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			m_selectFlag = true;
+		}
+		else if (ret.x <= -0.3f && !m_selectFlag && m_select > 0)
+		{
+			m_select--;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			m_selectFlag = true;
+		}
+		else if ((ret.x <= 0.29f && ret.x >= -0.29f) && m_selectFlag)
+		{
+			m_selectFlag = false;
+		}
+
 		// 仮：LBボタン,キーボードのSPACEで次の質問表示
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || keybord.m_bPressedKeyTbl[VK_SPACE])
 		{
+			if (m_switchQues < m_questionOrder.size())
+			{
+				int questionID = m_questionOrder[m_switchQues];
+				// 選択でステータス変動
+				PersonalStateChange(questionID, m_select);
+			}
+			m_select = 0;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+
 			if (m_switchQues == 5)
 			{
 				m_switchQues = 0;
 			}
 
-			if (m_switchQues == 4)
+			//// ここはちゃんと動くかのテストみたいな側面があるため要らないです
+			//if (m_switchQues == 4)
+			//{
+			//	m_questionSprite[m_switchQues]->OnClear(true);
+			//	m_switchQues = 0;
+			//	m_questionSprite[m_switchQues]->OnClear(false);
+			//}
+			////-------------------
+			//else 
+			if (m_switchQues != 4)
 			{
 				m_questionSprite[m_switchQues]->OnClear(true);
-				m_switchQues = 0;
-				m_questionSprite[m_switchQues]->OnClear(false); 
-			}
-			else if (m_switchQues < 5)
-			{
-				m_questionSprite[m_switchQues]->OnClear(true);
-				m_questionSprite[m_switchQues + 1]->OnClear(false); 
+				m_questionSprite[m_switchQues + 1]->OnClear(false);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[m_switchQues][i]->OnClear(true);
+					m_answerSprite[m_switchQues + 1][i]->OnClear(false);
+				}
 				m_switchQues++;
+			}
+			else
+			if(m_switchQues == 4)
+			{
+				m_questionSprite[m_switchQues]->OnClear(true);
+				m_selectSprite->OnClear(true);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[m_switchQues][i]->OnClear(true);
+				}
+
 			}
 		}
 
@@ -362,6 +441,7 @@ namespace basecross {
 			m_bulletNum = 90;
 		}
 
+		// 仮置きエフェクト // 後で移す //----------------------------
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
 			//EfkPlaying(L"Beam", angle + XM_PIDIV2, Vec3(0, 1, 0));
@@ -370,6 +450,7 @@ namespace basecross {
 			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
 			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
 		}
+		//-------------------------------------------------------------
 
 		// 弾数を文字列に変換
 		std::string bulletStr = std::to_string(m_bulletNum);
@@ -400,6 +481,7 @@ namespace basecross {
 				digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
 			}
 		}
+		DebugLog();
 	}
 
 	void StageSato::OnDraw()
@@ -437,5 +519,210 @@ namespace basecross {
 		}
 	}
 
+	// minusSide : Lawful,Evil
+	// plusSide  : Chaos,Good
+	// の想定
+	float StageSato::NormalizeAxis(float minusSide, float plusSide)
+	{
+		// どちらが大きいかの判断
+		if (plusSide >= minusSide) {
+			// 例: Chaos 側が大きい場合 → +1 から (minus/plus) を引いたもの
+			return  3.0f - (minusSide / plusSide) * 3;
+		}
+		else {
+			// Law/Evil 側が大きい場合 → - (1 - plus/minus)
+			return -(3.0f - (plusSide / minusSide) * 3);
+		}
+
+	}
+
+	// デバッグ用文字列表示
+	void StageSato::DebugLog()
+	{
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
+		wss /* << L"デバッグ用文字列 "*/
+			<< "Chaos  : " << m_personality.Chaos  << "\n"
+			<< "Lawful : " << m_personality.Lawful << "\n"
+			<< "Good   : " << m_personality.Good << "\n"
+			<< "Evil   : " << m_personality.Evil << "\n" 
+			<< "QuesID : " << m_questionOrder[m_switchQues] << "\n"
+			<< "Answer : " << m_select << "\n"
+			<< endl;
+		scene->SetDebugString(wss.str());
+
+	}
+
+	//質問表示関係(超長い)
+	void StageSato::PersonalStateChange(int questionID, int answerIndex)
+	{
+		int addNum = 5;
+		switch (questionID)
+		{
+		case 0: // 買い物するときによく使うものは
+			switch (answerIndex)
+			{
+			case 0: // 現金
+				m_personality.Lawful += addNum * 2;
+				break;
+			case 1: // キャッシュレス
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // クレジットカード(これもキャッシュレスだろって言われると私は死ぬ)
+				m_personality.Chaos += addNum * 2;
+				break;
+			}
+			break;
+
+		case 1: // 生まれ変わるとしたら
+			switch (answerIndex)
+			{
+			case 0: // 人間
+				m_personality.Evil += addNum;
+				break;
+			case 1: // 動物
+				m_personality.Good += addNum;
+				break;
+			case 2: // 植物
+				m_personality.Lawful += addNum;
+				break;
+			}
+			break;
+
+		case 2: // アウトドア派かインドア派か
+			switch (answerIndex)
+			{
+			case 0: // アウトドア派
+				m_personality.Chaos += addNum * 2;
+				break;
+			case 1: // インドア派
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // 半々(ここに関して本当に思いつかなかった。気になるなら質問の代案、もしくは3つめの代案求ム)
+				m_personality.Lawful += addNum * 2;
+				break;
+			}
+			break;
+
+		case 3: // ネットの情報に左右されやすいか
+			switch (answerIndex)
+			{
+			case 0: // はい
+				m_personality.Good += addNum;
+				break;
+			case 1: // いいえ
+				m_personality.Chaos += addNum;
+				break;
+			case 2: // どちらでもない(ここに関しては回答が本当に思いつかなかった。気になるなら質問の代案(ry
+				m_personality.Lawful += addNum;
+				break;
+			}
+			break;
+
+		case 4: // 人助けのためなら、法を犯しても構わない
+			switch (answerIndex)
+			{
+			case 0: // はい
+				m_personality.Good += addNum * 2;
+				m_personality.Chaos += addNum * 2;
+				break;
+			case 1: // いいえ
+				m_personality.Lawful += addNum * 2;
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつかなかった。気にな(ry
+				m_personality.Evil += addNum * 2;
+				break;
+			}
+			break;
+
+		case 5: // 好きな映画のジャンルは
+			switch (answerIndex)
+			{
+			case 0: // ダークヒーロー
+				m_personality.Good += addNum * 2;
+				m_personality.Lawful += addNum * 2;
+				break;
+			case 1: // ラブコメ
+				m_personality.Chaos += addNum * 2;
+				m_personality.Good += addNum * 2;
+				break;
+			case 2: // ドキュメンタリー
+				m_personality.Lawful += addNum * 2;
+				m_personality.Evil += addNum * 2;
+				break;
+			}
+			break;
+
+		case 6: // 筋肉はすべてを解決すると思うか
+			switch (answerIndex)
+			{
+			case 0: // はい
+				m_personality.Chaos += addNum;
+				m_personality.Good += addNum;
+				break;
+			case 1: // いいえ
+				m_personality.Lawful += addNum;
+				m_personality.Evil += addNum;
+				break;
+			case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつか(ry
+				m_personality.Chaos += addNum;
+				m_personality.Evil += addNum;
+				break;
+			}
+			break;
+
+		case 7: // クリスマスは誰と過ごすか
+			switch (answerIndex)
+			{
+			case 0: // 家族
+				m_personality.Good += addNum * 2;
+				m_personality.Lawful += addNum * 2;
+				break;
+			case 1: // 恋人
+				m_personality.Good += addNum * 2;
+				m_personality.Chaos += addNum * 2;
+				break;
+			case 2: // 孤高
+				m_personality.Evil += addNum * 2;
+				m_personality.Lawful += addNum * 2;
+				break;
+			}
+			break;
+
+		case 8: // 検索エンジンでよく使うのは
+			switch (answerIndex)
+			{
+			case 0: // Chrome
+				m_personality.Lawful += addNum;
+				break;
+			case 1: // Edge
+				m_personality.Chaos += addNum;
+				break;
+			case 2: // Safari
+				m_personality.Evil += addNum;
+				break;
+			}
+			break;
+
+		case 9: // コンビニでよく買うものは
+			switch (answerIndex)
+			{
+			case 0: // 食用品
+				m_personality.Lawful += addNum * 2;
+				m_personality.Good += addNum * 2;
+				break;
+			case 1: // 日用品
+				m_personality.Lawful += addNum * 2;
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // 書籍類
+				m_personality.Chaos += addNum * 2;
+				m_personality.Good += addNum * 2;
+				break;
+			}
+			break;
+		}
+	}
 }
-//end basecross
+	//end basecross
