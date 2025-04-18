@@ -15,6 +15,13 @@ namespace basecross {
 	public:
 		MyGameObject(const shared_ptr<Stage>& stagePtr);
 		~MyGameObject();
+
+		Vec3 GetPosition() {
+			return GetComponent<Transform>()->GetPosition();
+		}
+		void SetPosition(Vec3 pos) {
+			GetComponent<Transform>()->SetPosition(pos);
+		}
 	protected:
 		 //void OnCreate()override;
 		 //void OnUpdate()override;

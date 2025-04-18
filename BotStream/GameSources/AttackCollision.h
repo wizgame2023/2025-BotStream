@@ -8,8 +8,16 @@
 #include "Project.h"
 
 namespace basecross {
+
+	enum class AttackType {
+		Player,
+		Enemy
+	};
+
 	//攻撃判定から相手に伝える情報一覧
 	struct HitInfo {
+	public:
+		AttackType Type;
 		//ダメージ
 		int Damage;
 		//ヒットストップ時間
@@ -36,9 +44,9 @@ namespace basecross {
 		wstring GuardEffect;
 		wstring HitSound;
 		wstring GuardSound;
-
-	public:
-		HitInfo::HitInfo(int damage, float pausetime,
+		
+		//コンストラクタ
+		HitInfo::HitInfo(AttackType attacktype, int damage, float pausetime,
 			float hittime_stand, Vec3 hitvel_stand,
 			float hittime_air, Vec3 hitvel_air,
 			bool dofall, bool dofall_air,
@@ -47,6 +55,7 @@ namespace basecross {
 			wstring hitsound, wstring guardsound
 		)
 		{
+			this->Type = attacktype;
 			this->Damage = damage;
 			this->PauseTime = pausetime;
 			this->HitTime_Stand = hittime_stand;
@@ -63,6 +72,7 @@ namespace basecross {
 			this->GuardSound = guardeffect;
 		}
 		HitInfo::HitInfo() {
+			this->Type = AttackType::Player;
 			this->Damage = 0;
 			this->PauseTime = 0;
 			this->HitTime_Stand = 0;
@@ -112,13 +122,17 @@ namespace basecross {
 			m_collision->SetMakedRadius(scale);
 		}
 		//判定の持続時間を設定
-		void ActiveCollision(float activetime) {
+		void ActivateCollision(float activetime) {
 			m_ActiveTime = activetime;
 		}
 
 		//攻撃判定を相手に当てた時に呼ばれる関数
 		HitInfo GetHitInfo() {
 			return m_info;
+		}
+		//攻撃判定を更新する
+		void SetHitInfo(HitInfo info) {
+			this->m_info = info;
 		}
 	};
 }

@@ -27,7 +27,7 @@ namespace basecross{
 	};
 
 
-	class Enemy;
+	class EnemyBase;
 	class CameraRayCast;
 	class CameraManager : public MyGameObject
 	{
@@ -57,11 +57,12 @@ namespace basecross{
 
 		bool m_movePlayerAngleFlag;//プレイヤーの向いている方向に回転するかのフラグ
 		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
+		float m_targetDis;//ロックオン対象の距離デバック用
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
-		vector<shared_ptr<Enemy>> m_targets;//ターゲット候補
+		vector<shared_ptr<EnemyBase>> m_targets;//ターゲット候補
 		vector<Vec3> m_targetsPos;//ロックオン候補のPosを保存する配列
-		shared_ptr<Enemy> m_targetObj;//ターゲット対象
+		shared_ptr<EnemyBase> m_targetObj;//ターゲット対象
 		bool m_lockOnFlag;//ロックオンできるかできないかの変数
 		bool m_lockOnUse;//ロックオンするかしないかの変数
 		bool m_lockOnChangeFlag;//ロックオンを変えたかのフラグ
@@ -102,9 +103,9 @@ namespace basecross{
 		void ChangeLockOn(int leftOrRight,float targetAngle);//ロックオン対象を変更する処理
 
 		//ロックオン候補を決める関数
-		void LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec, Vec3 playerPos);
+		void LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec, Vec3 playerPos);
 		//ロックオンの解除
-		void LockOff(vector<shared_ptr<Enemy>> enemyVec);
+		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));//カメラのX軸回転の制限
 		void CameraPosUpdate();//カメラのポジションの更新
@@ -112,6 +113,12 @@ namespace basecross{
 		
 		void GetMeleeRange();
 		void SetMeleeRange();
+
+		//ターゲット対象との距離を渡す
+		float GetTargetDis();
+
+		//ターゲット対象を渡す関数
+		shared_ptr<Actor> GetTargetObj();
 	};
 
 	//カメラのロックオン範囲
@@ -165,7 +172,7 @@ namespace basecross{
 		Cube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		~Cube();
 		void OnCreate()override;//作成
-		//void OnUpdate()override;
+		void OnUpdate()override;
 	};
 
 

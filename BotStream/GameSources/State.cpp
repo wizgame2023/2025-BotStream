@@ -51,15 +51,5 @@ namespace basecross {
 
 
 
-	void EnemyWalkState::Enter() {
-
-	}
-	void EnemyWalkState::Update(float deltatime) {
-		auto t = _obj->GetComponent<Transform>();
-		t->SetPosition(t->GetPosition() + Vec3(deltatime, 0, 0));
-	}
-	void EnemyWalkState::Exit() {
-
-	}
 }
 //end basecross

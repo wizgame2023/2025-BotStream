@@ -81,7 +81,6 @@ namespace basecross {
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		m_playerPos = player->GetComponent<Transform>()->GetPosition();	
 
-
 		// インプットデバイスオブジェクト
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
 		//コントローラーの取得
@@ -103,7 +102,7 @@ namespace basecross {
 		//ロックオン処理
 		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
-		vector<shared_ptr<Enemy>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
+		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
 
 		//ロックオン候補がいないならロックオンできない＆選択を初期化
@@ -131,6 +130,7 @@ namespace basecross {
 					if (min > ditance)
 					{
 						min = ditance;
+						m_targetDis = abs(distanceVec.x) + abs(distanceVec.z);//対象との距離を保存する
 						m_targetObj = enemy;//ロックオン対象を決める
 					}
 				}
@@ -140,6 +140,7 @@ namespace basecross {
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
 			{
+				m_targetDis = 0.0f;
 				LockOff(enemyVec);//ロックオンの解除
 			}
 			else if (!m_lockOnFlag && !m_movePlayerAngleFlag)
@@ -227,11 +228,18 @@ namespace basecross {
 		//デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
+
+		if (m_targetObj)
+		{
+			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+			m_targetDis = targetVec.x + targetVec.z;
+		}
 		
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
 			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+			<< L"\nターゲット対象の距離: " << m_targetDis
 			//<< L"\n当たった場所x: " << hitPos.x
 			//<< L"\n当たった場所y: " << hitPos.y
 			//<< L"\n当たった場所z: " << hitPos.z
@@ -409,11 +417,11 @@ namespace basecross {
 	}
 
 	//ロックオン候補を決める関数
-	void CameraManager::LockOnCandidate(vector<shared_ptr<Enemy>> enemyVec,Vec3 playerPos)
+	void CameraManager::LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec,Vec3 playerPos)
 	{
 		m_targets.clear();//配列の初期化
 		m_lockOnFlag = false;//フラグの初期化
-		vector<shared_ptr<Enemy>> kariTargetsVec;
+		vector<shared_ptr<EnemyBase>> kariTargetsVec;
 
 		for (auto enemy : enemyVec)
 		{
@@ -470,8 +478,9 @@ namespace basecross {
 	}
 
 	//ロックオンの解除機能
-	void CameraManager::LockOff(vector<shared_ptr<Enemy>> enemyVec)
+	void CameraManager::LockOff(vector<shared_ptr<EnemyBase>> enemyVec)
 	{
+		m_targetDis = 0.0f;
 		m_targetObj->RemoveTag(L"ロックオン対象");
 		m_lockOnFlag = false;//ロックオンできない
 		m_lockOnUse = false;//ロックオンしない
@@ -643,6 +652,17 @@ namespace basecross {
 		auto angleNow = m_cameraAngleY;
 		auto addAngleSpeed = 10.0f;
 		auto angleDifference = targetAngle - angleNow;
+		//角度の差が181以上ならマイナスにして計算したほうが進む方向として早い
+		if (angleDifference >= XMConvertToRadians(181.0f))
+		{
+			targetAngle -= XMConvertToRadians(360.0f);
+			angleDifference = targetAngle - angleNow;
+		}
+		if (angleDifference <= XMConvertToRadians(-181.0f))
+		{
+			targetAngle += XMConvertToRadians(360.0f);
+			angleDifference = targetAngle - angleNow;
+		}
 
 		if (angleDifference > 0)//プラス方向に行くとき
 		{
@@ -654,7 +674,7 @@ namespace basecross {
 				return true;//移動完了したことを知らせる
 			}
 		}
-		else if (angleDifference < 0)//プラス方向に行くとき
+		else if (angleDifference < 0)//マイナス方向に行くとき
 		{
 			m_cameraAngleY -= addAngleSpeed * m_delta;
 			//プラス方向に行きすぎたらターゲットの角度と同じにする
@@ -680,6 +700,18 @@ namespace basecross {
 		{
 			m_cameraAngleY += XMConvertToRadians(360.0f);
 		}
+	}
+
+	//ターゲット対象を渡す関数
+	shared_ptr<Actor> CameraManager::GetTargetObj()
+	{
+		return m_targetObj;
+	}
+
+	//ターゲット対象との距離を渡す
+	float CameraManager::GetTargetDis()
+	{
+		return m_targetDis;
 	}
 
 	//ロックオン範囲を知らせるためのオブジェクト
@@ -858,8 +890,11 @@ namespace basecross {
 
 
 		//ptrDraw->HitTestSkinedMeshSegmentTriangles();
-
 		//ptrDraw->HitT
+	}
+
+	void Cube::OnUpdate()
+	{
 	}
 
 
