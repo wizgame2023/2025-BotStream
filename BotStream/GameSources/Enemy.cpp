@@ -53,7 +53,10 @@ namespace basecross {
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetTextureResource(L"Tx_Boss1");
-		
+
+		RegisterAnim();
+		ChangeAnim(L"Idle");
+
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
@@ -91,6 +94,17 @@ namespace basecross {
 
 	}
 
+	void EnemyBase::RegisterAnim() {
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		//立
+		ptrDraw->AddAnimation(L"Idle", 0, 25, true, 30.0f);
+		//回転
+		ptrDraw->AddAnimation(L"Rotate", 26, 154, true, 30.0f);
+		//のけぞり
+		ptrDraw->AddAnimation(L"Walk", 181, 169, false, 60.0f);
+		//のけぞり
+		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
+	}
 	//--------------------------------------------------------------------------
 
 	void BossFirst::OnCreate() {
@@ -167,16 +181,5 @@ namespace basecross {
 		m_state->ChangeState(L"Hit");
 	}
 
-	void BossFirst::RegisterAnim() {
-		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		//立
-		ptrDraw->AddAnimation(L"Idle", 0, 25, true, 30.0f);
-		//回転
-		ptrDraw->AddAnimation(L"Rotate", 26, 154, true, 30.0f);
-		//のけぞり
-		ptrDraw->AddAnimation(L"Walk", 181, 169, false, 60.0f);
-		//のけぞり
-		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
-	}
 }
 //end basecross
