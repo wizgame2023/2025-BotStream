@@ -95,7 +95,8 @@ namespace basecross {
 		//enemyMgr->InstEnemy(Vec3(0.0f, 0.0f, -10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 
 		//カメラマネージャ作成
-		AddGameObject<CameraManager>();
+		auto cameraManager = AddGameObject<CameraManager>();
+		SetSharedGameObject(L"CameraManager", cameraManager);
 	}
 
 	void StageSanpei::OnUpdate()
