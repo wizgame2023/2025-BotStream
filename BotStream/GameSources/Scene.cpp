@@ -36,7 +36,7 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<StageSanpei>();
+			ResetActiveStage<StageSato>();
 
 		}
 
@@ -70,6 +70,9 @@ namespace basecross{
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
 		app->RegisterTexture(L"Buttons", strTexture);
+
+		strTexture = texPath + L"Select.png";
+		app->RegisterTexture(L"Select", strTexture);
 		
 		// TextSprite
 		strTexture = texPath + L"Texts.png";
@@ -80,6 +83,8 @@ namespace basecross{
 		app->RegisterTexture(L"Questions", strTexture);
 		strTexture = texPath + L"Answer.png";
 		app->RegisterTexture(L"Answer", strTexture);
+		strTexture = texPath + L"ResultText.png";
+		app->RegisterTexture(L"ResultText", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
 		strTexture = texPath + L"Katana.png";
