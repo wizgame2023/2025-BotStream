@@ -15,10 +15,11 @@ namespace basecross{
 	{
 	protected:
 		bool m_used = false;
-		shared_ptr<EnemyStateMachine> m_state;
-		void RegisterAnim();
+		shared_ptr<StateMachineBase> m_state;
 
-		float bindPos = 0;
+		weak_ptr<Player> m_player;
+
+		void RegisterAnim();
 
 	public:
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
@@ -26,6 +27,10 @@ namespace basecross{
 		~EnemyBase() {}
 
 		void HitBackStandBehavior();
+
+		void ChangeState(wstring stateName) {
+			m_state->ChangeState(stateName);
+		}
 
 		void OnCreate() override;
 		void OnUpdate() override;
@@ -45,6 +50,9 @@ namespace basecross{
 		bool GetUsed() {
 			return m_used;
 		}
+
+		//ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ğ‘ª‚é
+		float GetPlayerDist();
 	};
 
 	class BossFirst : public EnemyBase {

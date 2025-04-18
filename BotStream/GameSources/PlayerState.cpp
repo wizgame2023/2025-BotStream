@@ -222,7 +222,7 @@ namespace basecross {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.Damage = 10;
-			tmp.HitVel_Stand = Vec3(-20, 0, 0);
+			tmp.HitVel_Stand = Vec3(-2, 10, 0);
 			tmp.HitTime_Stand = .8f;
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));

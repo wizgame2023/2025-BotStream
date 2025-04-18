@@ -16,7 +16,7 @@ namespace basecross {
 
 	}
 
-	EnemyBase::EnemyBase(const shared_ptr<Stage>&stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(use)
 	{
@@ -40,7 +40,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(.5f, .5f, .5f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, 0.0f, 0.0f)
@@ -61,6 +61,8 @@ namespace basecross {
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		AddTag(L"Enemy");
+
+		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
 
 		m_state = shared_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
 	}
@@ -100,11 +102,24 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Idle", 0, 25, true, 30.0f);
 		//回転
 		ptrDraw->AddAnimation(L"Rotate", 26, 154, true, 30.0f);
-		//のけぞり
+		//歩き
 		ptrDraw->AddAnimation(L"Walk", 181, 169, false, 60.0f);
 		//のけぞり
 		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
+		//近接1
+		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
+		//近接2
+		ptrDraw->AddAnimation(L"AttackClose2", 719, 80, false, 60.0f);
 	}
+
+	//XZ平面におけるプレイヤーとの距離
+	float EnemyBase::GetPlayerDist() {
+		auto p = (m_player.lock());
+		if (p == nullptr) return 0;
+
+		return (p->GetPosition() - GetPosition()).length();
+	}
+
 	//--------------------------------------------------------------------------
 
 	void BossFirst::OnCreate() {
@@ -141,11 +156,13 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(true);//debug
 
-		m_LandDetect->SetBindPos(Vec3(0, -3.0f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -3.2f, 0));
 
 		AddTag(L"Enemy");
-		//ボス用のものに差し替える？
-		m_state = shared_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
+
+		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
+
+		m_state = shared_ptr<BossFirstStateMachine>(new BossFirstStateMachine(GetThis<GameObject>()));
 	}
 
 	void BossFirst::OnUpdate() {
@@ -154,9 +171,6 @@ namespace basecross {
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
-
-		if (!m_isLand) bindPos -= _delta;
-		//m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
 
 		////デバック用
 		wstringstream wss(L"");
@@ -167,10 +181,9 @@ namespace basecross {
 			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-			<< L"\nAngle : " << bindPos << endl;
+			<< L"\nAngle : " << GetAngle() << endl;
 
 		scene->SetDebugString(wss.str());
-
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
