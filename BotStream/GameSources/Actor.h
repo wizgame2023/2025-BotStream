@@ -22,9 +22,9 @@ namespace basecross {
 		//Å‘åHP
 		int m_HPMax;
 		//UŒ‚—Í
-		int attack;
+		int m_attack;
 		//–hŒä—Í
-		int defense;
+		int m_defense;
 		//Œ»İHP
 		int m_HPCurrent;
 
@@ -74,6 +74,12 @@ namespace basecross {
 
 		//UŒ‚‚ğó‚¯‚½‚Ìˆ—(Œp³—p)
 		virtual void OnDamaged() { }
+
+		//ƒ_ƒ[ƒWŒvZ®
+		int CalculateDamage(int damage) {
+			int ret = damage - m_defense;
+			return ret <= 0 ? 1 : ret;
+		}
 
 		shared_ptr<PNTBoneModelDraw> GetBoneModelDraw() {
 			return GetComponent<PNTBoneModelDraw>();

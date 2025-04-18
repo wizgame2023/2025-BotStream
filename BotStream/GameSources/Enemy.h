@@ -16,6 +16,7 @@ namespace basecross{
 	protected:
 		bool m_used = false;
 		shared_ptr<EnemyStateMachine> m_state;
+		void RegisterAnim();
 
 		float bindPos = 0;
 
@@ -47,7 +48,6 @@ namespace basecross{
 	};
 
 	class BossFirst : public EnemyBase {
-		void RegisterAnim();
 		void OnDamaged() override;
 
 	public:
