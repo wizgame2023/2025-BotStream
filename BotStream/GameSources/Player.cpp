@@ -87,16 +87,6 @@ namespace basecross {
 			Dodge();
 		}
 
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		//{
-		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		//}
-
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		//{
-		//	EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
-		//}
-
 		//デバック用文字列
 		DebugLog();
 
@@ -258,6 +248,13 @@ namespace basecross {
 			break;
 		case PlayerEffect_Attack2:
 			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			break;
+		case PlayerEffect_Attack3:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			break;
+		case PlayerEffect_AttackEx:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Beam:
 			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
