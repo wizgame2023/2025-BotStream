@@ -1,6 +1,6 @@
 /*!
 @file PlayerState.cpp
-@brief ƒvƒŒƒCƒ„[‚ÌƒXƒe[ƒg
+@brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¹ãƒ†ãƒ¼ãƒˆ
 */
 
 #include "stdafx.h"
@@ -10,23 +10,23 @@ namespace basecross {
 	void PlayerStateBase::Update(float deltaTime)
 	{
 
-		//ƒRƒ“ƒgƒ[ƒ‰[‚ğó‚¯æ‚é
+		//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’å—ã‘å–ã‚‹
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//ƒJƒƒ‰ƒ}ƒl[ƒWƒƒ‚©‚çƒƒbƒNƒIƒ“‘ÎÛ‚ÌˆÊ’u‚ğæ“¾‚·‚é
+		//ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ã‹ã‚‰ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã®ä½ç½®ã‚’å–å¾—ã™ã‚‹
 		shared_ptr<CameraManager> camera = nullptr;
 		camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		shared_ptr<Actor> targetObj = nullptr;
 		targetObj = camera->GetTargetObj();
-		//ƒ^[ƒQƒbƒg‘ÎÛ‚ª‚¢‚é‘ÎÛ‚Æ‚Ì‹——£‚ğ‘ª‚é
+		//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ãŒã„ã‚‹æ™‚å¯¾è±¡ã¨ã®è·é›¢ã‚’æ¸¬ã‚‹
 		if (targetObj)
 		{
 			//Vec3 targetPos = Vec3(0.0f);
 			//Vec3 playerPos = Vec3(0.0f);
 			//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
 			//playerPos = m_player->GetComponent<Transform>()->GetPosition();
-			////ƒƒbƒNƒIƒ“‘ÎÛ‚Æ‚Ì‹——£‚ğŒvZ‚·‚é
+			////ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã¨ã®è·é›¢ã‚’è¨ˆç®—ã™ã‚‹
 			m_targetDistance = camera->GetTargetDis();
 		}
 		else if (!targetObj)
@@ -36,13 +36,13 @@ namespace basecross {
 
 
 	};
-	//ƒ^[ƒQƒbƒg‘ÎÛ‚Æ‚Ì‹——£‚ğæ“¾‚·‚é
+	//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã¨ã®è·é›¢ã‚’å–å¾—ã™ã‚‹
 	float PlayerStateBase::GetTargetDistance()
 	{
 		return m_targetDistance;
 	}
 
-	//Player‚Ì•à‚­ƒ‚[ƒVƒ‡ƒ“
+	//Playerã®æ­©ããƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
 	void PlayerWalkState::Enter()
 	{
 
@@ -52,11 +52,11 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 		
-		//ˆÚ“®ˆ—
+		//ç§»å‹•å‡¦ç†
 		Vec3 move = m_player->GetMoveVector(PlayerState_Walk);
 		m_player->PlayerMove(PlayerState_Walk);
 
-		//•à‚«ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+		//æ­©ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
 		if (move.length() != 0)
 		{
 			m_player->ChangeAnim(L"Walk");
@@ -66,41 +66,41 @@ namespace basecross {
 			m_player->ChangeAnim(L"Idle");
 		}
 
-		//•à‚«ƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+		//æ­©ãã‚¹ãƒ†ãƒ¼ãƒˆã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
 		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime * 5);
 	
-		//‰ñ”ğƒXƒe[ƒg‚É•ÏX‚·‚é
+		//å›é¿ã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
 		{
 			m_player->ChangeState(L"Dodge");
 		}
-		//UŒ‚ƒXƒe[ƒg‚É•ÏX‚·‚é@’·‰Ÿ‚µ‚¾‚Á‚½‚ç‰ñ“]UŒ‚‚»‚¤‚Å‚È‚¯‚ê‚Î’ÊíUŒ‚
-		//ƒƒbƒNƒIƒ“‘ÎÛ‚Ì‹——£‚É‚æ‚Á‚ÄUŒ‚•û–@‚ğ•Ï‚¦‚éƒƒbƒNƒIƒ“‚µ‚Ä‚È‚¯‚ê‚Î‹ß‹——£‚Ì‚İ
+		//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹ã€€é•·æŠ¼ã—ã ã£ãŸã‚‰å›è»¢æ”»æ’ƒãã†ã§ãªã‘ã‚Œã°é€šå¸¸æ”»æ’ƒ
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å¯¾è±¡ã®è·é›¢ã«ã‚ˆã£ã¦æ”»æ’ƒæ–¹æ³•ã‚’å¤‰ãˆã‚‹ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã—ã¦ãªã‘ã‚Œã°è¿‘è·é›¢ã®ã¿
 		float meleeRange = 3.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
-			m_timeOfPushAttackButton += deltaTime;//‰Ÿ‚µ‚Ä‚¢‚éŠÔ‚ğ‘ª‚é
+			m_timeOfPushAttackButton += deltaTime;//æŠ¼ã—ã¦ã„ã‚‹æ™‚é–“ã‚’æ¸¬ã‚‹
 		}
 		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_X)
 		{
-			//UŒ‚‚·‚éÛ‹——£‚É‚æ‚Á‚ÄUŒ‚•û–@‚ğ•Ï‚¦‚é
+			//æ”»æ’ƒã™ã‚‹éš›è·é›¢ã«ã‚ˆã£ã¦æ”»æ’ƒæ–¹æ³•ã‚’å¤‰ãˆã‚‹
 			if (m_targetDistance < meleeRange)
-			{//‹ß‹——£
+			{//è¿‘è·é›¢
 				if (m_timeOfPushAttackButton >= 1.5f)
 				{
 					m_player->ChangeState(L"AttackEx");
-					m_player->AddEffect(PlayerEffect_AttackEx);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+					m_player->AddEffect(PlayerEffect_AttackEx);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 				}
 				if (m_timeOfPushAttackButton < 1.5f)
 				{
 					m_player->ChangeState(L"Attack1");
-					m_player->AddEffect(PlayerEffect_Attack1);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+					m_player->AddEffect(PlayerEffect_Attack1);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 				}
 			}
 			else if (m_targetDistance >= meleeRange)
-			{//‰“‹——£
+			{//é è·é›¢
 				m_player->ChangeState(L"AttackLong");
-				m_player->AddEffect(PlayerEffect_Beam);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+				m_player->AddEffect(PlayerEffect_Beam);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 			}
 
 		}
@@ -111,24 +111,24 @@ namespace basecross {
 
 	}
 
-	//‰ñ”ğƒXƒe[ƒg
+	//å›é¿ã‚¹ãƒ†ãƒ¼ãƒˆ
 	void PlayerDodgeState::Enter()
 	{
 
 	}
 	void PlayerDodgeState::Update(float deltaTime)
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		PlayerStateBase::Update(deltaTime);
 
-		//ˆÚ“®ˆ—
+		//ç§»å‹•å‡¦ç†
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
 		m_player->PlayerMove(PlayerState_Dodge);
 
 		bool dodgeFlag = m_player->GetDodgeFlag();
 		if (!dodgeFlag)
 		{
-			//ƒ_ƒbƒVƒ…ƒXƒe[ƒg‚É‚·‚é‚©•à‚­ƒXƒe[ƒg‚É‚·‚é‚©
+			//ãƒ€ãƒƒã‚·ãƒ¥ã‚¹ãƒ†ãƒ¼ãƒˆã«ã™ã‚‹ã‹æ­©ãã‚¹ãƒ†ãƒ¼ãƒˆã«ã™ã‚‹ã‹
 			if (m_controller.wButtons & XINPUT_GAMEPAD_A)
 			{
 				m_player->ChangeState(L"Dash");
@@ -140,27 +140,27 @@ namespace basecross {
 		}
 
 	}
-	void PlayerDodgeState::Exit()//I—¹ˆ—
+	void PlayerDodgeState::Exit()//çµ‚äº†å‡¦ç†
 	{
 
 	}
 
 
-	//ƒ_ƒbƒVƒ…ƒXƒe[ƒg
+	//ãƒ€ãƒƒã‚·ãƒ¥ã‚¹ãƒ†ãƒ¼ãƒˆ
 	void PlayerDashState::Enter()
 	{
 
 	}
 	void PlayerDashState::Update(float deltaTime)
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		PlayerStateBase::Update(deltaTime);
 
-		//ˆÚ“®ˆ—
+		//ç§»å‹•å‡¦ç†
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dash);
 		m_player->PlayerMove(PlayerState_Dash);
 
-		//•à‚«ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+		//æ­©ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
 		if (move.length() != 0)
 		{
 			m_player->ChangeAnim(L"Walk");
@@ -170,30 +170,30 @@ namespace basecross {
 			m_player->ChangeAnim(L"Idle");
 		}
 
-		//•à‚«ƒXƒe[ƒg‚ÌƒAƒjƒ[ƒVƒ‡ƒ“Ä¶
+		//æ­©ãã‚¹ãƒ†ãƒ¼ãƒˆã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å†ç”Ÿ
 		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime * 7);
 
-		//•à‚­ƒXƒe[ƒg‚É•ÏX‚·‚é
+		//æ­©ãã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A)
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
-		//UŒ‚ƒXƒe[ƒg‚É•ÏX‚·‚é
+		//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
-			m_timeOfPushAttackButton += deltaTime;//‰Ÿ‚µ‚Ä‚¢‚éŠÔ‚ğ‘ª‚é
+			m_timeOfPushAttackButton += deltaTime;//æŠ¼ã—ã¦ã„ã‚‹æ™‚é–“ã‚’æ¸¬ã‚‹
 		}
 		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_X)
 		{
 			if (m_timeOfPushAttackButton >= 1.5f)
 			{
 				m_player->ChangeState(L"AttackEx");
-				m_player->AddEffect(PlayerEffect_AttackEx);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+				m_player->AddEffect(PlayerEffect_AttackEx);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 			}
 			if (m_timeOfPushAttackButton < 1.5f)
 			{
 				m_player->ChangeState(L"Attack1");
-				m_player->AddEffect(PlayerEffect_Attack1);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+				m_player->AddEffect(PlayerEffect_Attack1);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 			}
 		}
 
@@ -204,50 +204,61 @@ namespace basecross {
 	}
 
 
-	//UŒ‚ƒXƒe[ƒg(ˆê”ÔÅ‰‚Éo‚Ä‚­‚éUŒ‚)
+	//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆ(ä¸€ç•ªæœ€åˆã«å‡ºã¦ãã‚‹æ”»æ’ƒ)
 	void PlayerAttack1State::Enter()
 	{
-		//UŒ‚‚Ì“–‚½‚è”»’è‚ğo‚·
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®šã‚’å‡ºã™
 		auto stage = m_player->GetStage();
-		//UŒ‚‚Ì“–‚½‚è”»’è(‰¼)
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š(ä»®)
 		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 	}
 	void PlayerAttack1State::Update(float deltaTime)
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		PlayerStateBase::Update(deltaTime);
+    
+		//æ”»æ’ƒåˆ¤å®šã®å®šç¾©
+		if (m_timeOfAttack <= 0) {
+			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Damage = 10;
+			tmp.HitVel_Stand = Vec3(-20, 0, 0);
+			tmp.HitTime_Stand = .8f;
+			m_player->DefAttack(.5f, tmp);
+			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+		}
 
-		//UŒ‚‚ÌŠÔŒv‘ª
+		//æ”»æ’ƒã®æ™‚é–“è¨ˆæ¸¬
 		m_timeOfAttack += deltaTime;
-		//—P—\ŠÔˆÈ“à‚ÉUŒ‚ƒ{ƒ^ƒ“‚ğ‰Ÿ‚¹‚½‚çŸ‚ÌUŒ‚ƒXƒe[ƒg‚É‘JˆÚ‚Å‚«‚é
+		//çŒ¶äºˆæ™‚é–“ä»¥å†…ã«æ”»æ’ƒãƒœã‚¿ãƒ³ã‚’æŠ¼ã›ãŸã‚‰æ¬¡ã®æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»ã§ãã‚‹
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
-			//UŒ‚ƒXƒe[ƒg‚É•ÏX‚·‚é
+			//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
 			{			
 				m_nestAttackFlag = true;	
 			}
 		}
-		//Ÿ‚ÌUŒ‚‚ÉˆÚs‚Å‚«‚È‚¢ó‘Ô‚È‚çUŒ‚”»’è‚ÌF‚ğ•Ï‚¦‚é(ƒfƒoƒbƒN—p)
+		//æ¬¡ã®æ”»æ’ƒã«ç§»è¡Œã§ããªã„çŠ¶æ…‹ãªã‚‰æ”»æ’ƒåˆ¤å®šã®è‰²ã‚’å¤‰ãˆã‚‹(ãƒ‡ãƒãƒƒã‚¯ç”¨)
 		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
 		{
 			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
 			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
 		}
-		//UŒ‚‚ÌŠÔ‚ğ‰z‚¦‚½‚ç•Ê‚ÌƒXƒe[ƒg‚ÉˆÚ“®‚·‚é
+		//æ”»æ’ƒã®æ™‚é–“ã‚’è¶ŠãˆãŸã‚‰åˆ¥ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•ã™ã‚‹
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{	
 			auto stage = m_player->GetStage();
 
-			//ƒXƒe[ƒg‘JˆÚ
+			//ã‚¹ãƒ†ãƒ¼ãƒˆé·ç§»
 			if (m_nestAttackFlag)
 			{
-				m_player->ChangeState(L"Attack2");////Ÿ‚ÌUŒ‚ƒXƒe[ƒg‚ÉˆÚ“®
-				m_player->AddEffect(PlayerEffect_Attack2);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+				m_player->ChangeState(L"Attack2");////æ¬¡ã®æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•
+				m_player->AddEffect(PlayerEffect_Attack2);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 			}
 			else
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
+				stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
 				m_player->ChangeState(L"PlayerWalk");
 			}
 		}
@@ -256,59 +267,59 @@ namespace basecross {
 	void PlayerAttack1State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-		m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+		stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+		m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 		m_nestAttackFlag = false;
 	}
 
 
-	//UŒ‚ƒXƒe[ƒg(‚Q”Ô–Ú‚Éo‚éUŒ‚)
+	//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆ(ï¼’ç•ªç›®ã«å‡ºã‚‹æ”»æ’ƒ)
 	void PlayerAttack2State::Enter()
 	{
-		//UŒ‚‚Ì“–‚½‚è”»’è‚ğo‚·
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®šã‚’å‡ºã™
 		auto stage = m_player->GetStage();
-		//UŒ‚‚Ì“–‚½‚è”»’è(‰¼)
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š(ä»®)
 		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(0.0f,0.0f,1.0f,1.0f));
 	}
 	void PlayerAttack2State::Update(float deltaTime)
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		PlayerStateBase::Update(deltaTime);
 
-		//UŒ‚‚ÌŠÔŒv‘ª
+		//æ”»æ’ƒã®æ™‚é–“è¨ˆæ¸¬
 		m_timeOfAttack += deltaTime;
 
-		//—P—\ŠÔˆÈ“à‚ÉUŒ‚ƒ{ƒ^ƒ“‚ğ‰Ÿ‚¹‚½‚çŸ‚ÌUŒ‚ƒXƒe[ƒg‚É‘JˆÚ‚Å‚«‚é
+		//çŒ¶äºˆæ™‚é–“ä»¥å†…ã«æ”»æ’ƒãƒœã‚¿ãƒ³ã‚’æŠ¼ã›ãŸã‚‰æ¬¡ã®æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»ã§ãã‚‹
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
-			//UŒ‚ƒXƒe[ƒg‚É•ÏX‚·‚é
+			//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
 			{
 				m_nestAttackFlag = true;
 			}
 		}
-		//Ÿ‚ÌUŒ‚‚ÉˆÚs‚Å‚«‚È‚¢ó‘Ô‚È‚çUŒ‚”»’è‚ÌF‚ğ•Ï‚¦‚é(ƒfƒoƒbƒN—p)
+		//æ¬¡ã®æ”»æ’ƒã«ç§»è¡Œã§ããªã„çŠ¶æ…‹ãªã‚‰æ”»æ’ƒåˆ¤å®šã®è‰²ã‚’å¤‰ãˆã‚‹(ãƒ‡ãƒãƒƒã‚¯ç”¨)
 		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
 		{
 			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
 			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
 		}
-		//UŒ‚‚ÌŠÔ‚ğ‰z‚¦‚½‚ç•Ê‚ÌƒXƒe[ƒg‚ÉˆÚ“®‚·‚é
+		//æ”»æ’ƒã®æ™‚é–“ã‚’è¶ŠãˆãŸã‚‰åˆ¥ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•ã™ã‚‹
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
 			auto stage = m_player->GetStage();
-			m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+			m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 
-			//ƒXƒe[ƒg‘JˆÚ
+			//ã‚¹ãƒ†ãƒ¼ãƒˆé·ç§»
 			if (m_nestAttackFlag)
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-				m_player->ChangeState(L"Attack3");//Ÿ‚ÌUŒ‚ƒXƒe[ƒg‚ÉˆÚ“®
-				m_player->AddEffect(PlayerEffect_Attack3);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+				stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+				m_player->ChangeState(L"Attack3");//æ¬¡ã®æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•
+				m_player->AddEffect(PlayerEffect_Attack3);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 			}
 			else
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
+				stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
 				m_player->ChangeState(L"PlayerWalk");
 			}
 		}
@@ -316,59 +327,59 @@ namespace basecross {
 	void PlayerAttack2State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-		m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+		stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+		m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 		m_nestAttackFlag = false;
 	}
 
 
-	//UŒ‚ƒXƒe[ƒg(3”Ô–Ú‚Éo‚éUŒ‚)
+	//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆ(3ç•ªç›®ã«å‡ºã‚‹æ”»æ’ƒ)
 	void PlayerAttack3State::Enter()
 	{
-		//UŒ‚‚Ì“–‚½‚è”»’è‚ğo‚·
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®šã‚’å‡ºã™
 		auto stage = m_player->GetStage();
-		//UŒ‚‚Ì“–‚½‚è”»’è(‰¼)
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š(ä»®)
 		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(1.0f, 0.0f, 1.0f, 1.0f));
 	}
 	void PlayerAttack3State::Update(float deltaTime)
 	{
-		// “ü—ÍƒfƒoƒCƒXæ“¾
+		// å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹å–å¾—
 		PlayerStateBase::Update(deltaTime);
 
-		//UŒ‚‚ÌŠÔŒv‘ª
+		//æ”»æ’ƒã®æ™‚é–“è¨ˆæ¸¬
 		m_timeOfAttack += deltaTime;
 
-		//—P—\ŠÔˆÈ“à‚ÉUŒ‚ƒ{ƒ^ƒ“‚ğ‰Ÿ‚¹‚½‚çŸ‚ÌUŒ‚ƒXƒe[ƒg‚É‘JˆÚ‚Å‚«‚é
+		//çŒ¶äºˆæ™‚é–“ä»¥å†…ã«æ”»æ’ƒãƒœã‚¿ãƒ³ã‚’æŠ¼ã›ãŸã‚‰æ¬¡ã®æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«é·ç§»ã§ãã‚‹
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
-			//UŒ‚ƒXƒe[ƒg‚É•ÏX‚·‚é
+			//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
 			{
 				m_nestAttackFlag = true;
 			}
 		}
-		//Ÿ‚ÌUŒ‚‚ÉˆÚs‚Å‚«‚È‚¢ó‘Ô‚È‚çUŒ‚”»’è‚ÌF‚ğ•Ï‚¦‚é(ƒfƒoƒbƒN—p)
+		//æ¬¡ã®æ”»æ’ƒã«ç§»è¡Œã§ããªã„çŠ¶æ…‹ãªã‚‰æ”»æ’ƒåˆ¤å®šã®è‰²ã‚’å¤‰ãˆã‚‹(ãƒ‡ãƒãƒƒã‚¯ç”¨)
 		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
 		{
 			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
 			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
 		}
-		//UŒ‚‚ÌŠÔ‚ğ‰z‚¦‚½‚ç•Ê‚ÌƒXƒe[ƒg‚ÉˆÚ“®‚·‚é
+		//æ”»æ’ƒã®æ™‚é–“ã‚’è¶ŠãˆãŸã‚‰åˆ¥ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•ã™ã‚‹
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
 			auto stage = m_player->GetStage();
-			m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+			m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 
-			//ƒXƒe[ƒg‘JˆÚ
+			//ã‚¹ãƒ†ãƒ¼ãƒˆé·ç§»
 			if (m_nestAttackFlag)
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-				m_player->ChangeState(L"AttackEx");//Ÿ‚ÌUŒ‚ƒXƒe[ƒg‚ÉˆÚ“®
-				m_player->AddEffect(PlayerEffect_AttackEx);//UŒ‚ƒGƒtƒFƒNƒg‚ğo‚·
+				stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+				m_player->ChangeState(L"AttackEx");//æ¬¡ã®æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•
+				m_player->AddEffect(PlayerEffect_AttackEx);//æ”»æ’ƒã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™
 			}
 			else
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
+				stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
 				m_player->ChangeState(L"PlayerWalk");
 			}
 		}
@@ -376,30 +387,30 @@ namespace basecross {
 	void PlayerAttack3State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-		m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+		stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+		m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 		m_nestAttackFlag = false;
 	}
 
 
-	//UŒ‚ƒXƒe[ƒg(3”Ô–Ú‚Éo‚éUŒ‚)
+	//æ”»æ’ƒã‚¹ãƒ†ãƒ¼ãƒˆ(3ç•ªç›®ã«å‡ºã‚‹æ”»æ’ƒ)
 	void PlayerAttackExState::Enter()
 	{
-		//UŒ‚‚Ì“–‚½‚è”»’è‚ğo‚·
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®šã‚’å‡ºã™
 		auto stage = m_player->GetStage();
-		//UŒ‚‚Ì“–‚½‚è”»’è(‰¼)
+		//æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š(ä»®)
 		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 	void PlayerAttackExState::Update(float deltaTime)
 	{
-		//UŒ‚‚ÌŠÔŒv‘ª
+		//æ”»æ’ƒã®æ™‚é–“è¨ˆæ¸¬
 		m_timeOfAttack += deltaTime;
 
-		//UŒ‚‚ÌŠÔ‚ğ‰z‚¦‚½‚ç•Ê‚ÌƒXƒe[ƒg‚ÉˆÚ“®‚·‚é
+		//æ”»æ’ƒã®æ™‚é–“ã‚’è¶ŠãˆãŸã‚‰åˆ¥ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•ã™ã‚‹
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
 			auto stage = m_player->GetStage();
-			m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+			m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 
 			m_player->ChangeState(L"PlayerWalk");
 		}
@@ -407,25 +418,25 @@ namespace basecross {
 	void PlayerAttackExState::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-		m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+		stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+		m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 	}
 
 
 	//void PlayerAttackLongState::Enter()
 	//{
-	//	//‹…‚ğo‚·
+	//	//çƒã‚’å‡ºã™
 	//}
 	//void PlayerAttackLongState::Update(float deltaTime)
 	//{
-	//	//UŒ‚‚ÌŠÔŒv‘ª
+	//	//æ”»æ’ƒã®æ™‚é–“è¨ˆæ¸¬
 	//	m_timeOfAttack += deltaTime;
 
-	//	//UŒ‚‚ÌŠÔ‚ğ‰z‚¦‚½‚ç•Ê‚ÌƒXƒe[ƒg‚ÉˆÚ“®‚·‚é
+	//	//æ”»æ’ƒã®æ™‚é–“ã‚’è¶ŠãˆãŸã‚‰åˆ¥ã®ã‚¹ãƒ†ãƒ¼ãƒˆã«ç§»å‹•ã™ã‚‹
 	//	if (m_timeOfAttack >= m_timeMaxOfAttack)
 	//	{
 	//		auto stage = m_player->GetStage();
-	//		m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+	//		m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 
 	//		m_player->ChangeState(L"PlayerWalk");
 	//	}
@@ -434,8 +445,8 @@ namespace basecross {
 	//void PlayerAttackLongState::Exit()
 	//{
 	//	auto stage = m_player->GetStage();
-	//	stage->RemoveGameObject<Cube>(m_AttackObj);//UŒ‚”»’èíœ
-	//	m_timeOfAttack = 0.0f;//ƒŠƒZƒbƒg
+	//	stage->RemoveGameObject<Cube>(m_AttackObj);//æ”»æ’ƒåˆ¤å®šå‰Šé™¤
+	//	m_timeOfAttack = 0.0f;//ãƒªã‚»ãƒƒãƒˆ
 	//}
 
 }

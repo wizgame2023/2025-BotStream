@@ -20,6 +20,8 @@ namespace basecross {
 	void AttackCollision::OnCreate() {
 		m_collision = AddComponent<CollisionSphere>();
 		m_collision->SetAfterCollision(AfterCollision::None);
+
+		m_collision->SetMakedRadius(10);
 	}
 
 	void AttackCollision::OnUpdate() {

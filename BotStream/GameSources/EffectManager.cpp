@@ -167,4 +167,9 @@ namespace basecross
 			m_manager->StopEffect(EfkHandle);
 		}
 	}
+
+	void EffectManager::SetSpeed(const Handle& EfkHandle, const float Speed)
+	{
+		m_manager->SetSpeed(EfkHandle, Speed);
+	}
 }

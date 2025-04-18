@@ -7,18 +7,24 @@
 #include "stdafx.h"
 #include "Project.h"
 #include "Actor.h"
+#include "EnemyState.h"
 
 namespace basecross{
 	class EnemyStateMachine;
-	class Enemy : public Actor
+	class EnemyBase : public Actor
 	{
+	protected:
 		bool m_used = false;
 		shared_ptr<EnemyStateMachine> m_state;
 
+		float bindPos = 0;
+
 	public:
-		Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
-		Enemy(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
-		~Enemy();
+		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
+		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
+		~EnemyBase() {}
+
+		void HitBackStandBehavior();
 
 		void OnCreate() override;
 		void OnUpdate() override;
@@ -40,7 +46,22 @@ namespace basecross{
 		}
 	};
 
+	class BossFirst : public EnemyBase {
+		void RegisterAnim();
+		void OnDamaged() override;
 
+	public:
+		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+			EnemyBase(stagePtr, pos, rot, scale, used)
+		{
+
+		}
+		~BossFirst() {}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+	};
 }
 //end basecross
 

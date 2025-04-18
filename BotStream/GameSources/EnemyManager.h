@@ -8,27 +8,37 @@
 #include "Project.h"
 #include "Enemy.h"
 
+//そのうち、m_enemies配列の特定の要素を、EnemyBaseを継承した別種類の敵で上書きする機能を追加するかも？
+
 namespace basecross {
 	class MyGameObject;
 	class EnemyManager : public MyGameObject
 	{
-		//プール(10体)
-		shared_ptr<Enemy> m_enemies[10];
+		//プール(10体 [0]はボス向け)
+		shared_ptr<EnemyBase> m_enemies[11];
 	public:
 		EnemyManager(const shared_ptr<Stage>& stagePtr) : 
 			MyGameObject(stagePtr)
 		{
+			bool isFirstofVector = true;
+
 			//あらかじめ生成
 			for (auto& e : m_enemies) {
-				e = GetStage()->AddGameObject<Enemy>(Vec3(0), Vec3(0), Vec3(0));
+				if (isFirstofVector) {
+					isFirstofVector = !isFirstofVector;
+					continue;
+				}
+
+				e = GetStage()->AddGameObject<EnemyBase>(Vec3(0), Vec3(0), Vec3(0));
 			}
 		}
 		~EnemyManager() {}
 
 		//敵の配列を返す(trueならアクティブなもののみ)
-		vector<shared_ptr<Enemy>> GetEnemyVec(bool onlyActives) {
-			vector<shared_ptr<Enemy>> ret;
+		vector<shared_ptr<EnemyBase>> GetEnemyVec(bool onlyActives) {
+			vector<shared_ptr<EnemyBase>> ret;
 			for (auto e : m_enemies) {
+				if (e == nullptr) continue;
 				if (e->GetUsed() || !onlyActives) {
 					ret.push_back(e);
 				}
@@ -37,8 +47,9 @@ namespace basecross {
 		}
 
 		//アクティブな敵の中で最も生成順の若いものを返す
-		shared_ptr<Enemy> GetActiveEnemy() {
+		shared_ptr<EnemyBase> GetActiveEnemy() {
 			for (auto e : m_enemies) {
+				if (e == nullptr) continue;
 				if (e->GetUsed() == false) {
 					return e;
 				}
@@ -46,16 +57,23 @@ namespace basecross {
 		}
 
 		//番号で指定
-		shared_ptr<Enemy> GetActiveEnemy(int element) {
-			for (auto e : m_enemies) {
-				if (e->GetUsed() == false) {
-					return e;
-				}
-			}
+		shared_ptr<EnemyBase> GetActiveEnemy(int element) {
+			return m_enemies[element];
 		}
 		
 		//敵の情報を入力して敵を1体出す
 		void InstEnemy(Vec3 pos, Vec3 rot, Vec3 scale);
+
+		//ボス敵のポインタを渡す用の変数
+		void InstBoss(shared_ptr<EnemyBase> boss) {
+			m_enemies[0] = boss;
+			auto t = dynamic_pointer_cast<GameObject>(m_enemies[0])->GetComponent<Transform>();
+			m_enemies[0]->Initialize(t->GetPosition(), t->GetRotation(), t->GetScale());
+		}
+		//ボス取得(いなかったらnullが返る)
+		shared_ptr<EnemyBase> GetBoss() {
+			return m_enemies[0];
+		}
 
 		void OnCreate() override;
 	};
