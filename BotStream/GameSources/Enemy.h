@@ -15,12 +15,22 @@ namespace basecross{
 	{
 	protected:
 		bool m_used = false;
-		shared_ptr<EnemyStateMachine> m_state;
+		shared_ptr<StateMachineBase> m_state;
+
+		weak_ptr<Player> m_player;
+
+		void RegisterAnim();
 
 	public:
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
-		~EnemyBase();
+		~EnemyBase() {}
+
+		void HitBackStandBehavior();
+
+		void ChangeState(wstring stateName) {
+			m_state->ChangeState(stateName);
+		}
 
 		void OnCreate() override;
 		void OnUpdate() override;
@@ -40,20 +50,22 @@ namespace basecross{
 		bool GetUsed() {
 			return m_used;
 		}
+
+		//ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚ğ‘ª‚é
+		float GetPlayerDist();
 	};
 
 	class BossFirst : public EnemyBase {
-		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
-			EnemyBase(stagePtr, pos, rot, scale)
-		{
-
-		}
-		~BossFirst() { }
-		
-		void RegisterAnim();
 		void OnDamaged() override;
 
 	public:
+		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+			EnemyBase(stagePtr, pos, rot, scale, used)
+		{
+
+		}
+		~BossFirst() {}
+
 		void OnCreate() override;
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
