@@ -47,6 +47,17 @@ namespace basecross {
 		float m_frictionDynamic = .5f;
 		float m_frictionThreshold = .5f;
 
+		//着地判定を無効化する時間
+		float m_disableLandDetect = 0.0f;
+		//地上にいるか否か
+		bool m_isLand = false;
+		//向いている角度
+		float m_angle;
+
+		//喰らった時間
+		float m_hitbacktime = 0;
+
+
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
 		//着地判定
@@ -72,11 +83,40 @@ namespace basecross {
 			return GetComponent<Transform>();
 		}
 
+		// エフェクトの再生
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
+		// 地面着地
+		void OnLanding();
+
+		//OnCollisionEnterに置く
+		void DetectBeingAttacked(shared_ptr<GameObject>& other);
+	public:
+		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
+		~Actor();
+
+		void OnCreate() override;
+		void OnUpdate() override;
+
+		//喰らった攻撃の吹き飛ばし距離を代入(現状地上のもののみ)
+		void HitBack() {
+			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
+			m_velocity = m_GetHitInfo.HitVel_Stand;
+		}
+
+		//攻撃判定のポインタを取得
+		shared_ptr<AttackCollision> GetAttackPtr() {
+			return m_AttackCol;
+		}
+
 		//攻撃判定の内容を更新する
 		void DefAttack(float activetime, HitInfo info) {
 			m_AttackCol->SetHitInfo(info);
-			m_AttackCol->ActiveCollision(activetime);
+			m_AttackCol->ActivateCollision(activetime);
 		}
+
+		float GetAngle();   //今向いている方向のゲッター
+		void SetAngle(float angle);	//向いている方向のセッター
 
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {
@@ -91,16 +131,6 @@ namespace basecross {
 				return false;
 			}
 		}
-
-		//OnCollisionEnterに置く
-		void DetectBeingAttacked(shared_ptr<GameObject>& other);
-	public:
-		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
-		~Actor();
-
-		void OnCreate() override;
-		void OnUpdate() override;
-
 	};
 	
 }

@@ -143,6 +143,17 @@ namespace basecross {
 	}
 	void PlayerAttack1State::Update(float deltaTime)
 	{
+		//UŒ‚”»’è‚Ì’è‹`
+		if (m_timeOfAttack <= 0) {
+			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Damage = 10;
+			tmp.HitVel_Stand = Vec3(-20, 0, 0);
+			tmp.HitTime_Stand = .8f;
+			m_player->DefAttack(.5f, tmp);
+			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+		}
+
 		//UŒ‚‚ÌŠÔŒv‘ª
 		m_timeOfAttack += deltaTime;
 
