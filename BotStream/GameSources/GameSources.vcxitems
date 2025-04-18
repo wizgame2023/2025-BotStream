@@ -22,6 +22,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameClearScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)GameOverScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Ground.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LandDetect.h" />
@@ -52,6 +54,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameClearScene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)GameOverScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Ground.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LandDetect.cpp" />
