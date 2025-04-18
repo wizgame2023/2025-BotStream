@@ -7,7 +7,8 @@
 #include "stdafx.h"
 
 namespace basecross {
-	class Player;
+	class Player;	
+	class Actor;
 	class Cube;
 	//プレイヤーステートの元となるクラス
 	class PlayerStateBase :public StateBase
@@ -15,6 +16,9 @@ namespace basecross {
 	protected:
 		shared_ptr<Player> m_player;//プレイヤーの実体
 		CONTROLER_STATE m_controller;//コントローラー
+		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
+		shared_ptr<Actor> m_targetObj = nullptr;//ロックオン時の対象
+		float m_targetDistance;//ターゲット対象との距離
 	public:
 		PlayerStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -28,13 +32,10 @@ namespace basecross {
 
 		
 		virtual void Enter() {};
-		virtual void Update(float deltaTime) 
-		{
-			//コントローラーを受け取る
-			auto inputDevice = App::GetApp()->GetInputDevice();
-			m_controller = inputDevice.GetControlerVec()[0];
-		};
+		virtual void Update(float deltaTime);
 		virtual void Exit() {};
+
+		float GetTargetDistance();
 	};
 
 	//徒歩ステート
@@ -56,6 +57,7 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
 	};
 
 	//回避ステート
@@ -74,7 +76,8 @@ namespace basecross {
 
 		virtual void Enter();
 		virtual void Update(float deltaTime);
-		virtual void Exit(int a);//なぜかExitで引数を入れないとエラー吐きます
+		virtual void Exit();
+
 	};
 
 	//ダッシュステート
@@ -82,6 +85,7 @@ namespace basecross {
 	{
 	private:
 		shared_ptr<Player> m_player;
+		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
 	public:
 		PlayerDashState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj),
@@ -103,11 +107,11 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 1.0f;
+		float m_timeMaxOfAttack = 0.7f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		//次の攻撃の猶予時間
-		float m_graceTimeOfNextAttack = 0.7f;
+		float m_graceTimeOfNextAttack = 0.5f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -125,7 +129,7 @@ namespace basecross {
 
 		virtual void Enter();
 		virtual void Update(float deltaTime);
-		virtual void Exit(int a);
+		virtual void Exit();
 	};
 
 	//攻撃ステート(２番目に出る攻撃)
@@ -133,11 +137,11 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 1.0f;
+		float m_timeMaxOfAttack = 0.7f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		//次の攻撃の猶予時間
-		float m_graceTimeOfNextAttack = 0.7f;
+		float m_graceTimeOfNextAttack = 0.5f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -155,9 +159,98 @@ namespace basecross {
 
 		virtual void Enter();
 		virtual void Update(float deltaTime);
-		virtual void Exit(int a);
+		virtual void Exit();
 	};
 
+	//攻撃ステート(3番目に出る攻撃)
+	class PlayerAttack3State :public PlayerStateBase
+	{
+	private:
+		//攻撃時間
+		float m_timeMaxOfAttack = 1.0f;
+		//攻撃時間計測
+		float m_timeOfAttack;
+		//次の攻撃の猶予時間
+		float m_graceTimeOfNextAttack = 0.9f;
+		//次の攻撃をするかのフラグ
+		float m_nestAttackFlag = false;
+
+		shared_ptr<Cube> m_AttackObj = nullptr;
+
+	public:
+		PlayerAttack3State(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerAttack3State()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
+
+	//攻撃ステート(最後に出る攻撃)
+	class PlayerAttackExState :public PlayerStateBase
+	{
+	private:
+		//攻撃時間
+		float m_timeMaxOfAttack = 1.2f;
+		//攻撃時間計測
+		float m_timeOfAttack;
+		////次の攻撃の猶予時間
+		//float m_graceTimeOfNextAttack = 0.9f;
+		////次の攻撃をするかのフラグ
+		//float m_nestAttackFlag = false;
+
+		shared_ptr<Cube> m_AttackObj = nullptr;
+
+	public:
+		PlayerAttackExState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerAttackExState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
+
+	////攻撃ステート(最後に出る攻撃)
+	//class PlayerAttackLongState :public PlayerStateBase
+	//{
+	//private:
+	//	//攻撃時間
+	//	float m_timeMaxOfAttack = 1.2f;
+	//	//攻撃時間計測
+	//	float m_timeOfAttack;
+	//	////次の攻撃の猶予時間
+	//	//float m_graceTimeOfNextAttack = 0.9f;
+	//	////次の攻撃をするかのフラグ
+	//	//float m_nestAttackFlag = false;
+
+	//	shared_ptr<Cube> m_AttackObj = nullptr;
+
+	//public:
+	//	PlayerAttackLongState(shared_ptr<GameObject>& obj) :
+	//		PlayerStateBase(obj)
+	//	{
+
+	//	}
+	//	~PlayerAttackLongState()
+	//	{
+	//	}
+
+	//	virtual void Enter();
+	//	virtual void Update(float deltaTime);
+	//	virtual void Exit();
+	//};
 
 	//プレイヤーステートマシン
 	class PlayerStateMachine : public StateMachineBase
@@ -170,10 +263,15 @@ namespace basecross {
 			AddState(L"Dodge", shared_ptr<PlayerDodgeState>(new PlayerDodgeState(obj)));
 			AddState(L"Dash", shared_ptr<PlayerDashState>(new PlayerDashState(obj)));
 			AddState(L"Attack1", shared_ptr<PlayerAttack1State>(new PlayerAttack1State(obj)));
+			AddState(L"Attack2", shared_ptr<PlayerAttack2State>(new PlayerAttack2State(obj)));
+			AddState(L"Attack3", shared_ptr<PlayerAttack3State>(new PlayerAttack3State(obj)));
+			AddState(L"AttackEx", shared_ptr<PlayerAttackExState>(new PlayerAttackExState(obj)));
+			//AddState(L"AttackLong", shared_ptr<PlayerAttackLongState>(new PlayerAttackLongState(obj)));
 
 			//最初のステートはWalkここからいろんなステートに変更する イーブイみたいなもの
 			ChangeState(L"PlayerWalk");
 		}
+		
 	};
 
 }
