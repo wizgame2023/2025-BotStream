@@ -19,9 +19,7 @@ namespace basecross {
         void CreateWall();
         void CreateCeiling();
         void CreateDoor();
-        void CreateDoor2();
 
-        shared_ptr<Enemy> m_enemies[10];
 
     public:
         //ç\ízÇ∆îjä¸
@@ -30,6 +28,7 @@ namespace basecross {
         //èâä˙âª
         virtual void OnCreate()override;
         virtual void OnUpdate()override;
+        virtual void OnDraw()override;
 
     };
 
@@ -79,6 +78,10 @@ namespace basecross {
         Vec3 m_Scale;
         Vec3 m_Rotation;
         Vec3 m_Position;
+
+        shared_ptr<BillBoard> m_HPGauge;
+        shared_ptr<BillBoard> m_ArmorGauge;
+
     public:
         Door(const shared_ptr<Stage>& StagePtr,
             const Vec3& Scale,
@@ -86,20 +89,6 @@ namespace basecross {
             const Vec3& Position
         );
         virtual ~Door();
-        virtual void OnCreate() override;
-    };
-
-    class Door2 : public GameObject {
-        Vec3 m_Scale;
-        Vec3 m_Rotation;
-        Vec3 m_Position;
-    public:
-        Door2(const shared_ptr<Stage>& StagePtr,
-            const Vec3& Scale,
-            const Vec3& Rotation,
-            const Vec3& Position
-        );
-        virtual ~Door2();
         virtual void OnCreate() override;
     };
 

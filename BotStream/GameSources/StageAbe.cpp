@@ -63,7 +63,7 @@ namespace basecross {
 			m_SE = m_ptrSound->Start(L"StartVoice", 0, 0.3f);
 			break;
 		case 13:
-			m_SE = m_ptrSound->Start(L"StatrVoice2", 0, 0.3f);
+			m_SE = m_ptrSound->Start(L"StatrVoice2", 0, 0.6f);
 			break;
 		case 14:
 			m_SE = m_ptrSound->Start(L"Lock-on", 0, 0.3f);
