@@ -40,6 +40,13 @@ namespace basecross {
 			auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 			SetSharedGameObject(L"Player", player);
 
+			//エネミーマネージャー
+			auto enemyMgr = AddGameObject<EnemyManager>();
+			SetSharedGameObject(L"EnemyManager", enemyMgr);
+
+			//カメラマネージャ作成
+			auto cameraManager = AddGameObject<CameraManager>();
+			SetSharedGameObject(L"CameraManager", cameraManager);
 
 			auto ground = AddGameObject<Ground>();
 
@@ -160,29 +167,29 @@ namespace basecross {
 		//--------------------------------------------------------------------
 
 		//プレイヤーのゲージ関係----------------------------------------------
-		const Vec2 gaugeSize(300, 75), hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f),
-			spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
+		//const Vec2 gaugeSize(300, 75), hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f),
+		//	spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
 
-		//hpの初期位置
-		const float gaugePosX = 0.0f, gaugePosY = -250;
+		////hpの初期位置
+		//const float gaugePosX = 0.0f, gaugePosY = -250;
 
-		m_gaugeFrameSprite = AddGameObject<Sprite>(
-			L"PLGauge",  			//テクスチャ名
-			gaugeSize,       // サイズ
-			Vec3(gaugePosX, gaugePosY, 0));	//表示位置
-		m_gaugeFrameSprite->SetDrawLayer(1);
+		//m_gaugeFrameSprite = AddGameObject<Sprite>(
+		//	L"PLGauge",  			//テクスチャ名
+		//	gaugeSize,       // サイズ
+		//	Vec3(gaugePosX, gaugePosY, 0));	//表示位置
+		//m_gaugeFrameSprite->SetDrawLayer(1);
 
-		m_plHPSprite = AddGameObject<Sprite>(
-			L"PLHP",  			//テクスチャ名
-			hpGaugeSize,       // サイズ
-			Vec3(gaugePosX + (gaugeSize.x * 0.066f), gaugePosY - 0.7f, 0));	//表示位置
-		m_plHPSprite->SetDrawLayer(2);
+		//m_plHPSprite = AddGameObject<Sprite>(
+		//	L"PLHP",  			//テクスチャ名
+		//	hpGaugeSize,       // サイズ
+		//	Vec3(gaugePosX + (gaugeSize.x * 0.066f), gaugePosY - 0.7f, 0));	//表示位置
+		//m_plHPSprite->SetDrawLayer(2);
 
-		m_plSPSprite = AddGameObject<Sprite>(
-			L"PLSP",  			//テクスチャ名
-			spGaugeSize,       // サイズ
-			Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));	//表示位置
-		m_plSPSprite->SetDrawLayer(2);
+		//m_plSPSprite = AddGameObject<Sprite>(
+		//	L"PLSP",  			//テクスチャ名
+		//	spGaugeSize,       // サイズ
+		//	Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));	//表示位置
+		//m_plSPSprite->SetDrawLayer(2);
 
 		//--------------------------------------------------------------------
 
@@ -278,15 +285,14 @@ namespace basecross {
 			m_selectPos);        // 表示位置
 
 		//--------------------------------------------------------------------
+		
+
 	}
 
 	void StageSato::OnUpdate()
 	{
 		//エフェクト関係
 		EffectManager::Instance().InterfaceUpdate();
-
-
-		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
@@ -381,48 +387,6 @@ namespace basecross {
 			}
 		}
 
-		// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		{
-			m_playerHP = max(0.0f, m_playerHP - 10.0f);  // ← 10ずつ減る想定
-		}
-
-		// 比率でスケーリング
-		float hpRatio = m_playerHP / m_playerMaxHP;
-		hpRatio = clamp(hpRatio, 0.0f, 1.0f);
-
-		auto hpTrans = m_plHPSprite->GetComponent<Transform>();
-		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
-
-		// 左端固定
-		const float gaugeWidth = 300.0f * 0.8f;
-		float hpOffsetX = (hpRatio - 1.0f) * (gaugeWidth * 0.5f);
-		hpTrans->SetPosition(Vec3(20.0f + hpOffsetX, -200.0f, 0.0f));
-
-		// 枠の位置からの相対座標（±補正）
-		Vec3 hpOffset(300.0f * 0.066f, -0.7f, 0.0f);
-		hpTrans->SetPosition(framePos + hpOffset + Vec3(hpOffsetX, 0.0f, 0.0f));
-
-		// 仮：Bボタンで必殺技溜め
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			m_playerSP = min(m_playerSP + 10.0f, m_playerMaxSP); // 今の設定だと10回押すと最大になる
-		}
-
-		// SPゲージの比率を計算（0.0〜1.0）
-		float spRatio = clamp(m_playerSP / m_playerMaxSP, 0.0f, 1.0f);
-
-		auto spTrans = m_plSPSprite->GetComponent<Transform>();
-		spTrans->SetScale(Vec3(spRatio, 1.0f, 1.0f));
-
-		// 左端固定のための位置補正（中心をズラす）
-		const float spGaugeWidth = 240.0f;
-		float spOffsetX = (spRatio - 1.0f) * (spGaugeWidth * 0.3f);
-
-		// 枠の位置からの相対座標
-		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
-		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
-
 		// 仮：Xボタンで武器UI切り替え
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
 		{
@@ -482,6 +446,7 @@ namespace basecross {
 			}
 		}
 		DebugLog();
+
 	}
 
 	void StageSato::OnDraw()
