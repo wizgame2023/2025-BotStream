@@ -232,7 +232,7 @@ namespace basecross {
 		if (m_targetObj)
 		{
 			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-			m_targetDis = targetVec.x + targetVec.z;
+			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
 		}
 		
 		wss /* << L"デバッグ用文字列 "*/
@@ -741,7 +741,8 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
-		//m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetTextureResource(L"PLGauge");
 		m_ptrDraw->SetOwnShadowActive(false);//影は消す
 		m_ptrDraw->SetDrawActive(true);
 
@@ -759,7 +760,10 @@ namespace basecross {
 			GetStage()->RemoveGameObject<LockOnRange>(GetThis<LockOnRange>());
 			return;
 		}
-		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
+		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.3f));
+		m_ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 0.3f));
+		SetAlphaActive(true);
+
 
 		//いつもPlayerについていくようにする
 		Vec3 PlayerPos = playerLock->GetComponent<Transform>()->GetPosition();

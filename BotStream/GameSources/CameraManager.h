@@ -86,7 +86,7 @@ namespace basecross{
 		};
 
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f,
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 25.0f,float melleRange = 5.0f,
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
