@@ -106,6 +106,11 @@ namespace basecross {
 		GetStage()->RemoveGameObject<Sprite>(GetThis<Sprite>());
 	}
 
+	void Sprite::SetPosition(Vec3 pos)
+	{
+		m_trans->SetPosition(pos);
+	}
+
 	void Sprite::SetUVRect(Vec2 topLeft, Vec2 botRight)
 	{
 		vector<VertexPositionColorTexture> vertices = {
