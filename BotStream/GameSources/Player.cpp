@@ -7,9 +7,13 @@
 #include "Project.h"
 
 namespace basecross {
-	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,int hp,int attack,int defense) :
 		Actor(stagePtr, pos, rot, scale),
-		m_dodgeTime(0.0f)
+		m_dodgeTime(0.0f),
+		m_HPMax(hp),
+		m_HPCurrent(hp),
+		m_attack(attack),
+		m_defense(defense)
 	{
 
 	}
@@ -265,6 +269,16 @@ namespace basecross {
 		}
 	}
 
+	//HPのゲッター
+	int Player::GetHP()
+	{
+		return m_HPCurrent;
+	}
+	//HPのゲッター
+	int Player::GetMaxHP()
+	{
+		return m_HPMax;
+	}
 
 	//回避フラグのゲッター
 	bool Player::GetDodgeFlag()

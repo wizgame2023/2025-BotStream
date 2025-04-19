@@ -17,7 +17,8 @@ namespace basecross {
 		void CreateSprite();
 
 		//--------写すときはここをコピペすればいいと思われる--------
-				// 性格のステータス
+				
+		// 性格のステータス
 		struct PersonalState
 		{
 			int Good = 0;
@@ -56,6 +57,9 @@ namespace basecross {
 		int m_select = 0;
 		Vec3 m_selectPos;
 
+		// リザルト表示フラグ
+		bool m_resultFlag = false;
+
 		// 弾数
 		int m_bulletNum = 90;
 		// 弾数の数字の大きさ
@@ -85,6 +89,8 @@ namespace basecross {
 
 		// 性格診断のステータス変動
 		void PersonalStateChange(int questionID, int answerIndex);
+
+		void StateResult(int LawCha, int EvilGood);
 
 		// 数字を画面上に表示する関数
 		// value     : 表示する数値
