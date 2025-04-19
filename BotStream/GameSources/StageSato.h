@@ -26,9 +26,9 @@ namespace basecross {
 			int Chaos = 0;
 		};
 
-		shared_ptr<Sprite> m_plHPSprite;
-		shared_ptr<Sprite> m_plSPSprite;
-		shared_ptr<Sprite> m_gaugeFrameSprite;
+		//shared_ptr<Sprite> m_plHPSprite;
+		//shared_ptr<Sprite> m_plSPSprite;
+		//shared_ptr<Sprite> m_gaugeFrameSprite;
 		shared_ptr<Sprite> m_katanaSprite;
 		shared_ptr<Sprite> m_gunSprite;
 		shared_ptr<Sprite> m_questionSprite[5];
@@ -134,14 +134,14 @@ namespace basecross {
 			m_bulletNum = value;
 		}
 
-		// 比率みたいなやつをあーだこーだするやつ
-		template <typename T>
-		T clamp(T value, T minValue, T maxValue)
-		{
-			if (value < minValue) return minValue;
-			if (value > maxValue) return maxValue;
-			return value;
-		}
+		//// 比率みたいなやつをあーだこーだするやつ
+		//template <typename T>
+		//T clamp(T value, T minValue, T maxValue)
+		//{
+		//	if (value < minValue) return minValue;
+		//	if (value > maxValue) return maxValue;
+		//	return value;
+		//}
 
 	};
 
