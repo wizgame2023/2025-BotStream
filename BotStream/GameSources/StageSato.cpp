@@ -284,6 +284,14 @@ namespace basecross {
 			selectSize,      // サイズ
 			m_selectPos);        // 表示位置
 
+		Vec2 resultSize(400,100);
+		Vec3 resultPos(0, 0, 0);
+		m_resultSprite = AddGameObject<Sprite>(
+			L"ResultText",   // テクスチャ名
+			resultSize,      // サイズ
+			resultPos        // 位置
+		);
+		m_resultSprite->OnClear(true);
 		//--------------------------------------------------------------------
 		
 
@@ -383,8 +391,33 @@ namespace basecross {
 				{
 					m_answerSprite[m_switchQues][i]->OnClear(true);
 				}
+				float lawChaosIndex = NormalizeAxis(m_personality.Lawful, m_personality.Chaos);
+				float evilGoodIndex = NormalizeAxis(m_personality.Evil, m_personality.Good);
+				int checkLawCha, checkEvilGood;
 
+				// 中立:0
+				// 秩序:1
+				// 混沌:2
+				if (lawChaosIndex > -1.4 && lawChaosIndex < 1.4) checkLawCha = 0;
+				else if (lawChaosIndex <= -1.4) checkLawCha = 1;
+				else if (lawChaosIndex >= 1.4) checkLawCha = 2;
+
+				// 中立:0
+				// 悪:1
+				// 善:2
+				if (evilGoodIndex > -1.4 && lawChaosIndex < 1.4) checkEvilGood = 0;
+				else if (evilGoodIndex <= -1.4) checkEvilGood = 1;
+				else if (evilGoodIndex >= 1.4) checkEvilGood = 2;
+				
+				StateResult(checkLawCha, checkEvilGood);
+				m_resultFlag = true;
 			}
+		}
+
+		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_resultFlag == true)
+		{
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
 		}
 
 		// 仮：Xボタンで武器UI切り替え
@@ -485,17 +518,14 @@ namespace basecross {
 	}
 
 	// minusSide : Lawful,Evil
-	// plusSide  : Chaos,Good
-	// の想定
+	// plusSide  : Chaos,Good   の想定
 	float StageSato::NormalizeAxis(float minusSide, float plusSide)
 	{
 		// どちらが大きいかの判断
 		if (plusSide >= minusSide) {
-			// 例: Chaos 側が大きい場合 → +1 から (minus/plus) を引いたもの
 			return  3.0f - (minusSide / plusSide) * 3;
 		}
 		else {
-			// Law/Evil 側が大きい場合 → - (1 - plus/minus)
 			return -(3.0f - (plusSide / minusSide) * 3);
 		}
 
@@ -684,6 +714,82 @@ namespace basecross {
 			case 2: // 書籍類
 				m_personality.Chaos += addNum * 2;
 				m_personality.Good += addNum * 2;
+				break;
+			}
+			break;
+		}
+	}
+
+	//診断結果表示関係(結構長い)
+	void StageSato::StateResult(int LawCha, int EvilGood)
+	{
+		switch (LawCha)
+		{
+		case 0:  // 中立軸
+			switch (EvilGood)
+			{
+			case 0:
+				// 真なる中立
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.6f), Vec2(1, 0.7f));
+				break;
+
+			case 1:
+				// 中立にして悪
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.3f), Vec2(1, 0.4f));
+				break;
+
+			case 2:
+				// 中立にして善
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.0f), Vec2(1, 0.1f));
+				break;
+			}
+			break;
+
+		case 1:  // 秩序軸
+			switch (EvilGood)
+			{
+			case 0:
+				// 秩序にして中立
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.8f), Vec2(1, 0.9f));
+				break;
+
+			case 1:
+				// 秩序にして悪
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.5f), Vec2(1, 0.6f));
+				break;
+
+			case 2:
+				// 秩序にして善
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.2f), Vec2(1, 0.3f));
+				break;
+			}
+			break;
+
+		case 2:  // 混沌軸
+			switch (EvilGood)
+			{
+			case 0:
+				// 混沌にして中立
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.7f), Vec2(1, 0.8f));
+				break;
+
+			case 1:
+				// 混沌にして悪
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.4f), Vec2(1, 0.5f));
+				break;
+
+			case 2:
+				// 混沌にして善
+				m_resultSprite->OnClear(false);
+				m_resultSprite->SetUVRect(Vec2(0, 0.1f), Vec2(1, 0.2f));
 				break;
 			}
 			break;
