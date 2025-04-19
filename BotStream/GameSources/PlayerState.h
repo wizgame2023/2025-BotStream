@@ -107,11 +107,11 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.7f;
+		float m_timeMaxOfAttack = 0.5f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		//次の攻撃の猶予時間
-		float m_graceTimeOfNextAttack = 0.5f;
+		float m_graceTimeOfNextAttack = 0.3f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -222,35 +222,35 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	////攻撃ステート(最後に出る攻撃)
-	//class PlayerAttackLongState :public PlayerStateBase
-	//{
-	//private:
-	//	//攻撃時間
-	//	float m_timeMaxOfAttack = 1.2f;
-	//	//攻撃時間計測
-	//	float m_timeOfAttack;
-	//	////次の攻撃の猶予時間
-	//	//float m_graceTimeOfNextAttack = 0.9f;
-	//	////次の攻撃をするかのフラグ
-	//	//float m_nestAttackFlag = false;
+	//攻撃ステート(最後に出る攻撃)
+	class PlayerAttackLongState :public PlayerStateBase
+	{
+	private:
+		//攻撃時間
+		float m_timeMaxOfAttack = 1.2f;
+		//攻撃時間計測
+		float m_timeOfAttack;
+		////次の攻撃の猶予時間
+		//float m_graceTimeOfNextAttack = 0.9f;
+		////次の攻撃をするかのフラグ
+		//float m_nestAttackFlag = false;
 
-	//	shared_ptr<Cube> m_AttackObj = nullptr;
+		shared_ptr<Cube> m_AttackObj = nullptr;
 
-	//public:
-	//	PlayerAttackLongState(shared_ptr<GameObject>& obj) :
-	//		PlayerStateBase(obj)
-	//	{
+	public:
+		PlayerAttackLongState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
 
-	//	}
-	//	~PlayerAttackLongState()
-	//	{
-	//	}
+		}
+		~PlayerAttackLongState()
+		{
+		}
 
-	//	virtual void Enter();
-	//	virtual void Update(float deltaTime);
-	//	virtual void Exit();
-	//};
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
 
 	//プレイヤーステートマシン
 	class PlayerStateMachine : public StateMachineBase
@@ -266,7 +266,7 @@ namespace basecross {
 			AddState(L"Attack2", shared_ptr<PlayerAttack2State>(new PlayerAttack2State(obj)));
 			AddState(L"Attack3", shared_ptr<PlayerAttack3State>(new PlayerAttack3State(obj)));
 			AddState(L"AttackEx", shared_ptr<PlayerAttackExState>(new PlayerAttackExState(obj)));
-			//AddState(L"AttackLong", shared_ptr<PlayerAttackLongState>(new PlayerAttackLongState(obj)));
+			AddState(L"AttackLong", shared_ptr<PlayerAttackLongState>(new PlayerAttackLongState(obj)));
 
 			//最初のステートはWalkここからいろんなステートに変更する イーブイみたいなもの
 			ChangeState(L"PlayerWalk");
