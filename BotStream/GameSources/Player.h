@@ -47,6 +47,15 @@ namespace basecross{
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
+		//HP
+		int m_HPMax;
+		//攻撃力
+		int m_attack;
+		//防御力
+		int m_defense;
+		//現在HP
+		int m_HPCurrent;
+
 
 		// ほぼごり押しだからメンバー要確認
 		//shared_ptr<GameStage> m_Stage;
@@ -65,7 +74,7 @@ namespace basecross{
 		void Dodge();
 
 	public:
-		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale);
+		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale,int HP = 100,int attack = 10,int defense = 1);
 		~Player();
 
 		void OnCreate()override;//作成
@@ -82,6 +91,10 @@ namespace basecross{
 		//回避フラグのゲッター
 		bool GetDodgeFlag();
 
+		//HPのゲッター
+		int GetHP();
+		//HPのゲッター
+		int GetMaxHP();
 
 		//デバック用の文字列
 		void DebugLog();
