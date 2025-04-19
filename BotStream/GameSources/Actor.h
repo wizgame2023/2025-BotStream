@@ -104,6 +104,13 @@ namespace basecross {
 		void OnCreate() override;
 		void OnUpdate() override;
 
+		int GetHPCurrent() {
+			return m_HPCurrent;
+		}
+		int GetHPMax() {
+			return m_HPMax;
+		}
+
 		//‹ò‚ç‚Á‚½UŒ‚‚Ì‚«”ò‚Î‚µ‹——£‚ğ‘ã“ü(Œ»ó’nã‚Ì‚à‚Ì‚Ì‚İ)
 		void HitBack() {
 			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
