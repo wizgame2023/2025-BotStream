@@ -6,6 +6,8 @@
 #include "stdafx.h"
 #include "Project.h"
 #include "EffectManager.h"
+#include "time.h"
+#include <random>
 namespace basecross {
 
 	//--------------------------------------------------------------------------------------
@@ -38,6 +40,13 @@ namespace basecross {
 			auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 			SetSharedGameObject(L"Player", player);
 
+			//エネミーマネージャー
+			auto enemyMgr = AddGameObject<EnemyManager>();
+			SetSharedGameObject(L"EnemyManager", enemyMgr);
+
+			//カメラマネージャ作成
+			auto cameraManager = AddGameObject<CameraManager>();
+			SetSharedGameObject(L"CameraManager", cameraManager);
 
 			auto ground = AddGameObject<Ground>();
 
@@ -108,7 +117,7 @@ namespace basecross {
 			CAMERAUV1(0.0f, 0.333f), CAMERAUV2(0.5f, 0.666f),
 			DASHUV1(0.5f, 0.333f), DASHUV2(1.0f, 0.666f),
 			LOCKONUV1(0.0f, 0.666f), LOCKONUV2(0.5f, 1.0f),
-		    MOVEUV1(0.5f, 0.666f), MOVEUV2(1.0f, 1.0f),
+			MOVEUV1(0.5f, 0.666f), MOVEUV2(1.0f, 1.0f),
 			textSize(100, 50);
 
 		const float textPosX = -500, textPosY = -200;
@@ -158,30 +167,30 @@ namespace basecross {
 		//--------------------------------------------------------------------
 
 		//プレイヤーのゲージ関係----------------------------------------------
-		const Vec2 gaugeSize(300, 75),hpGaugeSize(gaugeSize.x * 0.8f,gaugeSize.y * 0.3f),
-			spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
+		//const Vec2 gaugeSize(300, 75), hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f),
+		//	spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
 
-		//hpの初期位置
-		const float gaugePosX = 0.0f, gaugePosY = -250;
+		////hpの初期位置
+		//const float gaugePosX = 0.0f, gaugePosY = -250;
 
-		m_gaugeFrameSprite = AddGameObject<Sprite>(
-			L"PLGauge",  			//テクスチャ名
-			gaugeSize,       // サイズ
-			Vec3(gaugePosX, gaugePosY, 0));	//表示位置
-		m_gaugeFrameSprite->SetDrawLayer(1);
+		//m_gaugeFrameSprite = AddGameObject<Sprite>(
+		//	L"PLGauge",  			//テクスチャ名
+		//	gaugeSize,       // サイズ
+		//	Vec3(gaugePosX, gaugePosY, 0));	//表示位置
+		//m_gaugeFrameSprite->SetDrawLayer(1);
 
-		m_plHPSprite = AddGameObject<Sprite>(
-			L"PLHP",  			//テクスチャ名
-			hpGaugeSize,       // サイズ
-			Vec3(gaugePosX + (gaugeSize.x * 0.066f), gaugePosY - 0.7f, 0));	//表示位置
-		m_plHPSprite->SetDrawLayer(2);
+		//m_plHPSprite = AddGameObject<Sprite>(
+		//	L"PLHP",  			//テクスチャ名
+		//	hpGaugeSize,       // サイズ
+		//	Vec3(gaugePosX + (gaugeSize.x * 0.066f), gaugePosY - 0.7f, 0));	//表示位置
+		//m_plHPSprite->SetDrawLayer(2);
 
-		m_plSPSprite = AddGameObject<Sprite>(
-			L"PLSP",  			//テクスチャ名
-			spGaugeSize,       // サイズ
-			Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));	//表示位置
-		m_plSPSprite->SetDrawLayer(2);
-		
+		//m_plSPSprite = AddGameObject<Sprite>(
+		//	L"PLSP",  			//テクスチャ名
+		//	spGaugeSize,       // サイズ
+		//	Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));	//表示位置
+		//m_plSPSprite->SetDrawLayer(2);
+
 		//--------------------------------------------------------------------
 
 		//現在の攻撃方法関係--------------------------------------------------
@@ -198,58 +207,185 @@ namespace basecross {
 			Vec3(200, 150, 0));	//表示位置
 		m_gunSprite->OnClear(true);
 		//--------------------------------------------------------------------
+
+		//弾数関係------------------------------------------------------------
+		const Vec2 numberPos(-120, -200); // 表示開始位置
+
+		for (int i = 0; i < 3; ++i)
+		{
+			auto digit = AddGameObject<Sprite>(
+				L"Numbers",
+				Vec2(m_digitSize, m_digitSize),
+				Vec3(numberPos.x + i * m_digitSize, numberPos.y, 0.0f)
+			);
+			digit->SetDrawLayer(3); // UIの最前面に表示
+			m_bulletDigits.push_back(digit);
+		}
+		//--------------------------------------------------------------------
+
+		//質問表示関係--------------------------------------------------------
+
+		const float quesSizeY = 120, quesSizeX = quesSizeY * 10, answerX = 150, answerY = answerX * 0.5625f;
+		const Vec3 questionPos(0, 200, 0), answerPos(questionPos.x - 350, questionPos.y - 400, questionPos.z);
+		const Vec2 questionSize(quesSizeX, quesSizeY), answerSize(answerX, answerY);
+		int questionIndex = 0;
+		// 重複しない乱数を格納するセット
+		std::set<int> uniqueNumbers;
+
+		// 乱数生成器の初期化
+		std::default_random_engine engine(static_cast<unsigned int>(std::time(nullptr)));
+
+		std::uniform_int_distribution<int> distribution(0, 9); // 1から10までの乱数
+
+		// 5つの重複しない乱数を生成
+		while (uniqueNumbers.size() < 5) {
+			int randomNumber = distribution(engine); // 乱数を生成
+			uniqueNumbers.insert(randomNumber); // セットに追加
+		}
+
+		for (const auto& number : uniqueNumbers) {
+			// ランダムに選ばれた質問を記憶
+			m_questionOrder.push_back(number);
+
+			//質問
+			m_questionSprite[questionIndex] = AddGameObject<Sprite>(
+				L"Questions",  			//テクスチャ名
+				questionSize,       // サイズ
+				questionPos);	//表示位置
+			m_questionSprite[questionIndex]->SetUVRect(Vec2(0.0f, number * 0.1f), Vec2(1.0f, (number * 0.1f) + 0.1f));
+
+			//回答
+			for (int i = 0; i < 3; i++)
+			{
+				m_answerSprite[questionIndex][i] = AddGameObject<Sprite>(
+					L"Answer",  			//テクスチャ名
+					answerSize,       // サイズ
+					answerPos + Vec3(i * 375, 0.0f, 0.0f));	//表示位置
+				m_answerSprite[questionIndex][i]->SetUVRect(Vec2(0.333f * i, number * 0.1f), Vec2(0.333f * (i + 1), (number * 0.1f) + 0.1f));
+			}
+
+			if (questionIndex != 0)
+			{
+				m_questionSprite[questionIndex]->OnClear(true);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[questionIndex][i]->OnClear(true);
+				}
+			}
+			questionIndex++;
+		}
+		m_switchQues = 0;
+
+		Vec2 selectSize(275, 200);
+		m_selectPos = answerPos;
+		// 選択してるところのやつ
+		m_selectSprite = AddGameObject<Sprite>(
+			L"Select",			//テクスチャ名
+			selectSize,      // サイズ
+			m_selectPos);        // 表示位置
+
+		//--------------------------------------------------------------------
+		
+
 	}
 
 	void StageSato::OnUpdate()
 	{
 		//エフェクト関係
-		//EffectManager::Instance().InterfaceUpdate();
-
-		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
+		EffectManager::Instance().InterfaceUpdate();
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
-		// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
+		Vec2 ret;
+		if (cntl[0].bConnected)
 		{
-			m_playerHP = max(0.0f, m_playerHP - 10.0f);  // ← 10ずつ減る想定
+			ret.x = cntl[0].fThumbLX;
+			ret.y = cntl[0].fThumbLY;
+		}
+		else if (!cntl[0].bConnected)
+		{
+			if (keybord.m_bPushKeyTbl[VK_UP])
+				ret.y = 1;
+
+			if (keybord.m_bPushKeyTbl[VK_LEFT])
+				ret.x = -1;
+
+			if (keybord.m_bPushKeyTbl[VK_DOWN])
+				ret.y = -1;
+
+			if (keybord.m_bPushKeyTbl[VK_RIGHT])
+				ret.x = 1;
+
 		}
 
-		// 比率でスケーリング
-		float hpRatio = m_playerHP / m_playerMaxHP;
-		hpRatio = clamp(hpRatio, 0.0f, 1.0f);
-
-		auto hpTrans = m_plHPSprite->GetComponent<Transform>();
-		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
-
-		// 左端固定
-		const float gaugeWidth = 300.0f * 0.8f;
-		float hpOffsetX = (hpRatio - 1.0f) * (gaugeWidth * 0.5f);
-		hpTrans->SetPosition(Vec3(20.0f + hpOffsetX, -200.0f, 0.0f));
-
-		// 枠の位置からの相対座標（±補正）
-		Vec3 hpOffset(300.0f * 0.066f, -0.7f, 0.0f);
-		hpTrans->SetPosition(framePos + hpOffset + Vec3(hpOffsetX, 0.0f, 0.0f));
-
-		// 仮：Bボタンで必殺技溜め
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		// Lスティックを左右に倒すと選択できる
+		if (ret.x >= 0.3f && !m_selectFlag && m_select < 2)
 		{
-			m_playerSP = min(m_playerSP + 10.0f, m_playerMaxSP); // 今の設定だと10回押すと最大になる
+			m_select++;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			m_selectFlag = true;
+		}
+		else if (ret.x <= -0.3f && !m_selectFlag && m_select > 0)
+		{
+			m_select--;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			m_selectFlag = true;
+		}
+		else if ((ret.x <= 0.29f && ret.x >= -0.29f) && m_selectFlag)
+		{
+			m_selectFlag = false;
 		}
 
-		// SPゲージの比率を計算（0.0〜1.0）
-		float spRatio = clamp(m_playerSP / m_playerMaxSP, 0.0f, 1.0f);
+		// 仮：LBボタン,キーボードのSPACEで次の質問表示
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || keybord.m_bPressedKeyTbl[VK_SPACE])
+		{
+			if (m_switchQues < m_questionOrder.size())
+			{
+				int questionID = m_questionOrder[m_switchQues];
+				// 選択でステータス変動
+				PersonalStateChange(questionID, m_select);
+			}
+			m_select = 0;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
 
-		auto spTrans = m_plSPSprite->GetComponent<Transform>();
-		spTrans->SetScale(Vec3(spRatio, 1.0f, 1.0f));
+			if (m_switchQues == 5)
+			{
+				m_switchQues = 0;
+			}
 
-		// 左端固定のための位置補正（中心をズラす）
-		const float spGaugeWidth = 240.0f;
-		float spOffsetX = (spRatio - 1.0f) * (spGaugeWidth * 0.3f);
+			//// ここはちゃんと動くかのテストみたいな側面があるため要らないです
+			//if (m_switchQues == 4)
+			//{
+			//	m_questionSprite[m_switchQues]->OnClear(true);
+			//	m_switchQues = 0;
+			//	m_questionSprite[m_switchQues]->OnClear(false);
+			//}
+			////-------------------
+			//else 
+			if (m_switchQues != 4)
+			{
+				m_questionSprite[m_switchQues]->OnClear(true);
+				m_questionSprite[m_switchQues + 1]->OnClear(false);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[m_switchQues][i]->OnClear(true);
+					m_answerSprite[m_switchQues + 1][i]->OnClear(false);
+				}
+				m_switchQues++;
+			}
+			else
+			if(m_switchQues == 4)
+			{
+				m_questionSprite[m_switchQues]->OnClear(true);
+				m_selectSprite->OnClear(true);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[m_switchQues][i]->OnClear(true);
+				}
 
-		// 枠の位置からの相対座標
-		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
-		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
+			}
+		}
 
 		// 仮：Xボタンで武器UI切り替え
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
@@ -258,11 +394,300 @@ namespace basecross {
 			m_katanaSprite->OnClear(m_weaponSwitchFlag);
 			m_weaponSwitchFlag = !m_weaponSwitchFlag;
 		}
+
+		// 仮：AボタンでUIの数字が下がる
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
+		{
+			m_bulletNum = max(0, m_bulletNum - 1);
+		}
+		else if (m_bulletNum <= 0)
+		{
+			m_bulletNum = 90;
+		}
+
+		// 仮置きエフェクト // 後で移す //----------------------------
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+		{
+			//EfkPlaying(L"Beam", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"Dodge", angle + XM_PI, Vec3(0, 1, 0));
+			//EfkPlaying(L"Dash", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
+		}
+		//-------------------------------------------------------------
+
+		// 弾数を文字列に変換
+		std::string bulletStr = std::to_string(m_bulletNum);
+		size_t digitCount = bulletStr.size();
+		Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
+		float uvWidth = 1.0f / 10.0f;          // UVの幅
+
+		// 桁数に応じてスプライトを更新(UVだけ更新)
+		for (size_t i = 0; i < m_bulletDigits.size(); ++i)
+		{
+			auto& digitSprite = m_bulletDigits[i];
+
+			if (i < digitCount)
+			{
+				// 表示すべき数字を取り出す(文字をint型に)
+				int digit = bulletStr[i] - '0';
+
+				// UV範囲
+				float u1 = digit * uvWidth;
+				float u2 = u1 + uvWidth;
+
+				// UVを設定して表示
+				digitSprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
+			}
+			else
+			{
+				// 桁が足りない場合は非表示
+				digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
+			}
+		}
+		DebugLog();
+
 	}
 
 	void StageSato::OnDraw()
 	{
 		EffectManager::Instance().InterfaceDraw();
 	}
+
+	// 使わないかもだけど一応残す
+	void StageSato::ShowNumber(int value, Vec2 pos, float digitSize)
+	{
+		// 数値を文字列に変換
+		std::string str = std::to_string(value);
+
+		float digitWidth = digitSize;
+		// UVの幅
+		float uvWidth = 1.0f / 10.0f;
+
+		for (size_t i = 0; i < str.size(); ++i)
+		{
+			char setValue = str[i];
+			//無いとは思うが、数字以外の文字が入っていたら無視
+			if (setValue < '0' || setValue > '9') continue;
+
+			int digit = setValue - '0';
+			float u1 = digit * uvWidth;
+			float u2 = u1 + uvWidth;
+
+			auto sprite = AddGameObject<Sprite>(
+				L"Numbers",
+				Vec2(digitWidth, digitSize),
+				Vec3(pos.x + i * digitWidth, pos.y, 0.0f)
+			);
+			sprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
+			sprite->SetDrawLayer(3);  // 前面に表示
+		}
+	}
+
+	// minusSide : Lawful,Evil
+	// plusSide  : Chaos,Good
+	// の想定
+	float StageSato::NormalizeAxis(float minusSide, float plusSide)
+	{
+		// どちらが大きいかの判断
+		if (plusSide >= minusSide) {
+			// 例: Chaos 側が大きい場合 → +1 から (minus/plus) を引いたもの
+			return  3.0f - (minusSide / plusSide) * 3;
+		}
+		else {
+			// Law/Evil 側が大きい場合 → - (1 - plus/minus)
+			return -(3.0f - (plusSide / minusSide) * 3);
+		}
+
+	}
+
+	// デバッグ用文字列表示
+	void StageSato::DebugLog()
+	{
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
+		wss /* << L"デバッグ用文字列 "*/
+			<< "Chaos  : " << m_personality.Chaos  << "\n"
+			<< "Lawful : " << m_personality.Lawful << "\n"
+			<< "Good   : " << m_personality.Good << "\n"
+			<< "Evil   : " << m_personality.Evil << "\n" 
+			<< "QuesID : " << m_questionOrder[m_switchQues] << "\n"
+			<< "Answer : " << m_select << "\n"
+			<< endl;
+		scene->SetDebugString(wss.str());
+
+	}
+
+	//質問表示関係(超長い)
+	void StageSato::PersonalStateChange(int questionID, int answerIndex)
+	{
+		int addNum = 5;
+		switch (questionID)
+		{
+		case 0: // 買い物するときによく使うものは
+			switch (answerIndex)
+			{
+			case 0: // 現金
+				m_personality.Lawful += addNum * 2;
+				break;
+			case 1: // キャッシュレス
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // クレジットカード(これもキャッシュレスだろって言われると私は死ぬ)
+				m_personality.Chaos += addNum * 2;
+				break;
+			}
+			break;
+
+		case 1: // 生まれ変わるとしたら
+			switch (answerIndex)
+			{
+			case 0: // 人間
+				m_personality.Evil += addNum;
+				break;
+			case 1: // 動物
+				m_personality.Good += addNum;
+				break;
+			case 2: // 植物
+				m_personality.Lawful += addNum;
+				break;
+			}
+			break;
+
+		case 2: // アウトドア派かインドア派か
+			switch (answerIndex)
+			{
+			case 0: // アウトドア派
+				m_personality.Chaos += addNum * 2;
+				break;
+			case 1: // インドア派
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // 半々(ここに関して本当に思いつかなかった。気になるなら質問の代案、もしくは3つめの代案求ム)
+				m_personality.Lawful += addNum * 2;
+				break;
+			}
+			break;
+
+		case 3: // ネットの情報に左右されやすいか
+			switch (answerIndex)
+			{
+			case 0: // はい
+				m_personality.Good += addNum;
+				break;
+			case 1: // いいえ
+				m_personality.Chaos += addNum;
+				break;
+			case 2: // どちらでもない(ここに関しては回答が本当に思いつかなかった。気になるなら質問の代案(ry
+				m_personality.Lawful += addNum;
+				break;
+			}
+			break;
+
+		case 4: // 人助けのためなら、法を犯しても構わない
+			switch (answerIndex)
+			{
+			case 0: // はい
+				m_personality.Good += addNum * 2;
+				m_personality.Chaos += addNum * 2;
+				break;
+			case 1: // いいえ
+				m_personality.Lawful += addNum * 2;
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつかなかった。気にな(ry
+				m_personality.Evil += addNum * 2;
+				break;
+			}
+			break;
+
+		case 5: // 好きな映画のジャンルは
+			switch (answerIndex)
+			{
+			case 0: // ダークヒーロー
+				m_personality.Good += addNum * 2;
+				m_personality.Lawful += addNum * 2;
+				break;
+			case 1: // ラブコメ
+				m_personality.Chaos += addNum * 2;
+				m_personality.Good += addNum * 2;
+				break;
+			case 2: // ドキュメンタリー
+				m_personality.Lawful += addNum * 2;
+				m_personality.Evil += addNum * 2;
+				break;
+			}
+			break;
+
+		case 6: // 筋肉はすべてを解決すると思うか
+			switch (answerIndex)
+			{
+			case 0: // はい
+				m_personality.Chaos += addNum;
+				m_personality.Good += addNum;
+				break;
+			case 1: // いいえ
+				m_personality.Lawful += addNum;
+				m_personality.Evil += addNum;
+				break;
+			case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつか(ry
+				m_personality.Chaos += addNum;
+				m_personality.Evil += addNum;
+				break;
+			}
+			break;
+
+		case 7: // クリスマスは誰と過ごすか
+			switch (answerIndex)
+			{
+			case 0: // 家族
+				m_personality.Good += addNum * 2;
+				m_personality.Lawful += addNum * 2;
+				break;
+			case 1: // 恋人
+				m_personality.Good += addNum * 2;
+				m_personality.Chaos += addNum * 2;
+				break;
+			case 2: // 孤高
+				m_personality.Evil += addNum * 2;
+				m_personality.Lawful += addNum * 2;
+				break;
+			}
+			break;
+
+		case 8: // 検索エンジンでよく使うのは
+			switch (answerIndex)
+			{
+			case 0: // Chrome
+				m_personality.Lawful += addNum;
+				break;
+			case 1: // Edge
+				m_personality.Chaos += addNum;
+				break;
+			case 2: // Safari
+				m_personality.Evil += addNum;
+				break;
+			}
+			break;
+
+		case 9: // コンビニでよく買うものは
+			switch (answerIndex)
+			{
+			case 0: // 食用品
+				m_personality.Lawful += addNum * 2;
+				m_personality.Good += addNum * 2;
+				break;
+			case 1: // 日用品
+				m_personality.Lawful += addNum * 2;
+				m_personality.Evil += addNum * 2;
+				break;
+			case 2: // 書籍類
+				m_personality.Chaos += addNum * 2;
+				m_personality.Good += addNum * 2;
+				break;
+			}
+			break;
+		}
+	}
 }
-//end basecross
+	//end basecross

@@ -75,8 +75,6 @@ namespace basecross {
 		}
 		else {
 			Friction();
-			//Jump();
-			//Dash();
 			Dodge();
 		}
 
@@ -91,7 +89,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		DebugLog();
+		//DebugLog();
 
 		//アニメーション再生
 		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
@@ -252,6 +250,13 @@ namespace basecross {
 		case PlayerEffect_Attack2:
 			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
 			break;
+		case PlayerEffect_Attack3:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			break;
+		case PlayerEffect_AttackEx:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
+			break;
 		case PlayerEffect_Beam:
 			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
@@ -261,30 +266,15 @@ namespace basecross {
 	}
 
 
-	//Playerの向いている方向のゲッター
-	float Player::GetAngle()
-	{
-		return -m_angle;
-	}
-
 	//回避フラグのゲッター
 	bool Player::GetDodgeFlag()
 	{
 		return m_dodgeFlag;
 	}
 
-	//Playerの向いている方向のセッター
-	void Player::SetAngle(float angle)
-	{
-		m_angle = angle;
-	}
-
 	//デバック用文字列表示関数
 	void Player::DebugLog()
 	{
-		// インプットデバイスオブジェクト
-		auto inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
-
 		////デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
@@ -299,47 +289,7 @@ namespace basecross {
 		scene->SetDebugString(wss.str());
 	}
 
-	// エフェクトのプレイ
-	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate)
-	{
-		rotate.normalize();
-		auto trans = GetComponent<Transform>();
-		auto plPos = trans->GetPosition();
 
-		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
-		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
-	}
-	void Player::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Col4 changeColor)
-	{
-		rotate.normalize();
-		auto trans = GetComponent<Transform>();
-		auto plPos = trans->GetPosition();
-
-		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
-		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
-		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
-	}
-
-	void Player::OnLanding()
-	{
-		if (m_disableLandDetect > 0) {
-			m_disableLandDetect -= _delta;
-		}
-		else {
-			if (m_LandDetect->GetLand() != m_isLand) {
-				//着地した判定
-				if (!m_isLand)
-				{
-					m_velocity.y = 0;
-					EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
-
-				}
-
-				m_isLand = !m_isLand;
-			}
-		}
-
-	}
 }
 //end basecross
 

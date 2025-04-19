@@ -81,7 +81,6 @@ namespace basecross {
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		m_playerPos = player->GetComponent<Transform>()->GetPosition();	
 
-
 		// インプットデバイスオブジェクト
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
 		//コントローラーの取得
@@ -131,6 +130,7 @@ namespace basecross {
 					if (min > ditance)
 					{
 						min = ditance;
+						m_targetDis = abs(distanceVec.x) + abs(distanceVec.z);//対象との距離を保存する
 						m_targetObj = enemy;//ロックオン対象を決める
 					}
 				}
@@ -140,6 +140,7 @@ namespace basecross {
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
 			{
+				m_targetDis = 0.0f;
 				LockOff(enemyVec);//ロックオンの解除
 			}
 			else if (!m_lockOnFlag && !m_movePlayerAngleFlag)
@@ -224,29 +225,36 @@ namespace basecross {
 		CameraPosUpdate();
 
 
-		////デバック用
-		//wstringstream wss(L"");
-		//auto scene = App::GetApp()->GetScene<Scene>();
-		//
-		//wss /* << L"デバッグ用文字列 "*/
-		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-		//	//<< L"\n当たった場所x: " << hitPos.x
-		//	//<< L"\n当たった場所y: " << hitPos.y
-		//	//<< L"\n当たった場所z: " << hitPos.z
-		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-		//	//<<L"\nFPS:"<< 1.0f/delta
-		//	<< endl;
+		//デバック用
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
 
-		//	//if (m_lockOnNum >= 0)
-		//	//{		
-		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-		//	//	float a = targetAngle;
-		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-		//	//}
+		if (m_targetObj)
+		{
+			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+			m_targetDis = targetVec.x + targetVec.z;
+		}
+		
+		wss /* << L"デバッグ用文字列 "*/
+			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+			<< L"\nターゲット対象の距離: " << m_targetDis
+			//<< L"\n当たった場所x: " << hitPos.x
+			//<< L"\n当たった場所y: " << hitPos.y
+			//<< L"\n当たった場所z: " << hitPos.z
+			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+			//<<L"\nFPS:"<< 1.0f/delta
+			<< endl;
 
-		//scene->SetDebugString(wss.str());
+			//if (m_lockOnNum >= 0)
+			//{		
+			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+			//	float a = targetAngle;
+			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+			//}
+
+		scene->SetDebugString(wss.str());
 
 	}
 
@@ -472,6 +480,7 @@ namespace basecross {
 	//ロックオンの解除機能
 	void CameraManager::LockOff(vector<shared_ptr<EnemyBase>> enemyVec)
 	{
+		m_targetDis = 0.0f;
 		m_targetObj->RemoveTag(L"ロックオン対象");
 		m_lockOnFlag = false;//ロックオンできない
 		m_lockOnUse = false;//ロックオンしない
@@ -691,6 +700,18 @@ namespace basecross {
 		{
 			m_cameraAngleY += XMConvertToRadians(360.0f);
 		}
+	}
+
+	//ターゲット対象を渡す関数
+	shared_ptr<Actor> CameraManager::GetTargetObj()
+	{
+		return m_targetObj;
+	}
+
+	//ターゲット対象との距離を渡す
+	float CameraManager::GetTargetDis()
+	{
+		return m_targetDis;
 	}
 
 	//ロックオン範囲を知らせるためのオブジェクト

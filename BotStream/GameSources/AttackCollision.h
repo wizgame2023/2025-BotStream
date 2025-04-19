@@ -122,7 +122,7 @@ namespace basecross {
 			m_collision->SetMakedRadius(scale);
 		}
 		//”»’è‚Ì‘±ŠÔ‚ğİ’è
-		void ActiveCollision(float activetime) {
+		void ActivateCollision(float activetime) {
 			m_ActiveTime = activetime;
 		}
 
