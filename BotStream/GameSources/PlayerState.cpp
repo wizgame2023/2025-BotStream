@@ -637,7 +637,10 @@ namespace basecross {
 
 		m_SEManager->Start(L"DamageVoiceSE");
 		auto hitInfo = m_player->GetHitInfo();
+		auto HPNow = m_player->GetHP();
+		//hitInfo.Damage
 		m_player->HitBack();
+		m_player->SetHP(HPNow - hitInfo.Damage);
 	}
 	void PlayerHitState::Update(float deltaTime)
 	{
