@@ -57,5 +57,6 @@
 #include "CameraManager.h"
 #include "EffectManager.h"
 #include "EnemyManager.h"
+#include "StageCollisionController.h"
 
 
