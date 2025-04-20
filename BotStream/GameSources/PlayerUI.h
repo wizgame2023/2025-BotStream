@@ -24,12 +24,65 @@ namespace basecross {
 		float m_playerSP = 0.0f;        // ‰Šú’lSP
 
 	public:
-		PlayerUI(const std::shared_ptr<Stage>& stagePtr)
-			: MyGameObject(stagePtr) {}
+		PlayerUI(const std::shared_ptr<Stage>& stagePtr,int HPMax = 1000.0f,int SPMax = 100.0f):
+			MyGameObject(stagePtr),
+			m_playerMaxHP(HPMax),
+			m_playerHP(HPMax),
+			m_playerSP(0.0f),
+			m_playerMaxSP(SPMax)
+		{}
 		virtual ~PlayerUI() {}
 
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
+
+		// player‚ÌÅ‘åHP‚ğæ“¾(sprite)
+		float GetPLMaxHPSprite()
+		{
+			return m_playerMaxHP;
+		}
+
+		// player‚ÌŒ»İ‚ÌHP‚ğæ“¾(sprite)
+		float GetPLHPSprite()
+		{
+			return m_playerHP;
+		}
+
+		// player‚ÌÅ‘åSP(•KE‹ZƒQ[ƒW)‚ğæ“¾(sprite)
+		float GetPLMaxSPSprite()
+		{
+			return m_playerMaxSP;
+		}
+
+		// player‚ÌŒ»İ‚ÌSP(•KE‹ZƒQ[ƒW)‚ğæ“¾(sprite)
+		float GetPLSPSprite()
+		{
+			return m_playerSP;
+		}
+
+		// player‚ÌÅ‘åHP‚ğİ’è(sprite)
+		void SetPLMaxHPSprite(float value)
+		{
+			m_playerMaxHP = value;
+		}
+
+		// player‚ÌHP‚ÌXV(sprite)
+		void SetPLHPSprite(float value)
+		{
+			m_playerHP = value;
+		}
+
+		// player‚ÌÅ‘åSP(•KE‹ZƒQ[ƒW)‚ğİ’è(sprite)
+		void SetPLMaxSPSprite(float value)
+		{
+			m_playerMaxSP = value;
+		}
+
+		// player‚ÌÅ‘åSP(•KE‹ZƒQ[ƒW)‚ğİ’è(sprite)
+		void SetPLSPSprite(float value)
+		{
+			m_playerSP = value;
+		}
 
 		// ”ä—¦‚İ‚½‚¢‚È‚â‚Â‚ğ‚ [‚¾‚±[‚¾‚·‚é‚â‚Â
 		template <typename T>
