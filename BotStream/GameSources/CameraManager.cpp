@@ -233,11 +233,13 @@ namespace basecross {
 			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
 		}
 		
+		
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
 			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
 			<< L"\nターゲット対象の距離: " << m_targetDis
+			<< L"\nFPS: " << 1.0f/m_delta
 			//<< L"\n当たった場所x: " << hitPos.x
 			//<< L"\n当たった場所y: " << hitPos.y
 			//<< L"\n当たった場所z: " << hitPos.z
