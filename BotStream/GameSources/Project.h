@@ -47,6 +47,8 @@
 #include "StageSato.h"
 #include "StageTuboi.h"
 #include "WaveStage.h"
+#include "GameClearScene.h"
+#include "GameOverScene.h"
 
 //Manager
 #include "CameraManager.h"
