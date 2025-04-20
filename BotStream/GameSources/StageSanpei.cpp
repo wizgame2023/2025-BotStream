@@ -111,6 +111,9 @@ namespace basecross {
 		//カメラマネージャ作成
 		auto cameraManager = AddGameObject<CameraManager>();
 		SetSharedGameObject(L"CameraManager", cameraManager);
+
+		//コリジョンマネージャー作成
+		AddGameObject<StageCollisionController>();
 	}
 
 	void StageSanpei::OnUpdate()
