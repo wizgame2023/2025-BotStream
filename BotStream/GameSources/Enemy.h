@@ -17,6 +17,8 @@ namespace basecross{
 		bool m_used = false;
 		shared_ptr<StateMachineBase> m_state;
 
+		int m_armor;
+
 		weak_ptr<Player> m_player;
 
 		void RegisterAnim();
@@ -53,6 +55,9 @@ namespace basecross{
 
 		//プレイヤーとの距離を測る
 		float GetPlayerDist();
+
+		//プレイヤーとの角度の差を測る
+		float GetPlayerSubDirection();
 	};
 
 	class BossFirst : public EnemyBase {

@@ -68,6 +68,8 @@ namespace basecross {
 		const float m_startAttack = 3.0f;
 		const float m_startAttackRand = 10;
 		const float m_farDist = 10;
+
+		const float m_rotateSpeed = 1.0f;
 		random_device rnd;
 	public:
 		BossFirstStandState(shared_ptr<GameObject>& obj) :
@@ -92,6 +94,11 @@ namespace basecross {
 	};
 
 	class BossFirstAttackState : public StateBase {
+		float m_time = 0;
+		float m_attackTime = .3f;
+		const float m_end = 1.15f;
+
+		bool m_attacked = false;
 	public:
 		BossFirstAttackState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {
