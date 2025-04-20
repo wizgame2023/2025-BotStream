@@ -41,6 +41,9 @@
 //Sprite
 #include "Sprite.h"
 
+//UI関係
+#include "PlayerUI.h"
+
 //開発ステージ用
 #include "StageAbe.h"
 #include "StageSanpei.h"
