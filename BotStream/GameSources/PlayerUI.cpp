@@ -12,11 +12,14 @@ namespace basecross {
 
 	void PlayerUI::OnCreate()
 	{
+		m_stage = GetStage();
+
         const Vec2 gaugeSize(300, 75);
         const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
         const Vec2 spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
         const float gaugePosX = 0.0f, gaugePosY = -250;
 
+		//Playerに関するバーUI生成
         m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
             L"PLGauge", gaugeSize, Vec3(gaugePosX, gaugePosY, 0));
         m_gaugeFrameSprite->SetDrawLayer(1);
@@ -37,13 +40,13 @@ namespace basecross {
         Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 
-		// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		{
-			m_playerHP = max(0.0f, m_playerHP - 10.0f);  // ← 10ずつ減る想定
-		}
+		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
+		//{
+		//	m_playerHP = max(0.0f, m_playerHP - 10.0f);  // ← 10ずつ減る想定
+		//}
 
-		// 比率でスケーリング
+		// 比率でスケーリング(HP)
 		float hpRatio = m_playerHP / m_playerMaxHP;
 		hpRatio = clamp(hpRatio, 0.0f, 1.0f);
 
@@ -59,11 +62,11 @@ namespace basecross {
 		Vec3 hpOffset(300.0f * 0.066f, -0.7f, 0.0f);
 		hpTrans->SetPosition(framePos + hpOffset + Vec3(hpOffsetX, 0.0f, 0.0f));
 
-		// 仮：Bボタンで必殺技溜め
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			m_playerSP = min(m_playerSP + 10.0f, m_playerMaxSP); // 今の設定だと10回押すと最大になる
-		}
+		//// 仮：Bボタンで必殺技溜め
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	m_playerSP = min(m_playerSP + 10.0f, m_playerMaxSP); // 今の設定だと10回押すと最大になる
+		//}
 
 		// SPゲージの比率を計算（0.0?1.0）
 		float spRatio = clamp(m_playerSP / m_playerMaxSP, 0.0f, 1.0f);
@@ -78,7 +81,6 @@ namespace basecross {
 		// 枠の位置からの相対座標
 		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
 		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
-
 
     }
 }
