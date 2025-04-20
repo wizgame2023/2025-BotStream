@@ -9,11 +9,7 @@
 namespace basecross {
 	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,int hp,int attack,int defense) :
 		Actor(stagePtr, pos, rot, scale),
-		m_dodgeTime(0.0f),
-		m_HPMax(hp),
-		m_HPCurrent(hp),
-		m_attack(attack),
-		m_defense(defense)
+		m_dodgeTime(0.0f)
 	{
 
 	}
@@ -25,6 +21,10 @@ namespace basecross {
 	//作成
 	void Player::OnCreate()
 	{
+		//HP設定
+		m_HPMax = 100.0f;
+		m_HPCurrent = m_HPMax;
+
 		Actor::OnCreate();
 		//Transform設定
 		m_trans = GetComponent<Transform>();
@@ -55,6 +55,8 @@ namespace basecross {
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
+
+		//SE受け取り
 	}
 
 	void Player::OnUpdate()
@@ -62,6 +64,27 @@ namespace basecross {
 		Actor::OnUpdate();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
+		auto stage = GetStage();
+
+		//リロード処理
+		ReloadBullet(3.0f);
+
+		//UIバーを更新する
+		auto playerUI = stage->GetSharedGameObject<PlayerUI>(L"PlayerUI");//Playerバーを取得
+		playerUI->SetPLHPSprite(m_HPCurrent);
+		playerUI->SetPLSPSprite(m_SPCurrent);
+
+		// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
+		{
+			m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
+		}
+		// 仮：Bボタンで必殺技溜め
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		{
+			m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
+		}
+
 
 		//ステート処理
 		m_stateMachine->Update();
@@ -146,6 +169,21 @@ namespace basecross {
 			m_dodgeFlag = true;//回避した
 		}
 
+	}
+
+	//リロード処理
+	void Player::ReloadBullet(float reloadTime)
+	{
+		if (m_bulletNum <= 0)
+		{
+			m_reloadTimeCount += _delta;
+			//時間経過したら球を補充させる
+			if (m_reloadTimeCount >= reloadTime)
+			{
+				m_reloadTimeCount = 0.0f;//リセット
+				m_bulletNum = m_bulletNumMax;
+			}
+		}
 	}
 
 	//プレイヤーの移動処理
@@ -278,6 +316,16 @@ namespace basecross {
 	int Player::GetMaxHP()
 	{
 		return m_HPMax;
+	}
+	//HPのゲッター
+	int Player::GetSP()
+	{
+		return m_SPCurrent;
+	}
+	//HPのゲッター
+	int Player::GetMaxSP()
+	{
+		return m_SPMax;
 	}
 
 	//回避フラグのゲッター

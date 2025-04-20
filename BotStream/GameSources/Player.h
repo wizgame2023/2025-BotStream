@@ -47,15 +47,25 @@ namespace basecross{
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
-		//HP
-		int m_HPMax;
-		//攻撃力
-		int m_attack;
-		//防御力
-		int m_defense;
-		//現在HP
-		int m_HPCurrent;
+		////最大HP
+		//int m_HPMax = 100.0f;
+		////攻撃力
+		//int m_attack;
+		////防御力
+		//int m_defense;
+		////現在HP
+		//int m_HPCurrent;
+		//最大SP
+		int m_SPMax = 100;
+		//現在SP 
+		int m_SPCurrent = 0;
+		//最大の球数
+		int m_bulletNumMax = 20;
+		//現在の球数
+		int m_bulletNum = 20;
 
+		//リロードしている時間計測
+		float m_reloadTimeCount = 0.0f;
 
 		// ほぼごり押しだからメンバー要確認
 		//shared_ptr<GameStage> m_Stage;
@@ -88,6 +98,9 @@ namespace basecross{
 		//移動ベクトルの計算処理
 		Vec3 GetMoveVector(int playerState);
 
+		//球がなくなった時のリロード処理
+		void ReloadBullet(float ReloadTime);
+
 		//回避フラグのゲッター
 		bool GetDodgeFlag();
 
@@ -95,6 +108,27 @@ namespace basecross{
 		int GetHP();
 		//HPのゲッター
 		int GetMaxHP();
+		//SPのゲッター
+		int GetSP();
+		//SPMaxのゲッター
+		int GetMaxSP();
+		//現在の球数を受け取る
+		int Player::GetBulletNum()
+		{
+			return m_bulletNum;
+		}
+		//現在の球数を変更する
+		void Player::SetBulletNum(int BulletNum)
+		{
+			m_bulletNum = BulletNum;
+		}
+		//最大の球数を受け取る
+		int Player::GetBulletMaxNum()
+		{
+			return m_bulletNumMax;
+		}
+
+
 
 		//デバック用の文字列
 		void DebugLog();
