@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<StageTuboi>();
+			ResetActiveStage<StageSanpei>();
 
 		}
 
@@ -152,6 +152,7 @@ namespace basecross{
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
+		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
 
 	}
 
