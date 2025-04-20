@@ -330,6 +330,11 @@ namespace basecross {
 	{
 		return m_SPCurrent;
 	}
+	//HPのセッター
+	void Player::SetHP(int setHP)
+	{
+		m_HPCurrent = setHP;
+	}
 	//SPのセッター
 	void Player::SetSP(int setSP)
 	{
