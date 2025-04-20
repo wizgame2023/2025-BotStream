@@ -74,6 +74,10 @@ namespace basecross{
 		//ステートマシン
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
+		//SE関係
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+
 
 		void Jump();
 
@@ -110,6 +114,8 @@ namespace basecross{
 		int GetMaxHP();
 		//SPのゲッター
 		int GetSP();
+		//SPのセッター
+		void SetSP(int setSP);
 		//SPMaxのゲッター
 		int GetMaxSP();
 		//現在の球数を受け取る
@@ -127,13 +133,49 @@ namespace basecross{
 		{
 			return m_bulletNumMax;
 		}
+		//受けた攻撃の情報を渡すゲッター
+		HitInfo Player::GetHitInfo()
+		{
+			return m_GetHitInfo;
+		}
+
+		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
+
+		void OnDamaged()override;
+
+		void hitbackMove();
 
 
 
 		//デバック用の文字列
 		void DebugLog();
+	};
 
+	class Bullet :public Actor
+	{
+	private:
+		float m_speed = 1.0f;
+		float m_playerAngle = 0.0f;
+		float m_canMoveDistance;//移動できる長さ
 
+		weak_ptr<Actor> m_originObj;//自分を生成したオブジェクト
+
+		shared_ptr<Transform> m_trans;
+	public:
+		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,float speed,shared_ptr<Actor> originObj,float canMoveDistance = 10.0f):
+			Actor(stagePtr,pos,rot,scale),
+			m_speed(speed),
+			m_originObj(originObj),
+			m_canMoveDistance(canMoveDistance)
+		{
+
+		}
+		~Bullet()
+		{
+		}
+
+		void OnCreate()override;
+		void OnUpdate()override;
 	};
 
 }
