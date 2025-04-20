@@ -444,11 +444,15 @@ namespace basecross {
 		//プレイヤーの位置を取得して移動する
 		auto pos = m_trans->GetPosition();
 		m_trans->SetPosition(pos + moveVec);
+		auto originLock = m_originObj.lock();
 
 		m_canMoveDistance -= moveVec.x + moveVec.z;
 		if (m_canMoveDistance <= 0.0f)
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+			auto hitInfo = originLock->GetAttackPtr()->GetHitInfo();
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
 	}
 
