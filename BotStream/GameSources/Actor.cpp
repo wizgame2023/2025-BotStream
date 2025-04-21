@@ -98,6 +98,9 @@ namespace basecross {
 		auto atk = dynamic_pointer_cast<AttackCollision>(other);
 		if (!atk) return;
 
+		m_hitDirection = other->GetComponent<Transform>()->GetWorldPosition();
+		m_hitDirection -= GetComponent<Transform>()->GetWorldPosition();
+
 		bool isAttacked = false;
 		HitInfo info = atk->GetHitInfo();
 

@@ -26,7 +26,12 @@ namespace basecross {
 	void EnemyBase::HitBackStandBehavior() {
 		m_hitbacktime -= _delta;
 		if (m_hitbacktime <= 0) {
-			m_state->ChangeState(L"Stand");
+			if (GetHPCurrent() <= 0) {
+				m_state->ChangeState(L"Dead");
+			}
+			else {
+				m_state->ChangeState(L"Stand");
+			}
 		}
 	}
 
@@ -91,6 +96,22 @@ namespace basecross {
 			Friction();
 		}
 
+		if (m_armorMax != 0 && m_armor <= 0) {
+			m_armorRecover += _delta;
+			if (m_armorRecoverTime <= m_armorRecover) {
+				m_armor = m_armorMax;
+				m_armorRecover = 0;
+			}
+		}
+
+		if (m_armorFlash > 0) {
+			GetBoneModelDraw()->SetDiffuse(m_armorFlashFX);
+			m_armorFlash -= _delta;
+			if (m_armorFlash <= 0) {
+				GetBoneModelDraw()->SetDiffuse(Col4(0));
+			}
+		}
+
 		//なんやかんや
 		m_state->Update();
 
@@ -110,10 +131,19 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"KnockedDown", 351, 79, false, 60.0f);
 		//ダウン復帰	
 		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
+		//ボーナス行動
+		ptrDraw->AddAnimation(L"Bonus", 541, 99, false, 90.0f);
+
 		//近接1
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
 		//近接2
 		ptrDraw->AddAnimation(L"AttackClose2", 719, 80, false, 60.0f);
+		//回転発生
+		ptrDraw->AddAnimation(L"AttackSpin1", 800, 49, false, 60.0f);
+		//回転持続
+		ptrDraw->AddAnimation(L"AttackSpin2", 850, 75, false, 30.0f);
+		//回転硬直
+		ptrDraw->AddAnimation(L"AttackSpin3", 926, 84, false, 60.0f);
 	}
 
 	//XZ平面におけるプレイヤーとの距離
@@ -122,6 +152,13 @@ namespace basecross {
 		if (p == nullptr) return 0;
 
 		return (p->GetPosition() - GetPosition()).length();
+	}
+	//単純にVec3で返す版
+	Vec3 EnemyBase::GetPlayerDistInVec3() {
+		auto p = (m_player.lock());
+		if (p == nullptr) return Vec3(0);
+
+		return (p->GetPosition() - GetPosition());
 	}
 	//XZ平面におけるプレイヤーの方向
 	float EnemyBase::GetPlayerSubDirection() {
@@ -135,7 +172,16 @@ namespace basecross {
 		fwd.normalize();
 		float playerAngle = atan2f(fwd.z, fwd.x);
 
-		return selfAngle - playerAngle - XM_PIDIV2;
+		float ret = selfAngle - playerAngle - XM_PIDIV2;
+
+		//180°より大きい角度が入っている場合
+		if (ret > XM_PI) {
+			ret = -XM_2PI + ret;
+		}
+		if (ret < -XM_PI) {
+			ret = XM_2PI + ret;
+		}
+		return ret;
 	}
 	
 	void EnemyBase::RotateToPlayer(const float multiply, const float threshold) {
@@ -161,6 +207,15 @@ namespace basecross {
 		SetPosition(m_pos);
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
+
+		m_HPMax = 300;
+		m_attack = 10;
+		m_defense = 1;
+		m_HPCurrent = m_HPMax;
+
+		m_armorMax = 100.0f;
+		m_armor = m_armorMax;
+		m_armorRecoverTime = 6.0f;
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
@@ -188,7 +243,8 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(true);//debug
 
-		m_LandDetect->SetBindPos(Vec3(0, -3.0f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -2.7f, 0));
+		m_LandDetect->SetCollScale(1.0f);
 
 		AddTag(L"Enemy");
 
@@ -199,6 +255,7 @@ namespace basecross {
 
 	void BossFirst::OnUpdate() {
 		EnemyBase::OnUpdate();
+
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 
@@ -213,17 +270,37 @@ namespace basecross {
 			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-			<< L"\nAngle : " << GetPlayerSubDirection() << endl;
+			<< L"\nAngle : " << GetPlayerSubDirection()
+			<< L"\nHP : " << m_HPCurrent << " / " << m_armor << " / " << m_armorRecoverTime - m_armorRecover << endl;
 
 		scene->SetDebugString(wss.str());
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
+		//無敵
+		if (m_HPCurrent <= 0) return;
+		if (GetBoneModelDraw()->GetCurrentAnimation() == L"AttackSpin2") return;
+
 		DetectBeingAttacked(Other);
 	}
 
 	void BossFirst::OnDamaged() {
-		m_state->ChangeState(L"Hit");
+		int armorDamage = m_GetHitInfo.Damage;
+		if (GetBoneModelDraw()->GetCurrentAnimation() == L"Bonus") {
+			armorDamage *= 2;
+		}
+		m_armor -= CalculateDamage(armorDamage);
+		if (m_armor <= 0) {
+			//非アーマー
+			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+			m_state->ChangeState(L"Hit");
+
+		}
+		else {
+			//アーマー
+			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
+			m_armorFlash = m_armorFlashMax;
+		}
 	}
 }
 //end basecross
