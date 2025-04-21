@@ -388,7 +388,7 @@ namespace basecross {
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
 		{
-			auto obstacles = dynamic_pointer_cast<ObjectNotMove>(obj);//当たり判定の対象		
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象		
 			float hitLength = min;//Playerと障害物の距離の長さ
 
 			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
@@ -397,7 +397,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();
+				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
 				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
