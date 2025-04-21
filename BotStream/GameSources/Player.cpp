@@ -454,6 +454,7 @@ namespace basecross {
 		auto originLock = m_originObj.lock();
 
 		m_canMoveDistance -= moveVec.x + moveVec.z;
+		//一定時間移動したら消える
 		if (m_canMoveDistance <= 0.0f)
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
@@ -462,6 +463,88 @@ namespace basecross {
 			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
 	}
+
+
+	//雑魚敵の処理をいったんここに書きますマージ終わったらEnemy.cpp.hに戻す
+	void EnemyZako::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//いったん雑魚敵のHPは50とする
+		m_HPMax = 50.0f;
+		m_HPCurrent = m_HPMax;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, -3.25f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		ptrDraw->SetMeshResource(L"Enemy_A");
+		ptrDraw->SetDiffuse(Col4(0.5f));
+		//ptrDraw->SetEmissive(Col4(1));
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		//ptrDraw->SetTextureResource(L"Tx_Boss1");
+
+		//コリジョン作成
+		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);//デバック用
+
+		AddTag(L"Enemy");
+		AddTag(L"EnemyZako");
+
+		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
+		
+		//ステートマシン生成
+		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+
+	}
+
+	void EnemyZako::OnUpdate()
+	{
+		EnemyBase::OnUpdate();
+
+		//HPがゼロになったら消える
+		if (m_HPCurrent <= 0)
+		{		
+			RemoveTag(L"LockOnCan");
+			RemoveTag(L"LockOnTarget");
+
+			m_used = false;
+
+			//GetStage()->RemoveGameObject<EnemyZako>(GetThis<EnemyZako>());
+			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			//GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		}
+
+		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+	}
+
+	//コリジョン判定
+	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
+	{
+		DetectBeingAttacked(Other);
+	}
+
+	//ダメージを受けた際の処理
+	void EnemyZako::OnDamaged()
+	{
+		m_state->ChangeState(L"Hit");
+	}
+
+
 
 }
 //end basecross
