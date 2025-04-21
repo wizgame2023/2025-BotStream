@@ -153,6 +153,7 @@ namespace basecross{
 		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
+		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
 		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
