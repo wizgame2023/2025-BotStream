@@ -60,9 +60,9 @@ namespace basecross{
 		//現在SP 
 		int m_SPCurrent = 0;
 		//最大の球数
-		int m_bulletNumMax = 20;
+		int m_bulletNumMax = 3;
 		//現在の球数
-		int m_bulletNum = 20;
+		int m_bulletNum = 3;
 
 		//リロードしている時間計測
 		float m_reloadTimeCount = 0.0f;
