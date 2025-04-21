@@ -57,21 +57,25 @@ namespace basecross{
 
 		bool m_movePlayerAngleFlag;//プレイヤーの向いている方向に回転するかのフラグ
 		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
-		float m_targetDis;//ロックオン対象の距離デバック用
+		float m_targetDis;//LockOnTargetの距離デバック用
+
+		//SE用
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<EnemyBase>> m_targets;//ターゲット候補
-		vector<Vec3> m_targetsPos;//ロックオン候補のPosを保存する配列
+		vector<Vec3> m_targetsPos;//LockOnCanのPosを保存する配列
 		shared_ptr<EnemyBase> m_targetObj;//ターゲット対象
 		bool m_lockOnFlag;//ロックオンできるかできないかの変数
 		bool m_lockOnUse;//ロックオンするかしないかの変数
 		bool m_lockOnChangeFlag;//ロックオンを変えたかのフラグ
-		int m_lockOnNum;//ロックオン対象を決めるための変数
+		int m_lockOnNum;//LockOnTargetを決めるための変数
 
 		bool m_stickFlag;//スティックを傾ける入力を受け取るかのフラグ
 
-		vector<targetsDeta> m_targesDeta;//ロックオン対象のデータが入った配列
-		vector<float> m_lockOnAngle;//ロックオン候補がPlayerにとってどの方向にいるのかの変数
+		vector<targetsDeta> m_targesDeta;//LockOnTargetのデータが入った配列
+		vector<float> m_lockOnAngle;//LockOnCanがPlayerにとってどの方向にいるのかの変数
 		/////////////////////////////////////////////////////////////////////////////
 
 		float m_meleeRange;//近接戦闘の範囲
@@ -86,7 +90,7 @@ namespace basecross{
 		};
 
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 15.0f,float melleRange = 5.0f,
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 25.0f,float melleRange = 5.0f,
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
@@ -99,10 +103,10 @@ namespace basecross{
 		bool MoveAngle(float targetAngle,int XorY);//回転度の移動処理
 		void AdjustmentAngle();//角度の調整
 		
-		void UpdateTargesDeta(Vec3 playerPos);//ロックオン候補のデータを更新する関数
-		void ChangeLockOn(int leftOrRight,float targetAngle);//ロックオン対象を変更する処理
+		void UpdateTargesDeta(Vec3 playerPos);//LockOnCanのデータを更新する関数
+		void ChangeLockOn(int leftOrRight,float targetAngle);//LockOnTargetを変更する処理
 
-		//ロックオン候補を決める関数
+		//LockOnCanを決める関数
 		void LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec, Vec3 playerPos);
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
@@ -175,6 +179,17 @@ namespace basecross{
 		void OnUpdate()override;
 	};
 
+	//デバック用のただの四角いやつ
+	class EnemyCube : public Actor
+	{
+	private:
+		Col4 m_color;//色
+	public:
+		EnemyCube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		~EnemyCube();
+		void OnCreate()override;//作成
+		void OnUpdate()override;//更新
+	};
 
 
 }

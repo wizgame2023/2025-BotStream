@@ -98,6 +98,9 @@ namespace basecross {
 		auto atk = dynamic_pointer_cast<AttackCollision>(other);
 		if (!atk) return;
 
+		m_hitDirection = other->GetComponent<Transform>()->GetWorldPosition();
+		m_hitDirection -= GetComponent<Transform>()->GetWorldPosition();
+
 		bool isAttacked = false;
 		HitInfo info = atk->GetHitInfo();
 
@@ -147,6 +150,32 @@ namespace basecross {
 
 				m_isLand = !m_isLand;
 			}
+		}
+	}
+
+	//エフェクトを出す処理
+	void Actor::AddEffect(int addEffect)
+	{
+		switch (addEffect)
+		{
+		case PlayerEffect_Attack1:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			break;
+		case PlayerEffect_Attack2:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			break;
+		case PlayerEffect_Attack3:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			break;
+		case PlayerEffect_AttackEx:
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
+			break;
+		case PlayerEffect_Beam:
+			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			break;
+		default:
+			break;
 		}
 	}
 

@@ -56,6 +56,10 @@ namespace basecross {
 		//ロックオンの有効範囲を可視化
 		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
+		//SE用のマネージャー取得
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
+
+
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
 		{
@@ -87,13 +91,6 @@ namespace basecross {
 		m_controler = inputDevice.GetControlerVec()[0];
 		m_contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
-		////左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
-		//m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x * m_delta;//追加する角度を決めて
-		//m_cameraAngleY += -m_addAngleYAxis;//追加
-
-		////左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-		//m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y * m_delta;//追加する角度を決めて
-		//m_cameraAngleX += m_addAngleXAxis;//追加
 		//慣性付きの回転処理
 		InertialRotation();
 		//X軸回転の制限処理
@@ -105,13 +102,13 @@ namespace basecross {
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
 
-		//ロックオン候補がいないならロックオンできない＆選択を初期化
+		//LockOnCanがいないならロックオンできない＆選択を初期化
 		if (m_targets.size() <= 0 && m_targetObj)
 		{
 			LockOff(enemyVec);//ロックオンの解除
 		}
 
-		ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
+		//ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
 		//ロックオンが出来てロックオンのしてないなら使う、使ってたら使わない どちらでもなければそうでないならプレイヤーの向いている方向に向く
@@ -131,12 +128,13 @@ namespace basecross {
 					{
 						min = ditance;
 						m_targetDis = abs(distanceVec.x) + abs(distanceVec.z);//対象との距離を保存する
-						m_targetObj = enemy;//ロックオン対象を決める
+						m_targetObj = enemy;//LockOnTargetを決める
 					}
 				}
 
 				m_lockOnUse = true;//ロックオン使用
-				m_targetObj->AddTag(L"ロックオン対象");
+				m_targetObj->AddTag(L"LockOnTarget");
+				m_SEManager->Start(L"LockOnSE", 0, 0.9f);//ロックオン用SE再生
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
 			{
@@ -206,7 +204,7 @@ namespace basecross {
 				m_lockOnChangeFlag = false;
 				m_lockOnUse = true;//ロックオン使用
 				m_targetObj = m_targets[m_lockOnNum];
-				m_targets[m_lockOnNum]->AddTag(L"ロックオン対象");
+				m_targets[m_lockOnNum]->AddTag(L"LockOnTarget");
 			}
 
 			LockOn(m_targetObj, player);//ロックオン
@@ -217,7 +215,7 @@ namespace basecross {
 			m_lockStageCamera->SetAt(m_playerPos+Vec3(0.0f,3.0f,0.0f));
 		}
 
-		//ロックオン候補はどのオブジェクト達になるのか処理
+		//LockOnCanはどのオブジェクト達になるのか処理
 		LockOnCandidate(enemyVec, m_playerPos);
 		//角度の調整0~360度までしか出ないようにする
 		AdjustmentAngle();
@@ -232,14 +230,16 @@ namespace basecross {
 		if (m_targetObj)
 		{
 			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-			m_targetDis = targetVec.x + targetVec.z;
+			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
 		}
+		
 		
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
 			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
 			<< L"\nターゲット対象の距離: " << m_targetDis
+			<< L"\nFPS: " << 1.0f/m_delta
 			//<< L"\n当たった場所x: " << hitPos.x
 			//<< L"\n当たった場所y: " << hitPos.y
 			//<< L"\n当たった場所z: " << hitPos.z
@@ -416,7 +416,7 @@ namespace basecross {
 
 	}
 
-	//ロックオン候補を決める関数
+	//LockOnCanを決める関数
 	void CameraManager::LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec,Vec3 playerPos)
 	{
 		m_targets.clear();//配列の初期化
@@ -432,23 +432,23 @@ namespace basecross {
 				(enemyPos.z - playerPos.z) * (enemyPos.z - playerPos.z);
 			float radiusRange = m_targetRange * m_targetRange;
 
-			//ロックオン候補なら配列にオブジェクトとPosを入れる
+			//LockOnCanなら配列にオブジェクトとPosを入れる
 			if (targetRange <= radiusRange)
 			{
-				if (!enemy->FindTag(L"ロックオン候補"))
+				if (!enemy->FindTag(L"LockOnCan"))
 				{
 					m_stage->AddGameObject<LockOnLook>(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), enemy, Vec3(0.0f, 4.0f, 0.0f));
 				}
 
-				m_targetsPos.push_back(enemyPos);//ロックオン候補のPosを配列に入れる
+				m_targetsPos.push_back(enemyPos);//LockOnCanのPosを配列に入れる
 				m_targets.push_back(enemy);
-				enemy->AddTag(L"ロックオン候補");//ロックオン候補のタグ追加
+				enemy->AddTag(L"LockOnCan");//LockOnCanのタグ追加
 				m_lockOnFlag = true;//ロックオン使用可能
 			}
-			else if (enemy->FindTag(L"ロックオン候補"))//ロックオン候補から外れたのがロックオン対象ならロックオンをやめる
+			else if (enemy->FindTag(L"LockOnCan"))//LockOnCanから外れたのがLockOnTargetならロックオンをやめる
 			{
-				enemy->RemoveTag(L"ロックオン候補");
-				if (enemy->FindTag(L"ロックオン対象"))
+				enemy->RemoveTag(L"LockOnCan");
+				if (enemy->FindTag(L"LockOnTarget"))
 				{
 					LockOff(enemyVec);//ロックオンの解除
 				}
@@ -466,7 +466,7 @@ namespace basecross {
 		Vec3 lockOnPos = lockOnObj->GetComponent<Transform>()->GetPosition();
 		Vec3 originPos = originObj->GetComponent<Transform>()->GetPosition();
 
-		//ロックオン対象をPlayerの距離ベクトルを測って角度取得
+		//LockOnTargetをPlayerの距離ベクトルを測って角度取得
 		Vec3 lockOnVec = lockOnPos - originPos;
 		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
 
@@ -481,28 +481,28 @@ namespace basecross {
 	void CameraManager::LockOff(vector<shared_ptr<EnemyBase>> enemyVec)
 	{
 		m_targetDis = 0.0f;
-		m_targetObj->RemoveTag(L"ロックオン対象");
+		m_targetObj->RemoveTag(L"LockOnTarget");
 		m_lockOnFlag = false;//ロックオンできない
 		m_lockOnUse = false;//ロックオンしない
 		m_lockOnNum = -1;
 		m_targetObj = NULL;
 	}
 
-	//ロックオン候補のデータを更新する処理
+	//LockOnCanのデータを更新する処理
 	void CameraManager::UpdateTargesDeta(Vec3 playerPos)
 	{
 		m_targesDeta.clear();//初期化
 
-		//ロックオンを切り替えるときにスティックを傾けてロックオン対象を変更する処理
+		//ロックオンを切り替えるときにスティックを傾けてLockOnTargetを変更する処理
 		Vec3 targetPos = m_targetObj->GetComponent<Transform>()->GetPosition();
-		//Playerから見てロックオン対象のいる方向ベクトルを求める
+		//Playerから見てLockOnTargetのいる方向ベクトルを求める
 		Vec3 lockOnVec = targetPos - playerPos;
 
 		for (auto enemy : m_targets)
 		{
 			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
 
-			//Playerから見てロックオン候補のいる方向ベクトルを求める
+			//Playerから見てLockOnCanのいる方向ベクトルを求める
 			Vec3 lockOnCanVec = enemyPos - playerPos;
 
 			//外積を求める
@@ -533,7 +533,7 @@ namespace basecross {
 		}
 	}
 
-	//ロックオン対象を変更する処理
+	//LockOnTargetを変更する処理
 	//第一引数 右か左か 第二引数 ターゲット対象のなす角
 	void CameraManager::ChangeLockOn(int leftOrRight,float targetAngle)
 	{
@@ -551,7 +551,7 @@ namespace basecross {
 			if (min > difference && difference != 0.0f)
 			{
 				min = difference;
-				m_targetObj->RemoveTag(L"ロックオン対象");
+				m_targetObj->RemoveTag(L"LockOnTarget");
 				m_lockOnNum = i;
 				m_lockOnChangeFlag = true;
 			}
@@ -741,7 +741,8 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
-		//m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetTextureResource(L"PLGauge");
 		m_ptrDraw->SetOwnShadowActive(false);//影は消す
 		m_ptrDraw->SetDrawActive(true);
 
@@ -759,7 +760,10 @@ namespace basecross {
 			GetStage()->RemoveGameObject<LockOnRange>(GetThis<LockOnRange>());
 			return;
 		}
-		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
+		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.3f));
+		m_ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 0.3f));
+		SetAlphaActive(true);
+
 
 		//いつもPlayerについていくようにする
 		Vec3 PlayerPos = playerLock->GetComponent<Transform>()->GetPosition();
@@ -821,15 +825,15 @@ namespace basecross {
 			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
 			return;
 		}
-		//ここで追跡対象のタグにロックオン対象やロックオン候補などのタグがなければ消去される
-		if (!parentLock->FindTag(L"ロックオン候補"))
+		//ここで追跡対象のタグにLockOnTargetやLockOnCanなどのタグがなければ消去される
+		if (!parentLock->FindTag(L"LockOnCan"))
 		{
 			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
 			return;
 		}
 
 
-		if (parentLock->FindTag(L"ロックオン対象"))
+		if (parentLock->FindTag(L"LockOnTarget"))
 		{
 			auto ptrDraw = GetComponent<PNTStaticDraw>();
 			ptrDraw->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -878,25 +882,86 @@ namespace basecross {
 		ptrDraw->SetDrawActive(true);
 		ptrDraw->SetEmissive(m_color); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
-
-		//テスト用にコリジョン付けました
-		//auto ptrCol = AddComponent<CollisionObb>();
-		//ptrCol->SetFixed(true);
-
-		////影を付ける
-		//auto m_ptrShadow = AddComponent<Shadowmap>();
-		//m_ptrShadow->SetMeshResource(L"DEFAULT_CUBE");
-		////m_ptrShadow->SetMeshToTransformMatrix(spanMat);
-
-
-		//ptrDraw->HitTestSkinedMeshSegmentTriangles();
-		//ptrDraw->HitT
 	}
 
 	void Cube::OnUpdate()
 	{
 	}
 
+
+	//デバック用 敵の攻撃オブジェクト
+	EnemyCube::EnemyCube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color) :
+		Actor(stagePtr,pos,rot,scale),
+		m_color(color)
+	{
+
+	}
+	EnemyCube::~EnemyCube()
+	{
+
+	}
+
+	void EnemyCube::OnCreate()
+	{
+		Actor::OnCreate();
+		//Transform設定
+		auto m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//ドローメッシュの設定
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+		ptrDraw->SetDiffuse(m_color);
+		ptrDraw->SetOwnShadowActive(false);//影は消す
+		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(m_color); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+		//コリジョン生成
+		auto ptrColl = AddComponent<CollisionObb>();
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);
+
+		
+		//攻撃判定の定義
+		auto tmp = GetAttackPtr()->GetHitInfo();
+		tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+		tmp.HitOnce = true;//一回しかヒットしないか
+		tmp.Damage = 10;//ダメージ
+		tmp.HitVel_Stand = Vec3(-30, 1, 0);//ヒットバック距離
+		tmp.HitTime_Stand = 3.0f;//のけぞり時間
+		//tmp.PauseTime = 5.0f;
+		//tmp.ForceRecover = true;
+		DefAttack(.5f, tmp);
+		GetAttackPtr()->SetPos(Vec3(0, 0, 10));
+		auto AttackPtr = GetAttackPtr();
+		AttackPtr->SetCollScale(1.0f);
+		
+		DefAttack(999.0f, tmp);
+
+	}
+
+	void EnemyCube::OnUpdate()
+	{
+		Actor::OnUpdate();
+
+		//auto tmp = GetAttackPtr()->GetHitInfo();
+		////tmp.HitSound = L"Attack1";
+		//tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+		//tmp.HitOnce = true;//一回しかヒットしないか
+		//tmp.Damage = 10;//ダメージ
+		//tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離
+		//tmp.HitTime_Stand = 3.0f;//のけぞり時間
+		////tmp.ForceRecover = true;
+		//DefAttack(.5f, tmp);
+		//GetAttackPtr()->SetPos(Vec3(0, 1, 0));
+		//auto AttackPtr = GetAttackPtr();
+		//AttackPtr->SetCollScale(20.0f);
+
+
+	}
 
 
 }

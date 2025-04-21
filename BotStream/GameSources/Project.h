@@ -41,16 +41,22 @@
 //Sprite
 #include "Sprite.h"
 
+//UI関係
+#include "PlayerUI.h"
+
 //開発ステージ用
 #include "StageAbe.h"
 #include "StageSanpei.h"
 #include "StageSato.h"
 #include "StageTuboi.h"
 #include "WaveStage.h"
+#include "GameClearScene.h"
+#include "GameOverScene.h"
 
 //Manager
 #include "CameraManager.h"
 #include "EffectManager.h"
 #include "EnemyManager.h"
+#include "StageCollisionController.h"
 
 

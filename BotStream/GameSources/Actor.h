@@ -54,9 +54,10 @@ namespace basecross {
 		//向いている角度
 		float m_angle;
 
-		//喰らった時間
+		//喰らいモーション時間
 		float m_hitbacktime = 0;
-
+		//攻撃を受けた方向
+		Vec3 m_hitDirection = Vec3(0);
 
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
@@ -104,8 +105,15 @@ namespace basecross {
 		void OnCreate() override;
 		void OnUpdate() override;
 
+		//エフェクトを出す処理
+		virtual void AddEffect(int addEffect);
+
+		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
 			return m_HPCurrent;
+		}
+		void SetHPCurrent(int setHP) {
+			m_HPCurrent = setHP;
 		}
 		int GetHPMax() {
 			return m_HPMax;
@@ -114,7 +122,14 @@ namespace basecross {
 		//喰らった攻撃の吹き飛ばし距離を代入(現状地上のもののみ)
 		void HitBack() {
 			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
-			m_velocity = m_GetHitInfo.HitVel_Stand;
+
+			Vec3 nrm = m_hitDirection.normalize();
+			float dir = atan2f(nrm.z, nrm.x);
+
+			Vec3 vel = m_GetHitInfo.HitVel_Stand;
+			m_velocity.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
+			m_velocity.y = vel.y;
+			m_velocity.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
 		}
 
 		//攻撃判定のポインタを取得
@@ -130,6 +145,27 @@ namespace basecross {
 
 		float GetAngle();   //今向いている方向のゲッター
 		void SetAngle(float angle);	//向いている方向のセッター
+
+		Vec3 GetVelocity() {
+			return m_velocity;
+		}
+		void SetVelocity(Vec3 vel) {
+			m_velocity = vel;
+		}
+
+		Vec3 GetForward() {
+			Vec3 vec = GetComponent<Transform>()->GetForward();
+
+			const float rotate = -XM_PIDIV2;
+
+			Vec3 fixedVec;
+			fixedVec.x = (cosf(rotate) * vec.x) - (sinf(rotate) * vec.z);
+			fixedVec.y = vec.y;
+			fixedVec.z = (cosf(rotate) * vec.z) + (sinf(rotate) * vec.x);
+
+			return fixedVec;
+		}
+
 
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {

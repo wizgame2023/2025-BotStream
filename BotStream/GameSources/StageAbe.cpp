@@ -33,7 +33,7 @@ namespace basecross {
 			m_SE = m_ptrSound->Start(L"Landing", 0, 0.3f);
 			break;
 		case 3:
-			m_SE = m_ptrSound->Start(L"Dash", 0, 0.5f);
+			m_SE = m_ptrSound->Start(L"Dash", 0, 1.0f);
 			break;
 		case 4:
 			m_SE = m_ptrSound->Start(L"ArmorBreak", 0, 0.3f);

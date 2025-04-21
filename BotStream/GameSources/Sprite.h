@@ -46,9 +46,10 @@ namespace basecross {
 		void MyDestroy();//自分自身を消す
 		Col4 GetColor();//ゲッター
 
+		void SetPosition(Vec3 pos);
 		void SetUVRect(Vec2 topLeft, Vec2 botRight);
 
-		
+
 	};
 
 }

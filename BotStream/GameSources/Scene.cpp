@@ -36,7 +36,29 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			ResetActiveStage<StageTuboi>();
+
+			ResetActiveStage<WaveStage>();
+
+		}
+
+		// ここは後にWaveStageに変更する
+		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
+		if (event->m_MsgStr == L"ToWaveStage")
+		{
+			ResetActiveStage<StageSanpei>();
+		}
+
+		if (event->m_MsgStr == L"ToGameOver") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<GameOver>();
+
+		}
+
+		if (event->m_MsgStr == L"ToGameClear") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<GameClear>();
 
 		}
 
@@ -70,6 +92,9 @@ namespace basecross{
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
 		app->RegisterTexture(L"Buttons", strTexture);
+
+		strTexture = texPath + L"Select.png";
+		app->RegisterTexture(L"Select", strTexture);
 		
 		// TextSprite
 		strTexture = texPath + L"Texts.png";
@@ -80,6 +105,10 @@ namespace basecross{
 		app->RegisterTexture(L"Questions", strTexture);
 		strTexture = texPath + L"Answer.png";
 		app->RegisterTexture(L"Answer", strTexture);
+		strTexture = texPath + L"ResultText.png";
+		app->RegisterTexture(L"ResultText", strTexture);
+		strTexture = texPath + L"ClearOverText.png";
+		app->RegisterTexture(L"ClearOverText", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
 		strTexture = texPath + L"Katana.png";
@@ -92,6 +121,10 @@ namespace basecross{
 		//ボーンマルチメッシュ
 		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//仮のプレイヤーメッシュ(槍兵)
 		app->RegisterResource(L"Spearmen", boneMultiModelMesh);
+
+		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ
+		app->RegisterResource(L"Enemy_A", boneModelMesh);
+
 		//ボーンマルチメッシュ用テクスチャ
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
@@ -117,6 +150,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Dash", efkPath + L"dash.efkefc");
 		EffectManager::Instance().RegisterEffect(L"PathBullet", efkPath + L"guntrajectory.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		// ---------------------------------
 
 		//BGM
@@ -131,7 +166,7 @@ namespace basecross{
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
-		app->RegisterWav(L"Landing", SoundPath + L"Landing.wav");
+		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
@@ -139,7 +174,11 @@ namespace basecross{
 		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
+		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
+		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
+		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
 
 	}
 
