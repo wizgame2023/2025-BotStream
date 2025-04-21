@@ -80,16 +80,16 @@ namespace basecross {
 		playerUI->SetPLHPSprite(m_HPCurrent);
 		playerUI->SetPLSPSprite(m_SPCurrent);
 
-		// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		{
-			m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
-		}
-		// 仮：Bボタンで必殺技溜め
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
-		}
+		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
+		//{
+		//	m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
+		//}
+		//// 仮：Bボタンで必殺技溜め
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
+		//}
 
 
 		//ステート処理
