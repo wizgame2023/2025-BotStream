@@ -16,6 +16,10 @@ namespace basecross{
 	protected:
 		bool m_used = false;
 		shared_ptr<StateMachineBase> m_state;
+		const float m_rotateSpeed = 1.2f;
+		const float m_rotateThreshold = .3f;
+
+		int m_armor;
 
 		weak_ptr<Player> m_player;
 
@@ -46,6 +50,13 @@ namespace basecross{
 			SetUpdateActive(true);
 			m_LandDetect->SetUpdateActive(true);
 		}
+		//初期化処理(引数無し)
+		void Initialize() {
+			m_used = true;
+			SetDrawActive(true);
+			SetUpdateActive(true);
+			m_LandDetect->SetUpdateActive(true);
+		}
 
 		bool GetUsed() {
 			return m_used;
@@ -53,6 +64,14 @@ namespace basecross{
 
 		//プレイヤーとの距離を測る
 		float GetPlayerDist();
+
+		//プレイヤーとの角度の差を測る
+		float GetPlayerSubDirection();
+
+		//回転
+		void RotateToPlayer(const float multiply, const float threshold);
+		void RotateToPlayer(const float multiply);
+
 	};
 
 	class BossFirst : public EnemyBase {

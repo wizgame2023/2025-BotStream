@@ -131,6 +131,27 @@ namespace basecross {
 		float GetAngle();   //今向いている方向のゲッター
 		void SetAngle(float angle);	//向いている方向のセッター
 
+		Vec3 GetVelocity() {
+			return m_velocity;
+		}
+		void SetVelocity(Vec3 vel) {
+			m_velocity = vel;
+		}
+
+		Vec3 GetForward() {
+			Vec3 vec = GetComponent<Transform>()->GetForward();
+
+			const float rotate = -XM_PIDIV2;
+
+			Vec3 fixedVec;
+			fixedVec.x = (cosf(rotate) * vec.x) - (sinf(rotate) * vec.z);
+			fixedVec.y = vec.y;
+			fixedVec.z = (cosf(rotate) * vec.z) + (sinf(rotate) * vec.x);
+
+			return fixedVec;
+		}
+
+
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {
 			auto drawPtr = GetBoneModelDraw();
