@@ -49,7 +49,7 @@ namespace basecross {
 		void SetPosition(Vec3 pos);
 		void SetUVRect(Vec2 topLeft, Vec2 botRight);
 
-		
+
 	};
 
 }
