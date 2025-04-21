@@ -62,6 +62,7 @@ namespace basecross {
 
 		//SE受け取り
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
 
 	}
 
