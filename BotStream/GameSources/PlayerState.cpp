@@ -18,7 +18,7 @@ namespace basecross {
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//カメラマネージャからロックオン対象の位置を取得する
+		//カメラマネージャからLockOnTargetの位置を取得する
 		shared_ptr<CameraManager> camera = nullptr;
 		camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		shared_ptr<Actor> targetObj = nullptr;
@@ -30,7 +30,7 @@ namespace basecross {
 			//Vec3 playerPos = Vec3(0.0f);
 			//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
 			//playerPos = m_player->GetComponent<Transform>()->GetPosition();
-			////ロックオン対象との距離を計算する
+			////LockOnTargetとの距離を計算する
 			m_targetDistance = camera->GetTargetDis();
 		}
 		else if (!targetObj)
@@ -79,7 +79,7 @@ namespace basecross {
 			m_player->ChangeState(L"Dodge");
 		}
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		//ロックオン対象の距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
+		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
 		float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
@@ -218,7 +218,7 @@ namespace basecross {
 		}
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		//ロックオン対象の距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
+		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
 		float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
@@ -694,6 +694,52 @@ namespace basecross {
 
 	}
 
+
+
+	//雑魚敵のステートマージした後EnemyStateファイルに移動する
+
+	//何もないときのステート
+	void EnemyZakoStandState::Enter()
+	{
+
+	}
+	void EnemyZakoStandState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+		//一定時間たったら攻撃する
+		m_timeOfShot += deltaTime;
+		if (m_timeOfShot >= m_timeMaxOfShot)
+		{
+			m_timeOfShot = 0.0f;//リセット
+			//m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+		}
+	}
+	void EnemyZakoStandState::Exit()
+	{
+		//打つカウントダウンリセット
+		m_timeOfShot = 0.0f;
+	}
+
+	//ダメージを受けたステート
+	void EnemyZakoHitState::Enter()
+	{
+		auto hitInfo = m_enemyZako->GetHitInfo();
+		auto HPNow = m_enemyZako->GetHPCurrent();
+		//攻撃を受けたのでヒットバックする
+		m_enemyZako->HitBack();
+		//ダメージ処理
+		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
+	}
+	void EnemyZakoHitState::Update(float deltaTime)
+	{
+		//一定時間たったらStandステートに戻る
+		m_enemyZako->HitBackStandBehavior();
+	}
+	void EnemyZakoHitState::Exit()
+	{
+
+	}
 
 }
 //end basecross
