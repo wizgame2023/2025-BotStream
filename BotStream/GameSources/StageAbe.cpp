@@ -56,24 +56,6 @@ namespace basecross {
 		case 10:
 			m_SE = m_ptrSound->Start(L"AssaultRifle", 0, 0.3f);
 			break;
-		case 11:
-			m_SE = m_ptrSound->Start(L"DamageVoice", 0, 0.3f);
-			break;
-		case 12:
-			m_SE = m_ptrSound->Start(L"StartVoice", 0, 0.3f);
-			break;
-		case 13:
-			m_SE = m_ptrSound->Start(L"StatrVoice2", 0, 0.6f);
-			break;
-		case 14:
-			m_SE = m_ptrSound->Start(L"Lock-on", 0, 0.3f);
-			break;
-		case 15:
-			m_SE = m_ptrSound->Start(L"Beam", 0, 0.3f);
-			break;
-		case 16:
-			m_SE = m_ptrSound->Start(L"EnemyAttack", 0, 0.3f);
-			break;
 
 		}
 	}
