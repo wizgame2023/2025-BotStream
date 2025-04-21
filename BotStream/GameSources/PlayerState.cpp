@@ -49,7 +49,7 @@ namespace basecross {
 	//Playerの歩くモーション
 	void PlayerWalkState::Enter()
 	{
-
+		PlayerStateBase::Enter();
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
@@ -91,7 +91,7 @@ namespace basecross {
 			if (m_targetDistance < meleeRange)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
-				{
+				{//長押しなら最終段の技が出る
 					m_player->ChangeState(L"AttackEx");
 					m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
 				}
@@ -102,8 +102,18 @@ namespace basecross {
 				}
 			}
 			else if (m_targetDistance >= meleeRange)
-			{//遠距離
-				m_player->ChangeState(L"AttackLong");
+			{//遠距離	
+				auto BulletNumNow = m_player->GetBulletNum();
+				//弾が残っていれば打てる
+				if (BulletNumNow > 0)
+				{
+					m_player->ChangeState(L"AttackLong");
+					m_player->SetBulletNum(--BulletNumNow);
+				}
+				if (BulletNumNow <= 0)
+				{
+					m_SEManager->Start(L"CantShotSE", 0, 0.9f);
+				}
 			}
 			m_timeOfPushAttackButton = 0.0f;//押した時間リセット
 		}
@@ -215,7 +225,7 @@ namespace basecross {
 			if (m_targetDistance < meleeRange)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
-				{
+				{//長押しなら最終段の技が出る
 					m_player->ChangeState(L"AttackEx");
 					m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
 				}
@@ -226,11 +236,30 @@ namespace basecross {
 				}
 			}
 			else if (m_targetDistance >= meleeRange)
-			{//遠距離
-				m_player->ChangeState(L"AttackLong");
-				m_player->AddEffect(PlayerEffect_Beam);//攻撃エフェクトを出す
+			{//遠距離	
+				auto BulletNumNow = m_player->GetBulletNum();
+				//弾が残っていれば打てる
+				if (BulletNumNow > 0)
+				{
+					m_player->ChangeState(L"AttackLong");
+					m_player->SetBulletNum(--BulletNumNow);
+				}
+				if (BulletNumNow <= 0)
+				{
+					m_SEManager->Start(L"CantShotSE", 0, 0.9f);
+				}
 			}
 			m_timeOfPushAttackButton = 0.0f;//押した時間リセット
+		}
+		//もしSPゲージがMAXであれば必殺技が打てる
+		auto SPCurrent = m_player->GetSP();
+		auto SPMAX = m_player->GetMaxSP();
+		if (SPCurrent >= SPMAX)
+		{
+			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
+			{
+				m_player->ChangeState(L"AttackSpecial");
+			}
 		}
 	}
 	void PlayerDashState::Exit()
