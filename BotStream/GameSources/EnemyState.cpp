@@ -56,13 +56,7 @@ namespace basecross {
 		m_time += deltatime;
 
 		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
-		float playerDir = boss->GetPlayerSubDirection();
-
-		if (abs(playerDir) > m_rotateSpeed) {
-			Quat q = boss->GetQuaternion();
-			q = boss->RotateQuat(q, Vec3(0, 1, 0), m_rotateSpeed * deltatime * (playerDir < 0 ? -1 : 1));
-			boss->SetQuaternion(q);
-		}
+		boss->RotateToPlayer(1.0f);
 
 		if (m_time >= m_startAttack && rnd() % 1000 <= m_startAttackRand) {
 			const float dist = boss->GetPlayerDist();
@@ -84,9 +78,19 @@ namespace basecross {
 
 	void BossFirstChaseState::Enter() {
 
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
+		boss->ChangeAnim(L"Walk", true);
 	}
 	void BossFirstChaseState::Update(float deltatime) {
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
+		boss->RotateToPlayer(1.0f, m_rotateThreshold);
 
+		boss->SetVelocity(boss->GetForward() * 5);
+
+		if (boss->GetPlayerDist() < m_closeDist) {
+			//‹ß‚¢I
+			boss->ChangeState(L"Attack");
+		}
 	}
 	void BossFirstChaseState::Exit() {
 

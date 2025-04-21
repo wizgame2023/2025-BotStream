@@ -106,6 +106,10 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Walk", 181, 169, true, 60.0f);
 		//のけぞり
 		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
+		//ダウン
+		ptrDraw->AddAnimation(L"KnockedDown", 351, 79, false, 60.0f);
+		//ダウン復帰	
+		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
 		//近接1
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
 		//近接2
@@ -133,6 +137,20 @@ namespace basecross {
 
 		return selfAngle - playerAngle - XM_PIDIV2;
 	}
+	
+	void EnemyBase::RotateToPlayer(const float multiply, const float threshold) {
+		float playerDir = GetPlayerSubDirection();
+
+		if (abs(playerDir) > threshold) {
+			Quat q = GetQuaternion();
+			q = RotateQuat(q, Vec3(0, 1, 0), m_rotateSpeed * multiply * _delta * (playerDir < 0 ? -1 : 1));
+			SetQuaternion(q);
+		}
+	}
+
+	void EnemyBase::RotateToPlayer(const float multiply) {
+		RotateToPlayer(multiply, m_rotateThreshold);
+	}
 
 	//--------------------------------------------------------------------------
 
@@ -140,7 +158,7 @@ namespace basecross {
 		Actor::OnCreate();
 		//Transform設定
 		m_trans = GetComponent<Transform>();
-		m_trans->SetPosition(m_pos);
+		SetPosition(m_pos);
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
