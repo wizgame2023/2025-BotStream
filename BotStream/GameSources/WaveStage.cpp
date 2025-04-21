@@ -42,23 +42,42 @@ namespace basecross {
             CreateFloor();
             CreateWall();
             CreateCeiling();
-            //CreateDoor();
 
             CreateSharedObjectGroup(L"Actor");
 
-            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
             SetSharedGameObject(L"Player", player);
 
             auto enemyMgr = AddGameObject<EnemyManager>();
             SetSharedGameObject(L"EnemyManager", enemyMgr);
 
-            auto door = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.57f, 1.57f), Vec3(-2.0f, 1.75f, -55.0f));
-            SetSharedGameObject(L"Door", door);
-            auto door2 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.57f, 1.57f), Vec3(2.0f, 1.75f, -55.0f));
-            SetSharedGameObject(L"Door2", door2);
 
-            enemyMgr->InstEnemy(Vec3(5.0f, -1.5f, -80.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
-            enemyMgr->InstEnemy(Vec3(-5.0f, -1.5f, -80.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
+            auto door = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.55f, 1.57f), Vec3(-2.0f, 1.75f, -125.0f));
+            SetSharedGameObject(L"Door", door);
+            auto door2 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.58f, 1.57f), Vec3(2.0f, 1.75f, -125.0f));
+            SetSharedGameObject(L"Door2", door2);
+            auto door3 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.58f, 1.57f), Vec3(2.0f, 1.75f, -55.0f));
+            SetSharedGameObject(L"Door3", door3);
+            auto door4 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.58f, 1.57f), Vec3(-2.0f, 1.75f, -55.0f));
+            SetSharedGameObject(L"Door4", door4);
+            
+            auto door5 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.57f, 1.57f), Vec3(-2.0f, 1.75f, -35.0f));
+            SetSharedGameObject(L"Door5", door5);
+            auto door6 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.58f, 1.57f), Vec3(2.0f, 1.75f, -35.0f));
+            SetSharedGameObject(L"Door6", door6);
+            auto door7 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.6f, 1.57f), Vec3(2.0f, 1.75f, 35.0f));
+            SetSharedGameObject(L"Door7", door7);
+            auto door8 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.57f, 1.57f), Vec3(-2.0f, 1.75f, 35.0f));
+            SetSharedGameObject(L"Door8", door8);
+           
+            auto door9 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.57f, 1.57f), Vec3(-2.0f, 1.75f, 55.0f));
+            SetSharedGameObject(L"Door9", door9);
+            auto door10 = AddGameObject<Door>(Vec3(6.5f, 0.1f, 4.0f), Vec3(0.0f, 1.57f, 1.57f), Vec3(2.0f, 1.75f, 55.0f));
+            SetSharedGameObject(L"Door10", door10);
+
+            enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, -1.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(10.0f, -1.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
 
             //enemyMgr->InstEnemy(Vec3(10.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
             //enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
@@ -67,13 +86,13 @@ namespace basecross {
             //enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, 100.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.5f, 1.5f, 1.5f));
 
 
-            AddGameObject<CameraManager>();
+            auto cameraManager = AddGameObject<CameraManager>();
+            SetSharedGameObject(L"CameraManager", cameraManager);
 
             auto ptrSoundManager = AddGameObject<SoundManager>();
             SetSharedGameObject(L"SoundManager", ptrSoundManager);
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
-
 
     }
 
@@ -86,8 +105,16 @@ namespace basecross {
         auto pad = App::GetApp()->GetInputDevice().GetControlerVec()[0];
         auto player = GetSharedGameObject<Player>(L"Player");
         auto enemyMgr = GetSharedGameObject<EnemyManager>(L"EnemyManager");
-        auto door = GetSharedGameObject<Door>(L"Door");
-        auto door2 = GetSharedGameObject<Door>(L"Door2");
+        auto ptrSoundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+
+        auto door3 = GetSharedGameObject<Door>(L"Door3");
+        auto door4 = GetSharedGameObject<Door>(L"Door4");
+        auto door5 = GetSharedGameObject<Door>(L"Door5");
+        auto door6 = GetSharedGameObject<Door>(L"Door6");
+        auto door7 = GetSharedGameObject<Door>(L"Door7");
+        auto door8 = GetSharedGameObject<Door>(L"Door8");
+        auto door9 = GetSharedGameObject<Door>(L"Door9");
+        auto door10 = GetSharedGameObject<Door>(L"Door10");
 
         auto EnemyVec = enemyMgr->GetEnemyVec(true);
         int EnemyNum = EnemyVec.size();
@@ -98,10 +125,8 @@ namespace basecross {
         if (pad.wPressedButtons & XINPUT_GAMEPAD_X)
         {
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(5);
-            //RemoveGameObject<EnemyBase>(GetSharedGameObject<EnemyBase>(L"Enemy"));
-            door->GetComponent<Transform>()->SetPosition(-6.0f, 1.75f, -55.0f);
-            door2->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, -55.0f);
 
+            EnemyNum = 0;
         }
         if (pad.wPressedButtons & XINPUT_GAMEPAD_A)
         {
@@ -114,12 +139,29 @@ namespace basecross {
 
         if (EnemyNum == 0)
         {
+            //enemyMgr->InstEnemy(Vec3(0.0f, -0.9f, 100.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
             enemyMgr->InstEnemy(Vec3(10.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
             enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
             enemyMgr->InstEnemy(Vec3(-10.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
+            enemyMgr->InstEnemy(Vec3(10.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
+            enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.3f, 0.3f, 0.3f));
 
-            player->GetComponent<Transform>()->SetPosition(0.0f, 0.0f, -30.0f);
+            door3->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, -55.0f);
+            door4->GetComponent<Transform>()->SetPosition(-6.0f, 1.75f, -55.0f);
+            door5->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, -35.0f);
+            door6->GetComponent<Transform>()->SetPosition(-6.0f, 1.75f, -35.0f);
+
+            //door7->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, 35.0f);
+            //door8->GetComponent<Transform>()->SetPosition(-6.0f, 1.75f, 35.0f);
+            //door9->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, 55.0f);
+            //door10->GetComponent<Transform>()->SetPosition(-6.0f, 1.75f, 55.0f);
+
+            GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+            GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
+
         }
+
+
     }
 
     void WaveStage::OnDraw()
@@ -234,19 +276,19 @@ namespace basecross {
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(-19.5f, 13.5f, 55.0f)
+                Vec3(-19.5f, 13.5f, 55.2f)
             },
             //後真ん中
             {
                 Vec3(25.0f, 0.1f, 8.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 17.5f, 55.0f)
+                Vec3(0.0f, 17.5f, 55.2f)
             },
             //後右
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(19.5f, 13.5f, 55.0f)
+                Vec3(19.5f, 13.5f, 55.2f)
             },
             //Wave2
             //右
@@ -265,37 +307,37 @@ namespace basecross {
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(-19.5f, 13.5f, 35.0f)
+                Vec3(-19.5f, 13.5f, 34.8f)
             },
             //前真ん中
             {
                 Vec3(25.0f, 0.1f, 8.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 17.5f, 35.0f)
+                Vec3(0.0f, 17.5f, 34.8f)
             },
             //前右
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(19.5f, 13.5f, 35.0f)
+                Vec3(19.5f, 13.5f, 34.8f)
             },
             //後左
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(-19.5f, 13.5f, -35.0f)
+                Vec3(-19.5f, 13.5f, -34.8f)
             },
             //後真ん中
             {
                 Vec3(25.0f, 0.1f, 8.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 17.5f, -35.0f)
+                Vec3(0.0f, 17.5f, -34.8f)
             },
             //後右
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(19.5f, 13.5f, -35.0f)
+                Vec3(19.5f, 13.5f, -34.8f)
             },
             //Wave1
             //右
@@ -314,19 +356,19 @@ namespace basecross {
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(-19.5f, 13.5f, -55.0f)
+                Vec3(-19.5f, 13.5f, -55.2f)
             },
             //前真ん中
             {
                 Vec3(25.0f, 0.1f, 8.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 17.5f, -55.0f)
+                Vec3(0.0f, 17.5f, -55.2f)
             },
             //前右
             {
                 Vec3(30.0f, 0.1f, 31.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(19.5f, 13.5f, -54.9f)
+                Vec3(19.5f, 13.5f, -55.2f)
             },
             //後左
             {
@@ -489,80 +531,6 @@ namespace basecross {
 
 
     //出入口作成
-    void WaveStage::CreateDoor()
-    {
-        vector < vector<Vec3> > vec =
-        {
-            //Boss
-            //右
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, -1.58f, 1.57f),
-                Vec3(-2.0f, 1.75f, 55.0f)
-            },
-            //左
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.55f, 1.57f),
-                Vec3(2.0f, 1.75f, 55.0f)
-            },
-            //Wave2
-            //前右
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, -1.55f, 1.57f),
-                Vec3(2.0f, 1.75f, 35.0f)
-            },
-            //前左
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.58f, 1.57f),
-                Vec3(-2.0f, 1.75f, 35.0f)
-            },
-            //後右
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, -1.58f, 1.57f),
-                Vec3(-2.0f, 1.75f, -35.0f)
-            },
-            //後左
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.55f, 1.57f),
-                Vec3(2.0f, 1.75f, -35.0f)
-            },
-            //Wave1
-            //前右
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.55f, 1.57f),
-                Vec3(-2.0f, 1.75f, -125.0f)
-            },
-             //前左
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.58f, 1.57f),
-                Vec3(2.0f, 1.75f, -125.0f)
-            },
-            //後右
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.58f, 1.57f),
-                Vec3(2.0f, 1.75f, -55.0f)
-            },
-            //後左
-            {
-                Vec3(6.5f, 0.1f, 4.0f),
-                Vec3(0.0f, 1.55f, 1.57f),
-                Vec3(-2.0f, 1.75f, -55.0f)
-            }
-        };
-        for (auto v : vec)
-        {
-            AddGameObject<Door>(v[0], v[1], v[2]);
-        }
-    }
-
     Door::Door(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
