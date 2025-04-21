@@ -62,6 +62,7 @@ namespace basecross {
 
 		//SE受け取り
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
 
 	}
 
@@ -76,20 +77,20 @@ namespace basecross {
 		ReloadBullet(3.0f);
 
 		//UIバーを更新する
-		auto playerUI = stage->GetSharedGameObject<PlayerUI>(L"PlayerUI");//Playerバーを取得
+		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
 		playerUI->SetPLHPSprite(m_HPCurrent);
 		playerUI->SetPLSPSprite(m_SPCurrent);
 
-		// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		{
-			m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
-		}
-		// 仮：Bボタンで必殺技溜め
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
-		}
+		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
+		//{
+		//	m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
+		//}
+		//// 仮：Bボタンで必殺技溜め
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
+		//}
 
 
 		//ステート処理

@@ -26,7 +26,7 @@ namespace basecross {
 	void EnemyBase::HitBackStandBehavior() {
 		m_hitbacktime -= _delta;
 		if (m_hitbacktime <= 0) {
-			m_state->ChangeState(L"Walk");
+			m_state->ChangeState(L"Stand");
 		}
 	}
 
@@ -103,9 +103,13 @@ namespace basecross {
 		//回転
 		ptrDraw->AddAnimation(L"Rotate", 26, 154, true, 30.0f);
 		//歩き
-		ptrDraw->AddAnimation(L"Walk", 181, 169, false, 60.0f);
+		ptrDraw->AddAnimation(L"Walk", 181, 169, true, 60.0f);
 		//のけぞり
 		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
+		//ダウン
+		ptrDraw->AddAnimation(L"KnockedDown", 351, 79, false, 60.0f);
+		//ダウン復帰	
+		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
 		//近接1
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
 		//近接2
@@ -119,6 +123,34 @@ namespace basecross {
 
 		return (p->GetPosition() - GetPosition()).length();
 	}
+	//XZ平面におけるプレイヤーの方向
+	float EnemyBase::GetPlayerSubDirection() {
+		auto p = (m_player.lock());
+		if (p == nullptr) return 0;
+
+		//プレイヤーの向きベクトルを取得
+		auto fwd = GetComponent<Transform>()->GetForward();
+		float selfAngle = atan2f(fwd.z, fwd.x);
+		fwd = (p->GetPosition() - GetPosition());
+		fwd.normalize();
+		float playerAngle = atan2f(fwd.z, fwd.x);
+
+		return selfAngle - playerAngle - XM_PIDIV2;
+	}
+	
+	void EnemyBase::RotateToPlayer(const float multiply, const float threshold) {
+		float playerDir = GetPlayerSubDirection();
+
+		if (abs(playerDir) > threshold) {
+			Quat q = GetQuaternion();
+			q = RotateQuat(q, Vec3(0, 1, 0), m_rotateSpeed * multiply * _delta * (playerDir < 0 ? -1 : 1));
+			SetQuaternion(q);
+		}
+	}
+
+	void EnemyBase::RotateToPlayer(const float multiply) {
+		RotateToPlayer(multiply, m_rotateThreshold);
+	}
 
 	//--------------------------------------------------------------------------
 
@@ -126,7 +158,7 @@ namespace basecross {
 		Actor::OnCreate();
 		//Transform設定
 		m_trans = GetComponent<Transform>();
-		m_trans->SetPosition(m_pos);
+		SetPosition(m_pos);
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
@@ -156,7 +188,7 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(true);//debug
 
-		m_LandDetect->SetBindPos(Vec3(0, -3.2f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -3.0f, 0));
 
 		AddTag(L"Enemy");
 
@@ -181,7 +213,7 @@ namespace basecross {
 			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-			<< L"\nAngle : " << GetAngle() << endl;
+			<< L"\nAngle : " << GetPlayerSubDirection() << endl;
 
 		scene->SetDebugString(wss.str());
 	}
@@ -193,6 +225,5 @@ namespace basecross {
 	void BossFirst::OnDamaged() {
 		m_state->ChangeState(L"Hit");
 	}
-
 }
 //end basecross

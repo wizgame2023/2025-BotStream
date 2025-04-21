@@ -22,9 +22,25 @@ namespace basecross {
 		void SetPosition(Vec3 pos) {
 			GetComponent<Transform>()->SetPosition(pos);
 		}
+
+		Quat GetQuaternion() {
+			return GetComponent<Transform>()->GetQuaternion();
+		}
+		void SetQuaternion(Quat quat) {
+			GetComponent<Transform>()->SetQuaternion(quat);
+		}
+
+		//ƒNƒH[ƒ^ƒjƒIƒ“Šî€‚Å‚Ì‰ñ“]ˆ— 1q:Å‰‚Ì‰ñ“] v:‰ñ“]² rad:‰ñ“]—Ê
+		Quat RotateQuat(const Quat q, const Vec3 v, const float rad) {
+			Quat r = Quat(cos(rad / 2), v.x * sin(rad / 2), v.y * sin(rad / 2), v.z * sin(rad / 2));
+			Quat r2 = Quat(cos(rad / 2), -v.x * sin(rad / 2), -v.y * sin(rad / 2), -v.z * sin(rad / 2));
+			return q * r * r2;
+		}
+
 	protected:
-		 //void OnCreate()override;
-		 //void OnUpdate()override;
+
+		//void OnCreate()override;
+		//void OnUpdate()override;
 	};
 
 }

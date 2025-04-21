@@ -160,7 +160,7 @@ namespace basecross{
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
-		app->RegisterWav(L"Landing", SoundPath + L"Landing.wav");
+		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
@@ -168,13 +168,11 @@ namespace basecross{
 		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
+		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
-		app->RegisterWav(L"DamageVoice", SoundPath + L"DamageVoice.wav");
-		app->RegisterWav(L"StartVoice", SoundPath + L"StartVoice.wav");
-		app->RegisterWav(L"StatrVoice2", SoundPath + L"StartVoice2.wav");
-		app->RegisterWav(L"Lock-on", SoundPath + L"Lock-on.wav");
-		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
-		app->RegisterWav(L"EnemyAttack", SoundPath + L"EnemyAttack.wav");
+		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
+		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
 
 	}
 

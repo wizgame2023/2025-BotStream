@@ -425,7 +425,7 @@ namespace basecross {
 		{
 			m_gunSprite->OnClear(!m_weaponSwitchFlag);
 			m_katanaSprite->OnClear(m_weaponSwitchFlag);
-			m_weaponSwitchFlag = !m_weaponSwitchFlag;
+			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
 		}
 
 		// 仮：AボタンでUIの数字が下がる
