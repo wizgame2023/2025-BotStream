@@ -42,18 +42,19 @@ namespace basecross {
 
 		CreateSharedObjectGroup(L"Actor");
 
-		auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 		SetSharedGameObject(L"Player", player);
 
 		auto enemyMgr = AddGameObject<EnemyManager>();
 		SetSharedGameObject(L"EnemyManager", enemyMgr);
 
-		auto boss = AddGameObject<BossFirst>(Vec3(1, 10 ,1), Vec3(0), Vec3(1));
+		auto boss = AddGameObject<BossFirst>(Vec3(0), Vec3(0), Vec3(0));
 		SetSharedGameObject(L"Boss", boss);
-		enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
+		enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss),
+			Vec3(0, 10, 10), Vec3(0), Vec3(1));
 
 		//test
-		enemyMgr->InstEnemy(Vec3(1), Vec3(0), Vec3(1));
+		enemyMgr->InstEnemy(Vec3(10, 1, 5), Vec3(0), Vec3(1));
 
 		//カメラマネージャ作成
 		auto cameraMgr = AddGameObject<CameraManager>();
