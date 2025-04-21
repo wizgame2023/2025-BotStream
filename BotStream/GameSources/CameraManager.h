@@ -59,6 +59,10 @@ namespace basecross{
 		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
 		float m_targetDis;//ロックオン対象の距離デバック用
 
+		//SE用
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<EnemyBase>> m_targets;//ターゲット候補
 		vector<Vec3> m_targetsPos;//ロックオン候補のPosを保存する配列
@@ -175,6 +179,17 @@ namespace basecross{
 		void OnUpdate()override;
 	};
 
+	//デバック用のただの四角いやつ
+	class EnemyCube : public Actor
+	{
+	private:
+		Col4 m_color;//色
+	public:
+		EnemyCube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		~EnemyCube();
+		void OnCreate()override;//作成
+		void OnUpdate()override;//更新
+	};
 
 
 }

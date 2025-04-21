@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<StageTuboi>();
+			ResetActiveStage<StageSanpei>();
 
 		}
 
@@ -45,7 +45,7 @@ namespace basecross{
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage")
 		{
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<StageSanpei>();
 		}
 	}
 
@@ -92,6 +92,8 @@ namespace basecross{
 		app->RegisterTexture(L"Answer", strTexture);
 		strTexture = texPath + L"ResultText.png";
 		app->RegisterTexture(L"ResultText", strTexture);
+		strTexture = texPath + L"ClearOverText.png";
+		app->RegisterTexture(L"ClearOverText", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
 		strTexture = texPath + L"Katana.png";
@@ -152,6 +154,8 @@ namespace basecross{
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
+		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
+		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
 
 	}
 

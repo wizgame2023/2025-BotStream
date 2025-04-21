@@ -19,6 +19,10 @@ namespace basecross {
 		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
 		shared_ptr<Actor> m_targetObj = nullptr;//ロックオン時の対象
 		float m_targetDistance;//ターゲット対象との距離
+
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+
 	public:
 		PlayerStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -31,7 +35,7 @@ namespace basecross {
 		}
 
 		
-		virtual void Enter() {};
+		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit() {};
 
@@ -222,12 +226,43 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//攻撃ステート(必殺技)
+	class PlayerAttackSpecialState :public PlayerStateBase
+	{
+	private:
+		//攻撃時間
+		float m_timeMaxOfAttack = 2.0f;
+		//攻撃時間計測
+		float m_timeOfAttack;
+		////次の攻撃の猶予時間
+		//float m_graceTimeOfNextAttack = 0.9f;
+		////次の攻撃をするかのフラグ
+		//float m_nestAttackFlag = false;
+
+		shared_ptr<Cube> m_AttackObj = nullptr;
+
+	public:
+		PlayerAttackSpecialState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerAttackSpecialState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
+
+
 	//攻撃ステート(最後に出る攻撃)
 	class PlayerAttackLongState :public PlayerStateBase
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 1.2f;
+		float m_timeMaxOfAttack = 0.5f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		////次の攻撃の猶予時間
@@ -252,6 +287,37 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//攻撃が当たった時のステート
+	class PlayerHitState :public PlayerStateBase
+	{
+	private:
+		//攻撃時間
+		float m_timeMaxOfHitBack = 1.2f;
+		//攻撃時間計測
+		float m_timeOfHitBack;
+		////次の攻撃の猶予時間
+		//float m_graceTimeOfNextAttack = 0.9f;
+		////次の攻撃をするかのフラグ
+		//float m_nestAttackFlag = false;
+
+		shared_ptr<Cube> m_AttackObj = nullptr;
+
+	public:
+		PlayerHitState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerHitState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
+
+
 	//プレイヤーステートマシン
 	class PlayerStateMachine : public StateMachineBase
 	{
@@ -267,6 +333,9 @@ namespace basecross {
 			AddState(L"Attack3", shared_ptr<PlayerAttack3State>(new PlayerAttack3State(obj)));
 			AddState(L"AttackEx", shared_ptr<PlayerAttackExState>(new PlayerAttackExState(obj)));
 			AddState(L"AttackLong", shared_ptr<PlayerAttackLongState>(new PlayerAttackLongState(obj)));
+			AddState(L"AttackSpecial", shared_ptr<PlayerAttackSpecialState>(new PlayerAttackSpecialState(obj)));
+			AddState(L"Hit", shared_ptr<PlayerHitState>(new PlayerHitState(obj)));
+
 
 			//最初のステートはWalkここからいろんなステートに変更する イーブイみたいなもの
 			ChangeState(L"PlayerWalk");
