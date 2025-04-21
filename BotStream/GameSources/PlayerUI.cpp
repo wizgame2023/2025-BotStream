@@ -14,30 +14,30 @@ namespace basecross {
 	{
 		m_stage = GetStage();
 
-        const Vec2 gaugeSize(300, 75);
-        const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
-        const Vec2 spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
-        const float gaugePosX = 0.0f, gaugePosY = -250;
+		const Vec2 gaugeSize(300, 75);
+		const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
+		const Vec2 spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
+		const float gaugePosX = 0.0f, gaugePosY = -250;
 
 		//Playerに関するバーUI生成
-        m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
-            L"PLGauge", gaugeSize, Vec3(gaugePosX, gaugePosY, 0));
-        m_gaugeFrameSprite->SetDrawLayer(1);
+		m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
+			L"PLGauge", gaugeSize, Vec3(gaugePosX, gaugePosY, 0));
+		m_gaugeFrameSprite->SetDrawLayer(1);
 
-        m_plHPSprite = m_stage->AddGameObject<Sprite>(
-            L"PLHP", hpGaugeSize,
-            Vec3(gaugePosX + (gaugeSize.x * 0.066f), gaugePosY - 0.7f, 0));
-        m_plHPSprite->SetDrawLayer(2);
+		m_plHPSprite = m_stage->AddGameObject<Sprite>(
+			L"PLHP", hpGaugeSize,
+			Vec3(gaugePosX + (gaugeSize.x * 0.066f), gaugePosY - 0.7f, 0));
+		m_plHPSprite->SetDrawLayer(2);
 
-        m_plSPSprite = m_stage->AddGameObject<Sprite>(
-            L"PLSP", spGaugeSize,
-            Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));
-        m_plSPSprite->SetDrawLayer(2);
+		m_plSPSprite = m_stage->AddGameObject<Sprite>(
+			L"PLSP", spGaugeSize,
+			Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));
+		m_plSPSprite->SetDrawLayer(2);
 	}
 
-    void PlayerGaugeUI::OnUpdate()
-    {
-        Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
+	void PlayerGaugeUI::OnUpdate()
+	{
+		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 
 		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
@@ -82,7 +82,7 @@ namespace basecross {
 		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
 		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
 
-    }
+	}
 
 	//-----------------------------------------------
 	//bullet

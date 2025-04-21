@@ -48,6 +48,11 @@ namespace basecross {
 			auto cameraManager = AddGameObject<CameraManager>();
 			SetSharedGameObject(L"CameraManager", cameraManager);
 
+			//Player関係のUI生成
+			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+			SetSharedGameObject(L"PlayerUI", playerUI);
+			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
+
 			auto ground = AddGameObject<Ground>();
 
 
@@ -438,16 +443,6 @@ namespace basecross {
 			m_bulletNum = 90;
 		}
 
-		// 仮置きエフェクト // 後で移す //----------------------------
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
-		{
-			//EfkPlaying(L"Beam", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"Dodge", angle + XM_PI, Vec3(0, 1, 0));
-			//EfkPlaying(L"Dash", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		}
-		//-------------------------------------------------------------
 
 		// 弾数を文字列に変換
 		std::string bulletStr = std::to_string(m_bulletNum);

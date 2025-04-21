@@ -17,7 +17,7 @@ namespace basecross {
 		void CreateSprite();
 
 		//--------写すときはここをコピペすればいいと思われる--------
-				
+
 		// 性格のステータス
 		struct PersonalState
 		{
@@ -64,7 +64,7 @@ namespace basecross {
 		int m_bulletNum = 90;
 		// 弾数の数字の大きさ
 		float m_digitSize = 40;
-		
+
 		// もう知らない！ローカル変数のバカ！
 		int m_switchQues = 0;
 		int m_questionNum = 0;
@@ -80,7 +80,7 @@ namespace basecross {
 		virtual void OnCreate()override;
 		virtual void OnUpdate()override;
 		virtual void OnDraw()override;
-		
+
 		// デバッグ用文字列
 		void DebugLog();
 
