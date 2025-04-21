@@ -106,6 +106,10 @@ namespace basecross{
 		//ボーンマルチメッシュ
 		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//仮のプレイヤーメッシュ(槍兵)
 		app->RegisterResource(L"Spearmen", boneMultiModelMesh);
+
+		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ
+		app->RegisterResource(L"Enemy_A", boneModelMesh);
+
 		//ボーンマルチメッシュ用テクスチャ
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
