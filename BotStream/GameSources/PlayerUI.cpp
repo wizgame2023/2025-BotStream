@@ -110,15 +110,26 @@ namespace basecross {
 	{
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 
+		auto playerLock = m_player.lock();
+
+		//Playerが居なくなったら自分も消える
+		if (!playerLock)
+		{
+			GetStage()->RemoveGameObject<PlayerBulletUI>(GetThis<PlayerBulletUI>());
+			return;
+		}
+		//プレイヤーの現在の球数によって数値が変わる
+		m_bulletNum =  m_player.lock()->GetBulletNum();
+
 		// 仮：AボタンでUIの数字が下がる
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
-		{
-			m_bulletNum = max(0, m_bulletNum - 1);
-		}
-		else if (m_bulletNum <= 0)
-		{
-			m_bulletNum = 90;
-		}
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
+		//{
+		//	m_bulletNum = max(0, m_bulletNum - 1);
+		//}
+		//else if (m_bulletNum <= 0)
+		//{
+		//	m_bulletNum = 90;
+		//}
 
 		// 弾数を文字列に変換
 		std::string bulletStr = std::to_string(m_bulletNum);
