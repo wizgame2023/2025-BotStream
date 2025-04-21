@@ -102,7 +102,7 @@ namespace basecross {
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
 
-		//ロックオン候補がいないならロックオンできない＆選択を初期化
+		//LockOnCanがいないならロックオンできない＆選択を初期化
 		if (m_targets.size() <= 0 && m_targetObj)
 		{
 			LockOff(enemyVec);//ロックオンの解除
@@ -128,12 +128,12 @@ namespace basecross {
 					{
 						min = ditance;
 						m_targetDis = abs(distanceVec.x) + abs(distanceVec.z);//対象との距離を保存する
-						m_targetObj = enemy;//ロックオン対象を決める
+						m_targetObj = enemy;//LockOnTargetを決める
 					}
 				}
 
 				m_lockOnUse = true;//ロックオン使用
-				m_targetObj->AddTag(L"ロックオン対象");
+				m_targetObj->AddTag(L"LockOnTarget");
 				m_SEManager->Start(L"LockOnSE", 0, 0.9f);//ロックオン用SE再生
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
@@ -204,7 +204,7 @@ namespace basecross {
 				m_lockOnChangeFlag = false;
 				m_lockOnUse = true;//ロックオン使用
 				m_targetObj = m_targets[m_lockOnNum];
-				m_targets[m_lockOnNum]->AddTag(L"ロックオン対象");
+				m_targets[m_lockOnNum]->AddTag(L"LockOnTarget");
 			}
 
 			LockOn(m_targetObj, player);//ロックオン
@@ -215,7 +215,7 @@ namespace basecross {
 			m_lockStageCamera->SetAt(m_playerPos+Vec3(0.0f,3.0f,0.0f));
 		}
 
-		//ロックオン候補はどのオブジェクト達になるのか処理
+		//LockOnCanはどのオブジェクト達になるのか処理
 		LockOnCandidate(enemyVec, m_playerPos);
 		//角度の調整0~360度までしか出ないようにする
 		AdjustmentAngle();
@@ -416,7 +416,7 @@ namespace basecross {
 
 	}
 
-	//ロックオン候補を決める関数
+	//LockOnCanを決める関数
 	void CameraManager::LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec,Vec3 playerPos)
 	{
 		m_targets.clear();//配列の初期化
@@ -432,23 +432,23 @@ namespace basecross {
 				(enemyPos.z - playerPos.z) * (enemyPos.z - playerPos.z);
 			float radiusRange = m_targetRange * m_targetRange;
 
-			//ロックオン候補なら配列にオブジェクトとPosを入れる
+			//LockOnCanなら配列にオブジェクトとPosを入れる
 			if (targetRange <= radiusRange)
 			{
-				if (!enemy->FindTag(L"ロックオン候補"))
+				if (!enemy->FindTag(L"LockOnCan"))
 				{
 					m_stage->AddGameObject<LockOnLook>(Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), enemy, Vec3(0.0f, 4.0f, 0.0f));
 				}
 
-				m_targetsPos.push_back(enemyPos);//ロックオン候補のPosを配列に入れる
+				m_targetsPos.push_back(enemyPos);//LockOnCanのPosを配列に入れる
 				m_targets.push_back(enemy);
-				enemy->AddTag(L"ロックオン候補");//ロックオン候補のタグ追加
+				enemy->AddTag(L"LockOnCan");//LockOnCanのタグ追加
 				m_lockOnFlag = true;//ロックオン使用可能
 			}
-			else if (enemy->FindTag(L"ロックオン候補"))//ロックオン候補から外れたのがロックオン対象ならロックオンをやめる
+			else if (enemy->FindTag(L"LockOnCan"))//LockOnCanから外れたのがLockOnTargetならロックオンをやめる
 			{
-				enemy->RemoveTag(L"ロックオン候補");
-				if (enemy->FindTag(L"ロックオン対象"))
+				enemy->RemoveTag(L"LockOnCan");
+				if (enemy->FindTag(L"LockOnTarget"))
 				{
 					LockOff(enemyVec);//ロックオンの解除
 				}
@@ -466,7 +466,7 @@ namespace basecross {
 		Vec3 lockOnPos = lockOnObj->GetComponent<Transform>()->GetPosition();
 		Vec3 originPos = originObj->GetComponent<Transform>()->GetPosition();
 
-		//ロックオン対象をPlayerの距離ベクトルを測って角度取得
+		//LockOnTargetをPlayerの距離ベクトルを測って角度取得
 		Vec3 lockOnVec = lockOnPos - originPos;
 		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
 
@@ -481,28 +481,28 @@ namespace basecross {
 	void CameraManager::LockOff(vector<shared_ptr<EnemyBase>> enemyVec)
 	{
 		m_targetDis = 0.0f;
-		m_targetObj->RemoveTag(L"ロックオン対象");
+		m_targetObj->RemoveTag(L"LockOnTarget");
 		m_lockOnFlag = false;//ロックオンできない
 		m_lockOnUse = false;//ロックオンしない
 		m_lockOnNum = -1;
 		m_targetObj = NULL;
 	}
 
-	//ロックオン候補のデータを更新する処理
+	//LockOnCanのデータを更新する処理
 	void CameraManager::UpdateTargesDeta(Vec3 playerPos)
 	{
 		m_targesDeta.clear();//初期化
 
-		//ロックオンを切り替えるときにスティックを傾けてロックオン対象を変更する処理
+		//ロックオンを切り替えるときにスティックを傾けてLockOnTargetを変更する処理
 		Vec3 targetPos = m_targetObj->GetComponent<Transform>()->GetPosition();
-		//Playerから見てロックオン対象のいる方向ベクトルを求める
+		//Playerから見てLockOnTargetのいる方向ベクトルを求める
 		Vec3 lockOnVec = targetPos - playerPos;
 
 		for (auto enemy : m_targets)
 		{
 			Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
 
-			//Playerから見てロックオン候補のいる方向ベクトルを求める
+			//Playerから見てLockOnCanのいる方向ベクトルを求める
 			Vec3 lockOnCanVec = enemyPos - playerPos;
 
 			//外積を求める
@@ -533,7 +533,7 @@ namespace basecross {
 		}
 	}
 
-	//ロックオン対象を変更する処理
+	//LockOnTargetを変更する処理
 	//第一引数 右か左か 第二引数 ターゲット対象のなす角
 	void CameraManager::ChangeLockOn(int leftOrRight,float targetAngle)
 	{
@@ -551,7 +551,7 @@ namespace basecross {
 			if (min > difference && difference != 0.0f)
 			{
 				min = difference;
-				m_targetObj->RemoveTag(L"ロックオン対象");
+				m_targetObj->RemoveTag(L"LockOnTarget");
 				m_lockOnNum = i;
 				m_lockOnChangeFlag = true;
 			}
@@ -825,15 +825,15 @@ namespace basecross {
 			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
 			return;
 		}
-		//ここで追跡対象のタグにロックオン対象やロックオン候補などのタグがなければ消去される
-		if (!parentLock->FindTag(L"ロックオン候補"))
+		//ここで追跡対象のタグにLockOnTargetやLockOnCanなどのタグがなければ消去される
+		if (!parentLock->FindTag(L"LockOnCan"))
 		{
 			GetStage()->RemoveGameObject<LockOnLook>(GetThis<LockOnLook>());
 			return;
 		}
 
 
-		if (parentLock->FindTag(L"ロックオン対象"))
+		if (parentLock->FindTag(L"LockOnTarget"))
 		{
 			auto ptrDraw = GetComponent<PNTStaticDraw>();
 			ptrDraw->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 1.0f));

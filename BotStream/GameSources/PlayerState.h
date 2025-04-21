@@ -10,6 +10,7 @@ namespace basecross {
 	class Player;	
 	class Actor;
 	class Cube;
+	class EnemyZako;
 	//プレイヤーステートの元となるクラス
 	class PlayerStateBase :public StateBase
 	{
@@ -341,6 +342,74 @@ namespace basecross {
 			ChangeState(L"PlayerWalk");
 		}
 		
+	};
+
+
+	//雑魚敵のステート関係
+
+	//雑魚敵のステートの元となるクラス
+	class EnemyZakoStateBase :public StateBase
+	{
+	protected:
+		shared_ptr<EnemyZako> m_enemyZako;
+	public:
+		EnemyZakoStateBase(shared_ptr<GameObject>& obj) :
+			StateBase(obj),
+			m_enemyZako(dynamic_pointer_cast<EnemyZako>(obj))
+		{
+
+		}
+
+		virtual void Enter() {}
+		virtual void Update(float deltatime) {}
+		virtual void Exit() {}
+	};
+	
+	//何もないときのステート
+	class EnemyZakoStandState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoStandState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+	
+	//ダメージを受けた雑魚敵
+	class EnemyZakoHitState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoHitState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	class EnemyZakoStateMachine :public StateMachineBase
+	{
+	public:
+		EnemyZakoStateMachine(shared_ptr<GameObject>& obj)
+		{
+			AddState(L"Stand", shared_ptr<EnemyZakoStandState>(new EnemyZakoStandState(obj)));
+			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
+		
+			ChangeState(L"Stand");
+		}
 	};
 
 }
