@@ -107,8 +107,12 @@ namespace basecross {
 		//エフェクトを出す処理
 		virtual void AddEffect(int addEffect);
 
+		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
 			return m_HPCurrent;
+		}
+		void SetHPCurrent(int setHP) {
+			m_HPCurrent = setHP;
 		}
 		int GetHPMax() {
 			return m_HPMax;
