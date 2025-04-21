@@ -111,6 +111,23 @@ namespace basecross {
 			Dodge();
 		}
 
+		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+
+		// テストエフェクト // 後で消す //----------------------------
+		if (keybord.m_bPressedKeyTbl[VK_RETURN])
+		{
+			//EfkPlaying(L"Beam", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"Dodge", angle + XM_PI, Vec3(0, 1, 0));
+			//EfkPlaying(L"Dash", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
+			EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
+		}
+		//-------------------------------------------------------------
+
+
+
 		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
 		//{
 		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
