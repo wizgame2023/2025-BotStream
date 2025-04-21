@@ -296,7 +296,7 @@ namespace basecross {
 			//tmp.HitSound = L"Attack1";
 
 			tmp.HitOnce = true;//一回しかヒットしないか
-			tmp.Damage = 10;//ダメージ
+			tmp.Damage = 15;//ダメージ
 			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;//のけぞり時間
 			//tmp.ForceRecover = true;
@@ -366,7 +366,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 12;
+			tmp.Damage = 17;
 			tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .3f;
 			m_player->DefAttack(.5f, tmp);
@@ -441,7 +441,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 15;
+			tmp.Damage = 20;
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
@@ -502,7 +502,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 25;
+			tmp.Damage = 30;
 			tmp.HitVel_Stand = Vec3(-15, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			m_player->DefAttack(.5f, tmp);
@@ -527,7 +527,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 20;
+			tmp.Damage = 40;
 			tmp.HitVel_Stand = Vec3(-20, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
@@ -576,7 +576,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 10;
+			tmp.Damage = 100;
 			tmp.HitVel_Stand = Vec3(-1, 5, 0);
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
