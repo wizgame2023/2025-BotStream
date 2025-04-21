@@ -76,7 +76,7 @@ namespace basecross {
 		ReloadBullet(3.0f);
 
 		//UIバーを更新する
-		auto playerUI = stage->GetSharedGameObject<PlayerUI>(L"PlayerUI");//Playerバーを取得
+		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
 		playerUI->SetPLHPSprite(m_HPCurrent);
 		playerUI->SetPLSPSprite(m_SPCurrent);
 
