@@ -20,6 +20,8 @@ namespace basecross {
         void CreateCeiling();
         void CreateDoor();
 
+        int m_waveNow = 0;//åªç›ÇÃwave
+
 
     public:
         //ç\ízÇ∆îjä¸
@@ -79,8 +81,8 @@ namespace basecross {
         Vec3 m_Rotation;
         Vec3 m_Position;
 
-        shared_ptr<BillBoard> m_HPGauge;
-        shared_ptr<BillBoard> m_ArmorGauge;
+        //shared_ptr<BillBoard> m_HPGauge;
+        //shared_ptr<BillBoard> m_ArmorGauge;
 
     public:
         Door(const shared_ptr<Stage>& StagePtr,
