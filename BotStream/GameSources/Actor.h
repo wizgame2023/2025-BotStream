@@ -105,6 +105,9 @@ namespace basecross {
 		void OnCreate() override;
 		void OnUpdate() override;
 
+		//エフェクトを出す処理
+		virtual void AddEffect(int addEffect);
+
 		int GetHPCurrent() {
 			return m_HPCurrent;
 		}

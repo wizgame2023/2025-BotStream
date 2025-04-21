@@ -101,6 +101,7 @@ namespace basecross {
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
 
 		shared_ptr<Stage> m_stage;
+		weak_ptr<Player> m_player;
 
 		// 弾数
 		int m_bulletNum = 90;
@@ -113,13 +114,25 @@ namespace basecross {
 		// digitPos:位置設定
 		// bulletNum:最大装填数
 		// digitSize:文字の大きさ
-		PlayerBulletUI(const std::shared_ptr<Stage>& stagePtr, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
+		PlayerBulletUI(const std::shared_ptr<Stage>& stagePtr,shared_ptr<Player> player, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
 			MyGameObject(stagePtr),
 			m_digitPos(digitPos),
 			m_bulletNum(bulletNum),
-			m_digitSize(digitSize)
+			m_digitSize(digitSize),
+			m_player(player)
 		{}
 		virtual ~PlayerBulletUI() {}
+
+		//弾の数のセッター
+		void SetBullet(int setBullet)
+		{
+			m_bulletNum = setBullet;
+		}
+		//弾の数のゲッター
+		int GetBullet()
+		{
+			return m_bulletNum;
+		}
 
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;

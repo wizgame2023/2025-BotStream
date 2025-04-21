@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<StageSanpei>();
+			ResetActiveStage<WaveStage>();
 
 		}
 
@@ -47,6 +47,21 @@ namespace basecross{
 		{
 			ResetActiveStage<StageSanpei>();
 		}
+
+		if (event->m_MsgStr == L"ToGameOver") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<GameOver>();
+
+		}
+
+		if (event->m_MsgStr == L"ToGameClear") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<GameClear>();
+
+		}
+
 	}
 
 	void Scene::GameResourses()
@@ -131,6 +146,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Dash", efkPath + L"dash.efkefc");
 		EffectManager::Instance().RegisterEffect(L"PathBullet", efkPath + L"guntrajectory.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		// ---------------------------------
 
 		//BGM
@@ -145,7 +162,7 @@ namespace basecross{
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
-		app->RegisterWav(L"Landing", SoundPath + L"Landing.wav");
+		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
@@ -157,6 +174,7 @@ namespace basecross{
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
 		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
 
 	}
 

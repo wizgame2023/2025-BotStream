@@ -206,8 +206,13 @@ namespace basecross {
 		//ダッシュステートのアニメーション再生
 		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime * 7);
 
-		//Aボタン離したら歩くステートに変更する
+		//Aボタン離したらorスティックを離したら歩くステートに変更する
 		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A)
+		{
+			m_player->ChangeState(L"PlayerWalk");
+		}
+		Vec3 stickVec = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (stickVec == Vec3(0.0f))
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
