@@ -11,6 +11,7 @@
 namespace basecross{
 	class EfkEffect;
 	class StageSato;
+	class PlayerBulletUI;
 	enum PlayerState
 	{
 		PlayerState_Walk,
@@ -78,6 +79,9 @@ namespace basecross{
 		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
+		//UI関係
+		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;//現在の球数を表示するUI
+
 
 		void Jump();
 
@@ -95,7 +99,7 @@ namespace basecross{
 		void OnUpdate()override;//更新
 
 		void ChangeState(wstring stateName);//ステート変更
-		void AddEffect(int addEffect);//エフェクトを出す処理
+		//void AddEffect(int addEffect)override;//エフェクトを出す処理
 
 		//プレイヤーの移動処理
 		void PlayerMove(int playerState);
