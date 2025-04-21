@@ -67,10 +67,15 @@ namespace basecross {
 		//ボス敵のポインタを渡す用の変数
 		void InstBoss(shared_ptr<EnemyBase> boss) {
 			m_enemies[0] = boss;
-			auto t = dynamic_pointer_cast<GameObject>(m_enemies[0])->GetComponent<Transform>();
-			m_enemies[0]->Initialize(t->GetPosition(), t->GetRotation(), t->GetScale());
+			m_enemies[0]->Initialize();
 		}
-		//ボス取得(いなかったらnullが返る)
+		//ボス敵のポインタを渡す用の変数
+		void InstBoss(shared_ptr<EnemyBase> boss, Vec3 pos, Vec3 rot, Vec3 scale) {
+			m_enemies[0] = boss;
+			m_enemies[0]->Initialize(pos, rot, scale);
+		}
+
+		//ボス取得(いなかったらnullptrが返る)
 		shared_ptr<EnemyBase> GetBoss() {
 			return m_enemies[0];
 		}

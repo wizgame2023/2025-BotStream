@@ -55,8 +55,10 @@ namespace basecross {
 	void BossFirstStandState::Update(float deltatime) {
 		m_time += deltatime;
 
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->RotateToPlayer(1.0f);
+
 		if (m_time >= m_startAttack && rnd() % 1000 <= m_startAttackRand) {
-			auto boss = dynamic_pointer_cast<BossFirst>(_obj);
 			const float dist = boss->GetPlayerDist();
 
 			if (dist < m_farDist) {
@@ -76,9 +78,19 @@ namespace basecross {
 
 	void BossFirstChaseState::Enter() {
 
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
+		boss->ChangeAnim(L"Walk", true);
 	}
 	void BossFirstChaseState::Update(float deltatime) {
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
+		boss->RotateToPlayer(1.0f, m_rotateThreshold);
 
+		boss->SetVelocity(boss->GetForward() * 5);
+
+		if (boss->GetPlayerDist() < m_closeDist) {
+			//‹ß‚¢I
+			boss->ChangeState(L"Attack");
+		}
 	}
 	void BossFirstChaseState::Exit() {
 
@@ -88,10 +100,30 @@ namespace basecross {
 	void BossFirstAttackState::Enter() {
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->ChangeAnim(L"AttackClose1", true);
-
+		m_time = 0;
+		m_attacked = false;
 	}
 	void BossFirstAttackState::Update(float deltatime) {
+		m_time += deltatime;
+		
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
+		//UŒ‚”»’è‚Ì’è‹`
+		if (m_time >= 0.3f && !m_attacked) {
+			m_attacked = !m_attacked;
 
+			auto tmp = boss->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Type = AttackType::Enemy;
+			tmp.Damage = 10;
+			tmp.HitVel_Stand = Vec3(-5, 0, 0);
+			tmp.HitTime_Stand = 1.2f;
+			boss->DefAttack(.3f, tmp);
+			boss->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+		}
+
+		if (m_time >= m_end) {
+			boss->ChangeState(L"Stand");
+		}
 	}
 	void BossFirstAttackState::Exit() {
 
