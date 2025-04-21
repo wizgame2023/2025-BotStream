@@ -146,6 +146,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Dash", efkPath + L"dash.efkefc");
 		EffectManager::Instance().RegisterEffect(L"PathBullet", efkPath + L"guntrajectory.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		// ---------------------------------
 
 		//BGM
