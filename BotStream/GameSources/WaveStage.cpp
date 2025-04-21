@@ -46,7 +46,7 @@ namespace basecross {
 
             CreateSharedObjectGroup(L"Actor");
 
-            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
             SetSharedGameObject(L"Player", player);
 
             auto enemyMgr = AddGameObject<EnemyManager>();
@@ -54,7 +54,7 @@ namespace basecross {
 
             auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 10.0f, 100.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
             SetSharedGameObject(L"Boss", boss);
-            enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
+            //enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
 
             auto playerUI = AddGameObject<PlayerGaugeUI>(100);
             SetSharedGameObject(L"PlayerUI", playerUI);
@@ -133,7 +133,7 @@ namespace basecross {
         {
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(5);
             
-            //EnemyNum = 0;
+            EnemyNum = 0;
         }
         if (pad.wPressedButtons & XINPUT_GAMEPAD_A)
         {
