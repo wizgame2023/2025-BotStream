@@ -10,7 +10,7 @@
 
 namespace basecross {
 
-	class PlayerUI : public MyGameObject {
+	class PlayerGaugeUI : public MyGameObject {
 
 		shared_ptr<Sprite> m_gaugeFrameSprite;
 		shared_ptr<Sprite> m_plHPSprite;
@@ -24,12 +24,65 @@ namespace basecross {
 		float m_playerSP = 0.0f;        // 初期値SP
 
 	public:
-		PlayerUI(const std::shared_ptr<Stage>& stagePtr)
-			: MyGameObject(stagePtr) {}
-		virtual ~PlayerUI() {}
+		PlayerGaugeUI(const std::shared_ptr<Stage>& stagePtr,int HPMax = 1000.0f,int SPMax = 100.0f):
+			MyGameObject(stagePtr),
+			m_playerMaxHP(HPMax),
+			m_playerHP(HPMax),
+			m_playerSP(0.0f),
+			m_playerMaxSP(SPMax)
+		{}
+		virtual ~PlayerGaugeUI() {}
 
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
+
+		// playerの最大HPを取得(sprite)
+		float GetPLMaxHPSprite()
+		{
+			return m_playerMaxHP;
+		}
+
+		// playerの現在のHPを取得(sprite)
+		float GetPLHPSprite()
+		{
+			return m_playerHP;
+		}
+
+		// playerの最大SP(必殺技ゲージ)を取得(sprite)
+		float GetPLMaxSPSprite()
+		{
+			return m_playerMaxSP;
+		}
+
+		// playerの現在のSP(必殺技ゲージ)を取得(sprite)
+		float GetPLSPSprite()
+		{
+			return m_playerSP;
+		}
+
+		// playerの最大HPを設定(sprite)
+		void SetPLMaxHPSprite(float value)
+		{
+			m_playerMaxHP = value;
+		}
+
+		// playerのHPの更新(sprite)
+		void SetPLHPSprite(float value)
+		{
+			m_playerHP = value;
+		}
+
+		// playerの最大SP(必殺技ゲージ)を設定(sprite)
+		void SetPLMaxSPSprite(float value)
+		{
+			m_playerMaxSP = value;
+		}
+
+		// playerの最大SP(必殺技ゲージ)を設定(sprite)
+		void SetPLSPSprite(float value)
+		{
+			m_playerSP = value;
+		}
 
 		// 比率みたいなやつをあーだこーだするやつ
 		template <typename T>
@@ -42,4 +95,34 @@ namespace basecross {
 
 	};
 
+	class PlayerBulletUI : public MyGameObject
+	{
+		// スプライトのリスト
+		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
+
+		shared_ptr<Stage> m_stage;
+
+		// 弾数
+		int m_bulletNum = 90;
+		// 弾数の数字の大きさ
+		float m_digitSize = 40;
+		// 文字の位置
+		Vec2 m_digitPos;
+		
+	public:
+		// digitPos:位置設定
+		// bulletNum:最大装填数
+		// digitSize:文字の大きさ
+		PlayerBulletUI(const std::shared_ptr<Stage>& stagePtr, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
+			MyGameObject(stagePtr),
+			m_digitPos(digitPos),
+			m_bulletNum(bulletNum),
+			m_digitSize(digitSize)
+		{}
+		virtual ~PlayerBulletUI() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+	};
 } // namespace basecross

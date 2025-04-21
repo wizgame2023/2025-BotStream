@@ -126,6 +126,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PlayerUI.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageCollisionController.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -211,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)PlayerUI.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageCollisionController.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -56,6 +56,10 @@ namespace basecross {
 		//ロックオンの有効範囲を可視化
 		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
+		//SE用のマネージャー取得
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
+
+
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
 		{
@@ -87,13 +91,6 @@ namespace basecross {
 		m_controler = inputDevice.GetControlerVec()[0];
 		m_contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
-		////左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
-		//m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x * m_delta;//追加する角度を決めて
-		//m_cameraAngleY += -m_addAngleYAxis;//追加
-
-		////左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-		//m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y * m_delta;//追加する角度を決めて
-		//m_cameraAngleX += m_addAngleXAxis;//追加
 		//慣性付きの回転処理
 		InertialRotation();
 		//X軸回転の制限処理
@@ -111,7 +108,7 @@ namespace basecross {
 			LockOff(enemyVec);//ロックオンの解除
 		}
 
-		ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
+		//ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
 		//ロックオンが出来てロックオンのしてないなら使う、使ってたら使わない どちらでもなければそうでないならプレイヤーの向いている方向に向く
@@ -137,6 +134,7 @@ namespace basecross {
 
 				m_lockOnUse = true;//ロックオン使用
 				m_targetObj->AddTag(L"ロックオン対象");
+				m_SEManager->Start(L"LockOnSE", 0, 0.9f);//ロックオン用SE再生
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
 			{
@@ -232,14 +230,16 @@ namespace basecross {
 		if (m_targetObj)
 		{
 			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-			m_targetDis = targetVec.x + targetVec.z;
+			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
 		}
+		
 		
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
 			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
 			<< L"\nターゲット対象の距離: " << m_targetDis
+			<< L"\nFPS: " << 1.0f/m_delta
 			//<< L"\n当たった場所x: " << hitPos.x
 			//<< L"\n当たった場所y: " << hitPos.y
 			//<< L"\n当たった場所z: " << hitPos.z
@@ -741,7 +741,8 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
-		//m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		m_ptrDraw->SetTextureResource(L"PLGauge");
 		m_ptrDraw->SetOwnShadowActive(false);//影は消す
 		m_ptrDraw->SetDrawActive(true);
 
@@ -759,7 +760,10 @@ namespace basecross {
 			GetStage()->RemoveGameObject<LockOnRange>(GetThis<LockOnRange>());
 			return;
 		}
-		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
+		m_ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.3f));
+		m_ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 0.3f));
+		SetAlphaActive(true);
+
 
 		//いつもPlayerについていくようにする
 		Vec3 PlayerPos = playerLock->GetComponent<Transform>()->GetPosition();
@@ -878,25 +882,86 @@ namespace basecross {
 		ptrDraw->SetDrawActive(true);
 		ptrDraw->SetEmissive(m_color); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
-
-		//テスト用にコリジョン付けました
-		//auto ptrCol = AddComponent<CollisionObb>();
-		//ptrCol->SetFixed(true);
-
-		////影を付ける
-		//auto m_ptrShadow = AddComponent<Shadowmap>();
-		//m_ptrShadow->SetMeshResource(L"DEFAULT_CUBE");
-		////m_ptrShadow->SetMeshToTransformMatrix(spanMat);
-
-
-		//ptrDraw->HitTestSkinedMeshSegmentTriangles();
-		//ptrDraw->HitT
 	}
 
 	void Cube::OnUpdate()
 	{
 	}
 
+
+	//デバック用 敵の攻撃オブジェクト
+	EnemyCube::EnemyCube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color) :
+		Actor(stagePtr,pos,rot,scale),
+		m_color(color)
+	{
+
+	}
+	EnemyCube::~EnemyCube()
+	{
+
+	}
+
+	void EnemyCube::OnCreate()
+	{
+		Actor::OnCreate();
+		//Transform設定
+		auto m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//ドローメッシュの設定
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+		ptrDraw->SetDiffuse(m_color);
+		ptrDraw->SetOwnShadowActive(false);//影は消す
+		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(m_color); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+		//コリジョン生成
+		auto ptrColl = AddComponent<CollisionObb>();
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);
+
+		
+		//攻撃判定の定義
+		auto tmp = GetAttackPtr()->GetHitInfo();
+		tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+		tmp.HitOnce = true;//一回しかヒットしないか
+		tmp.Damage = 10;//ダメージ
+		tmp.HitVel_Stand = Vec3(-30, 1, 0);//ヒットバック距離
+		tmp.HitTime_Stand = 3.0f;//のけぞり時間
+		//tmp.PauseTime = 5.0f;
+		//tmp.ForceRecover = true;
+		DefAttack(.5f, tmp);
+		GetAttackPtr()->SetPos(Vec3(0, 0, 10));
+		auto AttackPtr = GetAttackPtr();
+		AttackPtr->SetCollScale(1.0f);
+		
+		DefAttack(999.0f, tmp);
+
+	}
+
+	void EnemyCube::OnUpdate()
+	{
+		Actor::OnUpdate();
+
+		//auto tmp = GetAttackPtr()->GetHitInfo();
+		////tmp.HitSound = L"Attack1";
+		//tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+		//tmp.HitOnce = true;//一回しかヒットしないか
+		//tmp.Damage = 10;//ダメージ
+		//tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離
+		//tmp.HitTime_Stand = 3.0f;//のけぞり時間
+		////tmp.ForceRecover = true;
+		//DefAttack(.5f, tmp);
+		//GetAttackPtr()->SetPos(Vec3(0, 1, 0));
+		//auto AttackPtr = GetAttackPtr();
+		//AttackPtr->SetCollScale(20.0f);
+
+
+	}
 
 
 }
