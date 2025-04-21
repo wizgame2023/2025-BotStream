@@ -19,7 +19,14 @@ namespace basecross{
 		const float m_rotateSpeed = 1.2f;
 		const float m_rotateThreshold = .3f;
 
-		int m_armor;
+		float m_armorMax = 0;
+		float m_armor = 0;
+		float m_armorRecover = 0;
+		float m_armorRecoverTime = 0;
+
+		float m_armorFlash = 0;
+		const float m_armorFlashMax = .1f;
+		Col4 m_armorFlashFX = Col4(2.0f, .5f, .5f, 0);
 
 		weak_ptr<Player> m_player;
 
@@ -61,6 +68,9 @@ namespace basecross{
 		bool GetUsed() {
 			return m_used;
 		}
+
+		//プレイヤーとの距離(Vec3)
+		Vec3 GetPlayerDistInVec3();
 
 		//プレイヤーとの距離を測る
 		float GetPlayerDist();
