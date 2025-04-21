@@ -46,7 +46,7 @@ namespace basecross {
 
             CreateSharedObjectGroup(L"Actor");
 
-            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
             SetSharedGameObject(L"Player", player);
 
             auto enemyMgr = AddGameObject<EnemyManager>();
@@ -54,7 +54,7 @@ namespace basecross {
 
             auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 10.0f, 100.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
             SetSharedGameObject(L"Boss", boss);
-            enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
+            //enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
 
             auto playerUI = AddGameObject<PlayerGaugeUI>(100);
             SetSharedGameObject(L"PlayerUI", playerUI);
@@ -84,9 +84,9 @@ namespace basecross {
             SetSharedGameObject(L"Door10", door10);
 
             //wave1“G
-            enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, -1.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(10.0f, -1.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
 
             auto cameraManager = AddGameObject<CameraManager>();
             SetSharedGameObject(L"CameraManager", cameraManager);
@@ -95,6 +95,9 @@ namespace basecross {
             SetSharedGameObject(L"SoundManager", ptrSoundManager);
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
+
+            auto colController = AddGameObject<StageCollisionController>();
+            colController->SetCollisionSwhich(true);
 
     }
 
@@ -129,16 +132,16 @@ namespace basecross {
         EffectManager::Instance().InterfaceUpdate();
 
 
-        if (pad.wPressedButtons & XINPUT_GAMEPAD_X)
-        {
-            GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(5);
-            
-            //EnemyNum = 0;
-        }
-        if (pad.wPressedButtons & XINPUT_GAMEPAD_A)
-        {
-            GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(3);
-        }
+        //if (pad.wPressedButtons & XINPUT_GAMEPAD_X)
+        //{
+        //    GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(5);
+        //    
+        //    //EnemyNum = 0;
+        //}
+        //if (pad.wPressedButtons & XINPUT_GAMEPAD_A)
+        //{
+        //    GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(3);
+        //}
 
         if (m_waveNow == 1 && EnemyNum == 0)
         {
@@ -147,11 +150,11 @@ namespace basecross {
 
             EnemyNum = 6;
 
-            enemyMgr->InstEnemy(Vec3(-15.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, -1.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(0.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(10.0f, -1.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(15.0f, -1.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
 
 
             door3->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, -55.0f);
@@ -275,6 +278,7 @@ namespace basecross {
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
         //ptrDraw->SetTextureResource(L"Wall");
 
+        AddTag(L"CameraObstacles");
     }
 
 
@@ -483,6 +487,8 @@ namespace basecross {
         ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
         //ptrDraw->SetTextureResource(L"Wall");
 
+        AddTag(L"CameraObstacles");
+
     }
 
 
@@ -557,6 +563,8 @@ namespace basecross {
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
+        AddTag(L"CameraObstacles");
+
     }
 
 
@@ -586,9 +594,10 @@ namespace basecross {
 
         auto ptrDraw = AddComponent<BcPNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        AddTag(L"CameraObstacles");
 
         ptrDraw->SetDiffuse(Col4(0.5f, 0.6f, 0.7f, 0.0f));
-
+        
         //m_HPGauge = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"PLHP", 2, 8.0f);
         //m_ArmorGauge = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"PLSP", 2, 7.5f);
 
