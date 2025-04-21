@@ -42,9 +42,11 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StageCollisionController.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSanpei.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSato.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageSelect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageTuboi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)State.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WaveStage.h" />
   </ItemGroup>
   <ItemGroup>
@@ -73,8 +75,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StageCollisionController.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSanpei.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageSelect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageTuboi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WaveStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
   </ItemGroup>

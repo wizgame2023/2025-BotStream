@@ -54,9 +54,10 @@ namespace basecross {
 		//向いている角度
 		float m_angle;
 
-		//喰らった時間
+		//喰らいモーション時間
 		float m_hitbacktime = 0;
-
+		//攻撃を受けた方向
+		Vec3 m_hitDirection = Vec3(0);
 
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
@@ -121,7 +122,14 @@ namespace basecross {
 		//喰らった攻撃の吹き飛ばし距離を代入(現状地上のもののみ)
 		void HitBack() {
 			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
-			m_velocity = m_GetHitInfo.HitVel_Stand;
+
+			Vec3 nrm = m_hitDirection.normalize();
+			float dir = atan2f(nrm.z, nrm.x);
+
+			Vec3 vel = m_GetHitInfo.HitVel_Stand;
+			m_velocity.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
+			m_velocity.y = vel.y;
+			m_velocity.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
 		}
 
 		//攻撃判定のポインタを取得
