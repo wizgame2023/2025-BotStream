@@ -7,7 +7,7 @@
 #include "Project.h"
 
 namespace basecross {
-	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,int hp,int attack,int defense) :
+	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int hp, int attack, int defense) :
 		Actor(stagePtr, pos, rot, scale),
 		m_dodgeTime(0.0f)
 	{
@@ -58,7 +58,8 @@ namespace basecross {
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 
-		//のけぞり判定取得
+		//UI追加
+		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(165.0f, -250.0f), m_bulletNum);//現在の球数を出すUI
 
 		//SE受け取り
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
@@ -188,7 +189,7 @@ namespace basecross {
 			//時間経過したら球を補充させる
 			if (m_reloadTimeCount >= reloadTime)
 			{
-				m_SE = m_SEManager->Start(L"Reload",0,0.9f);//リロードSE
+				m_SE = m_SEManager->Start(L"Reload", 0, 0.9f);//リロードSE
 				m_reloadTimeCount = 0.0f;//リセット
 				m_bulletNum = m_bulletNumMax;
 			}
@@ -215,7 +216,7 @@ namespace basecross {
 	}
 
 	//移動ベクトルの計算処理
-	Vec3 Player::GetMoveVector(int playerState) 
+	Vec3 Player::GetMoveVector(int playerState)
 	{
 		// 入力デバイス取得
 		auto inputDevice = App::GetApp()->GetInputDevice();
@@ -290,31 +291,31 @@ namespace basecross {
 		return totalVec;
 	}
 
-	//エフェクトを出す処理
-	void Player::AddEffect(int addEffect)
-	{
-		switch (addEffect)
-		{
-		case PlayerEffect_Attack1:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
-			break;
-		case PlayerEffect_Attack2:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-			break;
-		case PlayerEffect_Attack3:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
-			break;
-		case PlayerEffect_AttackEx:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-			EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
-			break;
-		case PlayerEffect_Beam:
-			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-			break;
-		default:
-			break;
-		}
-	}
+	////エフェクトを出す処理
+	//void Player::AddEffect(int addEffect)
+	//{
+	//	switch (addEffect)
+	//	{
+	//	case PlayerEffect_Attack1:
+	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+	//		break;
+	//	case PlayerEffect_Attack2:
+	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+	//		break;
+	//	case PlayerEffect_Attack3:
+	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+	//		break;
+	//	case PlayerEffect_AttackEx:
+	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+	//		EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
+	//		break;
+	//	case PlayerEffect_Beam:
+	//		EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
 
 	//HPのゲッター
 	int Player::GetHP()
@@ -403,7 +404,7 @@ namespace basecross {
 		//ドローメッシュの設定
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetDiffuse(Col4(1.0f,1.0f,1.0f,1.0f));
+		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		ptrDraw->SetOwnShadowActive(false);//影は消す
 		ptrDraw->SetDrawActive(true);
 		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
@@ -417,7 +418,7 @@ namespace basecross {
 			return;
 		}
 		m_playerAngle = originLock->GetAngle();
-		
+
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
 		tmp.Type = AttackType::Player;//攻撃のタイプは敵
