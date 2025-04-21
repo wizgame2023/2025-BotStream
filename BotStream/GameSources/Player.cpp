@@ -141,7 +141,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		//DebugLog();
+		DebugLog();
 
 		//アニメーション再生
 		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
@@ -523,6 +523,8 @@ namespace basecross {
 		AddTag(L"EnemyZako");
 
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
+		m_LandDetect->SetCollScale(3.0f);
 		
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
