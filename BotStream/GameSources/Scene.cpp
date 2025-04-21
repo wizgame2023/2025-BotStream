@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<StageSanpei>();
+			ResetActiveStage<WaveStage>();
 
 		}
 
@@ -47,6 +47,21 @@ namespace basecross{
 		{
 			ResetActiveStage<StageSanpei>();
 		}
+
+		if (event->m_MsgStr == L"ToGameOver") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<GameOver>();
+
+		}
+
+		if (event->m_MsgStr == L"ToGameClear") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<GameClear>();
+
+		}
+
 	}
 
 	void Scene::GameResourses()

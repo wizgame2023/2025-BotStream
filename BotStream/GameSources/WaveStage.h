@@ -20,9 +20,8 @@ namespace basecross {
         void CreateCeiling();
         void CreateDoor();
 
-        int m_Spawn1 = true;
-        int m_Spawn2 = false;
-        int m_Spawn3 = false;
+        int m_waveNow = 0;//åªç›ÇÃwave
+
 
     public:
         //ç\ízÇ∆îjä¸
@@ -31,6 +30,7 @@ namespace basecross {
         //èâä˙âª
         virtual void OnCreate()override;
         virtual void OnUpdate()override;
+        virtual void OnDraw()override;
 
     };
 
@@ -80,6 +80,10 @@ namespace basecross {
         Vec3 m_Scale;
         Vec3 m_Rotation;
         Vec3 m_Position;
+
+        //shared_ptr<BillBoard> m_HPGauge;
+        //shared_ptr<BillBoard> m_ArmorGauge;
+
     public:
         Door(const shared_ptr<Stage>& StagePtr,
             const Vec3& Scale,
