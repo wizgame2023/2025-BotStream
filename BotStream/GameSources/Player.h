@@ -7,11 +7,13 @@
 #include "stdafx.h"
 #include "Project.h"
 #include "Actor.h"
+#include "Enemy.h"
 
 namespace basecross{
 	class EfkEffect;
 	class StageSato;
 	class PlayerBulletUI;
+	class EnemyBase;//EnemyZakoが居なくなったら消す
 	enum PlayerState
 	{
 		PlayerState_Walk,
@@ -184,6 +186,32 @@ namespace basecross{
 		void OnUpdate()override;
 	};
 
+
+	//雑魚敵の処理をいったんここに書きますマージ終わったらEnemy.cpp.hに戻す
+	class EnemyZako : public EnemyBase
+	{
+	private:
+		void OnDamaged() override;
+
+	public:
+		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
+			EnemyBase(stagePtr,pos,rot,scale,used)
+		{
+
+		}
+		~EnemyZako() {}
+
+		//受けた攻撃の情報を渡すゲッター
+		HitInfo EnemyZako::GetHitInfo()
+		{
+			return m_GetHitInfo;
+		}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+	};
+	
 }
 //end basecross
 
