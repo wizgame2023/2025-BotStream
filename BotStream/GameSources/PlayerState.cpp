@@ -707,6 +707,16 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
+		////目標となる角度取得
+		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
+		//angleTarget = abs(angleTarget);
+
+		//回転処理
+		//auto qt = m_enemyZako->GetComponent<Transform>()->GetQuaternion();
+		//qt.y += angleTarget;
+		//m_enemyZako->GetComponent<Transform>()->SetQuaternion(qt * Quat(0.0f, sin(angleTarget) / 2.0f, 0.0f, cos(angleTarget) / 2.0f));
+		
+
 		//一定時間たったら攻撃する
 		m_timeOfShot += deltaTime;
 		if (m_timeOfShot >= m_timeMaxOfShot)
