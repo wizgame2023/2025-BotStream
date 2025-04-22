@@ -91,8 +91,8 @@ namespace basecross {
 		}
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate,Vec3 pushPos = Vec3(0.0f));
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
 		// 地面着地
 		void OnLanding();
 

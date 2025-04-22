@@ -382,6 +382,25 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	//攻撃をするときのステート
+	class EnemyZakoShotState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoShotState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
 	
 	//ダメージを受けた雑魚敵
 	class EnemyZakoHitState :public EnemyZakoStateBase
@@ -406,6 +425,7 @@ namespace basecross {
 		EnemyZakoStateMachine(shared_ptr<GameObject>& obj)
 		{
 			AddState(L"Stand", shared_ptr<EnemyZakoStandState>(new EnemyZakoStandState(obj)));
+			AddState(L"Shot", shared_ptr<EnemyZakoShotState>(new EnemyZakoShotState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
 		
 			ChangeState(L"Stand");

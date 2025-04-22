@@ -46,7 +46,7 @@ namespace basecross {
 
             CreateSharedObjectGroup(L"Actor");
 
-            auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+            auto player = AddGameObject<Player>(Vec3(0.0f, 5.0f, -90.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
             SetSharedGameObject(L"Player", player);
 
             auto enemyMgr = AddGameObject<EnemyManager>();
@@ -84,9 +84,9 @@ namespace basecross {
             SetSharedGameObject(L"Door10", door10);
 
             //wave1敵
-            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f*10.0f, 0.7f, 0.7f*10.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
 
             auto cameraManager = AddGameObject<CameraManager>();
             SetSharedGameObject(L"CameraManager", cameraManager);
@@ -150,11 +150,12 @@ namespace basecross {
 
             EnemyNum = 6;
 
-            enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
-            enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f, 0.7f, 0.7f));
+            //ウェーブ２敵
+            enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
 
 
             door3->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, -55.0f);
@@ -183,10 +184,17 @@ namespace basecross {
 
         }
 
-        if (m_waveNow == 3 && EnemyNum == 0)
+        if (m_waveNow == 3)
+        {
+            auto boss = enemyMgr->GetBoss();
+            m_bossCurrentHP = boss->GetHPCurrent();//BossのHP取得
+        }
+
+        if (m_waveNow == 3 && m_bossCurrentHP <= 0)
         {
             GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-            scene->PostEvent(2.0f, GetThis<ObjectInterface>(),app->GetScene<Scene>(), L"ToGameClear");
+            scene->PostEvent(3.0f, GetThis<ObjectInterface>(),app->GetScene<Scene>(), L"ToGameClear");
+            m_waveNow = 4;//ウェーブ終了
         }
 
         if (plaHP <= 0)

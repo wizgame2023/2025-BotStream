@@ -34,6 +34,12 @@ namespace basecross{
 		PlayerEffect_Beam
 	};
 
+	enum ActorName
+	{
+		ActorName_Player,
+		ActorName_Enemy
+	};
+
 	class Player : public Actor
 	{
 	private:
@@ -166,15 +172,19 @@ namespace basecross{
 		float m_playerAngle = 0.0f;
 		float m_canMoveDistance;//移動できる長さ
 
+		//攻撃しているアクター
+		int m_actorType;
+
 		weak_ptr<Actor> m_originObj;//自分を生成したオブジェクト
 
 		shared_ptr<Transform> m_trans;
 	public:
-		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,float speed,shared_ptr<Actor> originObj,float canMoveDistance = 10.0f):
+		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,float speed,shared_ptr<Actor> originObj,float canMoveDistance = 10.0f,int actorType = ActorName_Player):
 			Actor(stagePtr,pos,rot,scale),
 			m_speed(speed),
 			m_originObj(originObj),
-			m_canMoveDistance(canMoveDistance)
+			m_canMoveDistance(canMoveDistance),
+			m_actorType(actorType)
 		{
 
 		}
@@ -184,6 +194,9 @@ namespace basecross{
 
 		void OnCreate()override;
 		void OnUpdate()override;
+
+		//攻撃しているアクターを指定する
+		void SetAttackActor(int actorName);
 	};
 
 

@@ -36,6 +36,7 @@ namespace basecross{
 		shared_ptr<Camera> m_lockStageCamera;//ロックできたステージ上のカメラ
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
 		shared_ptr<Stage> m_stage;
+		shared_ptr<Sprite> m_spriteAttack = nullptr;
 		float m_delta;
 
 		CONTROLER_STATE m_controler;//コントローラー
