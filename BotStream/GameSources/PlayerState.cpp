@@ -18,7 +18,7 @@ namespace basecross {
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//カメラマネージャからロックオン対象の位置を取得する
+		//カメラマネージャからLockOnTargetの位置を取得する
 		shared_ptr<CameraManager> camera = nullptr;
 		camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		shared_ptr<Actor> targetObj = nullptr;
@@ -30,7 +30,7 @@ namespace basecross {
 			//Vec3 playerPos = Vec3(0.0f);
 			//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
 			//playerPos = m_player->GetComponent<Transform>()->GetPosition();
-			////ロックオン対象との距離を計算する
+			////LockOnTargetとの距離を計算する
 			m_targetDistance = camera->GetTargetDis();
 		}
 		else if (!targetObj)
@@ -79,7 +79,7 @@ namespace basecross {
 			m_player->ChangeState(L"Dodge");
 		}
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		//ロックオン対象の距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
+		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
 		float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
@@ -218,7 +218,7 @@ namespace basecross {
 		}
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		//ロックオン対象の距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
+		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
 		float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
@@ -296,7 +296,7 @@ namespace basecross {
 			//tmp.HitSound = L"Attack1";
 
 			tmp.HitOnce = true;//一回しかヒットしないか
-			tmp.Damage = 10;//ダメージ
+			tmp.Damage = 15;//ダメージ
 			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;//のけぞり時間
 			//tmp.ForceRecover = true;
@@ -366,7 +366,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 12;
+			tmp.Damage = 17;
 			tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .3f;
 			m_player->DefAttack(.5f, tmp);
@@ -441,7 +441,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 15;
+			tmp.Damage = 20;
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
@@ -502,7 +502,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 25;
+			tmp.Damage = 30;
 			tmp.HitVel_Stand = Vec3(-15, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			m_player->DefAttack(.5f, tmp);
@@ -527,7 +527,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 20;
+			tmp.Damage = 40;
 			tmp.HitVel_Stand = Vec3(-20, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
@@ -576,7 +576,7 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 10;
+			tmp.Damage = 100;
 			tmp.HitVel_Stand = Vec3(-1, 5, 0);
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
@@ -694,6 +694,62 @@ namespace basecross {
 
 	}
 
+
+
+	//雑魚敵のステートマージした後EnemyStateファイルに移動する
+
+	//何もないときのステート
+	void EnemyZakoStandState::Enter()
+	{
+
+	}
+	void EnemyZakoStandState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+		////目標となる角度取得
+		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
+		//angleTarget = abs(angleTarget);
+
+		//回転処理
+		//auto qt = m_enemyZako->GetComponent<Transform>()->GetQuaternion();
+		//qt.y += angleTarget;
+		//m_enemyZako->GetComponent<Transform>()->SetQuaternion(qt * Quat(0.0f, sin(angleTarget) / 2.0f, 0.0f, cos(angleTarget) / 2.0f));
+		
+
+		//一定時間たったら攻撃する
+		m_timeOfShot += deltaTime;
+		if (m_timeOfShot >= m_timeMaxOfShot)
+		{
+			m_timeOfShot = 0.0f;//リセット
+			//m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+		}
+	}
+	void EnemyZakoStandState::Exit()
+	{
+		//打つカウントダウンリセット
+		m_timeOfShot = 0.0f;
+	}
+
+	//ダメージを受けたステート
+	void EnemyZakoHitState::Enter()
+	{
+		auto hitInfo = m_enemyZako->GetHitInfo();
+		auto HPNow = m_enemyZako->GetHPCurrent();
+		//攻撃を受けたのでヒットバックする
+		m_enemyZako->HitBack();
+		//ダメージ処理
+		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
+	}
+	void EnemyZakoHitState::Update(float deltaTime)
+	{
+		//一定時間たったらStandステートに戻る
+		m_enemyZako->HitBackStandBehavior();
+	}
+	void EnemyZakoHitState::Exit()
+	{
+
+	}
 
 }
 //end basecross

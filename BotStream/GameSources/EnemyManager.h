@@ -28,8 +28,8 @@ namespace basecross {
 					isFirstofVector = !isFirstofVector;
 					continue;
 				}
-
-				e = GetStage()->AddGameObject<EnemyBase>(Vec3(0), Vec3(0), Vec3(0));
+				auto test = 0.0f;
+				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));//‚±‚±‚ğG‹›“G‚ÌƒNƒ‰ƒX‚É•Ï‚¦‚é
 			}
 		}
 		~EnemyManager() {}
