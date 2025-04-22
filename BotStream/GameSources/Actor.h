@@ -59,6 +59,9 @@ namespace basecross {
 		//攻撃を受けた方向
 		Vec3 m_hitDirection = Vec3(0);
 
+		//ボーズ状態かどうか
+		bool m_poseFlag = false;
+
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
 		//着地判定
@@ -107,6 +110,9 @@ namespace basecross {
 
 		//エフェクトを出す処理
 		virtual void AddEffect(int addEffect);
+
+		//ポーズのフラグをオンオフする関数
+		void PoseSwitch(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
