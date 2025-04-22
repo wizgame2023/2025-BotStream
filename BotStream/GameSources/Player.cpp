@@ -141,7 +141,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		DebugLog();
+		//DebugLog();
 
 		//アニメーション再生
 		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
