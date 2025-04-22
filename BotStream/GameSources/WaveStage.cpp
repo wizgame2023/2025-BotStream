@@ -99,6 +99,8 @@ namespace basecross {
             auto colController = AddGameObject<StageCollisionController>();
             colController->SetCollisionSwhich(true);
 
+            //ƒ|[ƒYˆ—¶¬
+            AddGameObject<Pause>();
     }
 
 
