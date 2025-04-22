@@ -30,6 +30,7 @@ namespace basecross {
 	{
 		CreateViewLight();
 		CreateSprite();
+		CreateBGM();
 	}
 
 	void TitleStage::OnUpdate()
@@ -40,7 +41,7 @@ namespace basecross {
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 		{
-			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToPersonalityStage");
 		}
 
 	}
@@ -68,6 +69,13 @@ namespace basecross {
 			titleSize2,
 			Vec3(0, -200, 0)
 		);
+
+	}
+
+	void TitleStage::CreateBGM()
+	{
+		auto ptrMana = App::GetApp()->GetXAudio2Manager();
+		m_BGM = ptrMana->Start(L"Title", XAUDIO2_LOOP_INFINITE, 0.5f);
 
 	}
 }

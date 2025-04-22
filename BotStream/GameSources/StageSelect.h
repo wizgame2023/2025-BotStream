@@ -15,6 +15,7 @@ namespace basecross {
 		shared_ptr<Sprite> m_selectBackSprite;
 		shared_ptr<Sprite> m_textSprite;
 		shared_ptr<Sprite> m_stageNum;
+		shared_ptr<SoundItem> m_BGM;
 
 		Vec3 m_selectPos;
 
@@ -24,6 +25,7 @@ namespace basecross {
 		virtual ~StageSelect() {}
 
 		void CreateSprite();
+		void CreateBGM();
 
 		//‰Šú‰»
 		virtual void OnCreate()override;
