@@ -5,8 +5,29 @@
 */
 
 #include "stdafx.h"
-#include "Project.h"
 
 namespace basecross {
+	class StageSelect : public Stage
+	{
+		//ƒrƒ…[‚Ìì¬
+		void CreateViewLight();
+		shared_ptr<Sprite> m_selectSprite;
+		shared_ptr<Sprite> m_selectBackSprite;
+		shared_ptr<Sprite> m_textSprite;
+		shared_ptr<Sprite> m_stageNum;
 
+		Vec3 m_selectPos;
+
+	public:
+		//\’z‚Æ”jŠü
+		StageSelect() :Stage() {}
+		virtual ~StageSelect() {}
+
+		void CreateSprite();
+
+		//‰Šú‰»
+		virtual void OnCreate()override;
+		virtual void OnUpdate()override;
+
+	};
 }

@@ -162,5 +162,220 @@ namespace basecross {
 		}
 
 	}
+
+	//-----------------------------------------------
+	//button
+	//-----------------------------------------------
+
+	void PlayerButtonUI::OnCreate()
+	{
+		const Vec2
+			AUV1(0.0f, 0.0f), AUV2(0.333f, 0.25f),
+			XUV1(0.333f, 0.0f), XUV2(0.666f, 0.25f),
+			RBUV1(0.0f, 0.25f), RBUV2(0.333f, 0.5f),
+			RSUV1(0.333f, 0.25f), RSUV2(0.666f, 0.5f),
+			LSUV1(0.666f, 0.25f), LSUV2(1.0f, 0.5f),
+			HOLDAUV1(0.0f, 0.5f), HOLDAUV2(0.666f, 1.0f);
+		/*
+		switch (m_buttonSwitch)
+		{
+		case 0:	//A
+			m_button = m_stage->AddGameObject<Sprite>(
+				L"Buttons",         // テクスチャ名
+				m_buttonSize,      // サイズ
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+			m_button->SetUVRect(AUV1, AUV2);
+			break;
+
+		case 1: // X
+			m_button = m_stage->AddGameObject<Sprite>(
+				L"Buttons",         // テクスチャ名
+				m_buttonSize,      // サイズ
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+			m_button->SetUVRect(XUV1, XUV2);
+			break;
+
+		case 2: // RB
+			m_button = m_stage->AddGameObject<Sprite>(
+				L"Buttons",         // テクスチャ名
+				m_buttonSize,      // サイズ
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+			m_button->SetUVRect(RBUV1, RBUV2);
+			break;
+
+		case 3: // RS
+			m_button = m_stage->AddGameObject<Sprite>(
+				L"Buttons",         // テクスチャ名
+				m_buttonSize,      // サイズ
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+			m_button->SetUVRect(RSUV1, RSUV2);
+			break;
+
+		case 4: // LS
+			m_button = m_stage->AddGameObject<Sprite>(
+				L"Buttons",         // テクスチャ名
+				m_buttonSize,      // サイズ
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+			m_button->SetUVRect(LSUV1, LSUV2);
+			break;
+
+		case 5: // Hold
+			m_button = m_stage->AddGameObject<Sprite>(
+				L"Buttons",         // テクスチャ名
+				m_buttonSize,      // サイズ
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+			m_button->SetUVRect(HOLDAUV1, HOLDAUV2);
+			break;
+
+		}
+		*/
+
+		//A
+		auto sprite = m_stage->AddGameObject<Sprite>(
+			L"Buttons",         // テクスチャ名
+			m_buttonSize,      // サイズ
+			Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
+		sprite->SetUVRect(AUV1, AUV2);
+
+		//X
+		sprite = m_stage->AddGameObject<Sprite>(
+			L"Buttons",         // テクスチャ名
+			m_buttonSize,      // サイズ
+			Vec3(m_buttonPos.x - 75, m_buttonPos.y, 0));        // 表示位置
+		sprite->SetUVRect(XUV1, XUV2);
+
+		//RB
+		sprite = m_stage->AddGameObject<Sprite>(
+			L"Buttons",         // テクスチャ名
+			m_buttonSize,      // サイズ
+			Vec3(m_buttonPos.x + 75, m_buttonPos.y, 0));        // 表示位置
+		sprite->SetUVRect(RBUV1, RBUV2);
+
+		//RS
+		sprite = m_stage->AddGameObject<Sprite>(
+			L"Buttons",         // テクスチャ名
+			m_buttonSize,      // サイズ
+			Vec3(m_buttonPos.x, m_buttonPos.y + 75, 0));        // 表示位置
+		sprite->SetUVRect(RSUV1, RSUV2);
+
+		//LS
+		sprite = m_stage->AddGameObject<Sprite>(
+			L"Buttons",         // テクスチャ名
+			m_buttonSize,      // サイズ
+			Vec3(m_buttonPos.x + 75, m_buttonPos.y + 75, 0));        // 表示位置
+		sprite->SetUVRect(LSUV1, LSUV2);
+
+		//HOLD + A
+		sprite = m_stage->AddGameObject<Sprite>(
+			L"Buttons",         // テクスチャ名
+			m_buttonSize,      // サイズ
+			Vec3(m_buttonPos.x - 75, m_buttonPos.y + 75, 0));        // 表示位置
+		sprite->SetUVRect(HOLDAUV1, HOLDAUV2);
+
+	}
+
+	//-----------------------------------------------
+	//buttontext
+	//-----------------------------------------------
+
+	void PlayerButtonText::OnCreate()
+	{
+		const Vec2
+			ATKUV1(0.0f, 0.0f), ATKUV2(0.5f, 0.333f),
+			AVOIDUV1(0.5f, 0.0f), AVOIDUV2(1.0f, 0.333f),
+			CAMERAUV1(0.0f, 0.333f), CAMERAUV2(0.5f, 0.666f),
+			DASHUV1(0.5f, 0.333f), DASHUV2(1.0f, 0.666f),
+			LOCKONUV1(0.0f, 0.666f), LOCKONUV2(0.5f, 1.0f),
+			MOVEUV1(0.5f, 0.666f), MOVEUV2(1.0f, 1.0f);
+
+		switch (m_textSwitch)
+		{
+		case 0:	//攻撃
+			m_buttonText = m_stage->AddGameObject<Sprite>(
+				L"Texts",         // テクスチャ名
+				m_textSize,      // サイズ
+				Vec3(m_textPos.x, m_textPos.y, 0));        // 表示位置
+			m_buttonText->SetUVRect(ATKUV1, ATKUV2);
+			break;
+
+		case 1: // 回避
+			m_buttonText = m_stage->AddGameObject<Sprite>(
+				L"Texts",         // テクスチャ名
+				m_textSize,      // サイズ
+				Vec3(m_textPos.x, m_textPos.y, 0));        // 表示位置
+			m_buttonText->SetUVRect(AVOIDUV1, AVOIDUV2);
+			break;
+
+		case 2: // カメラ
+			m_buttonText = m_stage->AddGameObject<Sprite>(
+				L"Texts",         // テクスチャ名
+				m_textSize,      // サイズ
+				Vec3(m_textPos.x, m_textPos.y, 0));        // 表示位置
+			m_buttonText->SetUVRect(CAMERAUV1, CAMERAUV2);
+			break;
+
+		case 3: // ダッシュ
+			m_buttonText = m_stage->AddGameObject<Sprite>(
+				L"Texts",         // テクスチャ名
+				m_textSize,      // サイズ
+				Vec3(m_textPos.x, m_textPos.y, 0));        // 表示位置
+			m_buttonText->SetUVRect(DASHUV1, DASHUV2);
+			break;
+
+		case 4: // ロックオン
+			m_buttonText = m_stage->AddGameObject<Sprite>(
+				L"Texts",         // テクスチャ名
+				m_textSize,      // サイズ
+				Vec3(m_textPos.x, m_textPos.y, 0));        // 表示位置
+			m_buttonText->SetUVRect(LOCKONUV1, LOCKONUV2);
+			break;
+
+		case 5: // 移動
+			m_buttonText = m_stage->AddGameObject<Sprite>(
+				L"Texts",         // テクスチャ名
+				m_textSize,      // サイズ
+				Vec3(m_textPos.x, m_textPos.y, 0));        // 表示位置
+			m_buttonText->SetUVRect(MOVEUV1, MOVEUV2);
+			break;
+
+		}
+	}
+
+	//-----------------------------------------------
+	//weapon
+	//-----------------------------------------------
+	void PlayerWeaponUI::OnCreate()
+	{
+		//現在の攻撃方法関係--------------------------------------------------
+		// 近接
+		m_weaponSprite[0] = m_stage->AddGameObject<Sprite>(
+			L"KatanaTex",  			//テクスチャ名
+			m_weaponSize,       // サイズ
+			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//表示位置
+
+		m_weaponSprite[1] = m_stage->AddGameObject<Sprite>(
+			L"GunTex",  			//テクスチャ名
+			m_weaponSize,       // サイズ
+			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//表示位置
+		m_weaponSprite[1]->OnClear(true);
+		//--------------------------------------------------------------------
+
+	}
+
+	void PlayerWeaponUI::OnUpdate()
+	{
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+
+		// 仮：Xボタンで武器UI切り替え
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+		{
+			m_weaponSprite[0]->OnClear(!m_weaponSwitchFlag);
+			m_weaponSprite[1]->OnClear(m_weaponSwitchFlag);
+			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
+		}
+
+
+	}
+
 }
 //end basecross

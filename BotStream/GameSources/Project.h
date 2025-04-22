@@ -50,6 +50,8 @@
 #include "StageSato.h"
 #include "StageTuboi.h"
 #include "WaveStage.h"
+#include "TitleStage.h"
+#include "StageSelect.h"
 #include "GameClearScene.h"
 #include "GameOverScene.h"
 
