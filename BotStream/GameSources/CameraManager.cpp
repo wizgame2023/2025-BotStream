@@ -101,11 +101,19 @@ namespace basecross {
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
-
 		//LockOnCanがいないならロックオンできない＆選択を初期化
 		if (m_targets.size() <= 0 && m_targetObj)
 		{
 			LockOff(enemyVec);//ロックオンの解除
+		}
+		//ロックオン中にLockOnTargetが居なくなったらロックオン解除する
+		if (m_lockOnUse)
+		{		
+			auto test = m_targetObj->GetUsed();
+			if (!test)
+			{
+				LockOff(enemyVec);//ロックオンの解除
+			}
 		}
 
 		//ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -922,7 +930,7 @@ namespace basecross {
 		//コリジョン生成
 		auto ptrColl = AddComponent<CollisionObb>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 
 		
 		//攻撃判定の定義
