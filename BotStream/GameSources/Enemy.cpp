@@ -236,7 +236,7 @@ namespace basecross {
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
 		ptrColl->SetMakedRadius(3);
-		ptrColl->SetDrawActive(true);//debug
+		ptrColl->SetDrawActive(false);//debug
 
 		m_LandDetect->SetBindPos(Vec3(0, -2.7f, 0));
 		m_LandDetect->SetCollScale(1.0f);
@@ -256,19 +256,19 @@ namespace basecross {
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 
-		////デバック用
-		wstringstream wss(L"");
-		auto scene = App::GetApp()->GetScene<Scene>();
-		auto quat = GetComponent<Transform>()->GetQuaternion();
-		wss /* << L"デバッグ用文字列 "*/
-			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
-			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
-			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
-			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-			<< L"\nAngle : " << GetPlayerSubDirection()
-			<< L"\nHP : " << m_HPCurrent << " / " << m_armor << " / " << m_armorRecoverTime - m_armorRecover << endl;
+		//////デバック用
+		//wstringstream wss(L"");
+		//auto scene = App::GetApp()->GetScene<Scene>();
+		//auto quat = GetComponent<Transform>()->GetQuaternion();
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
+		//	<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
+		//	<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
+		//	<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
+		//	<< L"\nAngle : " << GetPlayerSubDirection()
+		//	<< L"\nHP : " << m_HPCurrent << " / " << m_armor << " / " << m_armorRecoverTime - m_armorRecover << endl;
 
-		scene->SetDebugString(wss.str());
+		//scene->SetDebugString(wss.str());
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
