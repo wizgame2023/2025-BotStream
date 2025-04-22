@@ -377,5 +377,67 @@ namespace basecross {
 
 	}
 
+
+	void BossGaugeUI::OnCreate()
+	{
+		// ステージ取得
+		m_stage = GetStage();
+
+		// ゲージサイズ (PlayerGaugeUI と同じ)
+		const Vec2 gaugeSize(300.0f, 75.0f);
+		const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
+		const Vec2 ampGaugeSize = hpGaugeSize;  // アーマーゲージも同じ高さに
+
+		// 画面上部に表示
+		const float gaugePosX = 0.0f;
+		const float gaugePosY = 200.0f;
+
+		// 枠
+		m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
+			L"BossGaugeFrame",
+			gaugeSize, 
+			Vec3(gaugePosX, gaugePosY, 0));
+		m_gaugeFrameSprite->SetDrawLayer(1);
+
+		// HP ゲージ
+		m_HPSprite = m_stage->AddGameObject<Sprite>(
+			L"BossHP",
+			hpGaugeSize,
+			Vec3(gaugePosX - (gaugeSize.x - hpGaugeSize.x) * 0.5f,
+				gaugePosY - (gaugeSize.y * 0.2f),
+				0));
+		m_HPSprite->SetDrawLayer(2);
+
+	}
+
+	void BossGaugeUI::OnUpdate()
+	{
+		// 枠の位置を基準に
+		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
+
+		// HP 比率
+		float hpRatio = clamp(m_HP / m_MaxHP, 0.0f, 1.0f);
+		auto hpTrans = m_plHPSprite->GetComponent<Transform>();
+		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
+		// 左端固定のための X オフセット
+		{
+			const float gaugeWidth = 300.0f * 0.8f;
+			float offsetX = (hpRatio - 1.0f) * (gaugeWidth * 0.5f);
+			hpTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f), 0));
+		}
+
+		// アーマー比率
+		float ampRatio = clamp(m_AMP / m_MaxAMP, 0.0f, 1.0f);
+		auto ampTrans = m_plSPSprite->GetComponent<Transform>();
+		ampTrans->SetScale(Vec3(ampRatio, 1.0f, 1.0f));
+		// アーマーゲージも同様に左端固定
+		{
+			const float gaugeWidth = 300.0f * 0.8f;
+			float offsetX = (ampRatio - 1.0f) * (gaugeWidth * 0.5f);
+			// HPゲージ下に 5px 分ずらした位置
+			ampTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f) - (300.0f * 0.3f) - 5.0f, 0));
+		}
+
+	}
 }
 //end basecross
