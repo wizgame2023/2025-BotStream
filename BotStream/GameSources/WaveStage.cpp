@@ -193,7 +193,8 @@ namespace basecross {
         if (m_waveNow == 3 && m_bossCurrentHP <= 0)
         {
             GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-            scene->PostEvent(2.0f, GetThis<ObjectInterface>(),app->GetScene<Scene>(), L"ToGameClear");
+            scene->PostEvent(3.0f, GetThis<ObjectInterface>(),app->GetScene<Scene>(), L"ToGameClear");
+            m_waveNow = 4;//ウェーブ終了
         }
 
         if (plaHP == 0)
