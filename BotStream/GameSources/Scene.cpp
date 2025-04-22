@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<StageSanpei>();
 
 		}
 
@@ -138,6 +138,10 @@ namespace basecross{
 		app->RegisterTexture(L"KatanaTex", strTexture);
 		strTexture = texPath + L"Gun.png";
 		app->RegisterTexture(L"GunTex", strTexture);
+
+		//ターゲット範囲用テクスチャ
+		strTexture = texPath + L"Bar.png";
+		app->RegisterTexture(L"BarTex", strTexture);
 
 		//モデル
 
