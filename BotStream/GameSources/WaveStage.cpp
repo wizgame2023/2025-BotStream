@@ -189,7 +189,7 @@ namespace basecross {
             scene->PostEvent(2.0f, GetThis<ObjectInterface>(),app->GetScene<Scene>(), L"ToGameClear");
         }
 
-        if (plaHP == 0)
+        if (plaHP <= 0)
         {
             GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
             scene->PostEvent(1.0f, GetThis<ObjectInterface>(), app->GetScene<Scene>(), L"ToGameOver");
