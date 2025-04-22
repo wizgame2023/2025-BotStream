@@ -37,15 +37,21 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<TitleStage>();
 
 		}
 
+		if (event->m_MsgStr == L"ToStageSelect")
+		{
+			ResetActiveStage<StageSelect>();
+
+		}
+		
 		// ここは後にWaveStageに変更する
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage")
 		{
-			ResetActiveStage<StageSanpei>();
+			ResetActiveStage<WaveStage>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {
@@ -77,6 +83,17 @@ namespace basecross{
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
+		// title
+		strTexture = texPath + L"TitleBack.png";
+		app->RegisterTexture(L"TitleBack", strTexture);
+		strTexture = texPath + L"TitleString.png";
+		app->RegisterTexture(L"TitleString", strTexture);
+		strTexture = texPath + L"TitleText.png";
+		app->RegisterTexture(L"TitleText", strTexture);
+
+		// StageSelect
+		strTexture = texPath + L"StageSelectString.png";
+		app->RegisterTexture(L"StageSelectString", strTexture);
 		
 		// UISprite
 		// Gauge

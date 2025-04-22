@@ -36,6 +36,10 @@ namespace basecross {
 			CreateSharedObjectGroup(L"Actor");
 
 			CreateSprite();
+
+			//auto playerUIButton = AddGameObject<PlayerButtonUI>(Vec2(100,100),Vec2(50,50));
+			//SetSharedGameObject(L"PlayerButton", playerUIButton);
+
 			//Player作成
 			auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 			SetSharedGameObject(L"Player", player);
@@ -49,8 +53,11 @@ namespace basecross {
 			SetSharedGameObject(L"CameraManager", cameraManager);
 
 			//Player関係のUI生成
+			//auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
+			//SetSharedGameObject(L"PlayerGauge", playerGauge);
 			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
 			SetSharedGameObject(L"PlayerUI", playerUI);
+
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
 
 			auto ground = AddGameObject<Ground>();
@@ -66,6 +73,7 @@ namespace basecross {
 	//スプライト関係、ステージでやっていいのかわからんから後で聞く
 	void StageSato::CreateSprite()
 	{
+		/*
 		//コントローラー関係--------------------------------------------------
 		const float buttonPosX = 500, buttonPosY = -200;
 		const Vec2 AUV1(0.0f, 0.0f), AUV2(0.333f, 0.25f), XUVX1(0.333f, 0.0f), XUVX2(0.666f, 0.25f),
@@ -115,6 +123,13 @@ namespace basecross {
 		sprite->SetUVRect(HOLDAUV1, HOLDAUV2);
 
 		//--------------------------------------------------------------------
+		*/
+		auto sprite = AddGameObject<Sprite>(
+			L"Select",
+			Vec2(40, 80),
+			Vec3(0, 0, 0)
+		);
+		const float buttonPosX = 500, buttonPosY = -200;
 
 		//操作のテキスト関係--------------------------------------------------
 		const Vec2 ATKUV1(0.0f, 0.0f), ATKUV2(0.5f, 0.333f),
