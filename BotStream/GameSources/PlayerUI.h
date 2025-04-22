@@ -227,4 +227,41 @@ namespace basecross {
 
 	};
 
+	// あとで移行
+	class BossGaugeUI : public MyGameObject {
+		shared_ptr<Sprite> m_gaugeFrameSprite;
+		shared_ptr<Sprite> m_plHPSprite;
+		shared_ptr<Sprite> m_plSPSprite;
+		shared_ptr<Stage> m_stage;
+
+		float m_MaxHP = 1000.0f;		// HPの最大値
+		float m_HP = m_MaxHP;	// HPの初期値
+
+		float m_MaxAMP = 100.0f;   // アーマーの最大値
+		float m_AMP = m_MaxAMP;   // アーマーの初期値
+
+	public:
+		BossGaugeUI(const std::shared_ptr<Stage>& stagePtr, int HPMax = 1000.0f, int AMPMax = 100.0f) :
+			MyGameObject(stagePtr),
+			m_MaxHP(HPMax),
+			m_HP(HPMax),
+			m_MaxAMP(AMPMax),
+			m_AMP(AMPMax)
+		{
+		}
+		virtual ~BossGaugeUI() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+		// 比率みたいなやつをあーだこーだするやつ
+		template <typename T>
+		T clamp(T value, T minValue, T maxValue)
+		{
+			if (value < minValue) return minValue;
+			if (value > maxValue) return maxValue;
+			return value;
+		}
+
+	};
 } // namespace basecross
