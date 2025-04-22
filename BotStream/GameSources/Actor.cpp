@@ -45,6 +45,12 @@ namespace basecross {
 	}
 
 	void Actor::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		_delta = App::GetApp()->GetElapsedTime();
 	}
 
@@ -199,6 +205,12 @@ namespace basecross {
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	}
+
+	//ポーズのフラグをオンオフする
+	void Actor::PoseSwitch(bool onOff)
+	{
+		m_poseFlag = onOff;
 	}
 }
 //end basecross

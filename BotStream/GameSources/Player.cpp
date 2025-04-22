@@ -72,8 +72,15 @@ namespace basecross {
 	}
 
 	void Player::OnUpdate()
-	{
+	{	
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		Actor::OnUpdate();
+
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
@@ -484,6 +491,12 @@ namespace basecross {
 
 	void Bullet::OnUpdate()
 	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		Actor::OnUpdate();
 
 		auto tmp = GetAttackPtr()->GetHitInfo();
@@ -585,6 +598,12 @@ namespace basecross {
 
 	void EnemyZako::OnUpdate()
 	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		EnemyBase::OnUpdate();
 
 		//HPがゼロになったら消える

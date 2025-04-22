@@ -49,7 +49,7 @@ namespace basecross {
 		m_lockStageCamera->SetAt(playerPos);
 
 		//スプライト追加
-		//m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
+		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
@@ -101,15 +101,45 @@ namespace basecross {
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
-		////近接戦闘していいかによってスプライトが変わる
-		//if (!m_meleeFlag)
-		//{
-		//	m_spriteAttack->SetTexture(L"KatanaTex");
-		//}
-		//if (m_meleeFlag)
-		//{
-		//	m_spriteAttack->SetTexture(L"GunTex");
-		//}
+		//テスト用にちゃんとポーズできるか確認するポーズ開始
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		{
+			auto objVec = GetStage()->GetGameObjectVec();
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				if (actor)
+				{
+					actor->PoseSwitch(true);
+				}
+			}
+		}
+		//テスト用にちゃんとポーズできるか確認するポーズ解除
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_Y)
+		{
+			auto objVec = GetStage()->GetGameObjectVec();
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				if (actor)
+				{
+					actor->PoseSwitch(false);
+				}
+			}
+		}
+
+		//近遠どちらの攻撃をするかの処理
+		MeleeFlagUpdate();
+
+		//近接戦闘していいかによってスプライトが変わる
+		if (!m_meleeFlag)
+		{
+			m_spriteAttack->SetTexture(L"KatanaTex");
+		}
+		if (m_meleeFlag)
+		{
+			m_spriteAttack->SetTexture(L"GunTex");
+		}
 
 		//LockOnCanがいないならロックオンできない＆選択を初期化
 		if (m_targets.size() <= 0 && m_targetObj)
@@ -731,6 +761,35 @@ namespace basecross {
 	{
 		return m_targetDis;
 	}
+
+	//ポーズ処理のオンオフ
+	void CameraManager::PoseSwitch(bool onOff)
+	{
+		m_poseFlag = onOff;
+	}
+
+	//近遠どちらの攻撃をするかの処理
+	void CameraManager::MeleeFlagUpdate()
+	{
+		//近距離攻撃の有効範囲
+		float meleeRange = 200.0f;
+		if (m_targetDis >= meleeRange)
+		{
+			m_meleeFlag = true;
+		}
+		if (m_targetDis < meleeRange)
+		{
+			m_meleeFlag = false;
+		}
+	}
+
+	//近距離攻撃をするかの処理のゲッター
+	bool CameraManager::GetMeleeFlag()
+	{
+		return m_meleeFlag;
+	}
+
+
 
 	//ロックオン範囲を知らせるためのオブジェクト
 	//第一引数　ロックオン有効範囲,第二引数　ロックオン範囲の中心となるオブジェクト
