@@ -26,12 +26,7 @@ namespace basecross {
 	void EnemyBase::HitBackStandBehavior() {
 		m_hitbacktime -= _delta;
 		if (m_hitbacktime <= 0) {
-			if (GetHPCurrent() <= 0) {
-				m_state->ChangeState(L"Dead");
-			}
-			else {
-				m_state->ChangeState(L"Stand");
-			}
+			m_state->ChangeState(L"Stand");
 		}
 	}
 
@@ -293,6 +288,7 @@ namespace basecross {
 		if (m_armor <= 0) {
 			//非アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+			
 			m_state->ChangeState(L"Hit");
 
 		}
@@ -300,6 +296,11 @@ namespace basecross {
 			//アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
+		}
+
+		//死亡
+		if (GetHPCurrent() <= 0) {
+			m_state->ChangeState(L"Dead");
 		}
 	}
 }
