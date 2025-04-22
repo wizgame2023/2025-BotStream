@@ -61,6 +61,10 @@ namespace basecross {
 		//UI追加
 		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(165.0f, -250.0f), m_bulletNum);//現在の球数を出すUI
 
+		//auto stage = GetStage();
+		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
+
+
 		//SE受け取り
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
 		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
@@ -81,6 +85,7 @@ namespace basecross {
 		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
 		playerUI->SetPLHPSprite(m_HPCurrent);
 		playerUI->SetPLSPSprite(m_SPCurrent);
+
 
 		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
 		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)

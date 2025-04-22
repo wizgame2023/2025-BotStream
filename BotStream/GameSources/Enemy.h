@@ -69,6 +69,16 @@ namespace basecross{
 			return m_used;
 		}
 
+		//アーマーの状況を0.0f～1.0fで返す
+		float GetArmorePercentage() {
+			if (m_armor > 0) {
+				return m_armor / m_armorMax;
+			}
+			else {
+				return m_armorRecover / m_armorRecoverTime;
+			}
+		}
+
 		//プレイヤーとの距離(Vec3)
 		Vec3 GetPlayerDistInVec3();
 
