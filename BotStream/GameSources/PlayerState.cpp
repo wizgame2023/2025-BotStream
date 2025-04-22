@@ -280,10 +280,10 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
-		//攻撃の当たり判定を出す
-		auto stage = m_player->GetStage();
-		//攻撃の当たり判定(仮)
-		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		////攻撃の当たり判定を出す
+		//auto stage = m_player->GetStage();
+		////攻撃の当たり判定(仮)
+		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 	}
 	void PlayerAttack1State::Update(float deltaTime)
 	{
@@ -317,12 +317,12 @@ namespace basecross {
 				m_nestAttackFlag = true;	
 			}
 		}
-		//次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
-		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
-		{
-			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		}
+		////次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
+		//if (m_timeOfAttack >= m_graceTimeOfNextAttack)
+		//{
+		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
+		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
+		//}
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{	
@@ -336,7 +336,7 @@ namespace basecross {
 			}
 			else
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+				//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 				m_player->ChangeState(L"PlayerWalk");
 			}
 		}
@@ -345,7 +345,7 @@ namespace basecross {
 	void PlayerAttack1State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 	}
@@ -357,10 +357,10 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
-		//攻撃の当たり判定を出す
-		auto stage = m_player->GetStage();
-		//攻撃の当たり判定(仮)
-		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(0.0f,0.0f,1.0f,1.0f));
+		////攻撃の当たり判定を出す
+		//auto stage = m_player->GetStage();
+		////攻撃の当たり判定(仮)
+		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(0.0f,0.0f,1.0f,1.0f));
 	
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
@@ -391,12 +391,12 @@ namespace basecross {
 				m_nestAttackFlag = true;
 			}
 		}
-		//次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
-		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
-		{
-			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		}
+		////次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
+		//if (m_timeOfAttack >= m_graceTimeOfNextAttack)
+		//{
+		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
+		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
+		//}
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
@@ -406,13 +406,13 @@ namespace basecross {
 			//ステート遷移
 			if (m_nestAttackFlag)
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+				//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 				m_player->ChangeState(L"Attack3");//次の攻撃ステートに移動
 				m_player->AddEffect(PlayerEffect_Attack3);//攻撃エフェクトを出す
 			}
 			else
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+				//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 				m_player->ChangeState(L"PlayerWalk");
 			}
 		}
@@ -420,7 +420,7 @@ namespace basecross {
 	void PlayerAttack2State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 	}
@@ -432,10 +432,10 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack2", 0, 0.9f);//SE再生
 
-		//攻撃の当たり判定を出す
-		auto stage = m_player->GetStage();
-		//攻撃の当たり判定(仮)
-		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(1.0f, 0.0f, 1.0f, 1.0f));
+		////攻撃の当たり判定を出す
+		//auto stage = m_player->GetStage();
+		////攻撃の当たり判定(仮)
+		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(1.0f, 0.0f, 1.0f, 1.0f));
 	
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
@@ -465,12 +465,12 @@ namespace basecross {
 				m_nestAttackFlag = true;
 			}
 		}
-		//次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
-		if (m_timeOfAttack >= m_graceTimeOfNextAttack)
-		{
-			m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-			m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		}
+		////次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
+		//if (m_timeOfAttack >= m_graceTimeOfNextAttack)
+		//{
+		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
+		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
+		//}
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
@@ -480,13 +480,13 @@ namespace basecross {
 			//ステート遷移
 			if (m_nestAttackFlag)
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+				//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 				m_player->ChangeState(L"AttackEx");//次の攻撃ステートに移動
 				m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
 			}
 			else
 			{
-				stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+				//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 				m_player->ChangeState(L"PlayerWalk");
 			}
 		}
@@ -494,7 +494,7 @@ namespace basecross {
 	void PlayerAttack3State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 
@@ -517,10 +517,10 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
 
-		//攻撃の当たり判定を出す
-		auto stage = m_player->GetStage();
-		//攻撃の当たり判定(仮)
-		m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 0.0f, 0.0f, 1.0f));
+		////攻撃の当たり判定を出す
+		//auto stage = m_player->GetStage();
+		////攻撃の当たり判定(仮)
+		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 0.0f, 0.0f, 1.0f));
 		
 
 		//攻撃判定の定義
@@ -555,7 +555,7 @@ namespace basecross {
 	void PlayerAttackExState::Exit()
 	{
 		auto stage = m_player->GetStage();
-		stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
+		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 	}
 
