@@ -49,7 +49,7 @@ namespace basecross {
 		m_lockStageCamera->SetAt(playerPos);
 
 		//スプライト追加
-		m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
+		//m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
@@ -100,6 +100,16 @@ namespace basecross {
 		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
+
+		////近接戦闘していいかによってスプライトが変わる
+		//if (!m_meleeFlag)
+		//{
+		//	m_spriteAttack->SetTexture(L"KatanaTex");
+		//}
+		//if (m_meleeFlag)
+		//{
+		//	m_spriteAttack->SetTexture(L"GunTex");
+		//}
 
 		//LockOnCanがいないならロックオンできない＆選択を初期化
 		if (m_targets.size() <= 0 && m_targetObj)
@@ -242,27 +252,27 @@ namespace basecross {
 		}
 		
 		
-		wss /* << L"デバッグ用文字列 "*/
-			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-			<< L"\nターゲット対象の距離: " << m_targetDis
-			<< L"\nFPS: " << 1.0f/m_delta
-			//<< L"\n当たった場所x: " << hitPos.x
-			//<< L"\n当たった場所y: " << hitPos.y
-			//<< L"\n当たった場所z: " << hitPos.z
-			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-			//<<L"\nFPS:"<< 1.0f/delta
-			<< endl;
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+		//	<< L"\nターゲット対象の距離: " << m_targetDis
+		//	<< L"\nFPS: " << 1.0f/m_delta
+		//	//<< L"\n当たった場所x: " << hitPos.x
+		//	//<< L"\n当たった場所y: " << hitPos.y
+		//	//<< L"\n当たった場所z: " << hitPos.z
+		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+		//	//<<L"\nFPS:"<< 1.0f/delta
+		//	<< endl;
 
-			//if (m_lockOnNum >= 0)
-			//{		
-			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-			//	float a = targetAngle;
-			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-			//}
+		//	//if (m_lockOnNum >= 0)
+		//	//{		
+		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+		//	//	float a = targetAngle;
+		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+		//	//}
 
-		scene->SetDebugString(wss.str());
+		//scene->SetDebugString(wss.str());
 
 	}
 
