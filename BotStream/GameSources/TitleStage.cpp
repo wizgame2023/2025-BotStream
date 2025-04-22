@@ -38,9 +38,12 @@ namespace basecross {
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
+		auto ptrMana = App::GetApp()->GetXAudio2Manager();
+
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 		{
+			ptrMana->Stop(m_BGM);
 			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToPersonalityStage");
 		}
 
@@ -75,7 +78,7 @@ namespace basecross {
 	void TitleStage::CreateBGM()
 	{
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
-		m_BGM = ptrMana->Start(L"Title", XAUDIO2_LOOP_INFINITE, 0.5f);
+		m_BGM = ptrMana->Start(L"Title", XAUDIO2_LOOP_INFINITE, 1.0f);
 
 	}
 }
