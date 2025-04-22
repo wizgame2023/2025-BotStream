@@ -22,6 +22,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EffectManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameClearScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameOverScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
@@ -30,6 +31,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MyGameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PauseUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PlayerState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PlayerUI.h" />
@@ -58,6 +60,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Enemy.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyState.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EnemyUI.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameClearScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameOverScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
@@ -66,6 +69,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)MyGameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ObjectMove.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ObjectNotMove.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PauseUI.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PlayerState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PlayerUI.cpp" />
