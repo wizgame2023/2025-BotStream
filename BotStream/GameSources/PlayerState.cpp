@@ -638,7 +638,7 @@ namespace basecross {
 		auto stage = m_player->GetStage();
 		auto playerPos = m_player->GetPosition();
 		m_SEManager->Start(L"HandGun", 0, 0.9f);//銃SE再生
-		stage->AddGameObject<Bullet>(playerPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 30.0f, m_player,30.0f);
+		auto bullet = stage->AddGameObject<Bullet>(playerPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 30.0f, m_player,30.0f);
 		//m_player->AddEffect(PlayerEffect_Beam);//攻撃エフェクトを出す
 	}
 	void PlayerAttackLongState::Update(float deltaTime)
@@ -707,14 +707,31 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		////目標となる角度取得
+		//目標となる角度取得
 		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
-		//angleTarget = abs(angleTarget);
+		//auto angleTarget = atan2f(targetVec.z, targetVec.x);
+		
+		//Playerのいる方向を計算
+		auto playerPos = stage->GetSharedGameObject<Player>(L"Player")->GetPosition();
+		auto EnemyPos = m_enemyZako->GetPosition();
+		auto targetVec = playerPos - EnemyPos;
+		auto angleTarget = (atan2f(targetVec.z, -targetVec.x)/2);
+		angleTarget += XMConvertToRadians(90.0f);
 
+		//大体その方向に向いたらPlayerの方向に向いているとみなす
+		if (abs(angleTarget) < XMConvertToRadians(3.0f))
+		{
+			angleTarget = 0.0f;
+		}
 		//回転処理
-		//auto qt = m_enemyZako->GetComponent<Transform>()->GetQuaternion();
-		//qt.y += angleTarget;
-		//m_enemyZako->GetComponent<Transform>()->SetQuaternion(qt * Quat(0.0f, sin(angleTarget) / 2.0f, 0.0f, cos(angleTarget) / 2.0f));
+		if (angleTarget != 0.0f)
+		{
+			auto qt = m_enemyZako->GetComponent<Transform>()->GetBeforeQuaternion();
+			qt.y = 0.0f;
+			////qt.y += angleTarget;
+			qt = qt * Quat(0.0f, sin(angleTarget) / 2.0f, 0.0f, cos(angleTarget) / 2.0f);
+			m_enemyZako->GetComponent<Transform>()->SetQuaternion(qt);
+		}
 		
 
 		//一定時間たったら攻撃する
@@ -722,7 +739,7 @@ namespace basecross {
 		if (m_timeOfShot >= m_timeMaxOfShot)
 		{
 			m_timeOfShot = 0.0f;//リセット
-			//m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+			m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
 		}
 	}
 	void EnemyZakoStandState::Exit()
@@ -730,6 +747,36 @@ namespace basecross {
 		//打つカウントダウンリセット
 		m_timeOfShot = 0.0f;
 	}
+
+	//攻撃をするステート
+	void EnemyZakoShotState::Enter()
+	{
+		auto stage = m_enemyZako->GetStage();
+		auto posEnemy = m_enemyZako->GetPosition();
+		//弾生成
+		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 10.0f,
+			dynamic_pointer_cast<Actor>(m_enemyZako),10.0f,ActorName_Enemy);
+	}
+	void EnemyZakoShotState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+		////目標となる角度取得
+		auto angleTarget = m_enemyZako->GetPlayerSubDirection();
+
+		//一定時間たったらStandステートに戻る
+		m_timeOfAttack += deltaTime;
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+	}
+	void EnemyZakoShotState::Exit()
+	{
+		//打つカウントダウンリセット
+		m_timeOfAttack = 0.0f;
+	}
+
 
 	//ダメージを受けたステート
 	void EnemyZakoHitState::Enter()
