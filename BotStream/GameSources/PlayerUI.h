@@ -138,4 +138,130 @@ namespace basecross {
 		virtual void OnUpdate() override;
 
 	};
+
+
+	//==============================================================================
+	// コントローラボタンアイコン表示UI
+	//==============================================================================
+	class PlayerButtonUI : public MyGameObject {
+		Vec2 m_buttonPos;
+		Vec2 m_buttonSize;
+		//int  m_buttonSwitch;
+		shared_ptr<Sprite> m_button;
+
+		shared_ptr<Stage> m_stage;
+	public:
+		// stagePtr: ステージ, buttonPos: アイコン位置, buttonSize: サイズ, switch: 選択インデックス
+		PlayerButtonUI(const std::shared_ptr<Stage>& stagePtr,
+			const Vec2& buttonPos,
+			const Vec2& buttonSize/*,
+			int buttonSwitch*/
+		) :
+			MyGameObject(stagePtr),
+			m_buttonPos(buttonPos),
+			m_buttonSize(buttonSize)//,
+			//m_buttonSwitch(buttonSwitch)
+		{
+		}
+
+		virtual ~PlayerButtonUI() {}
+
+		virtual void OnCreate() override;
+
+	};
+
+	//==============================================================================
+	// コントローラボタンのテキスト表示UI
+	//==============================================================================
+	class PlayerButtonText : public MyGameObject {
+		Vec2 m_textPos;
+		Vec2 m_textSize;
+		int  m_textSwitch;
+		shared_ptr<Sprite> m_buttonText;
+
+		shared_ptr<Stage> m_stage;
+
+	public:
+		// stagePtr: ステージ, textPos: 文字位置, textSize: サイズ, switch: 選択インデックス
+		PlayerButtonText(const std::shared_ptr<Stage>& stagePtr,
+			const Vec2& textPos,
+			const Vec2& textSize,
+			int textSwitch
+		) :
+			MyGameObject(stagePtr),
+			m_textPos(textPos),
+			m_textSize(textSize),
+			m_textSwitch(textSwitch)
+		{}
+		virtual ~PlayerButtonText() {}
+
+		virtual void OnCreate() override;
+	};
+
+	//==============================================================================
+	// 武器切替UI
+	//==============================================================================
+	class PlayerWeaponUI : public MyGameObject {
+
+		Vec2 m_weaponPos;
+		Vec2 m_weaponSize;
+		bool m_weaponSwitchFlag = false;
+		std::array<std::shared_ptr<Sprite>, 2> m_weaponSprite;
+
+		shared_ptr<Stage> m_stage;
+
+	public:
+		// stagePtr: ステージ, weaponPos: 武器アイコン位置, weaponSize: サイズ
+		PlayerWeaponUI(const std::shared_ptr<Stage>& stagePtr,
+			const Vec2& weaponPos,
+			const Vec2& weaponSize) :
+			MyGameObject(stagePtr),
+			m_weaponPos(weaponPos),
+			m_weaponSize(weaponSize)
+		{}
+
+		virtual ~PlayerWeaponUI() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+	};
+
+	// あとで移行
+	class BossGaugeUI : public MyGameObject {
+		shared_ptr<Sprite> m_gaugeFrameSprite;
+		shared_ptr<Sprite> m_plHPSprite;
+		shared_ptr<Sprite> m_plSPSprite;
+		shared_ptr<Stage> m_stage;
+
+		float m_MaxHP = 1000.0f;		// HPの最大値
+		float m_HP = m_MaxHP;	// HPの初期値
+
+		float m_MaxAMP = 100.0f;   // アーマーの最大値
+		float m_AMP = m_MaxAMP;   // アーマーの初期値
+
+	public:
+		BossGaugeUI(const std::shared_ptr<Stage>& stagePtr, int HPMax = 1000.0f, int AMPMax = 100.0f) :
+			MyGameObject(stagePtr),
+			m_MaxHP(HPMax),
+			m_HP(HPMax),
+			m_MaxAMP(AMPMax),
+			m_AMP(AMPMax)
+		{
+		}
+		virtual ~BossGaugeUI() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+		// 比率みたいなやつをあーだこーだするやつ
+		template <typename T>
+		T clamp(T value, T minValue, T maxValue)
+		{
+			if (value < minValue) return minValue;
+			if (value > maxValue) return maxValue;
+			return value;
+		}
+
+	};
 } // namespace basecross

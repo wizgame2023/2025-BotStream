@@ -21,6 +21,9 @@ namespace basecross {
         void CreateDoor();
 
         int m_waveNow = 0;//現在のwave
+        int m_bossCurrentHP = 99999;//BOSSの現在のHP
+
+        float TimeOfGameClear = 0.0f;//ゲームクリアするための時間計測
 
 
     public:

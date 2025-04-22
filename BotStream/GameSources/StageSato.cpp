@@ -36,21 +36,28 @@ namespace basecross {
 			CreateSharedObjectGroup(L"Actor");
 
 			CreateSprite();
-			//Player作成
-			auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-			SetSharedGameObject(L"Player", player);
 
-			//エネミーマネージャー
-			auto enemyMgr = AddGameObject<EnemyManager>();
-			SetSharedGameObject(L"EnemyManager", enemyMgr);
+			//auto playerUIButton = AddGameObject<PlayerButtonUI>(Vec2(100,100),Vec2(50,50));
+			//SetSharedGameObject(L"PlayerButton", playerUIButton);
 
-			//カメラマネージャ作成
-			auto cameraManager = AddGameObject<CameraManager>();
-			SetSharedGameObject(L"CameraManager", cameraManager);
+			////Player作成
+			//auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+			//SetSharedGameObject(L"Player", player);
+
+			////エネミーマネージャー
+			//auto enemyMgr = AddGameObject<EnemyManager>();
+			//SetSharedGameObject(L"EnemyManager", enemyMgr);
+
+			////カメラマネージャ作成
+			//auto cameraManager = AddGameObject<CameraManager>();
+			//SetSharedGameObject(L"CameraManager", cameraManager);
 
 			//Player関係のUI生成
-			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
-			SetSharedGameObject(L"PlayerUI", playerUI);
+			//auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
+			//SetSharedGameObject(L"PlayerGauge", playerGauge);
+			//auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+			//SetSharedGameObject(L"PlayerUI", playerUI);
+
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
 
 			auto ground = AddGameObject<Ground>();
@@ -66,6 +73,7 @@ namespace basecross {
 	//スプライト関係、ステージでやっていいのかわからんから後で聞く
 	void StageSato::CreateSprite()
 	{
+		/*
 		//コントローラー関係--------------------------------------------------
 		const float buttonPosX = 500, buttonPosY = -200;
 		const Vec2 AUV1(0.0f, 0.0f), AUV2(0.333f, 0.25f), XUVX1(0.333f, 0.0f), XUVX2(0.666f, 0.25f),
@@ -115,6 +123,15 @@ namespace basecross {
 		sprite->SetUVRect(HOLDAUV1, HOLDAUV2);
 
 		//--------------------------------------------------------------------
+		*/
+
+		/*
+		auto sprite = AddGameObject<Sprite>(
+			L"Select",
+			Vec2(40, 80),
+			Vec3(0, 0, 0)
+		);
+		const float buttonPosX = 500, buttonPosY = -200;
 
 		//操作のテキスト関係--------------------------------------------------
 		const Vec2 ATKUV1(0.0f, 0.0f), ATKUV2(0.5f, 0.333f),
@@ -227,7 +244,7 @@ namespace basecross {
 			m_bulletDigits.push_back(digit);
 		}
 		//--------------------------------------------------------------------
-
+		*/
 		//質問表示関係--------------------------------------------------------
 
 		const float quesSizeY = 120, quesSizeX = quesSizeY * 10, answerX = 150, answerY = answerX * 0.5625f;
@@ -351,7 +368,7 @@ namespace basecross {
 		}
 
 		// 仮：LBボタン,キーボードのSPACEで次の質問表示
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || keybord.m_bPressedKeyTbl[VK_SPACE])
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
 		{
 			if (m_switchQues < m_questionOrder.size())
 			{
@@ -422,58 +439,58 @@ namespace basecross {
 		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_resultFlag == true)
 		{
-			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
 		}
 
-		// 仮：Xボタンで武器UI切り替え
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		{
-			m_gunSprite->OnClear(!m_weaponSwitchFlag);
-			m_katanaSprite->OnClear(m_weaponSwitchFlag);
-			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
-		}
+		//// 仮：Xボタンで武器UI切り替え
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+		//{
+		//	m_gunSprite->OnClear(!m_weaponSwitchFlag);
+		//	m_katanaSprite->OnClear(m_weaponSwitchFlag);
+		//	m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
+		//}
 
-		// 仮：AボタンでUIの数字が下がる
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
-		{
-			m_bulletNum = max(0, m_bulletNum - 1);
-		}
-		else if (m_bulletNum <= 0)
-		{
-			m_bulletNum = 90;
-		}
+		//// 仮：AボタンでUIの数字が下がる
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
+		//{
+		//	m_bulletNum = max(0, m_bulletNum - 1);
+		//}
+		//else if (m_bulletNum <= 0)
+		//{
+		//	m_bulletNum = 90;
+		//}
 
 
-		// 弾数を文字列に変換
-		std::string bulletStr = std::to_string(m_bulletNum);
-		size_t digitCount = bulletStr.size();
-		Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
-		float uvWidth = 1.0f / 10.0f;          // UVの幅
+		//// 弾数を文字列に変換
+		//std::string bulletStr = std::to_string(m_bulletNum);
+		//size_t digitCount = bulletStr.size();
+		//Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
+		//float uvWidth = 1.0f / 10.0f;          // UVの幅
 
-		// 桁数に応じてスプライトを更新(UVだけ更新)
-		for (size_t i = 0; i < m_bulletDigits.size(); ++i)
-		{
-			auto& digitSprite = m_bulletDigits[i];
+		//// 桁数に応じてスプライトを更新(UVだけ更新)
+		//for (size_t i = 0; i < m_bulletDigits.size(); ++i)
+		//{
+		//	auto& digitSprite = m_bulletDigits[i];
 
-			if (i < digitCount)
-			{
-				// 表示すべき数字を取り出す(文字をint型に)
-				int digit = bulletStr[i] - '0';
+		//	if (i < digitCount)
+		//	{
+		//		// 表示すべき数字を取り出す(文字をint型に)
+		//		int digit = bulletStr[i] - '0';
 
-				// UV範囲
-				float u1 = digit * uvWidth;
-				float u2 = u1 + uvWidth;
+		//		// UV範囲
+		//		float u1 = digit * uvWidth;
+		//		float u2 = u1 + uvWidth;
 
-				// UVを設定して表示
-				digitSprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
-			}
-			else
-			{
-				// 桁が足りない場合は非表示
-				digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
-			}
-		}
-		DebugLog();
+		//		// UVを設定して表示
+		//		digitSprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
+		//	}
+		//	else
+		//	{
+		//		// 桁が足りない場合は非表示
+		//		digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
+		//	}
+		//}
+		//DebugLog();
 
 	}
 
