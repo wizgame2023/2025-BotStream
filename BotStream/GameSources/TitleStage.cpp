@@ -30,6 +30,7 @@ namespace basecross {
 	{
 		CreateViewLight();
 		CreateSprite();
+		CreateBGM();
 	}
 
 	void TitleStage::OnUpdate()
@@ -68,6 +69,13 @@ namespace basecross {
 			titleSize2,
 			Vec3(0, -200, 0)
 		);
+
+	}
+
+	void TitleStage::CreateBGM()
+	{
+		auto ptrMana = App::GetApp()->GetXAudio2Manager();
+		m_BGM = ptrMana->Start(L"Title", XAUDIO2_LOOP_INFINITE, 0.5f);
 
 	}
 }

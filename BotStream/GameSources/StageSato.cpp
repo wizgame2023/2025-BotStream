@@ -368,7 +368,7 @@ namespace basecross {
 		}
 
 		// 仮：LBボタン,キーボードのSPACEで次の質問表示
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || keybord.m_bPressedKeyTbl[VK_SPACE])
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
 		{
 			if (m_switchQues < m_questionOrder.size())
 			{

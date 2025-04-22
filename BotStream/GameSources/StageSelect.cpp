@@ -42,6 +42,14 @@ namespace basecross {
 
 	}
 
+	void StageSelect::CreateBGM()
+	{
+		auto ptrMana = App::GetApp()->GetXAudio2Manager();
+		m_BGM = ptrMana->Start(L"SelectStage", XAUDIO2_LOOP_INFINITE, 0.5f);
+
+
+	}
+
 	void StageSelect::CreateSprite()
 	{
 		float titleX = 1450;
