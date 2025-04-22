@@ -68,6 +68,12 @@ namespace basecross {
 	}
 
 	void EnemyBase::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		Actor::OnUpdate();
 		//m_used=falseなら表示を消してUpdateをreturn
 		if (GetDrawActive() != m_used) {
@@ -249,6 +255,12 @@ namespace basecross {
 	}
 
 	void BossFirst::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		EnemyBase::OnUpdate();
 
 		//アニメーション再生
