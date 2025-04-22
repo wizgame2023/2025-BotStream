@@ -101,33 +101,6 @@ namespace basecross {
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
-		//テスト用にちゃんとポーズできるか確認するポーズ開始
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			auto objVec = GetStage()->GetGameObjectVec();
-			for (auto obj : objVec)
-			{
-				auto actor = dynamic_pointer_cast<Actor>(obj);
-				if (actor)
-				{
-					actor->PoseSwitch(true);
-				}
-			}
-		}
-		//テスト用にちゃんとポーズできるか確認するポーズ解除
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_Y)
-		{
-			auto objVec = GetStage()->GetGameObjectVec();
-			for (auto obj : objVec)
-			{
-				auto actor = dynamic_pointer_cast<Actor>(obj);
-				if (actor)
-				{
-					actor->PoseSwitch(false);
-				}
-			}
-		}
-
 		//近遠どちらの攻撃をするかの処理
 		MeleeFlagUpdate();
 
@@ -445,7 +418,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にする
 				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
@@ -819,7 +792,7 @@ namespace basecross {
 		//ドローメッシュの設定
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
 		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		m_ptrDraw->SetTextureResource(L"PLGauge");
+		m_ptrDraw->SetTextureResource(L"BarTex");
 		m_ptrDraw->SetOwnShadowActive(false);//影は消す
 		m_ptrDraw->SetDrawActive(true);
 

@@ -43,6 +43,8 @@
 
 //UI関係
 #include "PlayerUI.h"
+#include "EnemyUI.h"
+#include "PauseUI.h"
 
 //開発ステージ用
 #include "StageAbe.h"
