@@ -230,8 +230,8 @@ namespace basecross {
 	// ‚ ‚Æ‚ÅˆÚs
 	class BossGaugeUI : public MyGameObject {
 		shared_ptr<Sprite> m_gaugeFrameSprite;
-		shared_ptr<Sprite> m_plHPSprite;
-		shared_ptr<Sprite> m_plSPSprite;
+		shared_ptr<Sprite> m_HPSprite;
+		shared_ptr<Sprite> m_AMPSprite;
 		shared_ptr<Stage> m_stage;
 
 		float m_MaxHP = 1000.0f;		// HP‚ÌÅ‘å’l
