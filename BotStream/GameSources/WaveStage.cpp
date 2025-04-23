@@ -84,9 +84,9 @@ namespace basecross {
             SetSharedGameObject(L"Door10", door10);
 
             //wave1“G
-            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f*10.0f, 0.7f, 0.7f*10.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, -75.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f*5.0f, 0.7f, 0.7f*5.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, -85.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
 
             auto cameraManager = AddGameObject<CameraManager>();
             SetSharedGameObject(L"CameraManager", cameraManager);
@@ -153,11 +153,11 @@ namespace basecross {
             EnemyNum = 6;
 
             //ƒEƒF[ƒu‚Q“G
-            enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
-            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
-            enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 10.0f, 0.7f, 0.7f * 10.0f));
+            enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
 
 
             door3->GetComponent<Transform>()->SetPosition(6.0f, 1.75f, -55.0f);
