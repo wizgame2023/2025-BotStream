@@ -417,7 +417,7 @@ namespace basecross {
 
 		// HP 比率
 		float hpRatio = clamp(m_HP / m_MaxHP, 0.0f, 1.0f);
-		auto hpTrans = m_plHPSprite->GetComponent<Transform>();
+		auto hpTrans = m_HPSprite->GetComponent<Transform>();
 		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
 		// 左端固定のための X オフセット
 		{
@@ -426,17 +426,17 @@ namespace basecross {
 			hpTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f), 0));
 		}
 
-		// アーマー比率
-		float ampRatio = clamp(m_AMP / m_MaxAMP, 0.0f, 1.0f);
-		auto ampTrans = m_plSPSprite->GetComponent<Transform>();
-		ampTrans->SetScale(Vec3(ampRatio, 1.0f, 1.0f));
-		// アーマーゲージも同様に左端固定
-		{
-			const float gaugeWidth = 300.0f * 0.8f;
-			float offsetX = (ampRatio - 1.0f) * (gaugeWidth * 0.5f);
-			// HPゲージ下に 5px 分ずらした位置
-			ampTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f) - (300.0f * 0.3f) - 5.0f, 0));
-		}
+		//// アーマー比率
+		//float ampRatio = clamp(m_AMP / m_MaxAMP, 0.0f, 1.0f);
+		//auto ampTrans = m_AMPSprite->GetComponent<Transform>();
+		//ampTrans->SetScale(Vec3(ampRatio, 1.0f, 1.0f));
+		//// アーマーゲージも同様に左端固定
+		//{
+		//	const float gaugeWidth = 300.0f * 0.8f;
+		//	float offsetX = (ampRatio - 1.0f) * (gaugeWidth * 0.5f);
+		//	// HPゲージ下に 5px 分ずらした位置
+		//	ampTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f) - (300.0f * 0.3f) - 5.0f, 0));
+		//}
 
 	}
 }
