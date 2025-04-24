@@ -14,7 +14,7 @@ namespace basecross {
 	class StageSato : public Stage {
 		//ビューの作成
 		void CreateViewLight();
-		void CreateSprite();
+		//void CreateSprite();
 
 		//--------写すときはここをコピペすればいいと思われる--------
 
@@ -30,12 +30,12 @@ namespace basecross {
 		//shared_ptr<Sprite> m_plHPSprite;
 		//shared_ptr<Sprite> m_plSPSprite;
 		//shared_ptr<Sprite> m_gaugeFrameSprite;
-		shared_ptr<Sprite> m_katanaSprite;
-		shared_ptr<Sprite> m_gunSprite;
-		shared_ptr<Sprite> m_questionSprite[5];
-		shared_ptr<Sprite> m_answerSprite[5][3];
-		shared_ptr<Sprite> m_selectSprite;
-		shared_ptr<Sprite> m_resultSprite;
+		//shared_ptr<Sprite> m_katanaSprite;
+		//shared_ptr<Sprite> m_gunSprite;
+		//shared_ptr<Sprite> m_questionSprite[5];
+		//shared_ptr<Sprite> m_answerSprite[5][3];
+		//shared_ptr<Sprite> m_selectSprite;
+		//shared_ptr<Sprite> m_resultSprite;
 
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
@@ -88,9 +88,9 @@ namespace basecross {
 		float NormalizeAxis(float minusSide, float plusSide);
 
 		// 性格診断のステータス変動
-		void PersonalStateChange(int questionID, int answerIndex);
+		//void PersonalStateChange(int questionID, int answerIndex);
 
-		void StateResult(int LawCha, int EvilGood);
+		//void StateResult(int LawCha, int EvilGood);
 
 		// 数字を画面上に表示する関数
 		// value     : 表示する数値
