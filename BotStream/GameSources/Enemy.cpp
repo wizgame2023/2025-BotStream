@@ -26,12 +26,7 @@ namespace basecross {
 	void EnemyBase::HitBackStandBehavior() {
 		m_hitbacktime -= _delta;
 		if (m_hitbacktime <= 0) {
-			if (GetHPCurrent() <= 0) {
-				m_state->ChangeState(L"Dead");
-			}
-			else {
-				m_state->ChangeState(L"Stand");
-			}
+			m_state->ChangeState(L"Stand");
 		}
 	}
 
@@ -73,6 +68,12 @@ namespace basecross {
 	}
 
 	void EnemyBase::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		Actor::OnUpdate();
 		//m_used=falseなら表示を消してUpdateをreturn
 		if (GetDrawActive() != m_used) {
@@ -241,7 +242,7 @@ namespace basecross {
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
 		ptrColl->SetMakedRadius(3);
-		ptrColl->SetDrawActive(true);//debug
+		ptrColl->SetDrawActive(false);//debug
 
 		m_LandDetect->SetBindPos(Vec3(0, -2.7f, 0));
 		m_LandDetect->SetCollScale(1.0f);
@@ -254,6 +255,12 @@ namespace basecross {
 	}
 
 	void BossFirst::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		EnemyBase::OnUpdate();
 
 		//アニメーション再生
@@ -261,19 +268,19 @@ namespace basecross {
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 
-		////デバック用
-		wstringstream wss(L"");
-		auto scene = App::GetApp()->GetScene<Scene>();
-		auto quat = GetComponent<Transform>()->GetQuaternion();
-		wss /* << L"デバッグ用文字列 "*/
-			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
-			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
-			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
-			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-			<< L"\nAngle : " << GetPlayerSubDirection()
-			<< L"\nHP : " << m_HPCurrent << " / " << m_armor << " / " << m_armorRecoverTime - m_armorRecover << endl;
+		//////デバック用
+		//wstringstream wss(L"");
+		//auto scene = App::GetApp()->GetScene<Scene>();
+		//auto quat = GetComponent<Transform>()->GetQuaternion();
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
+		//	<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
+		//	<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
+		//	<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
+		//	<< L"\nAngle : " << GetPlayerSubDirection()
+		//	<< L"\nHP : " << m_HPCurrent << " / " << m_armor << " / " << m_armorRecoverTime - m_armorRecover << endl;
 
-		scene->SetDebugString(wss.str());
+		//scene->SetDebugString(wss.str());
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
@@ -293,6 +300,7 @@ namespace basecross {
 		if (m_armor <= 0) {
 			//非アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+			
 			m_state->ChangeState(L"Hit");
 
 		}
@@ -300,6 +308,11 @@ namespace basecross {
 			//アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
+		}
+
+		//死亡
+		if (GetHPCurrent() <= 0) {
+			m_state->ChangeState(L"Dead");
 		}
 	}
 }

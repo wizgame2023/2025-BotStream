@@ -139,6 +139,10 @@ namespace basecross{
 		strTexture = texPath + L"Gun.png";
 		app->RegisterTexture(L"GunTex", strTexture);
 
+		//ターゲット範囲用テクスチャ
+		strTexture = texPath + L"Bar.png";
+		app->RegisterTexture(L"BarTex", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ

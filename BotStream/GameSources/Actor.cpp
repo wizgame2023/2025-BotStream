@@ -45,6 +45,12 @@ namespace basecross {
 	}
 
 	void Actor::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		_delta = App::GetApp()->GetElapsedTime();
 	}
 
@@ -168,8 +174,8 @@ namespace basecross {
 			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
 			break;
 		case PlayerEffect_AttackEx:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-			EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
+			EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f),Vec3(0.0f,2.0f,0.0f));
+			//EfkPlaying(L"Attack", GetAngle(), Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Beam:
 			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
@@ -180,25 +186,31 @@ namespace basecross {
 	}
 
 	// エフェクトのプレイ
-	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate)
+	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Vec3 pushPos)
 	{
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
-		auto plPos = trans->GetPosition();
+		auto plPos = trans->GetPosition()+ pushPos;
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
 
-	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Col4 changeColor)
+	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Col4 changeColor, Vec3 pushPos)
 	{
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
-		auto plPos = trans->GetPosition();
+		auto plPos = trans->GetPosition() + pushPos;
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	}
+
+	//ポーズのフラグをオンオフする
+	void Actor::PoseSwitch(bool onOff)
+	{
+		m_poseFlag = onOff;
 	}
 }
 //end basecross

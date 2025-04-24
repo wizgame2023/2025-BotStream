@@ -72,8 +72,15 @@ namespace basecross {
 	}
 
 	void Player::OnUpdate()
-	{
+	{	
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		Actor::OnUpdate();
+
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
@@ -146,7 +153,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		DebugLog();
+		//DebugLog();
 
 		//アニメーション再生
 		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
@@ -439,11 +446,34 @@ namespace basecross {
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
 			return;
 		}
-		m_playerAngle = originLock->GetAngle();
+		
+		if (originLock->FindTag(L"Player"))
+		{
+			m_playerAngle = originLock->GetAngle();
+		}
+		else if (originLock->FindTag(L"Enemy"))
+		{
+			auto playerAngleVec = originLock->GetComponent<Transform>()->GetForward();
+			m_playerAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
+			m_playerAngle -= XMConvertToRadians(90.0f);
+		}
 
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
-		tmp.Type = AttackType::Player;//攻撃のタイプは敵
+		//tmp.Type = AttackType::Player;//攻撃のタイプは敵
+		//SetAttackActor(m_actorType);//攻撃しているActorを指定する
+		switch (m_actorType)
+		{
+		case ActorName_Player:
+			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー
+			break;
+		case ActorName_Enemy:
+			tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+			break;
+		default:
+			break;
+		}
+
 		tmp.HitOnce = true;//一回しかヒットしないか
 		tmp.Damage = 10;//ダメージ
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
@@ -461,11 +491,23 @@ namespace basecross {
 
 	void Bullet::OnUpdate()
 	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		Actor::OnUpdate();
+
+		auto tmp = GetAttackPtr()->GetHitInfo();
+		tmp.Type;
 
 		auto delta = App::GetApp()->GetElapsedTime();
 		//移動距離を計算する
 		Vec3 moveVec;
+
+		//原点オブジェクトを受け取る
+		auto originLock = m_originObj.lock();
 
 		moveVec.x = m_speed * cos(m_playerAngle) * delta;
 		moveVec.z = m_speed * sin(-m_playerAngle) * delta;
@@ -473,7 +515,6 @@ namespace basecross {
 		//プレイヤーの位置を取得して移動する
 		auto pos = m_trans->GetPosition();
 		m_trans->SetPosition(pos + moveVec);
-		auto originLock = m_originObj.lock();
 
 		m_canMoveDistance -= moveVec.x + moveVec.z;
 		//一定時間移動したら消える
@@ -484,6 +525,25 @@ namespace basecross {
 			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
 			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
+	}
+
+	//攻撃をしているのは誰か決める処理
+	void Bullet::SetAttackActor(int actorName)
+	{		
+		auto tmp = GetAttackPtr()->GetHitInfo();
+
+		switch (actorName)
+		{
+		case ActorName_Player:
+			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー
+			break;
+		case ActorName_Enemy:
+			tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+			break;
+		default:
+			break;
+		}
+
 	}
 
 
@@ -504,10 +564,10 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(1.0f/5, 1.0f, 1.0f/5),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -3.25f, 0.0f)
+			Vec3(0.0f, -0.0f, 0.0f)
 		);
 
 		//ドローメッシュの設定
@@ -522,14 +582,14 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);//デバック用
+		ptrColl->SetDrawActive(false);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");
 
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
-		m_LandDetect->SetCollScale(3.0f);
+		m_LandDetect->SetCollScale(1.5f);
 		
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
@@ -538,6 +598,12 @@ namespace basecross {
 
 	void EnemyZako::OnUpdate()
 	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
 		EnemyBase::OnUpdate();
 
 		//HPがゼロになったら消える

@@ -59,6 +59,9 @@ namespace basecross {
 		//攻撃を受けた方向
 		Vec3 m_hitDirection = Vec3(0);
 
+		//ボーズ状態かどうか
+		bool m_poseFlag = false;
+
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
 		//着地判定
@@ -91,8 +94,8 @@ namespace basecross {
 		}
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate,Vec3 pushPos = Vec3(0.0f));
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
 		// 地面着地
 		void OnLanding();
 
@@ -107,6 +110,9 @@ namespace basecross {
 
 		//エフェクトを出す処理
 		virtual void AddEffect(int addEffect);
+
+		//ポーズのフラグをオンオフする関数
+		void PoseSwitch(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
