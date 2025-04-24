@@ -35,7 +35,7 @@ namespace basecross {
 
 			CreateSharedObjectGroup(L"Actor");
 
-			CreateSprite();
+			//CreateSprite();
 
 			//auto playerUIButton = AddGameObject<PlayerButtonUI>(Vec2(100,100),Vec2(50,50));
 			//SetSharedGameObject(L"PlayerButton", playerUIButton);
@@ -71,8 +71,8 @@ namespace basecross {
 	}
 
 	//スプライト関係、ステージでやっていいのかわからんから後で聞く
-	void StageSato::CreateSprite()
-	{
+	//void StageSato::CreateSprite()
+	//{
 		/*
 		//コントローラー関係--------------------------------------------------
 		const float buttonPosX = 500, buttonPosY = -200;
@@ -247,77 +247,77 @@ namespace basecross {
 		*/
 		//質問表示関係--------------------------------------------------------
 
-		const float quesSizeY = 120, quesSizeX = quesSizeY * 10, answerX = 150, answerY = answerX * 0.5625f;
-		const Vec3 questionPos(0, 200, 0), answerPos(questionPos.x - 350, questionPos.y - 400, questionPos.z);
-		const Vec2 questionSize(quesSizeX, quesSizeY), answerSize(answerX, answerY);
-		int questionIndex = 0;
-		// 重複しない乱数を格納するセット
-		std::set<int> uniqueNumbers;
+		//const float quesSizeY = 120, quesSizeX = quesSizeY * 10, answerX = 150, answerY = answerX * 0.5625f;
+		//const Vec3 questionPos(0, 200, 0), answerPos(questionPos.x - 350, questionPos.y - 400, questionPos.z);
+		//const Vec2 questionSize(quesSizeX, quesSizeY), answerSize(answerX, answerY);
+		//int questionIndex = 0;
+		//// 重複しない乱数を格納するセット
+		//std::set<int> uniqueNumbers;
 
-		// 乱数生成器の初期化
-		std::default_random_engine engine(static_cast<unsigned int>(std::time(nullptr)));
+		//// 乱数生成器の初期化
+		//std::default_random_engine engine(static_cast<unsigned int>(std::time(nullptr)));
 
-		std::uniform_int_distribution<int> distribution(0, 9); // 1から10までの乱数
+		//std::uniform_int_distribution<int> distribution(0, 9); // 1から10までの乱数
 
-		// 5つの重複しない乱数を生成
-		while (uniqueNumbers.size() < 5) {
-			int randomNumber = distribution(engine); // 乱数を生成
-			uniqueNumbers.insert(randomNumber); // セットに追加
-		}
+		//// 5つの重複しない乱数を生成
+		//while (uniqueNumbers.size() < 5) {
+		//	int randomNumber = distribution(engine); // 乱数を生成
+		//	uniqueNumbers.insert(randomNumber); // セットに追加
+		//}
 
-		for (const auto& number : uniqueNumbers) {
-			// ランダムに選ばれた質問を記憶
-			m_questionOrder.push_back(number);
+		//for (const auto& number : uniqueNumbers) {
+		//	// ランダムに選ばれた質問を記憶
+		//	m_questionOrder.push_back(number);
 
-			//質問
-			m_questionSprite[questionIndex] = AddGameObject<Sprite>(
-				L"Questions",  			//テクスチャ名
-				questionSize,       // サイズ
-				questionPos);	//表示位置
-			m_questionSprite[questionIndex]->SetUVRect(Vec2(0.0f, number * 0.1f), Vec2(1.0f, (number * 0.1f) + 0.1f));
+		//	//質問
+		//	m_questionSprite[questionIndex] = AddGameObject<Sprite>(
+		//		L"Questions",  			//テクスチャ名
+		//		questionSize,       // サイズ
+		//		questionPos);	//表示位置
+		//	m_questionSprite[questionIndex]->SetUVRect(Vec2(0.0f, number * 0.1f), Vec2(1.0f, (number * 0.1f) + 0.1f));
 
-			//回答
-			for (int i = 0; i < 3; i++)
-			{
-				m_answerSprite[questionIndex][i] = AddGameObject<Sprite>(
-					L"Answer",  			//テクスチャ名
-					answerSize,       // サイズ
-					answerPos + Vec3(i * 375, 0.0f, 0.0f));	//表示位置
-				m_answerSprite[questionIndex][i]->SetUVRect(Vec2(0.333f * i, number * 0.1f), Vec2(0.333f * (i + 1), (number * 0.1f) + 0.1f));
-			}
+		//	//回答
+		//	for (int i = 0; i < 3; i++)
+		//	{
+		//		m_answerSprite[questionIndex][i] = AddGameObject<Sprite>(
+		//			L"Answer",  			//テクスチャ名
+		//			answerSize,       // サイズ
+		//			answerPos + Vec3(i * 375, 0.0f, 0.0f));	//表示位置
+		//		m_answerSprite[questionIndex][i]->SetUVRect(Vec2(0.333f * i, number * 0.1f), Vec2(0.333f * (i + 1), (number * 0.1f) + 0.1f));
+		//	}
 
-			if (questionIndex != 0)
-			{
-				m_questionSprite[questionIndex]->OnClear(true);
-				for (int i = 0; i < 3; i++)
-				{
-					m_answerSprite[questionIndex][i]->OnClear(true);
-				}
-			}
-			questionIndex++;
-		}
-		m_switchQues = 0;
+		//	if (questionIndex != 0)
+		//	{
+		//		m_questionSprite[questionIndex]->OnClear(true);
+		//		for (int i = 0; i < 3; i++)
+		//		{
+		//			m_answerSprite[questionIndex][i]->OnClear(true);
+		//		}
+		//	}
+		//	questionIndex++;
+		//}
+		//m_switchQues = 0;
 
-		Vec2 selectSize(275, 200);
-		m_selectPos = answerPos;
-		// 選択してるところのやつ
-		m_selectSprite = AddGameObject<Sprite>(
-			L"Select",			//テクスチャ名
-			selectSize,      // サイズ
-			m_selectPos);        // 表示位置
+		//Vec2 selectSize(275, 200);
+		//m_selectPos = answerPos;
+		//// 選択してるところのやつ
+		//m_selectSprite = AddGameObject<Sprite>(
+		//	L"Select",			//テクスチャ名
+		//	selectSize,      // サイズ
+		//	m_selectPos);        // 表示位置
 
-		Vec2 resultSize(400,100);
-		Vec3 resultPos(0, 0, 0);
-		m_resultSprite = AddGameObject<Sprite>(
-			L"ResultText",   // テクスチャ名
-			resultSize,      // サイズ
-			resultPos        // 位置
-		);
-		m_resultSprite->OnClear(true);
+		//Vec2 resultSize(400,100);
+		//Vec3 resultPos(0, 0, 0);
+		//m_resultSprite = AddGameObject<Sprite>(
+		//	L"ResultText",   // テクスチャ名
+		//	resultSize,      // サイズ
+		//	resultPos        // 位置
+		//);
+		//m_resultSprite->OnClear(true);
 		//--------------------------------------------------------------------
 		
 
-	}
+	//}
 
 	void StageSato::OnUpdate()
 	{
@@ -353,13 +353,13 @@ namespace basecross {
 		if (ret.x >= 0.3f && !m_selectFlag && m_select < 2)
 		{
 			m_select++;
-			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
 			m_selectFlag = true;
 		}
 		else if (ret.x <= -0.3f && !m_selectFlag && m_select > 0)
 		{
 			m_select--;
-			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
 			m_selectFlag = true;
 		}
 		else if ((ret.x <= 0.29f && ret.x >= -0.29f) && m_selectFlag)
@@ -368,21 +368,21 @@ namespace basecross {
 		}
 
 		// 仮：LBボタン,キーボードのSPACEで次の質問表示
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
-		{
-			if (m_switchQues < m_questionOrder.size())
-			{
-				int questionID = m_questionOrder[m_switchQues];
-				// 選択でステータス変動
-				PersonalStateChange(questionID, m_select);
-			}
-			m_select = 0;
-			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
+		//{
+			//if (m_switchQues < m_questionOrder.size())
+			//{
+			//	int questionID = m_questionOrder[m_switchQues];
+			//	// 選択でステータス変動
+			//	PersonalStateChange(questionID, m_select);
+			//}
+			//m_select = 0;
+			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
 
-			if (m_switchQues == 5)
-			{
-				m_switchQues = 0;
-			}
+			//if (m_switchQues == 5)
+			//{
+			//	m_switchQues = 0;
+			//}
 
 			//// ここはちゃんと動くかのテストみたいな側面があるため要らないです
 			//if (m_switchQues == 4)
@@ -393,51 +393,51 @@ namespace basecross {
 			//}
 			////-------------------
 			//else 
-			if (m_switchQues != 4)
-			{
-				m_questionSprite[m_switchQues]->OnClear(true);
-				m_questionSprite[m_switchQues + 1]->OnClear(false);
-				for (int i = 0; i < 3; i++)
-				{
-					m_answerSprite[m_switchQues][i]->OnClear(true);
-					m_answerSprite[m_switchQues + 1][i]->OnClear(false);
-				}
-				m_switchQues++;
-			}
-			else
-			if(m_switchQues == 4)
-			{
-				m_questionSprite[m_switchQues]->OnClear(true);
-				m_selectSprite->OnClear(true);
-				for (int i = 0; i < 3; i++)
-				{
-					m_answerSprite[m_switchQues][i]->OnClear(true);
-				}
-				float lawChaosIndex = NormalizeAxis(m_personality.Lawful, m_personality.Chaos);
-				float evilGoodIndex = NormalizeAxis(m_personality.Evil, m_personality.Good);
-				int checkLawCha, checkEvilGood;
+			//if (m_switchQues != 4)
+			//{
+			//	m_questionSprite[m_switchQues]->OnClear(true);
+			//	m_questionSprite[m_switchQues + 1]->OnClear(false);
+			//	for (int i = 0; i < 3; i++)
+			//	{
+			//		m_answerSprite[m_switchQues][i]->OnClear(true);
+			//		m_answerSprite[m_switchQues + 1][i]->OnClear(false);
+			//	}
+			//	m_switchQues++;
+			//}
+			//else
+			//if(m_switchQues == 4)
+			//{
+			//	m_questionSprite[m_switchQues]->OnClear(true);
+			//	m_selectSprite->OnClear(true);
+			//	for (int i = 0; i < 3; i++)
+			//	{
+			//		m_answerSprite[m_switchQues][i]->OnClear(true);
+			//	}
+			//	float lawChaosIndex = NormalizeAxis(m_personality.Lawful, m_personality.Chaos);
+			//	float evilGoodIndex = NormalizeAxis(m_personality.Evil, m_personality.Good);
+			//	int checkLawCha, checkEvilGood;
 
-				// 中立:0
-				// 秩序:1
-				// 混沌:2
-				if (lawChaosIndex > -1.4 && lawChaosIndex < 1.4) checkLawCha = 0;
-				else if (lawChaosIndex <= -1.4) checkLawCha = 1;
-				else if (lawChaosIndex >= 1.4) checkLawCha = 2;
+			//	// 中立:0
+			//	// 秩序:1
+			//	// 混沌:2
+			//	if (lawChaosIndex > -1.4 && lawChaosIndex < 1.4) checkLawCha = 0;
+			//	else if (lawChaosIndex <= -1.4) checkLawCha = 1;
+			//	else if (lawChaosIndex >= 1.4) checkLawCha = 2;
 
-				// 中立:0
-				// 悪:1
-				// 善:2
-				if (evilGoodIndex > -1.4 && lawChaosIndex < 1.4) checkEvilGood = 0;
-				else if (evilGoodIndex <= -1.4) checkEvilGood = 1;
-				else if (evilGoodIndex >= 1.4) checkEvilGood = 2;
-				
-				StateResult(checkLawCha, checkEvilGood);
-				m_resultFlag = true;
-			}
-		}
+			//	// 中立:0
+			//	// 悪:1
+			//	// 善:2
+			//	if (evilGoodIndex > -1.4 && lawChaosIndex < 1.4) checkEvilGood = 0;
+			//	else if (evilGoodIndex <= -1.4) checkEvilGood = 1;
+			//	else if (evilGoodIndex >= 1.4) checkEvilGood = 2;
+			//	
+			//	StateResult(checkLawCha, checkEvilGood);
+			//	m_resultFlag = true;
+			//}
+		//}
 
 		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_resultFlag == true)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
 		{
 			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
 		}
@@ -561,251 +561,251 @@ namespace basecross {
 	}
 
 	//質問表示関係(超長い)
-	void StageSato::PersonalStateChange(int questionID, int answerIndex)
-	{
-		int addNum = 5;
-		switch (questionID)
-		{
-		case 0: // 買い物するときによく使うものは
-			switch (answerIndex)
-			{
-			case 0: // 現金
-				m_personality.Lawful += addNum * 2;
-				break;
-			case 1: // キャッシュレス
-				m_personality.Evil += addNum * 2;
-				break;
-			case 2: // クレジットカード(これもキャッシュレスだろって言われると私は死ぬ)
-				m_personality.Chaos += addNum * 2;
-				break;
-			}
-			break;
+	//void StageSato::PersonalStateChange(int questionID, int answerIndex)
+	//{
+	//	int addNum = 5;
+	//	switch (questionID)
+	//	{
+	//	case 0: // 買い物するときによく使うものは
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // 現金
+	//			m_personality.Lawful += addNum * 2;
+	//			break;
+	//		case 1: // キャッシュレス
+	//			m_personality.Evil += addNum * 2;
+	//			break;
+	//		case 2: // クレジットカード(これもキャッシュレスだろって言われると私は死ぬ)
+	//			m_personality.Chaos += addNum * 2;
+	//			break;
+	//		}
+	//		break;
 
-		case 1: // 生まれ変わるとしたら
-			switch (answerIndex)
-			{
-			case 0: // 人間
-				m_personality.Evil += addNum;
-				break;
-			case 1: // 動物
-				m_personality.Good += addNum;
-				break;
-			case 2: // 植物
-				m_personality.Lawful += addNum;
-				break;
-			}
-			break;
+	//	case 1: // 生まれ変わるとしたら
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // 人間
+	//			m_personality.Evil += addNum;
+	//			break;
+	//		case 1: // 動物
+	//			m_personality.Good += addNum;
+	//			break;
+	//		case 2: // 植物
+	//			m_personality.Lawful += addNum;
+	//			break;
+	//		}
+	//		break;
 
-		case 2: // アウトドア派かインドア派か
-			switch (answerIndex)
-			{
-			case 0: // アウトドア派
-				m_personality.Chaos += addNum * 2;
-				break;
-			case 1: // インドア派
-				m_personality.Evil += addNum * 2;
-				break;
-			case 2: // 半々(ここに関して本当に思いつかなかった。気になるなら質問の代案、もしくは3つめの代案求ム)
-				m_personality.Lawful += addNum * 2;
-				break;
-			}
-			break;
+	//	case 2: // アウトドア派かインドア派か
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // アウトドア派
+	//			m_personality.Chaos += addNum * 2;
+	//			break;
+	//		case 1: // インドア派
+	//			m_personality.Evil += addNum * 2;
+	//			break;
+	//		case 2: // 半々(ここに関して本当に思いつかなかった。気になるなら質問の代案、もしくは3つめの代案求ム)
+	//			m_personality.Lawful += addNum * 2;
+	//			break;
+	//		}
+	//		break;
 
-		case 3: // ネットの情報に左右されやすいか
-			switch (answerIndex)
-			{
-			case 0: // はい
-				m_personality.Good += addNum;
-				break;
-			case 1: // いいえ
-				m_personality.Chaos += addNum;
-				break;
-			case 2: // どちらでもない(ここに関しては回答が本当に思いつかなかった。気になるなら質問の代案(ry
-				m_personality.Lawful += addNum;
-				break;
-			}
-			break;
+	//	case 3: // ネットの情報に左右されやすいか
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // はい
+	//			m_personality.Good += addNum;
+	//			break;
+	//		case 1: // いいえ
+	//			m_personality.Chaos += addNum;
+	//			break;
+	//		case 2: // どちらでもない(ここに関しては回答が本当に思いつかなかった。気になるなら質問の代案(ry
+	//			m_personality.Lawful += addNum;
+	//			break;
+	//		}
+	//		break;
 
-		case 4: // 人助けのためなら、法を犯しても構わない
-			switch (answerIndex)
-			{
-			case 0: // はい
-				m_personality.Good += addNum * 2;
-				m_personality.Chaos += addNum * 2;
-				break;
-			case 1: // いいえ
-				m_personality.Lawful += addNum * 2;
-				m_personality.Evil += addNum * 2;
-				break;
-			case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつかなかった。気にな(ry
-				m_personality.Evil += addNum * 2;
-				break;
-			}
-			break;
+	//	case 4: // 人助けのためなら、法を犯しても構わない
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // はい
+	//			m_personality.Good += addNum * 2;
+	//			m_personality.Chaos += addNum * 2;
+	//			break;
+	//		case 1: // いいえ
+	//			m_personality.Lawful += addNum * 2;
+	//			m_personality.Evil += addNum * 2;
+	//			break;
+	//		case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつかなかった。気にな(ry
+	//			m_personality.Evil += addNum * 2;
+	//			break;
+	//		}
+	//		break;
 
-		case 5: // 好きな映画のジャンルは
-			switch (answerIndex)
-			{
-			case 0: // ダークヒーロー
-				m_personality.Good += addNum * 2;
-				m_personality.Lawful += addNum * 2;
-				break;
-			case 1: // ラブコメ
-				m_personality.Chaos += addNum * 2;
-				m_personality.Good += addNum * 2;
-				break;
-			case 2: // ドキュメンタリー
-				m_personality.Lawful += addNum * 2;
-				m_personality.Evil += addNum * 2;
-				break;
-			}
-			break;
+	//	case 5: // 好きな映画のジャンルは
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // ダークヒーロー
+	//			m_personality.Good += addNum * 2;
+	//			m_personality.Lawful += addNum * 2;
+	//			break;
+	//		case 1: // ラブコメ
+	//			m_personality.Chaos += addNum * 2;
+	//			m_personality.Good += addNum * 2;
+	//			break;
+	//		case 2: // ドキュメンタリー
+	//			m_personality.Lawful += addNum * 2;
+	//			m_personality.Evil += addNum * 2;
+	//			break;
+	//		}
+	//		break;
 
-		case 6: // 筋肉はすべてを解決すると思うか
-			switch (answerIndex)
-			{
-			case 0: // はい
-				m_personality.Chaos += addNum;
-				m_personality.Good += addNum;
-				break;
-			case 1: // いいえ
-				m_personality.Lawful += addNum;
-				m_personality.Evil += addNum;
-				break;
-			case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつか(ry
-				m_personality.Chaos += addNum;
-				m_personality.Evil += addNum;
-				break;
-			}
-			break;
+	//	case 6: // 筋肉はすべてを解決すると思うか
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // はい
+	//			m_personality.Chaos += addNum;
+	//			m_personality.Good += addNum;
+	//			break;
+	//		case 1: // いいえ
+	//			m_personality.Lawful += addNum;
+	//			m_personality.Evil += addNum;
+	//			break;
+	//		case 2: // どちらでもない(ここに関しては関しては回答が本当に思いつか(ry
+	//			m_personality.Chaos += addNum;
+	//			m_personality.Evil += addNum;
+	//			break;
+	//		}
+	//		break;
 
-		case 7: // クリスマスは誰と過ごすか
-			switch (answerIndex)
-			{
-			case 0: // 家族
-				m_personality.Good += addNum * 2;
-				m_personality.Lawful += addNum * 2;
-				break;
-			case 1: // 恋人
-				m_personality.Good += addNum * 2;
-				m_personality.Chaos += addNum * 2;
-				break;
-			case 2: // 孤高
-				m_personality.Evil += addNum * 2;
-				m_personality.Lawful += addNum * 2;
-				break;
-			}
-			break;
+	//	case 7: // クリスマスは誰と過ごすか
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // 家族
+	//			m_personality.Good += addNum * 2;
+	//			m_personality.Lawful += addNum * 2;
+	//			break;
+	//		case 1: // 恋人
+	//			m_personality.Good += addNum * 2;
+	//			m_personality.Chaos += addNum * 2;
+	//			break;
+	//		case 2: // 孤高
+	//			m_personality.Evil += addNum * 2;
+	//			m_personality.Lawful += addNum * 2;
+	//			break;
+	//		}
+	//		break;
 
-		case 8: // 検索エンジンでよく使うのは
-			switch (answerIndex)
-			{
-			case 0: // Chrome
-				m_personality.Lawful += addNum;
-				break;
-			case 1: // Edge
-				m_personality.Chaos += addNum;
-				break;
-			case 2: // Safari
-				m_personality.Evil += addNum;
-				break;
-			}
-			break;
+	//	case 8: // 検索エンジンでよく使うのは
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // Chrome
+	//			m_personality.Lawful += addNum;
+	//			break;
+	//		case 1: // Edge
+	//			m_personality.Chaos += addNum;
+	//			break;
+	//		case 2: // Safari
+	//			m_personality.Evil += addNum;
+	//			break;
+	//		}
+	//		break;
 
-		case 9: // コンビニでよく買うものは
-			switch (answerIndex)
-			{
-			case 0: // 食用品
-				m_personality.Lawful += addNum * 2;
-				m_personality.Good += addNum * 2;
-				break;
-			case 1: // 日用品
-				m_personality.Lawful += addNum * 2;
-				m_personality.Evil += addNum * 2;
-				break;
-			case 2: // 書籍類
-				m_personality.Chaos += addNum * 2;
-				m_personality.Good += addNum * 2;
-				break;
-			}
-			break;
-		}
-	}
+	//	case 9: // コンビニでよく買うものは
+	//		switch (answerIndex)
+	//		{
+	//		case 0: // 食用品
+	//			m_personality.Lawful += addNum * 2;
+	//			m_personality.Good += addNum * 2;
+	//			break;
+	//		case 1: // 日用品
+	//			m_personality.Lawful += addNum * 2;
+	//			m_personality.Evil += addNum * 2;
+	//			break;
+	//		case 2: // 書籍類
+	//			m_personality.Chaos += addNum * 2;
+	//			m_personality.Good += addNum * 2;
+	//			break;
+	//		}
+	//		break;
+	//	}
+	//}
 
 	//診断結果表示関係(結構長い)
-	void StageSato::StateResult(int LawCha, int EvilGood)
-	{
-		switch (LawCha)
-		{
-		case 0:  // 中立軸
-			switch (EvilGood)
-			{
-			case 0:
-				// 真なる中立
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.6f), Vec2(1, 0.7f));
-				break;
+	//void StageSato::StateResult(int LawCha, int EvilGood)
+	//{
+	//	switch (LawCha)
+	//	{
+	//	case 0:  // 中立軸
+	//		switch (EvilGood)
+	//		{
+	//		case 0:
+	//			// 真なる中立
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.6f), Vec2(1, 0.7f));
+	//			break;
 
-			case 1:
-				// 中立にして悪
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.3f), Vec2(1, 0.4f));
-				break;
+	//		case 1:
+	//			// 中立にして悪
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.3f), Vec2(1, 0.4f));
+	//			break;
 
-			case 2:
-				// 中立にして善
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.0f), Vec2(1, 0.1f));
-				break;
-			}
-			break;
+	//		case 2:
+	//			// 中立にして善
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.0f), Vec2(1, 0.1f));
+	//			break;
+	//		}
+	//		break;
 
-		case 1:  // 秩序軸
-			switch (EvilGood)
-			{
-			case 0:
-				// 秩序にして中立
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.8f), Vec2(1, 0.9f));
-				break;
+	//	case 1:  // 秩序軸
+	//		switch (EvilGood)
+	//		{
+	//		case 0:
+	//			// 秩序にして中立
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.8f), Vec2(1, 0.9f));
+	//			break;
 
-			case 1:
-				// 秩序にして悪
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.5f), Vec2(1, 0.6f));
-				break;
+	//		case 1:
+	//			// 秩序にして悪
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.5f), Vec2(1, 0.6f));
+	//			break;
 
-			case 2:
-				// 秩序にして善
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.2f), Vec2(1, 0.3f));
-				break;
-			}
-			break;
+	//		case 2:
+	//			// 秩序にして善
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.2f), Vec2(1, 0.3f));
+	//			break;
+	//		}
+	//		break;
 
-		case 2:  // 混沌軸
-			switch (EvilGood)
-			{
-			case 0:
-				// 混沌にして中立
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.7f), Vec2(1, 0.8f));
-				break;
+	//	case 2:  // 混沌軸
+	//		switch (EvilGood)
+	//		{
+	//		case 0:
+	//			// 混沌にして中立
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.7f), Vec2(1, 0.8f));
+	//			break;
 
-			case 1:
-				// 混沌にして悪
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.4f), Vec2(1, 0.5f));
-				break;
+	//		case 1:
+	//			// 混沌にして悪
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.4f), Vec2(1, 0.5f));
+	//			break;
 
-			case 2:
-				// 混沌にして善
-				m_resultSprite->OnClear(false);
-				m_resultSprite->SetUVRect(Vec2(0, 0.1f), Vec2(1, 0.2f));
-				break;
-			}
-			break;
-		}
-	}
+	//		case 2:
+	//			// 混沌にして善
+	//			m_resultSprite->OnClear(false);
+	//			m_resultSprite->SetUVRect(Vec2(0, 0.1f), Vec2(1, 0.2f));
+	//			break;
+	//		}
+	//		break;
+	//	}
+	//}
 }
 	//end basecross
