@@ -9,8 +9,11 @@ using namespace basecross;
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
 //定数
-const wchar_t* pClassName = L"BotStream";
-const wchar_t* pWndTitle = L"BotStream(仮)";
+const wchar_t* pClassName = L"EGO";
+const wchar_t* pWndTitle = L"EGO";
+//ウィンドウモードの時の幅と高さ
+int g_ClientWidth = 1280;
+int g_ClientHeight = 800;
 
 
 //--------------------------------------------------------------------------------------
@@ -57,12 +60,11 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow, bool isFullScreen, int iCli
 
 	HWND hWnd = 0;
 	// ウィンドウの作成
-	if (isFullScreen) { // フルスクリーン
-						// 画面全体の幅と高さを取得
-						//もし画面全体の解像度で処理する場合は以下を有効に
-						//メモリを圧迫するので動作速度注意！
-						//        iClientWidth = GetSystemMetrics(SM_CXSCREEN);
-						//        iClientHeight = GetSystemMetrics(SM_CYSCREEN);
+	if (isFullScreen) {
+		// フルスクリーン
+		//ボーダーレスウインドウを使用
+		iClientWidth = GetSystemMetrics(SM_CXSCREEN);
+		iClientHeight = GetSystemMetrics(SM_CYSCREEN);
 		hWnd = CreateWindow(
 			pClassName,			// 登録されているクラス名
 			pWndTitle,			// ウインドウ名
@@ -106,6 +108,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow, bool isFullScreen, int iCli
 			return 0;   //エラー終了
 		}
 	}
+	ShowCursor(FALSE);
 	//ウインドウの表示
 	ShowWindow(
 		hWnd,       //取得したウインドウのハンドル
@@ -114,7 +117,6 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow, bool isFullScreen, int iCli
 	UpdateWindow(hWnd);
 	return hWnd;
 }
-
 
 //--------------------------------------------------------------------------------------
 //	int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth, int iClientHeight);
@@ -145,7 +147,8 @@ int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth
 		//ここに設定したキーボード入力を得る
 		vector<DWORD> UseKeyVec = {
 			VK_PRIOR,VK_NEXT,VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT,VK_SPACE,
-			VK_LBUTTON, VK_RBUTTON, VK_MBUTTON, VK_LCONTROL, VK_RETURN,
+			VK_LBUTTON, VK_RBUTTON, VK_MBUTTON, VK_LCONTROL,
+			'W','A','S','D','X','B'
 		};
 		while (WM_QUIT != msg.message) {
 			if (!App::GetApp()->ResetInputState(hWnd, UseKeyVec)) {
@@ -232,12 +235,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	//ロケールの設定
 	setlocale(LC_ALL, "JPN");
 
-	//ウインドウの幅と高さ
-	int iClientWidth = 1280;
-	int iClientHeight = 800;
 	// フルスクリーンにするかどうかの判定
 	// コマンドラインに/fが設定されていたらフルスクリーンにする
-	bool isFullScreen = false;
+	bool isFullScreen = true;
 	wstring wstrcmd = lpCmdLine;
 	if (wstrcmd == L"/f" || wstrcmd == L"/F") {
 		isFullScreen = true;     // フラグをtrueに設定
@@ -245,19 +245,35 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 	MyRegisterClass(hInstance);
 	// アプリケーションの初期化を実行します:
-	HWND hWnd = InitInstance(hInstance, nCmdShow, isFullScreen, iClientWidth, iClientHeight);
+	HWND hWnd = InitInstance(hInstance, nCmdShow, isFullScreen, g_ClientWidth, g_ClientHeight);
 
 	if (!hWnd)
 	{
 		return FALSE;
 	}
 
-	return  MainLoop(hInstance, hWnd, isFullScreen, iClientWidth, iClientHeight);
+	return  MainLoop(hInstance, hWnd, isFullScreen, g_ClientWidth, g_ClientHeight);
 
 }
 
-
-
+//--------------------------------------------------------------------------------------
+//
+//  関数: MakeWindowModeRectFunc()
+//
+//  目的: ウインドウモードに移行する矩形を作成する
+//
+//--------------------------------------------------------------------------------------
+void MakeWindowModeRectFunc(RECT& rc) {
+	rc = { 0, 0, g_ClientWidth, g_ClientHeight };
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+	int CXWidth = GetSystemMetrics(SM_CXSCREEN);
+	int CYHeight = GetSystemMetrics(SM_CYSCREEN);
+	int RCWidth = rc.right - rc.left;
+	int RCHeight = rc.bottom - rc.top;
+	int OffsetLeft = CXWidth / 2 - RCWidth / 2;
+	int OffsetTop = CYHeight / 2 - RCHeight / 2;
+	OffsetRect(&rc, OffsetLeft, OffsetTop);
+}
 
 //--------------------------------------------------------------------------------------
 //
@@ -283,9 +299,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
-	case WM_KEYDOWN:                // キーが押された
-		if (wParam == VK_ESCAPE) {  // 押されたのはESCキーだ
-			DestroyWindow(hWnd);	//ウインドウを破棄する
+	case WM_KEYDOWN:
+		// キーが押された
+		switch (wParam) {
+		case VK_ESCAPE:
+			//ウインドウを破棄する
+			DestroyWindow(hWnd);
+			break;
+		case VK_RETURN:
+			if (GetAsyncKeyState(VK_CONTROL)) {
+				//Ctrl+Enterでモード切替
+				if (App::AppCheck()) {
+					if (App::GetApp()->IsFullScreen()) {
+						//ウインドウモードに移行
+						RECT rc;
+						MakeWindowModeRectFunc(rc);
+						App::GetApp()->SetWindowMode(rc);
+					}
+					else {
+						App::GetApp()->SetFullScreenMode();
+					}
+				}
+			}
+			break;
+		}
+		break;
+	case WM_SIZE:
+		if (App::AppCheck()) {
+			App::GetApp()->OnSize();
 		}
 		break;
 	default:
@@ -293,5 +334,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
 
 

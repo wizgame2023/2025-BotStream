@@ -566,7 +566,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f/10, 1.0f, 1.0f/10),
+			Vec3(1.0f/5, 1.0f, 1.0f/5),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, -0.0f, 0.0f)
