@@ -48,11 +48,13 @@ namespace basecross {
 		float m_frictionThreshold = .5f;
 
 		//着地判定を無効化する時間
-		float m_disableLandDetect = 0.0f;
+		float m_landDetectDisableTime = 0.0f;
 		//地上にいるか否か
 		bool m_isLand = false;
 		//向いている角度
 		float m_angle;
+		//重力・摩擦処理の有無
+		bool m_doPhysics = true;
 
 		//喰らいモーション時間
 		float m_hitbacktime = 0;
@@ -77,7 +79,7 @@ namespace basecross {
 		void Gravity();
 
 		//攻撃を受けた時の処理(継承用)
-		virtual void OnDamaged() { }
+		virtual void OnDamaged() {}
 
 		//ダメージ計算式
 		int CalculateDamage(int damage) {
@@ -94,7 +96,7 @@ namespace basecross {
 		}
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate,Vec3 pushPos = Vec3(0.0f));
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Vec3 pushPos = Vec3(0.0f));
 		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
 		// 地面着地
 		void OnLanding();
@@ -187,6 +189,5 @@ namespace basecross {
 			}
 		}
 	};
-	
 }
 //end basecross

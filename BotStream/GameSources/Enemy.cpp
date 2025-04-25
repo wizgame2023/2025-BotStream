@@ -73,9 +73,6 @@ namespace basecross {
 		{
 			return;
 		}
-
-		Actor::OnUpdate();
-		//m_used=falseなら表示を消してUpdateをreturn
 		if (GetDrawActive() != m_used) {
 			SetDrawActive(m_used);
 		}
@@ -86,17 +83,9 @@ namespace basecross {
 			return;
 		}
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
+		Actor::OnUpdate();
 
-		//処理
-		if (!m_isLand) {
-			Gravity();
-		}
-		else {
-			Friction();
-		}
-
+		//アーマー回復
 		if (m_armorMax != 0 && m_armor <= 0) {
 			m_armorRecover += _delta;
 			if (m_armorRecoverTime <= m_armorRecover) {
@@ -263,6 +252,18 @@ namespace basecross {
 
 		EnemyBase::OnUpdate();
 
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+
+		//物理的な処理
+		if (m_doPhysics) {
+			if (!m_isLand) {
+				Gravity();
+			}
+			else {
+				Friction();
+			}
+		}
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 
@@ -293,14 +294,25 @@ namespace basecross {
 
 	void BossFirst::OnDamaged() {
 		int armorDamage = m_GetHitInfo.Damage;
+		bool armorEffect = m_armor > 0;
+
+		//アーマーへのダメージ2倍
 		if (GetBoneModelDraw()->GetCurrentAnimation() == L"Bonus") {
 			armorDamage *= 2;
 		}
 		m_armor -= CalculateDamage(armorDamage);
+
 		if (m_armor <= 0) {
+			if (armorEffect) {
+				AddEffect(EnemyEffect_ArmorBreak);
+
+				//SE
+				App::GetApp()->GetXAudio2Manager()->Start(L"Beam", 0, 0.9f);
+			}
+
 			//非アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
-			
+
 			m_state->ChangeState(L"Hit");
 
 		}

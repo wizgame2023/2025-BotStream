@@ -49,13 +49,16 @@ namespace basecross{
 		//初期化処理(敵をスポーンさせるとき使う？)
 		void Initialize(Vec3 pos, Vec3 rot, Vec3 scale) {
 			m_used = true;
+
 			auto ptr = GetComponent<Transform>();
 			ptr->SetPosition(pos);
 			ptr->SetRotation(rot);
 			ptr->SetScale(scale);
+
 			SetDrawActive(true);
 			SetUpdateActive(true);
 			m_LandDetect->SetUpdateActive(true);
+			m_landDetectDisableTime = 0;
 		}
 		//初期化処理(引数無し)
 		void Initialize() {
