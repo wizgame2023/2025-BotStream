@@ -35,7 +35,7 @@ namespace basecross {
 
 			CreateSharedObjectGroup(L"Actor");
 
-			//CreateSprite();
+			CreateSprite();
 
 			//auto playerUIButton = AddGameObject<PlayerButtonUI>(Vec2(100,100),Vec2(50,50));
 			//SetSharedGameObject(L"PlayerButton", playerUIButton);
@@ -71,8 +71,16 @@ namespace basecross {
 	}
 
 	//スプライト関係、ステージでやっていいのかわからんから後で聞く
-	//void StageSato::CreateSprite()
-	//{
+	void StageSato::CreateSprite()
+	{
+		float XY = 300;
+		m_personalSelect = AddGameObject<Sprite>(
+			L"PlayerType",
+			Vec2(XY, XY),
+			Vec3(0, 0, 0)
+		);
+		m_personalSelect->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 1.0f));
+
 		/*
 		//コントローラー関係--------------------------------------------------
 		const float buttonPosX = 500, buttonPosY = -200;
@@ -317,7 +325,7 @@ namespace basecross {
 		//--------------------------------------------------------------------
 		
 
-	//}
+	}
 
 	void StageSato::OnUpdate()
 	{
@@ -354,12 +362,14 @@ namespace basecross {
 		{
 			m_select++;
 			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			m_personalSelect->SetUVRect(Vec2(0.333f * m_select, 0.0f), Vec2((0.333f * m_select) + 0.333f, 1.0f));
 			m_selectFlag = true;
 		}
 		else if (ret.x <= -0.3f && !m_selectFlag && m_select > 0)
 		{
 			m_select--;
 			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+			m_personalSelect->SetUVRect(Vec2(0.333f * m_select, 0.0f), Vec2((0.333f * m_select) + 0.333f, 1.0f));
 			m_selectFlag = true;
 		}
 		else if ((ret.x <= 0.29f && ret.x >= -0.29f) && m_selectFlag)

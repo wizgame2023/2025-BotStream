@@ -97,6 +97,10 @@ namespace basecross{
 		strTexture = texPath + L"TitleText.png";
 		app->RegisterTexture(L"TitleText", strTexture);
 
+		// PlayerType
+		strTexture = texPath + L"PlayerTypes.png";
+		app->RegisterTexture(L"PlayerType", strTexture);
+
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);

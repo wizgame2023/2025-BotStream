@@ -14,7 +14,7 @@ namespace basecross {
 	class StageSato : public Stage {
 		//ビューの作成
 		void CreateViewLight();
-		//void CreateSprite();
+		void CreateSprite();
 
 		//--------写すときはここをコピペすればいいと思われる--------
 
@@ -36,6 +36,8 @@ namespace basecross {
 		//shared_ptr<Sprite> m_answerSprite[5][3];
 		//shared_ptr<Sprite> m_selectSprite;
 		//shared_ptr<Sprite> m_resultSprite;
+
+		shared_ptr<Sprite> m_personalSelect;
 
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
