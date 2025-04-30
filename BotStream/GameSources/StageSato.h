@@ -27,6 +27,14 @@ namespace basecross {
 			int Chaos = 0;
 		};
 
+
+		enum PlayerType
+		{
+			Type_Speed,
+			Type_Power,
+			Type_Balance,
+		};
+
 		//shared_ptr<Sprite> m_plHPSprite;
 		//shared_ptr<Sprite> m_plSPSprite;
 		//shared_ptr<Sprite> m_gaugeFrameSprite;
@@ -58,6 +66,8 @@ namespace basecross {
 		bool m_questionEndFlag = false;
 		int m_select = 0;
 		Vec3 m_selectPos;
+
+		PlayerType m_type = PlayerType::Type_Speed;
 
 		// リザルト表示フラグ
 		bool m_resultFlag = false;
@@ -140,6 +150,12 @@ namespace basecross {
 		void SetPLBulletNumSprite(float value)
 		{
 			m_bulletNum = value;
+		}
+
+		// playerの初期性格(タイプ)を取得
+		PlayerType GetPLType()
+		{
+			return m_type;
 		}
 
 		//// 比率みたいなやつをあーだこーだするやつ

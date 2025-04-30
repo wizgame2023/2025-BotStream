@@ -376,79 +376,86 @@ namespace basecross {
 		{
 			m_selectFlag = false;
 		}
+		
 
+		/*
 		// 仮：LBボタン,キーボードのSPACEで次の質問表示
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
-		//{
-			//if (m_switchQues < m_questionOrder.size())
-			//{
-			//	int questionID = m_questionOrder[m_switchQues];
-			//	// 選択でステータス変動
-			//	PersonalStateChange(questionID, m_select);
-			//}
-			//m_select = 0;
-			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
+		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
+		{
+			if (m_switchQues < m_questionOrder.size())
+			{
+				int questionID = m_questionOrder[m_switchQues];
+				// 選択でステータス変動
+				PersonalStateChange(questionID, m_select);
+			}
+			m_select = 0;
+			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
 
-			//if (m_switchQues == 5)
-			//{
-			//	m_switchQues = 0;
-			//}
+			if (m_switchQues == 5)
+			{
+				m_switchQues = 0;
+			}
 
-			//// ここはちゃんと動くかのテストみたいな側面があるため要らないです
-			//if (m_switchQues == 4)
-			//{
-			//	m_questionSprite[m_switchQues]->OnClear(true);
-			//	m_switchQues = 0;
-			//	m_questionSprite[m_switchQues]->OnClear(false);
-			//}
-			////-------------------
-			//else 
-			//if (m_switchQues != 4)
-			//{
-			//	m_questionSprite[m_switchQues]->OnClear(true);
-			//	m_questionSprite[m_switchQues + 1]->OnClear(false);
-			//	for (int i = 0; i < 3; i++)
-			//	{
-			//		m_answerSprite[m_switchQues][i]->OnClear(true);
-			//		m_answerSprite[m_switchQues + 1][i]->OnClear(false);
-			//	}
-			//	m_switchQues++;
-			//}
-			//else
-			//if(m_switchQues == 4)
-			//{
-			//	m_questionSprite[m_switchQues]->OnClear(true);
-			//	m_selectSprite->OnClear(true);
-			//	for (int i = 0; i < 3; i++)
-			//	{
-			//		m_answerSprite[m_switchQues][i]->OnClear(true);
-			//	}
-			//	float lawChaosIndex = NormalizeAxis(m_personality.Lawful, m_personality.Chaos);
-			//	float evilGoodIndex = NormalizeAxis(m_personality.Evil, m_personality.Good);
-			//	int checkLawCha, checkEvilGood;
+			// ここはちゃんと動くかのテストみたいな側面があるため要らないです
+			if (m_switchQues == 4)
+			{
+				m_questionSprite[m_switchQues]->OnClear(true);
+				m_switchQues = 0;
+				m_questionSprite[m_switchQues]->OnClear(false);
+			}
+			//-------------------
+			else 
+			if (m_switchQues != 4)
+			{
+				m_questionSprite[m_switchQues]->OnClear(true);
+				m_questionSprite[m_switchQues + 1]->OnClear(false);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[m_switchQues][i]->OnClear(true);
+					m_answerSprite[m_switchQues + 1][i]->OnClear(false);
+				}
+				m_switchQues++;
+			}
+			else
+			if(m_switchQues == 4)
+			{
+				m_questionSprite[m_switchQues]->OnClear(true);
+				m_selectSprite->OnClear(true);
+				for (int i = 0; i < 3; i++)
+				{
+					m_answerSprite[m_switchQues][i]->OnClear(true);
+				}
+				float lawChaosIndex = NormalizeAxis(m_personality.Lawful, m_personality.Chaos);
+				float evilGoodIndex = NormalizeAxis(m_personality.Evil, m_personality.Good);
+				int checkLawCha, checkEvilGood;
 
-			//	// 中立:0
-			//	// 秩序:1
-			//	// 混沌:2
-			//	if (lawChaosIndex > -1.4 && lawChaosIndex < 1.4) checkLawCha = 0;
-			//	else if (lawChaosIndex <= -1.4) checkLawCha = 1;
-			//	else if (lawChaosIndex >= 1.4) checkLawCha = 2;
+				// 中立:0
+				// 秩序:1
+				// 混沌:2
+				if (lawChaosIndex > -1.4 && lawChaosIndex < 1.4) checkLawCha = 0;
+				else if (lawChaosIndex <= -1.4) checkLawCha = 1;
+				else if (lawChaosIndex >= 1.4) checkLawCha = 2;
 
-			//	// 中立:0
-			//	// 悪:1
-			//	// 善:2
-			//	if (evilGoodIndex > -1.4 && lawChaosIndex < 1.4) checkEvilGood = 0;
-			//	else if (evilGoodIndex <= -1.4) checkEvilGood = 1;
-			//	else if (evilGoodIndex >= 1.4) checkEvilGood = 2;
-			//	
-			//	StateResult(checkLawCha, checkEvilGood);
-			//	m_resultFlag = true;
-			//}
-		//}
+				// 中立:0
+				// 悪:1
+				// 善:2
+				if (evilGoodIndex > -1.4 && lawChaosIndex < 1.4) checkEvilGood = 0;
+				else if (evilGoodIndex <= -1.4) checkEvilGood = 1;
+				else if (evilGoodIndex >= 1.4) checkEvilGood = 2;
+				
+				StateResult(checkLawCha, checkEvilGood);
+				m_resultFlag = true;
+			}
+		}
+		*/
 
 		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
 		{
+			// デバッグ用の適当な変数
+			m_resultFlag = true;
+
+			m_type = static_cast<PlayerType>(m_select);
 			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
 		}
 
@@ -500,7 +507,7 @@ namespace basecross {
 		//		digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
 		//	}
 		//}
-		//DebugLog();
+		DebugLog();
 
 	}
 
@@ -558,14 +565,37 @@ namespace basecross {
 	{
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
-		wss /* << L"デバッグ用文字列 "*/
-			<< "Chaos  : " << m_personality.Chaos  << "\n"
-			<< "Lawful : " << m_personality.Lawful << "\n"
-			<< "Good   : " << m_personality.Good << "\n"
-			<< "Evil   : " << m_personality.Evil << "\n" 
-			<< "QuesID : " << m_questionOrder[m_switchQues] << "\n"
-			<< "Answer : " << m_select << "\n"
-			<< endl;
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< "Chaos  : " << m_personality.Chaos  << "\n"
+		//	<< "Lawful : " << m_personality.Lawful << "\n"
+		//	<< "Good   : " << m_personality.Good << "\n"
+		//	<< "Evil   : " << m_personality.Evil << "\n" 
+		//	<< "QuesID : " << m_questionOrder[m_switchQues] << "\n"
+		//	<< "Answer : " << m_select << "\n"
+		//	<< endl;
+		
+		if (m_resultFlag)
+		{
+			switch (m_type)
+			{
+			case StageSato::Type_Speed:
+				wss << "Type   :  Speed" << "\n"
+					<< endl;
+				break;
+			case StageSato::Type_Power:
+				wss << "Type   :  Power" << "\n"
+					<< endl;
+				break;
+			case StageSato::Type_Balance:
+				wss << "Type   :  Balance" << "\n"
+					<< endl;
+				break;
+			default:
+				break;
+			}
+
+		}
+
 		scene->SetDebugString(wss.str());
 
 	}
