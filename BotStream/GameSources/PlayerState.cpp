@@ -6,6 +6,8 @@
 #include "stdafx.h"
 #include "Project.h"
 
+#define AttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
+
 namespace basecross {
 	void PlayerStateBase::Enter()
 	{
@@ -18,25 +20,34 @@ namespace basecross {
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//カメラマネージャからLockOnTargetの位置を取得する
-		shared_ptr<CameraManager> camera = nullptr;
-		camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
-		shared_ptr<Actor> targetObj = nullptr;
-		targetObj = camera->GetTargetObj();
-		//ターゲット対象がいる時対象との距離を測る
-		if (targetObj)
-		{
-			//Vec3 targetPos = Vec3(0.0f);
-			//Vec3 playerPos = Vec3(0.0f);
-			//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
-			//playerPos = m_player->GetComponent<Transform>()->GetPosition();
-			////LockOnTargetとの距離を計算する
-			m_targetDistance = camera->GetTargetDis();
-		}
-		else if (!targetObj)
-		{
-			m_targetDistance = 0.0f;
-		}
+		//カメラマネージャ取得
+		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+		
+
+		//回避してよいかフラグを受け取る
+		m_dodgeFlag = m_player->GetDodgeFlag();
+		//接近戦指定以下のフラグ受け取る
+		m_meleeFlag = cameraManager->GetMeleeFlag();
+
+		////カメラマネージャからLockOnTargetの位置を取得する
+		//shared_ptr<CameraManager> camera = nullptr;
+		//camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+		//shared_ptr<Actor> targetObj = nullptr;
+		//targetObj = camera->GetTargetObj();
+		////ターゲット対象がいる時対象との距離を測る
+		//if (targetObj)
+		//{
+		//	//Vec3 targetPos = Vec3(0.0f);
+		//	//Vec3 playerPos = Vec3(0.0f);
+		//	//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
+		//	//playerPos = m_player->GetComponent<Transform>()->GetPosition();
+		//	////LockOnTargetとの距離を計算する
+		//	m_targetDistance = camera->GetTargetDis();
+		//}
+		//else if (!targetObj)
+		//{
+		//	m_targetDistance = 0.0f;
+		//}
 
 
 	};
@@ -76,19 +87,22 @@ namespace basecross {
 		//回避ステートに変更する
 		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
 		{
-			m_player->ChangeState(L"Dodge");
+			if (m_dodgeFlag)
+			{
+				m_player->ChangeState(L"Dodge");
+			}
 		}
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
-		float meleeRange = 200.0f;
+		//float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_X)
+		if (AttackButton)
 		{
 			//攻撃する際距離によって攻撃方法を変える
-			if (m_targetDistance < meleeRange)
+			if (m_meleeFlag)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
 				{//長押しなら最終段の技が出る
@@ -101,7 +115,7 @@ namespace basecross {
 					m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
 				}
 			}
-			else if (m_targetDistance >= meleeRange)
+			else if (!m_meleeFlag)
 			{//遠距離	
 				auto BulletNumNow = m_player->GetBulletNum();
 				//弾が残っていれば打てる
@@ -131,7 +145,7 @@ namespace basecross {
 	}
 	void PlayerWalkState::Exit()
 	{
-
+		
 	}
 
 	//回避ステート
@@ -142,8 +156,13 @@ namespace basecross {
 
 		m_SEManager->Start(L"Dash", 0, 0.9f);//回避SE
 
+		//回避していいか確認する
+		//m_playerDodgeFlag = m_player->GetDodgeFlag();
 		//回避タグ追加
 		m_player->AddTag(L"DodgeNow");
+
+		//回避判定リセット
+		m_player->SetDodgeFlag(true);
 	}
 	void PlayerDodgeState::Update(float deltaTime)
 	{
@@ -154,8 +173,9 @@ namespace basecross {
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
 		m_player->PlayerMove(PlayerState_Dodge);
 
-		bool dodgeFlag = m_player->GetDodgeFlag();
-		if (!dodgeFlag)
+		//回避した後の処理(どっちのステートに行くかの処理)
+		bool endDodgeFlag = m_player->GetEndDodgeFlag();
+		if (!endDodgeFlag)
 		{
 			//ダッシュステートにするか歩くステートにするか
 			if (m_controller.wButtons & XINPUT_GAMEPAD_A)
@@ -166,6 +186,11 @@ namespace basecross {
 			{
 				m_player->ChangeState(L"PlayerWalk");
 			}
+			//回避終了判定リセット
+			m_player->SetEndDodgeFlag(true);
+			//回避したので回避のクールタイムを入れる
+			m_player->SetDodgeFlag(false);
+
 		}
 
 	}
@@ -219,15 +244,15 @@ namespace basecross {
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
-		float meleeRange = 200.0f;
+		//float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_X)
+		if (AttackButton)
 		{
 			//攻撃する際距離によって攻撃方法を変える
-			if (m_targetDistance < meleeRange)
+			if (m_meleeFlag)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
 				{//長押しなら最終段の技が出る
@@ -240,7 +265,7 @@ namespace basecross {
 					m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
 				}
 			}
-			else if (m_targetDistance >= meleeRange)
+			else if (!m_meleeFlag)
 			{//遠距離	
 				auto BulletNumNow = m_player->GetBulletNum();
 				//弾が残っていれば打てる
@@ -312,7 +337,7 @@ namespace basecross {
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
 			//攻撃ステートに変更する
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			if (AttackButton)
 			{			
 				m_nestAttackFlag = true;	
 			}
@@ -386,7 +411,7 @@ namespace basecross {
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
 			//攻撃ステートに変更する
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			if (AttackButton)
 			{
 				m_nestAttackFlag = true;
 			}
@@ -460,7 +485,7 @@ namespace basecross {
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
 			//攻撃ステートに変更する
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			if (AttackButton)
 			{
 				m_nestAttackFlag = true;
 			}
