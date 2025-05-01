@@ -93,7 +93,7 @@ namespace basecross{
 		};
 
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 25.0f,float melleRange = 5.0f,
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 15.0f,float targetRange = 25.0f,float melleRange = 5.0f,
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
@@ -130,6 +130,29 @@ namespace basecross{
 
 		//近遠どちらの攻撃をするかの処理
 		void MeleeFlagUpdate();
+
+		//ロックオン処理
+		void LockOn(shared_ptr<Player> player);
+		//ロックオンする敵を決める処理
+		void SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle);
+		//ロックオンを解除する条件
+		void ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec);
+
+		//角度のゲッタセッタ
+		//第一引数　X軸かY軸どちらの軸の角度を取るか
+		float GetAngle(wstring XorY)
+		{
+			if (XorY == L"X")
+			{
+				return m_cameraAngleX;
+			}
+			if (XorY == L"Y")
+			{
+				return m_cameraAngleY;
+			}
+
+			return 0;
+		}
 
 		//ターゲット対象を渡す関数
 		shared_ptr<Actor> GetTargetObj();
