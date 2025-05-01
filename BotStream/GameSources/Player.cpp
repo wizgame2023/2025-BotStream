@@ -9,6 +9,7 @@
 namespace basecross {
 	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int hp, int attack, int defense) :
 		Actor(stagePtr, pos, rot, scale),
+		m_dodgeCoolTime(0.0f),
 		m_dodgeTime(0.0f)
 	{
 
@@ -79,6 +80,7 @@ namespace basecross {
 			return;
 		}
 
+		//親クラス処理
 		Actor::OnUpdate();
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
@@ -92,6 +94,17 @@ namespace basecross {
 		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
 		playerUI->SetPLHPSprite(m_HPCurrent);
 		playerUI->SetPLSPSprite(m_SPCurrent);
+
+		//回避クールタイム計算
+		if (!m_dodgeFlag)
+		{
+			m_dodgeCoolTime += _delta;
+			if (m_dodgeCoolTime >= m_maxDodgeCoolTime)
+			{
+				m_dodgeCoolTime = 0.0f;//リセット
+				m_dodgeFlag = true;//回避できるようにする
+			}
+		}
 
 
 		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
@@ -122,7 +135,7 @@ namespace basecross {
 		}
 		else {
 			Friction();
-			Dodge();
+			//Dodge();
 		}
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
@@ -307,12 +320,12 @@ namespace basecross {
 				{
 					m_dashFlag = true;
 					m_dodgeTime = 0.0f;
-					m_dodgeFlag = false;//回避処理終了
+					m_endDodgeFlag = false;//回避処理終了
 				}
 				else
 				{
 					m_dodgeTime = 0.0f;
-					m_dodgeFlag = false;//回避処理終了
+					m_endDodgeFlag = false;//回避処理終了
 				}
 
 			}
@@ -377,11 +390,28 @@ namespace basecross {
 		return m_SPMax;
 	}
 
+	//回避フラグのセッター
+	void Player::SetDodgeFlag(bool setDodgeFlag)
+	{
+		m_dodgeFlag = setDodgeFlag;
+	}
 	//回避フラグのゲッター
 	bool Player::GetDodgeFlag()
 	{
 		return m_dodgeFlag;
 	}
+
+	//回避終了フラグのセッター
+	void Player::SetEndDodgeFlag(bool setEndDodgeFlag)
+	{
+		m_endDodgeFlag = setEndDodgeFlag;
+	}
+	//回避終了フラグのゲッター
+	bool Player::GetEndDodgeFlag()
+	{
+		return m_endDodgeFlag;
+	}
+
 
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
@@ -446,10 +476,13 @@ namespace basecross {
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
 			return;
 		}
+		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		
 		if (originLock->FindTag(L"Player"))
 		{
-			m_playerAngle = originLock->GetAngle();
+			//m_playerAngle = cameraManager->
+			//Y軸のカメラの角度を受け取る
+			m_playerAngle = -(cameraManager->GetAngle(L"Y"))-XMConvertToRadians(180.0f);
 		}
 		else if (originLock->FindTag(L"Enemy"))
 		{
@@ -457,7 +490,7 @@ namespace basecross {
 			m_playerAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
 			m_playerAngle -= XMConvertToRadians(90.0f);
 		}
-
+		auto test = XMConvertToDegrees(m_playerAngle);
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
 		//tmp.Type = AttackType::Player;//攻撃のタイプは敵
