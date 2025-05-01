@@ -41,6 +41,13 @@ namespace basecross{
 
 		}
 
+		if (event->m_MsgStr == L"EnemyTest") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<StageTuboi>();
+
+		}
+
 		if (event->m_MsgStr == L"ToStageSelect")
 		{
 			ResetActiveStage<StageSelect>();
@@ -179,6 +186,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
+		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		// ---------------------------------
 
 		//BGM
@@ -196,6 +204,7 @@ namespace basecross{
 		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
+		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
 		app->RegisterWav(L"Attack2", SoundPath + L"Attack2.wav");
 		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");

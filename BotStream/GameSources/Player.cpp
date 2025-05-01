@@ -83,6 +83,19 @@ namespace basecross {
 		//親クラス処理
 		Actor::OnUpdate();
 
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+
+		//物理的な処理
+		if (m_doPhysics) {
+			if (!m_isLand) {
+				Gravity();
+			}
+			else {
+				Friction();
+				Dodge();
+			}
+		}
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
@@ -126,17 +139,6 @@ namespace basecross {
 		//動く処理(仮)
 		//PlayerMove();
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
-
-		//処理
-		if (!m_isLand) {
-			Gravity();
-		}
-		else {
-			Friction();
-			//Dodge();
-		}
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -181,7 +183,7 @@ namespace basecross {
 		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
 			m_velocity.y = m_jumpPower;
 			m_isLand = false;
-			m_disableLandDetect = 1.0f;
+			m_landDetectDisableTime = 1.0f;
 		}
 	}
 
