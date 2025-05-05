@@ -53,6 +53,19 @@ namespace basecross {
 		_delta = App::GetApp()->GetElapsedTime();
 	}
 
+	//着地判定(無効化時間中ならそれを減算する)
+	OnLanding();
+
+	//物理的な処理
+	if (m_doPhysics) {
+		if (!m_isLand) {
+			Gravity();
+		}
+		else {
+			Friction();
+		}
+	}
+
 	//最高速度
 	void Actor::SpeedLimit(float multiply) {
 		float limit = m_speedMax * multiply;

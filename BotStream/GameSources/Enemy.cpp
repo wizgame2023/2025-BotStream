@@ -252,18 +252,6 @@ namespace basecross {
 
 		EnemyBase::OnUpdate();
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
-
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				Friction();
-			}
-		}
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 

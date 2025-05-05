@@ -131,6 +131,7 @@ namespace basecross {
 		void HitBack() {
 			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
 
+			//どちらから攻撃されたかを計算
 			Vec3 nrm = m_hitDirection.normalize();
 			float dir = atan2f(nrm.z, nrm.x);
 
@@ -161,6 +162,7 @@ namespace basecross {
 			m_velocity = vel;
 		}
 
+		//前方ベクトルの取得
 		Vec3 GetForward() {
 			Vec3 vec = GetComponent<Transform>()->GetForward();
 
@@ -174,6 +176,10 @@ namespace basecross {
 			return fixedVec;
 		}
 
+		//地面の上にいるか否かのゲッター
+		bool GetLand() {
+			return m_isLand;
+		}
 
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {

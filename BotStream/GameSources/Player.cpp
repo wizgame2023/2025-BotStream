@@ -81,19 +81,10 @@ namespace basecross {
 
 		Actor::OnUpdate();
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
-
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				Friction();
-				Dodge();
-			}
+		if (m_isLand) {
+			Dodge();
 		}
+
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
