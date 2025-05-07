@@ -114,38 +114,71 @@ namespace basecross {
 			m_pauseTextSprite[i]->OnClear(true);
 		}
 
-		for (int i = 0; i < 2; i++)
+		// BGMTextPos
+		auto BGMPos = m_pauseTextSprite[4]->GetPosition();
+		// SETextPos
+		auto SEPos = m_pauseTextSprite[5]->GetPosition();
+	
+		// audioメーター
+		//for (int i = 0; i < 2; i++)
+		//{
+		for (int i = 0; i < 10; i++)
 		{
-			auto audioPos = m_pauseTextSprite[i + 4]->GetPosition();
-			m_audioMater[i] = AddGameObject<Sprite>(
-				L"AudioMater",
-				Vec2(500, 500 / 5),
-				Vec3(audioPos.x + 50, audioPos.y - 100, audioPos.z)
+			auto audioPos = /*i ? SEPos : */BGMPos;
+			audioPos.x -= 200;
+			m_BGMMater[i] = AddGameObject<Sprite>(
+				L"AudioOther",
+				Vec2(50, 100),
+				Vec3(audioPos.x + (50.0f * i), audioPos.y - 100, audioPos.z)
 			);
-			m_audioMater[i]->SetDrawLayer(1);
-			m_audioMater[i]->OnClear(true);
+			m_BGMMater[i]->SetDrawLayer(1);
+			m_BGMMater[i]->OnClear(true);
+			m_BGMMater[i]->SetUVRect(Vec2(0.5f, 0.0f), Vec2(0.75f, 1.0f));
+			m_BGMMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
 		}
 
+		//}
+
+		// SEメーター
+		for (int i = 0; i < 10; i++)
+		{
+			auto sePos = SEPos;
+			sePos.x -= 200;
+			m_SEMater[i] = AddGameObject<Sprite>(
+				L"AudioOther",
+				Vec2(50, 100),
+				Vec3(sePos.x + (50.0f * i), sePos.y - 100, sePos.z)
+			);
+			m_SEMater[i]->SetDrawLayer(1);
+			m_SEMater[i]->OnClear(true);
+			m_SEMater[i]->SetUVRect(Vec2(0.5f, 0.0f), Vec2(0.75f, 1.0f));
+			m_SEMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
+		}
+
+		// スピーカー
 		for (int i = 0; i < 2; i++)
 		{
-			auto audioPos = m_audioMater[i]->GetPosition();
+			auto audioPos = i ? SEPos : BGMPos;
 			m_speaker[i] = AddGameObject<Sprite>(
 				L"AudioOther",
 				Vec2(80, 80),
-				Vec3(audioPos.x - 300.0f, audioPos.y, audioPos.z)
+				Vec3(audioPos.x - 300, audioPos.y - 100, audioPos.z)
 			);
 			m_speaker[i]->SetDrawLayer(1);
 			m_speaker[i]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 1.0f));
 			m_speaker[i]->OnClear(true);
 		}
 
+		// 選択してるところ
 		for (int i = 0; i < 2; i++)
 		{
-			auto audioPos = m_audioMater[i]->GetPosition();
+			auto bgmMax = m_BGMMater[9]->GetPosition();
+			auto seMax = m_SEMater[9]->GetPosition();
+			auto audioPos = i ? seMax : bgmMax;
 			m_audioSelect[i] = AddGameObject<Sprite>(
 				L"AudioOther",
 				Vec2(50, 100),
-				Vec3(audioPos.x + 225.0f, audioPos.y, audioPos.z)
+				Vec3(audioPos)
 			);
 			m_audioSelect[i]->SetDrawLayer(1);
 			m_audioSelect[i]->SetUVRect(Vec2(0.75f, 0.0f), Vec2(1.0f, 1.0f));
@@ -473,7 +506,7 @@ namespace basecross {
 			m_selectSprite->OnClear(true);
 			for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
 				m_pauseTextSprite[i]->OnClear(true);
-			// （もし m_audioMater など別配列があればここで全部 OnClear(true)）
+			// （もし m_BGMMater など別配列があればここで全部 OnClear(true)）
 		}
 		// --- Pause ON → 必要要素だけ表示 -------------
 		else
@@ -489,13 +522,7 @@ namespace basecross {
 				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
 					m_pauseTextSprite[i]->OnClear(false);
 				// Audio項目は隠す
-				for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
-				{
-					m_pauseTextSprite[i]->OnClear(true);
-					m_audioMater[i - MAIN_MENU_COUNT]->OnClear(true);
-					m_audioSelect[i - MAIN_MENU_COUNT]->OnClear(true);
-					m_speaker[i - MAIN_MENU_COUNT]->OnClear(true);
-				}
+				AudioUIClear(true);
 			}
 			else
 			{
@@ -503,13 +530,7 @@ namespace basecross {
 				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
 					m_pauseTextSprite[i]->OnClear(true);
 				// Audio項目だけ表示
-				for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
-				{
-					m_pauseTextSprite[i]->OnClear(false);
-					m_audioMater[i - MAIN_MENU_COUNT]->OnClear(false);
-					m_audioSelect[i - MAIN_MENU_COUNT]->OnClear(false);
-					m_speaker[i - MAIN_MENU_COUNT]->OnClear(false);
-				}
+				AudioUIClear(false);
 			}
 
 			// --- スティック上下でメニュー移動 -----------
@@ -546,12 +567,14 @@ namespace basecross {
 			m_selectSprite->SetPosition(
 				Vec3(base.x, base.y - offsetY, base.z)
 			);
+
 			// --- Audio設定の更新処理 --------------------
 			if (m_pauseAudioFlag)
 			{
 				// デッドゾーン定義
 				constexpr float dead = 0.3f;
 				constexpr float change = 50.0f;
+				
 				// 左右いずれかのデッドゾーン復帰でフラグクリア
 				if (fabs(ret.x) < dead)
 					m_audioSelectFlag = false;
@@ -562,6 +585,16 @@ namespace basecross {
 					auto selectPos = m_audioSelect[m_select2]->GetPosition();
 					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x + change, selectPos.y, selectPos.z));
 					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] + 0.1f, 0.0f, 1.0f);
+
+					if (!m_select2)
+					{
+						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
+					}
+					else
+					{
+						m_SEMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
+					}
+					m_audioMaxSetCol[m_select2] += 1;
 					m_audioSelectFlag = true;
 				}
 				// スティックを左に倒したら -0.1f
@@ -570,6 +603,16 @@ namespace basecross {
 					auto selectPos = m_audioSelect[m_select2]->GetPosition();
 					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x - change, selectPos.y, selectPos.z));
 					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] - 0.1f, 0.0f, 1.0f);
+					m_audioMaxSetCol[m_select2] -= 1;
+					if (!m_select2)
+					{
+						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+					}
+					else
+					{
+						m_SEMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+					}
+
 					m_audioSelectFlag = true;
 				}
 			}
@@ -780,6 +823,27 @@ namespace basecross {
 
 		scene->SetDebugString(wss.str());
 
+	}
+
+	void StageSato::AudioUIClear(bool clear)
+	{
+		// --- 定数定義 ------------------------------------
+		constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
+		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE → 0～1
+		constexpr int AUDIO_MATER = 10;
+
+		for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
+		{
+			m_pauseTextSprite[i]->OnClear(clear);
+			m_audioSelect[i - MAIN_MENU_COUNT]->OnClear(clear);
+			m_speaker[i - MAIN_MENU_COUNT]->OnClear(clear);
+		}
+
+		for (int i = 0; i < AUDIO_MATER; i++)
+		{
+			m_BGMMater[i]->OnClear(clear);
+			m_SEMater[i]->OnClear(clear);
+		}
 	}
 
 	//質問表示関係(超長い)

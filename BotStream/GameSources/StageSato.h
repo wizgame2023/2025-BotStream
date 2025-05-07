@@ -50,7 +50,8 @@ namespace basecross {
 		shared_ptr<Sprite> m_pauseBack;
 		shared_ptr<Sprite> m_pauseTextSprite[6];
 		shared_ptr<Sprite> m_speaker[2];
-		shared_ptr<Sprite> m_audioMater[2];
+		shared_ptr<Sprite> m_BGMMater[10];
+		shared_ptr<Sprite> m_SEMater[10];
 		shared_ptr<Sprite> m_audioSelect[2];
 
 		// スプライトのリスト
@@ -78,6 +79,7 @@ namespace basecross {
 		bool m_pauseFlag = false;
 		bool m_pauseAudioFlag = false;
 		float m_audioMax[2] = { 1.0f , 1.0f };
+		int m_audioMaxSetCol[2] = { 10, 10 };
 
 		int m_select2 = 0;
 
@@ -112,6 +114,9 @@ namespace basecross {
 
 		// 軸の正規化
 		float NormalizeAxis(float minusSide, float plusSide);
+
+		// BGM,SE関係の表示非表示の制御
+		void AudioUIClear(bool clear);
 
 		// 性格診断のステータス変動
 		//void PersonalStateChange(int questionID, int answerIndex);
