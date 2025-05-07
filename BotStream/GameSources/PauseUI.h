@@ -31,6 +31,20 @@ namespace basecross {
 		//選択左
 		shared_ptr<Sprite> m_selectSpriteL;
 
+		// pause画面のUIText
+		shared_ptr<Sprite> m_pauseTextSprite[6];
+
+		// 選択切り替えフラグ
+		bool m_selectFlag = false;
+
+		enum PauseSelect
+		{
+			Restart,
+			StageSelect,
+			Audio,
+		};
+
+		//void CreateSprite();
 	public:
 		Pause(shared_ptr<Stage>& StagePtr) :
 			MyGameObject(StagePtr)

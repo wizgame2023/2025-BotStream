@@ -13,7 +13,7 @@ namespace basecross {
 	void Pause::OnCreate()
 	{
 		auto stage = GetStage();
-
+		//CreateSprite();
 		////ステージセレクト
 		//float selectSizeX = 250, selectSizeY = selectSizeX * 0.5f;
 		//float selectPosX = 0, selectPosY = 200;
@@ -80,7 +80,50 @@ namespace basecross {
 		//	}
 		//}
 		
-		
+		if (m_pauseFlag)
+		{
+			auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+			auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+
+			Vec2 ret;
+			if (cntl[0].bConnected)
+			{
+				ret.x = cntl[0].fThumbLX;
+				ret.y = cntl[0].fThumbLY;
+			}
+			else if (!cntl[0].bConnected)
+			{
+				if (keybord.m_bPushKeyTbl[VK_UP])
+					ret.y = 1;
+
+				if (keybord.m_bPushKeyTbl[VK_LEFT])
+					ret.x = -1;
+
+				if (keybord.m_bPushKeyTbl[VK_DOWN])
+					ret.y = -1;
+
+				if (keybord.m_bPushKeyTbl[VK_RIGHT])
+					ret.x = 1;
+
+			}
+
+			// Lスティックを上下に倒すと選択できる
+			if (ret.y >= 0.3f && !m_selectFlag && m_select < 2)
+			{
+				m_select++;
+				m_selectFlag = true;
+			}
+			else if (ret.y <= -0.3f && !m_selectFlag && m_select > 0)
+			{
+				m_select--;
+				m_selectFlag = true;
+			}
+			else if ((ret.y <= 0.29f && ret.x >= -0.29f) && m_selectFlag)
+			{
+				m_selectFlag = false;
+			}
+
+		}
 		
 		
 		if (!m_pauseFlag)
@@ -126,4 +169,68 @@ namespace basecross {
 
 	}
 
+
+	//void Pause::CreateSprite()
+	//{
+	//	// pause
+	//	float X = 300.0f;
+	//	m_pauseTextSprite[0] = AddGameObject<Sprite>(
+	//		L"PauseText",
+	//		Vec2(500, 500 / 2),
+	//		Vec3(0, 0, 0)
+	//	);
+	//	m_pauseTextSprite[0]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.5f));
+
+	//	for (int i = 0; i < 6; i++)
+	//	{
+	//		m_pauseTextSprite[i] = AddGameObject<Sprite>(
+	//			L"PauseText",
+	//			Vec2(X, X / 2),
+	//			Vec3(-200, 300 - (i * 150), 0)
+	//		);
+	//	}
+	//	m_pauseTextSprite[1] = AddGameObject<Sprite>(
+	//		L"PauseText",
+	//		Vec2(X, X / 2),
+	//		Vec3(0, 0, 0)
+	//	);
+	//	m_pauseTextSprite[1]->SetUVRect(Vec2(0.333f, 0.0f), Vec2(0.666f,0.5f));
+
+	//	// セレクト
+	//	m_pauseTextSprite[2] = AddGameObject<Sprite>(
+	//		L"PauseText",
+	//		Vec2(X, X / 2),
+	//		Vec3(0, 0, 0)
+	//	);
+	//	m_pauseTextSprite[2]->SetUVRect(Vec2(0.666f, 0.0f), Vec2(1.0f,0.5f));
+
+	//	// オーディオ
+	//	m_pauseTextSprite[3] = AddGameObject<Sprite>(
+	//		L"PauseText",
+	//		Vec2(X, X / 2),
+	//		Vec3(0, 0, 0)
+	//	);
+	//	m_pauseTextSprite[3]->SetUVRect(Vec2(0.0f, 0.5f), Vec2(0.333f,1.0f));
+
+	//	// BGM
+	//	m_pauseTextSprite[4] = AddGameObject<Sprite>(
+	//		L"PauseText",
+	//		Vec2(X, X / 2),
+	//		Vec3(0, 0, 0)
+	//	);
+	//	m_pauseTextSprite[4]->SetUVRect(Vec2(0.333f, 0.5f), Vec2(0.666f, 1.0f));
+
+	//	// SE
+	//	m_pauseTextSprite[5] = AddGameObject<Sprite>(
+	//		L"PauseText",
+	//		Vec2(X, X / 2),
+	//		Vec3(0, 0, 0)
+	//	);
+	//	m_pauseTextSprite[5]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 1.0f));
+	//	//m_restartSprite = AddGameObject<Sprite>(
+	//	//	L"PlayerType",
+	//	//	Vec2(XY, XY),
+	//	//	Vec3(0, 0, 0)
+	//	//);
+	//}
 }

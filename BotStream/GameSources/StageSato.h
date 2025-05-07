@@ -42,10 +42,16 @@ namespace basecross {
 		//shared_ptr<Sprite> m_gunSprite;
 		//shared_ptr<Sprite> m_questionSprite[5];
 		//shared_ptr<Sprite> m_answerSprite[5][3];
-		//shared_ptr<Sprite> m_selectSprite;
 		//shared_ptr<Sprite> m_resultSprite;
 
+		shared_ptr<Sprite> m_selectSprite;
+
 		shared_ptr<Sprite> m_personalSelect;
+		shared_ptr<Sprite> m_pauseBack;
+		shared_ptr<Sprite> m_pauseTextSprite[6];
+		shared_ptr<Sprite> m_speaker[2];
+		shared_ptr<Sprite> m_audioMater[2];
+		shared_ptr<Sprite> m_audioSelect[2];
 
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
@@ -64,8 +70,16 @@ namespace basecross {
 		// 選択切り替えフラグ
 		bool m_selectFlag = false;
 		bool m_questionEndFlag = false;
+		// Audio用の選択切り替えフラグ
+		bool m_audioSelectFlag = false;
 		int m_select = 0;
 		Vec3 m_selectPos;
+
+		bool m_pauseFlag = false;
+		bool m_pauseAudioFlag = false;
+		float m_audioMax[2] = { 1.0f , 1.0f };
+
+		int m_select2 = 0;
 
 		PlayerType m_type = PlayerType::Type_Speed;
 
@@ -104,10 +118,6 @@ namespace basecross {
 
 		//void StateResult(int LawCha, int EvilGood);
 
-		// 数字を画面上に表示する関数
-		// value     : 表示する数値
-		// pos       : 表示開始位置
-		// digitSize : 各桁の幅と高さ
 		void ShowNumber(int value, Vec2 pos, float digitSize);
 
 		// playerの最大HPを取得(sprite)
@@ -158,14 +168,14 @@ namespace basecross {
 			return m_type;
 		}
 
-		//// 比率みたいなやつをあーだこーだするやつ
-		//template <typename T>
-		//T clamp(T value, T minValue, T maxValue)
-		//{
-		//	if (value < minValue) return minValue;
-		//	if (value > maxValue) return maxValue;
-		//	return value;
-		//}
+		// 比率みたいなやつをあーだこーだするやつ
+		template <typename T>
+		T clamp(T value, T minValue, T maxValue)
+		{
+			if (value < minValue) return minValue;
+			if (value > maxValue) return maxValue;
+			return value;
+		}
 
 	};
 

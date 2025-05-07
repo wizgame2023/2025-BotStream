@@ -80,7 +80,101 @@ namespace basecross {
 			Vec3(0, 0, 0)
 		);
 		m_personalSelect->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 1.0f));
+		m_personalSelect->OnClear(true);
 
+		// pause背景
+		float XY1 = 1450, textPosX = -400, textPosY = 300;
+		m_pauseBack = AddGameObject<Sprite>(
+			L"PauseBack",
+			Vec2(XY1, XY1 * 0.5625f),
+			Vec3(0, 0, 0)
+		);
+		m_pauseBack->OnClear(true);
+		m_pauseBack->SetDrawLayer(0);
+
+		for (int i = 0; i < 4; i++)
+		{
+			m_pauseTextSprite[i] = AddGameObject<Sprite>(
+				L"PauseText",
+				Vec2(250, 250 / 2),
+				Vec3(textPosX, textPosY - (i * 150), 0)
+			);
+			m_pauseTextSprite[i]->SetDrawLayer(1);
+			m_pauseTextSprite[i]->OnClear(true);
+
+		}
+		for (int i = 4; i < 6; i++)
+		{
+			m_pauseTextSprite[i] = AddGameObject<Sprite>(
+				L"PauseText",
+				Vec2(200, 200 / 2),
+				Vec3(200, 900 - (i * 200), 0)
+			);
+			m_pauseTextSprite[i]->SetDrawLayer(1);
+			m_pauseTextSprite[i]->OnClear(true);
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			auto audioPos = m_pauseTextSprite[i + 4]->GetPosition();
+			m_audioMater[i] = AddGameObject<Sprite>(
+				L"AudioMater",
+				Vec2(500, 500 / 5),
+				Vec3(audioPos.x + 50, audioPos.y - 100, audioPos.z)
+			);
+			m_audioMater[i]->SetDrawLayer(1);
+			m_audioMater[i]->OnClear(true);
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			auto audioPos = m_audioMater[i]->GetPosition();
+			m_speaker[i] = AddGameObject<Sprite>(
+				L"AudioOther",
+				Vec2(80, 80),
+				Vec3(audioPos.x - 300.0f, audioPos.y, audioPos.z)
+			);
+			m_speaker[i]->SetDrawLayer(1);
+			m_speaker[i]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 1.0f));
+			m_speaker[i]->OnClear(true);
+		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			auto audioPos = m_audioMater[i]->GetPosition();
+			m_audioSelect[i] = AddGameObject<Sprite>(
+				L"AudioOther",
+				Vec2(50, 100),
+				Vec3(audioPos.x + 225.0f, audioPos.y, audioPos.z)
+			);
+			m_audioSelect[i]->SetDrawLayer(1);
+			m_audioSelect[i]->SetUVRect(Vec2(0.75f, 0.0f), Vec2(1.0f, 1.0f));
+			m_audioSelect[i]->OnClear(true);
+			m_audioSelect[i]->SetColor(Col4(0.52f, 0.8f, 0.92f, 1.0f));
+		}
+
+		// pause
+		m_pauseTextSprite[0]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.5f));
+		// 再開
+		m_pauseTextSprite[1]->SetUVRect(Vec2(0.333f, 0.0f), Vec2(0.666f, 0.5f));
+		// セレクト
+		m_pauseTextSprite[2]->SetUVRect(Vec2(0.666f, 0.0f), Vec2(1.0f, 0.5f));
+		// オーディオ
+		m_pauseTextSprite[3]->SetUVRect(Vec2(0.0f, 0.5f), Vec2(0.333f, 1.0f));
+		// BGM
+		m_pauseTextSprite[4]->SetUVRect(Vec2(0.333f, 0.5f), Vec2(0.666f, 1.0f));
+		// SE
+		m_pauseTextSprite[5]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 1.0f));
+
+		Vec2 selectSize(400, 300);
+		m_selectPos = Vec3(textPosX, textPosY - 150, 0);
+		// 選択してるところのやつ
+		m_selectSprite = AddGameObject<Sprite>(
+			L"Select",			//テクスチャ名
+			selectSize,      // サイズ
+			m_selectPos);        // 表示位置
+		m_selectSprite->OnClear(true);
+		m_selectSprite->SetDrawLayer(2);
 		/*
 		//コントローラー関係--------------------------------------------------
 		const float buttonPosX = 500, buttonPosY = -200;
@@ -308,7 +402,7 @@ namespace basecross {
 
 		//Vec2 selectSize(275, 200);
 		//m_selectPos = answerPos;
-		//// 選択してるところのやつ
+		// 選択してるところのやつ
 		//m_selectSprite = AddGameObject<Sprite>(
 		//	L"Select",			//テクスチャ名
 		//	selectSize,      // サイズ
@@ -323,7 +417,7 @@ namespace basecross {
 		//);
 		//m_resultSprite->OnClear(true);
 		//--------------------------------------------------------------------
-		
+
 
 	}
 
@@ -357,97 +451,170 @@ namespace basecross {
 
 		}
 
-		// Lスティックを左右に倒すと選択できる
-		if (ret.x >= 0.3f && !m_selectFlag && m_select < 2)
+		if (!m_pauseFlag &&
+			(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
+				keybord.m_bPressedKeyTbl[VK_SPACE]))
 		{
-			m_select++;
-			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
-			m_personalSelect->SetUVRect(Vec2(0.333f * m_select, 0.0f), Vec2((0.333f * m_select) + 0.333f, 1.0f));
-			m_selectFlag = true;
+			m_pauseFlag = true;
+			m_pauseAudioFlag = false;
+			m_select2 = 0;     // メニューインデックス 0 からスタート
+			m_selectFlag = false; // デッドゾーンフラグクリア
 		}
-		else if (ret.x <= -0.3f && !m_selectFlag && m_select > 0)
+
+		// --- 定数定義 ------------------------------------
+		constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
+		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE → 0～1
+		const float dead = 0.3f;            // デッドゾーン
+
+		// --- 2) Pause OFF → 完全非表示 ------------------
+		if (!m_pauseFlag)
 		{
-			m_select--;
-			//m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
-			m_personalSelect->SetUVRect(Vec2(0.333f * m_select, 0.0f), Vec2((0.333f * m_select) + 0.333f, 1.0f));
-			m_selectFlag = true;
+			m_pauseBack->OnClear(true);
+			m_selectSprite->OnClear(true);
+			for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
+				m_pauseTextSprite[i]->OnClear(true);
+			// （もし m_audioMater など別配列があればここで全部 OnClear(true)）
 		}
-		else if ((ret.x <= 0.29f && ret.x >= -0.29f) && m_selectFlag)
+		// --- Pause ON → 必要要素だけ表示 -------------
+		else
 		{
-			m_selectFlag = false;
-		}
-		
+			// 背景と選択してるところは常に表示
+			m_pauseBack->OnClear(false);
+			m_selectSprite->OnClear(false);
 
-		/*
-		// 仮：LBボタン,キーボードのSPACEで次の質問表示
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_SPACE])
-		{
-			if (m_switchQues < m_questionOrder.size())
+			// メインメニュー or オーディオメニューの切り替え
+			if (!m_pauseAudioFlag)
 			{
-				int questionID = m_questionOrder[m_switchQues];
-				// 選択でステータス変動
-				PersonalStateChange(questionID, m_select);
-			}
-			m_select = 0;
-			m_selectSprite->SetPosition(Vec3(m_selectPos.x + m_select * 375, m_selectPos.y, m_selectPos.z));
-
-			if (m_switchQues == 5)
-			{
-				m_switchQues = 0;
-			}
-
-			// ここはちゃんと動くかのテストみたいな側面があるため要らないです
-			if (m_switchQues == 4)
-			{
-				m_questionSprite[m_switchQues]->OnClear(true);
-				m_switchQues = 0;
-				m_questionSprite[m_switchQues]->OnClear(false);
-			}
-			//-------------------
-			else 
-			if (m_switchQues != 4)
-			{
-				m_questionSprite[m_switchQues]->OnClear(true);
-				m_questionSprite[m_switchQues + 1]->OnClear(false);
-				for (int i = 0; i < 3; i++)
+				// メイン4つだけ表示
+				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
+					m_pauseTextSprite[i]->OnClear(false);
+				// Audio項目は隠す
+				for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
 				{
-					m_answerSprite[m_switchQues][i]->OnClear(true);
-					m_answerSprite[m_switchQues + 1][i]->OnClear(false);
+					m_pauseTextSprite[i]->OnClear(true);
+					m_audioMater[i - MAIN_MENU_COUNT]->OnClear(true);
+					m_audioSelect[i - MAIN_MENU_COUNT]->OnClear(true);
+					m_speaker[i - MAIN_MENU_COUNT]->OnClear(true);
 				}
-				m_switchQues++;
 			}
 			else
-			if(m_switchQues == 4)
 			{
-				m_questionSprite[m_switchQues]->OnClear(true);
-				m_selectSprite->OnClear(true);
-				for (int i = 0; i < 3; i++)
+				// メイン項目を隠して
+				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
+					m_pauseTextSprite[i]->OnClear(true);
+				// Audio項目だけ表示
+				for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
 				{
-					m_answerSprite[m_switchQues][i]->OnClear(true);
+					m_pauseTextSprite[i]->OnClear(false);
+					m_audioMater[i - MAIN_MENU_COUNT]->OnClear(false);
+					m_audioSelect[i - MAIN_MENU_COUNT]->OnClear(false);
+					m_speaker[i - MAIN_MENU_COUNT]->OnClear(false);
 				}
-				float lawChaosIndex = NormalizeAxis(m_personality.Lawful, m_personality.Chaos);
-				float evilGoodIndex = NormalizeAxis(m_personality.Evil, m_personality.Good);
-				int checkLawCha, checkEvilGood;
+			}
 
-				// 中立:0
-				// 秩序:1
-				// 混沌:2
-				if (lawChaosIndex > -1.4 && lawChaosIndex < 1.4) checkLawCha = 0;
-				else if (lawChaosIndex <= -1.4) checkLawCha = 1;
-				else if (lawChaosIndex >= 1.4) checkLawCha = 2;
+			// --- スティック上下でメニュー移動 -----------
+			// デッドゾーンから復帰したら次の倒し判定をリセット
+			if (fabs(ret.y) < dead)
+				m_selectFlag = false;
 
-				// 中立:0
-				// 悪:1
-				// 善:2
-				if (evilGoodIndex > -1.4 && lawChaosIndex < 1.4) checkEvilGood = 0;
-				else if (evilGoodIndex <= -1.4) checkEvilGood = 1;
-				else if (evilGoodIndex >= 1.4) checkEvilGood = 2;
-				
-				StateResult(checkLawCha, checkEvilGood);
-				m_resultFlag = true;
+			// 今のメニュー数に応じて最大インデックス決定
+			int maxIndex = m_pauseAudioFlag
+				? (AUDIO_MENU_COUNT - 1)
+				: (MAIN_MENU_COUNT - 1);
+
+			// 下倒し：++m_select2
+			if (ret.y <= -dead && !m_selectFlag)
+			{
+				m_select2 = clamp(m_select2 + 1, 0, maxIndex);
+				m_selectFlag = true;
+			}
+			// 上倒し：--m_select2
+			else if (ret.y >= dead && !m_selectFlag)
+			{
+				m_select2 = clamp(m_select2 - 1, 0, maxIndex);
+				m_selectFlag = true;
+			}
+
+			// --- 選択描画位置更新 --------------------
+			Vec3 base = m_selectPos;
+			if (m_pauseAudioFlag)
+				base.x += 600;  // Audioメニューだけ右寄せ
+
+			float offsetY = m_pauseAudioFlag
+				? (m_select2 * 200 + 50)
+				: (m_select2 * 150);
+			m_selectSprite->SetPosition(
+				Vec3(base.x, base.y - offsetY, base.z)
+			);
+			// --- Audio設定の更新処理 --------------------
+			if (m_pauseAudioFlag)
+			{
+				// デッドゾーン定義
+				constexpr float dead = 0.3f;
+				constexpr float change = 50.0f;
+				// 左右いずれかのデッドゾーン復帰でフラグクリア
+				if (fabs(ret.x) < dead)
+					m_audioSelectFlag = false;
+
+				// スティックを右に倒したら +0.1f
+				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[m_select2] < 1.0f)
+				{
+					auto selectPos = m_audioSelect[m_select2]->GetPosition();
+					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x + change, selectPos.y, selectPos.z));
+					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] + 0.1f, 0.0f, 1.0f);
+					m_audioSelectFlag = true;
+				}
+				// スティックを左に倒したら -0.1f
+				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[m_select2] > 0.1f)
+				{
+					auto selectPos = m_audioSelect[m_select2]->GetPosition();
+					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x - change, selectPos.y, selectPos.z));
+					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] - 0.1f, 0.0f, 1.0f);
+					m_audioSelectFlag = true;
+				}
+			}
+
+			// --- 決定（Bボタン or Enter） ----------------
+			if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B) ||
+				keybord.m_bPressedKeyTbl[VK_RETURN])
+			{
+				if (!m_pauseAudioFlag)
+				{
+					switch (m_select2)
+					{
+					case 0: // 再開
+						m_pauseFlag = false;
+						break;
+					case 1: // ステージセレクトへ遷移
+						PostEvent(0.0f,
+							GetThis<ObjectInterface>(),
+							App::GetApp()->GetScene<Scene>(),
+							L"ToStageSelect");
+						m_pauseFlag = false;
+						break;
+					case 2: // オーディオ設定へ
+						// メインを隠してAudio表示に移行
+						m_pauseAudioFlag = true;
+						m_select2 = 0;
+						m_selectFlag = false;
+						break;
+					case 3: // ゲーム終了（必要なら実装）
+					default:
+						break;
+					}
+				}
+				else
+				{
+					// Audioメニュー中の決定処理
+					if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B) ||
+						keybord.m_bPressedKeyTbl[VK_RETURN])
+					{
+						m_select2 = 0;
+						m_pauseAudioFlag = false;
+					}
+				}
 			}
 		}
-		*/
 
 		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
@@ -458,56 +625,60 @@ namespace basecross {
 			m_type = static_cast<PlayerType>(m_select);
 			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
 		}
+		
 
-		//// 仮：Xボタンで武器UI切り替え
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		//{
-		//	m_gunSprite->OnClear(!m_weaponSwitchFlag);
-		//	m_katanaSprite->OnClear(m_weaponSwitchFlag);
-		//	m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
-		//}
+			/*
+			//// 仮：Xボタンで武器UI切り替え
+			//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
+			//{
+			//	m_gunSprite->OnClear(!m_weaponSwitchFlag);
+			//	m_katanaSprite->OnClear(m_weaponSwitchFlag);
+			//	m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
+			//}
 
-		//// 仮：AボタンでUIの数字が下がる
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
-		//{
-		//	m_bulletNum = max(0, m_bulletNum - 1);
-		//}
-		//else if (m_bulletNum <= 0)
-		//{
-		//	m_bulletNum = 90;
-		//}
+			//// 仮：AボタンでUIの数字が下がる
+			//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
+			//{
+			//	m_bulletNum = max(0, m_bulletNum - 1);
+			//}
+			//else if (m_bulletNum <= 0)
+			//{
+			//	m_bulletNum = 90;
+			//}
 
 
-		//// 弾数を文字列に変換
-		//std::string bulletStr = std::to_string(m_bulletNum);
-		//size_t digitCount = bulletStr.size();
-		//Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
-		//float uvWidth = 1.0f / 10.0f;          // UVの幅
+			//// 弾数を文字列に変換
+			//std::string bulletStr = std::to_string(m_bulletNum);
+			//size_t digitCount = bulletStr.size();
+			//Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
+			//float uvWidth = 1.0f / 10.0f;          // UVの幅
 
-		//// 桁数に応じてスプライトを更新(UVだけ更新)
-		//for (size_t i = 0; i < m_bulletDigits.size(); ++i)
-		//{
-		//	auto& digitSprite = m_bulletDigits[i];
+			//// 桁数に応じてスプライトを更新(UVだけ更新)
+			//for (size_t i = 0; i < m_bulletDigits.size(); ++i)
+			//{
+			//	auto& digitSprite = m_bulletDigits[i];
 
-		//	if (i < digitCount)
-		//	{
-		//		// 表示すべき数字を取り出す(文字をint型に)
-		//		int digit = bulletStr[i] - '0';
+			//	if (i < digitCount)
+			//	{
+			//		// 表示すべき数字を取り出す(文字をint型に)
+			//		int digit = bulletStr[i] - '0';
 
-		//		// UV範囲
-		//		float u1 = digit * uvWidth;
-		//		float u2 = u1 + uvWidth;
+			//		// UV範囲
+			//		float u1 = digit * uvWidth;
+			//		float u2 = u1 + uvWidth;
 
-		//		// UVを設定して表示
-		//		digitSprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
-		//	}
-		//	else
-		//	{
-		//		// 桁が足りない場合は非表示
-		//		digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
-		//	}
-		//}
-		DebugLog();
+			//		// UVを設定して表示
+			//		digitSprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
+			//	}
+			//	else
+			//	{
+			//		// 桁が足りない場合は非表示
+			//		digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
+			//	}
+			//}
+			*/
+
+			DebugLog();
 
 	}
 
@@ -573,7 +744,18 @@ namespace basecross {
 		//	<< "QuesID : " << m_questionOrder[m_switchQues] << "\n"
 		//	<< "Answer : " << m_select << "\n"
 		//	<< endl;
-		
+		Vec3 selectPos = m_selectSprite->GetPosition();
+
+		if (m_pauseFlag) wss << "Pause is True" << endl;
+		else wss << "Pause is False" << endl;
+
+
+		wss << "m_selectPos : "
+			<< selectPos.x << ", "
+			<< selectPos.y << ", "
+			<< selectPos.z << "\n"
+			<< m_select2 << "\n"
+			<< endl;
 		if (m_resultFlag)
 		{
 			switch (m_type)
@@ -848,4 +1030,4 @@ namespace basecross {
 	//	}
 	//}
 }
-	//end basecross
+//end basecross
