@@ -21,6 +21,9 @@ namespace basecross {
 		shared_ptr<Actor> m_targetObj = nullptr;//ロックオン時の対象
 		float m_targetDistance;//ターゲット対象との距離
 
+		bool m_dodgeFlag = true;//回避できるかのフラグ
+		bool m_meleeFlag = true;//接近戦できるかのフラグ
+
 		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
@@ -69,6 +72,8 @@ namespace basecross {
 	class PlayerDodgeState : public PlayerStateBase
 	{
 	private:
+		//回避していいかのフラグ
+		bool m_playerDodgeFlag = false;
 	public:
 		PlayerDodgeState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
@@ -295,7 +300,7 @@ namespace basecross {
 		//攻撃時間
 		float m_timeMaxOfHitBack = 1.2f;
 		//攻撃時間計測
-		float m_timeOfHitBack;
+		float m_timeOfHitBack = 0.0f;
 		////次の攻撃の猶予時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ

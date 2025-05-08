@@ -6,6 +6,9 @@
 #include "stdafx.h"
 #include "Project.h"
 
+#define AttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
+#define DodgeButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_A
+
 namespace basecross {
 	void PlayerStateBase::Enter()
 	{
@@ -18,25 +21,34 @@ namespace basecross {
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//カメラマネージャからLockOnTargetの位置を取得する
-		shared_ptr<CameraManager> camera = nullptr;
-		camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
-		shared_ptr<Actor> targetObj = nullptr;
-		targetObj = camera->GetTargetObj();
-		//ターゲット対象がいる時対象との距離を測る
-		if (targetObj)
-		{
-			//Vec3 targetPos = Vec3(0.0f);
-			//Vec3 playerPos = Vec3(0.0f);
-			//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
-			//playerPos = m_player->GetComponent<Transform>()->GetPosition();
-			////LockOnTargetとの距離を計算する
-			m_targetDistance = camera->GetTargetDis();
-		}
-		else if (!targetObj)
-		{
-			m_targetDistance = 0.0f;
-		}
+		//カメラマネージャ取得
+		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+		
+
+		//回避してよいかフラグを受け取る
+		m_dodgeFlag = m_player->GetDodgeFlag();
+		//接近戦指定以下のフラグ受け取る
+		m_meleeFlag = cameraManager->GetMeleeFlag();
+
+		////カメラマネージャからLockOnTargetの位置を取得する
+		//shared_ptr<CameraManager> camera = nullptr;
+		//camera = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+		//shared_ptr<Actor> targetObj = nullptr;
+		//targetObj = camera->GetTargetObj();
+		////ターゲット対象がいる時対象との距離を測る
+		//if (targetObj)
+		//{
+		//	//Vec3 targetPos = Vec3(0.0f);
+		//	//Vec3 playerPos = Vec3(0.0f);
+		//	//targetPos = targetObj->GetComponent<Transform>()->GetPosition();
+		//	//playerPos = m_player->GetComponent<Transform>()->GetPosition();
+		//	////LockOnTargetとの距離を計算する
+		//	m_targetDistance = camera->GetTargetDis();
+		//}
+		//else if (!targetObj)
+		//{
+		//	m_targetDistance = 0.0f;
+		//}
 
 
 	};
@@ -73,22 +85,23 @@ namespace basecross {
 		//歩きステートのアニメーション再生
 		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime * 5);
 	
-		//回避ステートに変更する
+		//回避していいフラグ状態だったら回避ステートに変更
 		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
 		{
-			m_player->ChangeState(L"Dodge");
+			if (m_dodgeFlag)
+			{
+				m_player->ChangeState(L"Dodge");
+			}
 		}
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
-		float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_X)
+		//攻撃するときの処理(刀か銃にするか)
+		if (AttackButton)
 		{
-			//攻撃する際距離によって攻撃方法を変える
-			if (m_targetDistance < meleeRange)
+			if (m_meleeFlag)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
 				{//長押しなら最終段の技が出る
@@ -101,7 +114,7 @@ namespace basecross {
 					m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
 				}
 			}
-			else if (m_targetDistance >= meleeRange)
+			else if (!m_meleeFlag)
 			{//遠距離	
 				auto BulletNumNow = m_player->GetBulletNum();
 				//弾が残っていれば打てる
@@ -131,7 +144,7 @@ namespace basecross {
 	}
 	void PlayerWalkState::Exit()
 	{
-
+		
 	}
 
 	//回避ステート
@@ -142,8 +155,13 @@ namespace basecross {
 
 		m_SEManager->Start(L"Dash", 0, 0.9f);//回避SE
 
+		//回避していいか確認する
+		//m_playerDodgeFlag = m_player->GetDodgeFlag();
 		//回避タグ追加
 		m_player->AddTag(L"DodgeNow");
+
+		//回避判定が開始されたことを伝える
+		m_player->SetEndDodgeFlag(true);
 	}
 	void PlayerDodgeState::Update(float deltaTime)
 	{
@@ -154,8 +172,9 @@ namespace basecross {
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
 		m_player->PlayerMove(PlayerState_Dodge);
 
-		bool dodgeFlag = m_player->GetDodgeFlag();
-		if (!dodgeFlag)
+		//回避した後の処理(どっちのステートに行くかの処理)
+		bool endDodgeFlag = m_player->GetEndDodgeFlag();
+		if (!endDodgeFlag)
 		{
 			//ダッシュステートにするか歩くステートにするか
 			if (m_controller.wButtons & XINPUT_GAMEPAD_A)
@@ -166,6 +185,11 @@ namespace basecross {
 			{
 				m_player->ChangeState(L"PlayerWalk");
 			}
+			//回避終了判定リセット
+			m_player->SetEndDodgeFlag(true);
+			//回避したので回避のクールタイムを入れる
+			m_player->SetDodgeFlag(false);
+
 		}
 
 	}
@@ -219,15 +243,15 @@ namespace basecross {
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
-		float meleeRange = 200.0f;
+		//float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_X)
+		if (AttackButton)
 		{
 			//攻撃する際距離によって攻撃方法を変える
-			if (m_targetDistance < meleeRange)
+			if (m_meleeFlag)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
 				{//長押しなら最終段の技が出る
@@ -240,7 +264,7 @@ namespace basecross {
 					m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
 				}
 			}
-			else if (m_targetDistance >= meleeRange)
+			else if (!m_meleeFlag)
 			{//遠距離	
 				auto BulletNumNow = m_player->GetBulletNum();
 				//弾が残っていれば打てる
@@ -280,10 +304,6 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
-		////攻撃の当たり判定を出す
-		//auto stage = m_player->GetStage();
-		////攻撃の当たり判定(仮)
-		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 	}
 	void PlayerAttack1State::Update(float deltaTime)
 	{
@@ -297,7 +317,7 @@ namespace basecross {
 
 			tmp.HitOnce = true;//一回しかヒットしないか
 			tmp.Damage = 15;//ダメージ
-			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離
+			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .8f;//のけぞり時間
 			//tmp.ForceRecover = true;
 			m_player->DefAttack(.5f, tmp);
@@ -312,17 +332,16 @@ namespace basecross {
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
 			//攻撃ステートに変更する
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			if (AttackButton)
 			{			
 				m_nestAttackFlag = true;	
 			}
+			//回避ステートに変更する(強制的に回避ステートに変更する)
+			if (DodgeButton)
+			{
+				m_player->ChangeState(L"Dodge");
+			}
 		}
-		////次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
-		//if (m_timeOfAttack >= m_graceTimeOfNextAttack)
-		//{
-		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		//}
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{	
@@ -357,10 +376,6 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
-		////攻撃の当たり判定を出す
-		//auto stage = m_player->GetStage();
-		////攻撃の当たり判定(仮)
-		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(0.0f,0.0f,1.0f,1.0f));
 	
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
@@ -386,17 +401,16 @@ namespace basecross {
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
 			//攻撃ステートに変更する
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			if (AttackButton)
 			{
 				m_nestAttackFlag = true;
 			}
+			//回避ステートに変更する(強制的に回避ステートに変更する)
+			if (DodgeButton)
+			{
+				m_player->ChangeState(L"Dodge");
+			}
 		}
-		////次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
-		//if (m_timeOfAttack >= m_graceTimeOfNextAttack)
-		//{
-		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		//}
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
@@ -432,11 +446,6 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack2", 0, 0.9f);//SE再生
 
-		////攻撃の当たり判定を出す
-		//auto stage = m_player->GetStage();
-		////攻撃の当たり判定(仮)
-		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(1.0f, 0.0f, 1.0f, 1.0f));
-	
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
@@ -460,17 +469,11 @@ namespace basecross {
 		if (m_timeOfAttack < m_graceTimeOfNextAttack)
 		{
 			//攻撃ステートに変更する
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X)
+			if (AttackButton)
 			{
 				m_nestAttackFlag = true;
 			}
 		}
-		////次の攻撃に移行できない状態なら攻撃判定の色を変える(デバック用)
-		//if (m_timeOfAttack >= m_graceTimeOfNextAttack)
-		//{
-		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetDiffuse(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		//	m_AttackObj->GetComponent<PNTStaticDraw>()->SetEmissive(Col4(1.0f, 0.0f, 0.0f, 0.0f));
-		//}
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
@@ -480,7 +483,6 @@ namespace basecross {
 			//ステート遷移
 			if (m_nestAttackFlag)
 			{
-				//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 				m_player->ChangeState(L"AttackEx");//次の攻撃ステートに移動
 				m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
 			}
@@ -494,7 +496,6 @@ namespace basecross {
 	void PlayerAttack3State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 
@@ -516,12 +517,6 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
-
-		////攻撃の当たり判定を出す
-		//auto stage = m_player->GetStage();
-		////攻撃の当たり判定(仮)
-		//m_AttackObj = stage->AddGameObject<Cube>(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 0.0f, 0.0f, 1.0f));
-		
 
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
@@ -555,7 +550,6 @@ namespace basecross {
 	void PlayerAttackExState::Exit()
 	{
 		auto stage = m_player->GetStage();
-		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 	}
 
@@ -603,23 +597,6 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 
-		////攻撃判定の定義
-		//if (m_timeOfAttack <= 0) {
-		//	auto tmp = m_player->GetAttackPtr()->GetHitInfo();
-		//	tmp.HitOnce = true;
-		//	tmp.Damage = 10;
-		//	tmp.HitVel_Stand = Vec3(-1, 5, 0);
-		//	tmp.HitTime_Stand = .8f;
-		//	//tmp.ForceRecover = false;//ノックバックする
-		//	m_player->DefAttack(.5f, tmp);
-		//	m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
-		//	auto AttackPtr = m_player->GetAttackPtr();
-		//	auto AttackPos = AttackPtr->GetPos();
-		//	
-
-		//	AttackPtr->SetCollScale(12.0f);
-		//}
-
 	}
 	void PlayerAttackSpecialState::Exit()
 	{
@@ -638,7 +615,7 @@ namespace basecross {
 		auto stage = m_player->GetStage();
 		auto playerPos = m_player->GetPosition();
 		m_SEManager->Start(L"HandGun", 0, 0.9f);//銃SE再生
-		auto bullet = stage->AddGameObject<Bullet>(playerPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 30.0f, m_player,30.0f);
+		auto bullet = stage->AddGameObject<Bullet>(playerPos+Vec3(0.0f,2.0f,0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 30.0f, m_player, 30.0f);
 		//m_player->AddEffect(PlayerEffect_Beam);//攻撃エフェクトを出す
 	}
 	void PlayerAttackLongState::Update(float deltaTime)
@@ -710,6 +687,7 @@ namespace basecross {
 		//目標となる角度取得
 		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
 		//auto angleTarget = atan2f(targetVec.z, targetVec.x);
+
 		
 		//Playerのいる方向を計算
 		auto playerPos = stage->GetSharedGameObject<Player>(L"Player")->GetPosition();

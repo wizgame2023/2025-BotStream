@@ -14,6 +14,8 @@ namespace basecross{
 	class StageSato;
 	class PlayerBulletUI;
 	class EnemyBase;//EnemyZakoが居なくなったら消す
+	class BillBoard;
+	class BillBoardGauge;
 	enum PlayerState
 	{
 		PlayerState_Walk,
@@ -31,7 +33,8 @@ namespace basecross{
 		PlayerEffect_Attack2,
 		PlayerEffect_Attack3,
 		PlayerEffect_AttackEx,
-		PlayerEffect_Beam
+		PlayerEffect_Beam,
+		EnemyEffect_ArmorBreak
 	};
 
 	enum ActorName
@@ -49,10 +52,16 @@ namespace basecross{
 		const float m_speedMaxDash = 20.0f;
 		//スティックのデッドゾーン(あとでmanager系に置くかも)
 		float m_stickDeadZone = .1f;
-		//回避したかのフラグ
-		bool m_dodgeFlag = false;
-		//回避時間を測る変数
-		float m_dodgeTime;
+		//回避できるかのフラグ
+		bool m_dodgeFlag = true;
+		//回避処理を終えたかのフラグ
+		bool m_endDodgeFlag = false;
+		//回避計測時間
+		float m_dodgeTime = 0.0f;
+		//回避のクールタイムを測る変数
+		float m_dodgeCoolTime = 0.0f;
+		//回避のクールタイムの時間
+		float m_maxDodgeCoolTime = 0.8f;
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
@@ -69,9 +78,9 @@ namespace basecross{
 		//現在SP 
 		int m_SPCurrent = 0;
 		//最大の球数
-		int m_bulletNumMax = 3;
+		int m_bulletNumMax = 10;
 		//現在の球数
-		int m_bulletNum = 3;
+		int m_bulletNum = 10;
 
 		//リロードしている時間計測
 		float m_reloadTimeCount = 0.0f;
@@ -117,9 +126,6 @@ namespace basecross{
 		//球がなくなった時のリロード処理
 		void ReloadBullet(float ReloadTime);
 
-		//回避フラグのゲッター
-		bool GetDodgeFlag();
-
 		//HPのゲッター
 		int GetHP();
 		//HPのゲッター
@@ -131,7 +137,19 @@ namespace basecross{
 		//SPのセッター
 		void SetSP(int setSP);
 		//SPMaxのゲッター
-		int GetMaxSP();
+		int GetMaxSP();		
+		
+		//DodgeFlagのセッター
+		void SetDodgeFlag(bool setDodgeFlag);
+		//DodgeFlagのゲッター
+		bool GetDodgeFlag();
+
+		//endDodgeFlagのセッター
+		void SetEndDodgeFlag(bool setDodgeFlag);
+		//endDodgeFlagのゲッター
+		bool GetEndDodgeFlag();
+
+
 		//現在の球数を受け取る
 		int Player::GetBulletNum()
 		{
@@ -169,7 +187,8 @@ namespace basecross{
 	{
 	private:
 		float m_speed = 1.0f;
-		float m_playerAngle = 0.0f;
+		float m_AngleYAxis = 0.0f;//y軸の角度
+		float m_angleXAxis = 0.0f;//x軸の角度
 		float m_canMoveDistance;//移動できる長さ
 
 		//攻撃しているアクター
@@ -195,6 +214,8 @@ namespace basecross{
 		void OnCreate()override;
 		void OnUpdate()override;
 
+		void OnCollisionEnter(shared_ptr<GameObject>& obj)override;
+
 		//攻撃しているアクターを指定する
 		void SetAttackActor(int actorName);
 	};
@@ -205,6 +226,10 @@ namespace basecross{
 	{
 	private:
 		void OnDamaged() override;
+
+		//HPバー用のビルボード
+		shared_ptr<BillBoard> m_HPFrame = nullptr;
+		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
 	public:
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
@@ -223,6 +248,9 @@ namespace basecross{
 		void OnCreate() override;
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+
+		//ビルボードの処理
+		void UpdateHPBer();
 	};
 	
 }

@@ -1,6 +1,6 @@
-/*!
+ï»¿/*!
 @file Actor.cpp
-@brief Player‚âEnemy‚È‚Ç‚ÌƒLƒƒƒ‰ƒNƒ^[—p‚ÌƒNƒ‰ƒX
+@brief Playerã‚„Enemyãªã©ã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ç”¨ã®ã‚¯ãƒ©ã‚¹
 */
 
 #include "stdafx.h"
@@ -24,20 +24,20 @@ namespace basecross {
 	void Actor::OnCreate() {
 		auto stage = GetStage();
 
-		//ActorƒOƒ‹[ƒv‚É“o˜^‚·‚é
+		//Actorã‚°ãƒ«ãƒ¼ãƒ—ã«ç™»éŒ²ã™ã‚‹
 		auto group = stage->GetSharedObjectGroup(L"Actor");
 		if (group) {
 			group->IntoGroup(GetThis<GameObject>());
 		}
 
-		//•`‰æƒRƒ“ƒ|[ƒlƒ“ƒg‚Ì’Ç‰Á
+		//æç”»ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®è¿½åŠ 
 		AddComponent<PNTBoneModelDraw>();
 
-		//’…’n”»’è‚Ì¶¬AqƒIƒuƒWƒFƒNƒg‚É‚·‚é
+		//ç€åœ°åˆ¤å®šã®ç”Ÿæˆ
 		m_LandDetect = stage->AddGameObject<LandDetect>();
 		m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
 
-		//UŒ‚”»’è‚Ì¶¬
+		//æ”»æ’ƒåˆ¤å®šã®ç”Ÿæˆ
 		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
 		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
 
@@ -45,16 +45,15 @@ namespace basecross {
 	}
 
 	void Actor::OnUpdate() {
-		//‚à‚µƒ|[ƒYƒtƒ‰ƒO‚ªƒIƒ“‚Å‚ ‚ê‚ÎƒAƒbƒvƒf[ƒgˆ—‚Ío—ˆ‚È‚­‚È‚é
+		//ã‚‚ã—ãƒãƒ¼ã‚ºãƒ•ãƒ©ã‚°ãŒã‚ªãƒ³ã§ã‚ã‚Œã°ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆå‡¦ç†ã¯å‡ºæ¥ãªããªã‚‹
 		if (m_poseFlag)
 		{
 			return;
 		}
-
 		_delta = App::GetApp()->GetElapsedTime();
 	}
 
-	//Å‚‘¬“x
+	//æœ€é«˜é€Ÿåº¦
 	void Actor::SpeedLimit(float multiply) {
 		float limit = m_speedMax * multiply;
 		auto angle = m_velocity;
@@ -74,32 +73,32 @@ namespace basecross {
 				if (m_velocity.z < angle.z * limit) m_velocity.z = angle.z * limit;
 			}
 		}
-		//—‰º‚ÌI’[‘¬“x
+		//è½ä¸‹ã®çµ‚ç«¯é€Ÿåº¦
 		if (m_velocity.y < m_fallTerminal) m_velocity.y = m_fallTerminal;
 	}
 
-	//–€C(’nã‚Ì‚İ)
+	//æ‘©æ“¦(åœ°ä¸Šã®ã¿)
 	void Actor::Friction() {
-		//Ã–€C
+		//é™æ‘©æ“¦
 		if (m_accel == Vec3(0)) {
 			m_velocity.x -= m_velocity.x * m_friction * (1000.0f / 60.0f) * _delta;
 			m_velocity.z -= m_velocity.z * m_friction * (1000.0f / 60.0f) * _delta;
 			if (m_velocity.length() < m_frictionThreshold) m_velocity.x = 0;
 			return;
 		}
-		//“®–€C
+		//å‹•æ‘©æ“¦
 		if (m_accel != Vec3(0)) {
 			m_velocity.x -= m_velocity.x * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
 			m_velocity.z -= m_velocity.z * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
 		}
 	}
 
-	//d—Í
+	//é‡åŠ›
 	void Actor::Gravity() {
 		m_velocity.y += m_gravity * _delta;
 	}
 
-	//OnCollisionEnter‚É’u‚­
+	//OnCollisionEnterã«ç½®ã
 	void Actor::DetectBeingAttacked(shared_ptr<GameObject>& other) {
 		auto atk = dynamic_pointer_cast<AttackCollision>(other);
 		if (!atk) return;
@@ -112,41 +111,29 @@ namespace basecross {
 
 		isAttacked = isAttacked || (FindTag(L"Enemy") && info.Type == AttackType::Player);
 		isAttacked = isAttacked || (FindTag(L"Player") && info.Type == AttackType::Enemy);
-		//UŒ‚‚ğó‚¯‚½‚ç
+		//æ”»æ’ƒã‚’å—ã‘ãŸã‚‰
 		if (isAttacked) {
-			//UŒ‚”»’è‚©‚çUŒ‚‚Ìƒf[ƒ^‚ğæ“¾
+			//æ”»æ’ƒåˆ¤å®šã‹ã‚‰æ”»æ’ƒã®ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
 			m_GetHitInfo = info;
 
 			if (info.HitOnce == true) {
-				//UŒ‚”»’è‚ğÁ‚·
+				//æ”»æ’ƒåˆ¤å®šã‚’æ¶ˆã™
 				atk->ActivateCollision(0);
 			}
 
-			//”í’eˆ—‚Ö
+			//è¢«å¼¾å‡¦ç†ã¸
 			OnDamaged();
 		}
 	}
 
-	//Œü‚¢‚Ä‚¢‚é•ûŒü‚ÌƒQƒbƒ^[
-	float Actor::GetAngle()
-	{
-		return -m_angle;
-	}
-
-	//Œü‚¢‚Ä‚¢‚é•ûŒü‚ÌƒZƒbƒ^[
-	void Actor::SetAngle(float angle)
-	{
-		m_angle = angle;
-	}
-
-	void Actor::OnLanding()
-	{
-		if (m_disableLandDetect > 0) {
-			m_disableLandDetect -= _delta;
+	//ã“ã‚Œã¯OnUpdateã«ç½®ã
+	void Actor::OnLanding() {
+		if (m_landDetectDisableTime > 0) {
+			m_landDetectDisableTime -= _delta;
 		}
 		else {
 			if (m_LandDetect->GetLand() != m_isLand) {
-				//’…’n‚µ‚½”»’è
+				//ï¿½ï¿½ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				if (!m_isLand)
 				{
 					m_velocity.y = 0;
@@ -159,7 +146,20 @@ namespace basecross {
 		}
 	}
 
-	//ƒGƒtƒFƒNƒg‚ğo‚·ˆ—
+
+	//å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®ã‚²ãƒƒã‚¿ãƒ¼
+	float Actor::GetAngle()
+	{
+		return -m_angle;
+	}
+
+	//å‘ã„ã¦ã„ã‚‹æ–¹å‘ã®ã‚»ãƒƒã‚¿ãƒ¼
+	void Actor::SetAngle(float angle)
+	{
+		m_angle = angle;
+	}
+
+	//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å‡ºã™å‡¦ç†
 	void Actor::AddEffect(int addEffect)
 	{
 		switch (addEffect)
@@ -180,12 +180,15 @@ namespace basecross {
 		case PlayerEffect_Beam:
 			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
+		case EnemyEffect_ArmorBreak:
+			EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			break;
 		default:
 			break;
 		}
 	}
 
-	// ƒGƒtƒFƒNƒg‚ÌƒvƒŒƒC
+	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®ãƒ—ãƒ¬ã‚¤
 	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Vec3 pushPos)
 	{
 		rotate.normalize();
@@ -203,11 +206,11 @@ namespace basecross {
 		auto plPos = trans->GetPosition() + pushPos;
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
-		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//ƒGƒtƒFƒNƒg‚ÌF‚ğ•Ï‚¦‚é
+		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®è‰²ã‚’å¤‰ãˆã‚‹
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
 
-	//ƒ|[ƒY‚Ìƒtƒ‰ƒO‚ğƒIƒ“ƒIƒt‚·‚é
+	//ãƒãƒ¼ã‚ºã®ãƒ•ãƒ©ã‚°ã‚’ã‚ªãƒ³ã‚ªãƒ•ã™ã‚‹
 	void Actor::PoseSwitch(bool onOff)
 	{
 		m_poseFlag = onOff;

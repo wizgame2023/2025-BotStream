@@ -9,6 +9,7 @@
 namespace basecross {
 	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int hp, int attack, int defense) :
 		Actor(stagePtr, pos, rot, scale),
+		m_dodgeCoolTime(0.0f),
 		m_dodgeTime(0.0f)
 	{
 
@@ -79,8 +80,22 @@ namespace basecross {
 			return;
 		}
 
+		//親クラス処理
 		Actor::OnUpdate();
 
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+
+		//物理的な処理
+		if (m_doPhysics) {
+			if (!m_isLand) {
+				Gravity();
+			}
+			else {
+				Friction();
+				//Dodge();//これ使いません
+			}
+		}
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
@@ -92,6 +107,17 @@ namespace basecross {
 		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
 		playerUI->SetPLHPSprite(m_HPCurrent);
 		playerUI->SetPLSPSprite(m_SPCurrent);
+
+		//回避クールタイム計算
+		if (!m_dodgeFlag)
+		{
+			m_dodgeCoolTime += _delta;
+			if (m_dodgeCoolTime >= m_maxDodgeCoolTime)
+			{
+				m_dodgeCoolTime = 0.0f;//リセット
+				m_dodgeFlag = true;//回避できるようにする
+			}
+		}
 
 
 		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
@@ -113,17 +139,6 @@ namespace basecross {
 		//動く処理(仮)
 		//PlayerMove();
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
-
-		//処理
-		if (!m_isLand) {
-			Gravity();
-		}
-		else {
-			Friction();
-			Dodge();
-		}
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -168,7 +183,7 @@ namespace basecross {
 		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
 			m_velocity.y = m_jumpPower;
 			m_isLand = false;
-			m_disableLandDetect = 1.0f;
+			m_landDetectDisableTime = 1.0f;
 		}
 	}
 
@@ -248,8 +263,8 @@ namespace basecross {
 	Vec3 Player::GetMoveVector(int playerState)
 	{
 		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice();
-		auto controller = inputDevice.GetControlerVec()[0];
+		InputDevice inputDevice = App::GetApp()->GetInputDevice();
+		CONTROLER_STATE controller = inputDevice.GetControlerVec()[0];
 		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
 		Vec3 totalVec;
 
@@ -307,12 +322,12 @@ namespace basecross {
 				{
 					m_dashFlag = true;
 					m_dodgeTime = 0.0f;
-					m_dodgeFlag = false;//回避処理終了
+					m_endDodgeFlag = false;//回避処理終了
 				}
 				else
 				{
 					m_dodgeTime = 0.0f;
-					m_dodgeFlag = false;//回避処理終了
+					m_endDodgeFlag = false;//回避処理終了
 				}
 
 			}
@@ -377,11 +392,28 @@ namespace basecross {
 		return m_SPMax;
 	}
 
+	//回避フラグのセッター
+	void Player::SetDodgeFlag(bool setDodgeFlag)
+	{
+		m_dodgeFlag = setDodgeFlag;
+	}
 	//回避フラグのゲッター
 	bool Player::GetDodgeFlag()
 	{
 		return m_dodgeFlag;
 	}
+
+	//回避終了フラグのセッター
+	void Player::SetEndDodgeFlag(bool setEndDodgeFlag)
+	{
+		m_endDodgeFlag = setEndDodgeFlag;
+	}
+	//回避終了フラグのゲッター
+	bool Player::GetEndDodgeFlag()
+	{
+		return m_endDodgeFlag;
+	}
+
 
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
@@ -409,7 +441,8 @@ namespace basecross {
 		auto quat = GetComponent<Transform>()->GetQuaternion();
 		wss /* << L"デバッグ用文字列 "*/
 			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
-			<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
+			<< L"\n 回避フラグ：  " << m_dodgeFlag
+			<< L"\n Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
 			<< L"\nAngle : " << GetAngle() << endl;
@@ -430,6 +463,9 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
+		////テストで撃つ場所にキューブを生成してみる
+		//GetStage()->AddGameObject<Cube>(m_pos, m_rot, Vec3(1.0f, 1.0f, 1.0f));
+
 		//ドローメッシュの設定
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
@@ -446,22 +482,31 @@ namespace basecross {
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
 			return;
 		}
+		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		
 		if (originLock->FindTag(L"Player"))
 		{
-			m_playerAngle = originLock->GetAngle();
+			//弾がカメラの注視点の方向に進むように角度を計算する
+
+			auto cameraAt = cameraManager->GetCameraAt();
+			//float a = originPos.length();
+			Vec2 XZVec = Vec2(cameraAt.x - m_pos.x, cameraAt.z - m_pos.z);//XZ方面の距離ベクトル
+			float lengthY = cameraAt.y - m_pos.y;
+			float lengthXZ = XZVec.length();
+
+			//X軸とY軸のカメラの角度を決める
+			m_angleXAxis = -atan2f(lengthY, lengthXZ) + XMConvertToRadians(90.0f);
+			m_AngleYAxis = -(cameraManager->GetAngle(L"Y")) - XMConvertToRadians(180.0f);
 		}
 		else if (originLock->FindTag(L"Enemy"))
 		{
 			auto playerAngleVec = originLock->GetComponent<Transform>()->GetForward();
-			m_playerAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
-			m_playerAngle -= XMConvertToRadians(90.0f);
+			m_AngleYAxis = atan2f(playerAngleVec.z, -playerAngleVec.x);
+			m_AngleYAxis -= XMConvertToRadians(90.0f);
 		}
-
+		auto test = XMConvertToDegrees(m_AngleYAxis);
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
-		//tmp.Type = AttackType::Player;//攻撃のタイプは敵
-		//SetAttackActor(m_actorType);//攻撃しているActorを指定する
 		switch (m_actorType)
 		{
 		case ActorName_Player:
@@ -500,7 +545,6 @@ namespace basecross {
 		Actor::OnUpdate();
 
 		auto tmp = GetAttackPtr()->GetHitInfo();
-		tmp.Type;
 
 		auto delta = App::GetApp()->GetElapsedTime();
 		//移動距離を計算する
@@ -509,21 +553,42 @@ namespace basecross {
 		//原点オブジェクトを受け取る
 		auto originLock = m_originObj.lock();
 
-		moveVec.x = m_speed * cos(m_playerAngle) * delta;
-		moveVec.z = m_speed * sin(-m_playerAngle) * delta;
+		//誰が撃っているかによってどのように弾が発射されるか決まる
+		if (originLock->FindTag(L"Player"))
+		{
+			moveVec.x = m_speed * cos(m_AngleYAxis) * sin(m_angleXAxis) * delta;
+			moveVec.y = m_speed * cos(m_angleXAxis) * delta;
+			moveVec.z = m_speed * sin(-m_AngleYAxis) * sin(m_angleXAxis) * delta;
+		}
+		if (originLock->FindTag(L"Enemy"))
+		{
+			moveVec.x = m_speed * cos(m_AngleYAxis) * delta;
+			moveVec.z = m_speed * sin(-m_AngleYAxis) * delta;
+		}
 
 		//プレイヤーの位置を取得して移動する
 		auto pos = m_trans->GetPosition();
 		m_trans->SetPosition(pos + moveVec);
 
-		m_canMoveDistance -= moveVec.x + moveVec.z;
-		//一定時間移動したら消える
+		m_canMoveDistance -= moveVec.x + moveVec.z + moveVec.y;
+		//一定距離移動したら消える
 		if (m_canMoveDistance <= 0.0f)
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
 			auto hitInfo = originLock->GetAttackPtr()->GetHitInfo();
 			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
 			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		}
+	}
+
+	//当たり判定
+	void Bullet::OnCollisionEnter(shared_ptr<GameObject>& obj)
+	{
+		//敵や障害物に弾が当たったら消える
+		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
+		if (obj->FindTag(L"Enemy")||obj->FindTag(L"Terrain"))
+		{
+			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
 		}
 	}
 
@@ -594,6 +659,12 @@ namespace basecross {
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
+		//頭上にHPバーを表示させる
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer->SetPercent(1.0f);
+
+		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
 
 	void EnemyZako::OnUpdate()
@@ -605,6 +676,40 @@ namespace basecross {
 		}
 
 		EnemyBase::OnUpdate();
+
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+
+		//物理的な処理
+		if (m_doPhysics) {
+			if (!m_isLand) {
+				Gravity();
+			}
+			else {
+				Friction();
+			}
+		}
+
+
+		//HPバーの処理
+		UpdateHPBer();
+		//if (!m_used)
+		//{
+		//	m_billBoard->SetScale(Vec3(0.0f));
+		//	m_billBoardSecond->SetScale(Vec3(0.0f));
+		//}
+		//if (m_used)
+		//{
+		//	m_billBoard->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+		//	m_billBoardSecond->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+		//	
+		//	//HPの割合によってゲージが減る
+		//	float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
+		//	m_billBoardSecond->SetPercent(HPPercent);
+
+		//}
+
+
 
 		//HPがゼロになったら消える
 		if (m_HPCurrent <= 0)
@@ -620,6 +725,28 @@ namespace basecross {
 		}
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+	}
+
+	//HPバーの処理
+	void EnemyZako::UpdateHPBer()
+	{
+		//ビルボードの処理
+		if (!m_used)
+		{
+			m_HPFrame->SetScale(Vec3(0.0f));
+			m_HPBer->SetScale(Vec3(0.0f));
+		}
+		if (m_used)
+		{
+			m_HPFrame->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+			m_HPBer->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+
+			//HPの割合によってゲージが減る
+			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
+			m_HPBer->SetPercent(HPPercent);
+
+		}
+
 	}
 
 	//コリジョン判定

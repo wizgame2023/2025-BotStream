@@ -100,7 +100,7 @@ namespace basecross {
             colController->SetCollisionSwhich(true);
 
             //É|Å[ÉYèàóùê∂ê¨
-            AddGameObject<Pause>();
+            AddGameObject<PauseSprite>();
     }
 
 
@@ -283,12 +283,13 @@ namespace basecross {
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 
         AddTag(L"Floor");
+        AddTag(L"CameraObstacles");
+        AddTag(L"Terrain");
 
         ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
         //ptrDraw->SetTextureResource(L"Wall");
 
-        AddTag(L"CameraObstacles");
     }
 
 
@@ -498,6 +499,7 @@ namespace basecross {
         //ptrDraw->SetTextureResource(L"Wall");
 
         AddTag(L"CameraObstacles");
+        AddTag(L"Terrain");
 
     }
 
@@ -574,6 +576,7 @@ namespace basecross {
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
         AddTag(L"CameraObstacles");
+        AddTag(L"Terrain");
 
     }
 
@@ -605,6 +608,7 @@ namespace basecross {
         auto ptrDraw = AddComponent<BcPNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         AddTag(L"CameraObstacles");
+        AddTag(L"Terrain");
 
         ptrDraw->SetDiffuse(Col4(0.5f, 0.6f, 0.7f, 0.0f));
         
