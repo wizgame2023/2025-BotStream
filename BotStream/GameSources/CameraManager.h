@@ -83,6 +83,8 @@ namespace basecross{
 		bool m_meleeFlag;//近接戦闘していいかのフラグ	
 
 		bool m_poseFlag;//ポーズのフラグ
+
+		//テストの
 		
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
@@ -152,6 +154,12 @@ namespace basecross{
 			}
 
 			return 0;
+		}
+
+		//カメラのAtゲッタ
+		Vec3 GetCameraAt()
+		{
+			return m_lockStageCamera->GetAt();
 		}
 
 		//ターゲット対象を渡す関数

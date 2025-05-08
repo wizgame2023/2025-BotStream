@@ -147,18 +147,6 @@ namespace basecross {
 		//	m_cameraAngleY = XMConvertToRadians(270.0f);
 		//}
 
-		//ロックオンするときの処理
-		//LockOn(player);
-
-		//注視点はPlayerの位置よりも少し先にしたい
-		m_lockStageCamera->SetAt(m_playerPos + Vec3(0.0f, 3.0f, 0.0f));
-
-		//LockOnCanはどのオブジェクト達になるのか処理
-		//LockOnCandidate(enemyVec, m_playerPos);
-		//角度の調整0~360度までしか出ないようにする
-		AdjustmentAngle();
-		//カメラの位置更新
-		CameraPosUpdate();
 
 		//LBを押している最中は射撃モードに移行する
 		if (m_controler.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
@@ -171,6 +159,11 @@ namespace basecross {
 
 			//その後に射撃用のUIも出したい
 
+			//注視点の変更(普段よりも先に見たい)
+			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
+				cos(m_cameraAngleX) * -15.0f,
+				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f));
+
 		}
 		else
 		{
@@ -182,7 +175,34 @@ namespace basecross {
 
 			//ここはUIを出さない
 
+
+			//注視点の変更
+			//注視点の変更(普段よりも先に見たい)
+			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
+				cos(m_cameraAngleX) * -5.0f,
+				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f));
+			//m_lockStageCamera->SetAt(m_cameraPos + Vec3(cosf(m_addAngleYAxis)*1.0f, m_playerPos.y, sinf(-m_addAngleYAxis) * 1.0f));
+
 		}
+
+
+		//現在の注視点を見れるようにする
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		{
+			player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		}
+
+
+		//ロックオンするときの処理
+		//LockOn(player);
+
+
+		//LockOnCanはどのオブジェクト達になるのか処理
+		//LockOnCandidate(enemyVec, m_playerPos);
+		//角度の調整0~360度までしか出ないようにする
+		AdjustmentAngle();
+		//カメラの位置更新
+		CameraPosUpdate();
 
 
 		//デバック用
@@ -311,10 +331,19 @@ namespace basecross {
 		size_t triangleNumber; // レイが交差したポリゴンの番号
 		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
 
-		//まず、障害物がなかった時の位置を入れる
-		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
-			(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
-			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		//まず、障害物がなかった時の位置を入れる(この数値は接近戦をするか射撃をするかによって変わる)
+		if (m_meleeFlag)
+		{
+			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
+				(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
+				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		}
+		else if (!m_meleeFlag)
+		{
+			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
+				(m_playerPos.y + 5.0f) + cos(m_cameraAngleX) * m_range,
+				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		}
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
@@ -328,7 +357,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にする
 				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
