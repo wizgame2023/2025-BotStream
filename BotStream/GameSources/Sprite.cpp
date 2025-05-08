@@ -65,12 +65,11 @@ namespace basecross {
 		m_Clear = OnOff;
 		if (OnOff == true)//オンなら
 		{
-			m_color = m_drawComp->GetDiffuse();
-			m_drawComp->SetDiffuse(Col4(0.0f, 0.0f, 0.0f, 0.0f));//透明にする
+			SetDrawActive(false);
 		}
 		if (OnOff == false)//オフなら
 		{
-			m_drawComp->SetDiffuse(m_color);//透明でなかった時の色に戻る
+			SetDrawActive(true);//透明でなかった時の色に戻る
 		}
 	}
 
@@ -109,6 +108,11 @@ namespace basecross {
 	void Sprite::SetPosition(Vec3 pos)
 	{
 		m_trans->SetPosition(pos);
+	}
+
+	Vec3 Sprite::GetPosition()
+	{
+		return m_trans->GetPosition();
 	}
 
 	void Sprite::SetUVRect(Vec2 topLeft, Vec2 botRight)

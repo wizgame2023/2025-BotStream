@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<StageSato>();
 
 		}
 
@@ -104,6 +104,10 @@ namespace basecross{
 		strTexture = texPath + L"TitleText.png";
 		app->RegisterTexture(L"TitleText", strTexture);
 
+		// PlayerType
+		strTexture = texPath + L"PlayerTypes.png";
+		app->RegisterTexture(L"PlayerType", strTexture);
+
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);
@@ -126,6 +130,16 @@ namespace basecross{
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
 		
+		// PauseSprite
+		strTexture = texPath + L"PauseBack.png";
+		app->RegisterTexture(L"PauseBack", strTexture);
+		strTexture = texPath + L"PauseText.png";
+		app->RegisterTexture(L"PauseText", strTexture);
+		strTexture = texPath + L"AudioMater.png";
+		app->RegisterTexture(L"AudioMater", strTexture);
+		strTexture = texPath + L"AudioOther.png";
+		app->RegisterTexture(L"AudioOther", strTexture);
+
 		// TextSprite
 		strTexture = texPath + L"Texts.png";
 		app->RegisterTexture(L"Texts", strTexture);

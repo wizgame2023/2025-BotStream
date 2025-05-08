@@ -113,7 +113,7 @@ namespace basecross {
 		SetSharedGameObject(L"CameraManager", cameraManager);
 
 		//ポーズ生成
-		AddGameObject<Pause>();
+		AddGameObject<PauseSprite>();
 
 		//コリジョンマネージャー作成
 		AddGameObject<StageCollisionController>();
