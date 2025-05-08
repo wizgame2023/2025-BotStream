@@ -51,19 +51,13 @@ namespace basecross {
 			return;
 		}
 		_delta = App::GetApp()->GetElapsedTime();
-	}
 
-	//着地判定(無効化時間中ならそれを減算する)
-	OnLanding();
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
 
-	//物理的な処理
-	if (m_doPhysics) {
-		if (!m_isLand) {
-			Gravity();
-		}
-		else {
-			Friction();
-		}
+		//物理的な処理
+		Gravity();
+		Friction();
 	}
 
 	//最高速度
@@ -92,6 +86,10 @@ namespace basecross {
 
 	//摩擦(地上のみ)
 	void Actor::Friction() {
+		if (!m_doPhysics) {
+			return;
+		}
+
 		//静摩擦
 		if (m_accel == Vec3(0)) {
 			m_velocity.x -= m_velocity.x * m_friction * (1000.0f / 60.0f) * _delta;
@@ -103,11 +101,21 @@ namespace basecross {
 		if (m_accel != Vec3(0)) {
 			m_velocity.x -= m_velocity.x * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
 			m_velocity.z -= m_velocity.z * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
+
+			//加速度リセット
+			m_accel = Vec3(0);
 		}
 	}
 
 	//重力
 	void Actor::Gravity() {
+		if (!m_doPhysics) {
+			return;
+		}
+		
+		if (m_isLand && m_velocity.y < m_gravity * _delta) {
+			m_velocity.y = m_gravity * _delta;
+		}
 		m_velocity.y += m_gravity * _delta;
 	}
 
@@ -195,6 +203,9 @@ namespace basecross {
 			break;
 		case EnemyEffect_ArmorBreak:
 			EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			break;
+		case EnemyEffect_Beam:
+			EfkPlaying(L"Beam", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		default:
 			break;

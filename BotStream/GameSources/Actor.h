@@ -32,7 +32,7 @@ namespace basecross {
 		float _delta;
 		//速度
 		Vec3 m_velocity;
-		//加速度(Friction関数で使用するのでvelocityを変動させる場合はこの変数を使ってください)
+		//加速度(Friction関数で使用)
 		Vec3 m_accel;
 		//最高速
 		float m_speedMax = 10;
@@ -135,10 +135,14 @@ namespace basecross {
 			Vec3 nrm = m_hitDirection.normalize();
 			float dir = atan2f(nrm.z, nrm.x);
 
-			Vec3 vel = m_GetHitInfo.HitVel_Stand;
-			m_velocity.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
-			m_velocity.y = vel.y;
-			m_velocity.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
+			Vec3 vel = (m_isLand) ? m_GetHitInfo.HitVel_Stand : m_GetHitInfo.HitVel_Air;
+
+			Vec3 accel;
+			accel.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
+			accel.y = vel.y;
+			accel.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
+			
+			AddVelocity(accel);
 		}
 
 		//攻撃判定のポインタを取得
@@ -160,6 +164,10 @@ namespace basecross {
 		}
 		void SetVelocity(Vec3 vel) {
 			m_velocity = vel;
+		}
+		void AddVelocity(Vec3 vel) {
+			m_accel = vel;
+			m_velocity += vel;
 		}
 
 		//前方ベクトルの取得

@@ -54,9 +54,6 @@ namespace basecross {
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetTextureResource(L"Tx_Boss1");
 
-		RegisterAnim();
-		ChangeAnim(L"Idle");
-
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
@@ -105,35 +102,6 @@ namespace basecross {
 		//なんやかんや
 		m_state->Update();
 
-	}
-
-	void EnemyBase::RegisterAnim() {
-		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		//立
-		ptrDraw->AddAnimation(L"Idle", 0, 25, true, 30.0f);
-		//回転
-		ptrDraw->AddAnimation(L"Rotate", 26, 154, true, 30.0f);
-		//歩き
-		ptrDraw->AddAnimation(L"Walk", 181, 169, true, 60.0f);
-		//のけぞり
-		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
-		//ダウン
-		ptrDraw->AddAnimation(L"KnockedDown", 351, 79, false, 60.0f);
-		//ダウン復帰	
-		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
-		//ボーナス行動
-		ptrDraw->AddAnimation(L"Bonus", 541, 99, false, 90.0f);
-
-		//近接1
-		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
-		//近接2
-		ptrDraw->AddAnimation(L"AttackClose2", 719, 80, false, 60.0f);
-		//回転発生
-		ptrDraw->AddAnimation(L"AttackSpin1", 800, 49, false, 60.0f);
-		//回転持続
-		ptrDraw->AddAnimation(L"AttackSpin2", 850, 75, false, 30.0f);
-		//回転硬直
-		ptrDraw->AddAnimation(L"AttackSpin3", 926, 84, false, 60.0f);
 	}
 
 	//XZ平面におけるプレイヤーとの距離
@@ -189,6 +157,42 @@ namespace basecross {
 	}
 
 	//--------------------------------------------------------------------------
+
+	void BossFirst::RegisterAnim() {
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		//立
+		ptrDraw->AddAnimation(L"Idle", 0, 25, true, 30.0f);
+		//回転
+		ptrDraw->AddAnimation(L"Rotate", 26, 154, true, 30.0f);
+		//歩き
+		ptrDraw->AddAnimation(L"Walk", 181, 169, true, 60.0f);
+		//のけぞり
+		ptrDraw->AddAnimation(L"HitBack", 488, 52, false, 60.0f);
+		//ダウン
+		ptrDraw->AddAnimation(L"KnockedDown", 351, 79, false, 60.0f);
+		//ダウン復帰	
+		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
+		//ボーナス行動
+		ptrDraw->AddAnimation(L"Bonus", 541, 99, false, 90.0f);
+
+		//近接1
+		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
+		//近接2
+		ptrDraw->AddAnimation(L"AttackClose2", 719, 80, false, 60.0f);
+		//回転発生
+		ptrDraw->AddAnimation(L"AttackSpin1", 800, 49, false, 60.0f);
+		//回転持続
+		ptrDraw->AddAnimation(L"AttackSpin2", 850, 75, false, 30.0f);
+		//回転硬直
+		ptrDraw->AddAnimation(L"AttackSpin3", 926, 84, false, 60.0f);
+
+		//極太ビーム用意
+		ptrDraw->AddAnimation(L"AttackSPBeam1", 1500, 75, false, 60.0f);
+		//極太ビーム展開
+		ptrDraw->AddAnimation(L"AttackSPBeam2", 1601, 49, false, 60.0f);
+		//極太ビーム終了
+		ptrDraw->AddAnimation(L"AttackSPBeam3", 1651, 69, false, 60.0f);
+	}
 
 	void BossFirst::OnCreate() {
 		Actor::OnCreate();
@@ -282,7 +286,7 @@ namespace basecross {
 
 	void BossFirst::OnDamaged() {
 		int armorDamage = m_GetHitInfo.Damage;
-		bool armorEffect = m_armor > 0;
+		bool isArmorBreak = m_armor > 0;
 
 		//アーマーへのダメージ2倍
 		if (GetBoneModelDraw()->GetCurrentAnimation() == L"Bonus") {
@@ -290,22 +294,23 @@ namespace basecross {
 		}
 		m_armor -= CalculateDamage(armorDamage);
 
+		//非アーマー
 		if (m_armor <= 0) {
-			if (armorEffect) {
+			//ブレイク時の演出
+			if (isArmorBreak) {
 				AddEffect(EnemyEffect_ArmorBreak);
-
-				//SE
 				App::GetApp()->GetXAudio2Manager()->Start(L"Beam", 0, 0.9f);
+
+				m_state->ChangeState(L"Stun");
+			}
+			else {
+				m_state->ChangeState(L"Hit");
 			}
 
-			//非アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
-
-			m_state->ChangeState(L"Hit");
-
 		}
+		//アーマー
 		else {
-			//アーマー
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
 		}

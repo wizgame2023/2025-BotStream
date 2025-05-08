@@ -30,7 +30,6 @@ namespace basecross{
 
 		weak_ptr<Player> m_player;
 
-		void RegisterAnim();
 
 	public:
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
@@ -99,6 +98,7 @@ namespace basecross{
 
 	class BossFirst : public EnemyBase {
 		void OnDamaged() override;
+		void RegisterAnim();
 
 	public:
 		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
