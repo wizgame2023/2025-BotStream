@@ -400,7 +400,7 @@ namespace basecross {
 		m_gaugeFrameSprite->SetDrawLayer(1);
 
 		// HP ƒQ[ƒW
-		m_plHPSprite = m_stage->AddGameObject<Sprite>(
+		auto m_plHPSprite = m_stage->AddGameObject<Sprite>(
 			L"BossHP",
 			hpGaugeSize,
 			Vec3(gaugePosX - (gaugeSize.x - hpGaugeSize.x) * 0.5f,
