@@ -100,7 +100,7 @@ namespace basecross {
             colController->SetCollisionSwhich(true);
 
             //ƒ|[ƒYˆ—¶¬
-            AddGameObject<Pause>();
+            AddGameObject<PauseSprite>();
     }
 
 
