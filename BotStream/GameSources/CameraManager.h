@@ -51,6 +51,9 @@ namespace basecross{
 		float m_addAngleXAxis;//X軸の追加回転度
 		float m_addAngleYAxis;//Y軸の追加回転度
 
+		//スプライト
+		shared_ptr<Sprite> m_spriteAiming = nullptr;//射撃用のクロスヘアのスプライト
+
 
 		shared_ptr<CameraRayCast> m_cameraRayCast;
 		Vec3 m_playerPos;//プレイヤーポジション
@@ -83,6 +86,8 @@ namespace basecross{
 		bool m_meleeFlag;//近接戦闘していいかのフラグ	
 
 		bool m_poseFlag;//ポーズのフラグ
+
+		//テストの
 		
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
@@ -152,6 +157,12 @@ namespace basecross{
 			}
 
 			return 0;
+		}
+
+		//カメラのAtゲッタ
+		Vec3 GetCameraAt()
+		{
+			return m_lockStageCamera->GetAt();
 		}
 
 		//ターゲット対象を渡す関数
