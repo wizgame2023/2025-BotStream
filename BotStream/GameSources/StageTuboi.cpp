@@ -37,13 +37,18 @@ namespace basecross {
 			throw;
 		}
 
-		CreateSprite();
+		//CreateSprite();
 		AddGameObject<Ground>();
 
 		CreateSharedObjectGroup(L"Actor");
 
 		auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 		SetSharedGameObject(L"Player", player);
+
+		//Playerä÷åWÇÃUIê∂ê¨
+		auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+		SetSharedGameObject(L"PlayerUI", playerUI);
+		//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
 
 		auto enemyMgr = AddGameObject<EnemyManager>();
 		SetSharedGameObject(L"EnemyManager", enemyMgr);

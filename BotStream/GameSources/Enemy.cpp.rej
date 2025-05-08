@@ -1,0 +1,37 @@
+diff a/BotStream/GameSources/Enemy.cpp b/BotStream/GameSources/Enemy.cpp	(rejected hunks)
+@@ -73,30 +73,16 @@
+ 		{
+ 			return;
+ 		}
+-
+-		Actor::OnUpdate();
+ 		//m_used=false�Ȃ�\���������Update��return
+-		if (GetDrawActive() != m_used) {
+-			SetDrawActive(m_used);
+-		}
+-		if (m_used == false) {
+-			m_LandDetect->SetDrawActive(false);
+-			m_LandDetect->SetUpdateActive(false);
+-			SetUpdateActive(m_used);
++		if (GetDrawActive() == false) {
++			SetDrawActive(false);
++			SetUpdateActive(false);
+ 			return;
+ 		}
+ 
+-		//���n����(���������Ԓ��Ȃ炻�����Z����)
+-		OnLanding();
+-
+-		//����
+-		if (!m_isLand) {
+-			Gravity();
+-		}
+-		else {
+-			Friction();
+-		}
++		Actor::OnUpdate();
+ 
++		//�A�[�}�[��
+ 		if (m_armorMax != 0 && m_armor <= 0) {
+ 			m_armorRecover += _delta;
+ 			if (m_armorRecoverTime <= m_armorRecover) {
