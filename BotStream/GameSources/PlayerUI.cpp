@@ -1,6 +1,6 @@
 /*!
 @file PlayerUI.cpp
-@brief ƒvƒŒƒCƒ„[‚ÉŠÖ‚·‚éUI
+@brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«é–¢ã™ã‚‹UI
 */
 
 #pragma once
@@ -19,7 +19,7 @@ namespace basecross {
 		const Vec2 spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
 		const float gaugePosX = 0.0f, gaugePosY = -250;
 
-		//Player‚ÉŠÖ‚·‚éƒo[UI¶¬
+		//Playerã«é–¢ã™ã‚‹ãƒãƒ¼UIç”Ÿæˆ
 		m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
 			L"PLGauge", gaugeSize, Vec3(gaugePosX, gaugePosY, 0));
 		m_gaugeFrameSprite->SetDrawLayer(1);
@@ -40,45 +40,45 @@ namespace basecross {
 		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 
-		//// ‰¼FYƒ{ƒ^ƒ“‚ÅƒvƒŒƒCƒ„[‚Ì(Œ©‚©‚¯ã‚Ì)HP‚ªŒ¸‚é
+		//// ä»®ï¼šYãƒœã‚¿ãƒ³ã§ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®(è¦‹ã‹ã‘ä¸Šã®)HPãŒæ¸›ã‚‹
 		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
 		//{
-		//	m_playerHP = max(0.0f, m_playerHP - 10.0f);  // © 10‚¸‚ÂŒ¸‚é‘z’è
+		//	m_playerHP = max(0.0f, m_playerHP - 10.0f);  // â† 10ãšã¤æ¸›ã‚‹æƒ³å®š
 		//}
 
-		// ”ä—¦‚ÅƒXƒP[ƒŠƒ“ƒO(HP)
+		// æ¯”ç‡ã§ã‚¹ã‚±ãƒ¼ãƒªãƒ³ã‚°(HP)
 		float hpRatio = m_playerHP / m_playerMaxHP;
 		hpRatio = clamp(hpRatio, 0.0f, 1.0f);
 
 		auto hpTrans = m_plHPSprite->GetComponent<Transform>();
 		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
 
-		// ¶’[ŒÅ’è
+		// å·¦ç«¯å›ºå®š
 		const float gaugeWidth = 300.0f * 0.8f;
 		float hpOffsetX = (hpRatio - 1.0f) * (gaugeWidth * 0.5f);
 		hpTrans->SetPosition(Vec3(20.0f + hpOffsetX, -200.0f, 0.0f));
 
-		// ˜g‚ÌˆÊ’u‚©‚ç‚Ì‘Š‘ÎÀ•Wiƒvƒ‰ƒ}ƒC•â³j
+		// æ ã®ä½ç½®ã‹ã‚‰ã®ç›¸å¯¾åº§æ¨™ï¼ˆãƒ—ãƒ©ãƒã‚¤è£œæ­£ï¼‰
 		Vec3 hpOffset(300.0f * 0.066f, -0.7f, 0.0f);
 		hpTrans->SetPosition(framePos + hpOffset + Vec3(hpOffsetX, 0.0f, 0.0f));
 
-		//// ‰¼FBƒ{ƒ^ƒ“‚Å•KE‹Z—­‚ß
+		//// ä»®ï¼šBãƒœã‚¿ãƒ³ã§å¿…æ®ºæŠ€æºœã‚
 		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
 		//{
-		//	m_playerSP = min(m_playerSP + 10.0f, m_playerMaxSP); // ¡‚Ìİ’è‚¾‚Æ10‰ñ‰Ÿ‚·‚ÆÅ‘å‚É‚È‚é
+		//	m_playerSP = min(m_playerSP + 10.0f, m_playerMaxSP); // ä»Šã®è¨­å®šã ã¨10å›æŠ¼ã™ã¨æœ€å¤§ã«ãªã‚‹
 		//}
 
-		// SPƒQ[ƒW‚Ì”ä—¦‚ğŒvZi0.0?1.0j
+		// SPã‚²ãƒ¼ã‚¸ã®æ¯”ç‡ã‚’è¨ˆç®—ï¼ˆ0.0?1.0ï¼‰
 		float spRatio = clamp(m_playerSP / m_playerMaxSP, 0.0f, 1.0f);
 
 		auto spTrans = m_plSPSprite->GetComponent<Transform>();
 		spTrans->SetScale(Vec3(spRatio, 1.0f, 1.0f));
 
-		// ¶’[ŒÅ’è‚Ì‚½‚ß‚ÌˆÊ’u•â³i’†S‚ğƒYƒ‰‚·j
+		// å·¦ç«¯å›ºå®šã®ãŸã‚ã®ä½ç½®è£œæ­£ï¼ˆä¸­å¿ƒã‚’ã‚ºãƒ©ã™ï¼‰
 		const float spGaugeWidth = 240.0f;
 		float spOffsetX = (spRatio - 1.0f) * (spGaugeWidth * 0.3f);
 
-		// ˜g‚ÌˆÊ’u‚©‚ç‚Ì‘Š‘ÎÀ•W
+		// æ ã®ä½ç½®ã‹ã‚‰ã®ç›¸å¯¾åº§æ¨™
 		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
 		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
 
@@ -91,7 +91,7 @@ namespace basecross {
 	{
 		m_stage = GetStage();
 
-		//’e”ŠÖŒW------------------------------------------------------------
+		//å¼¾æ•°é–¢ä¿‚------------------------------------------------------------
 		for (int i = 0; i < 3; ++i)
 		{
 			auto digit = m_stage->AddGameObject<Sprite>(
@@ -99,7 +99,7 @@ namespace basecross {
 				Vec2(m_digitSize, m_digitSize),
 				Vec3(m_digitPos.x + i * m_digitSize, m_digitPos.y, 0.0f)
 			);
-			digit->SetDrawLayer(3); // UI‚ÌÅ‘O–Ê‚É•\¦
+			digit->SetDrawLayer(3); // UIã®æœ€å‰é¢ã«è¡¨ç¤º
 			m_bulletDigits.push_back(digit);
 		}
 		//--------------------------------------------------------------------
@@ -112,16 +112,16 @@ namespace basecross {
 
 		auto playerLock = m_player.lock();
 
-		//Player‚ª‹‚È‚­‚È‚Á‚½‚ç©•ª‚àÁ‚¦‚é
+		//PlayerãŒå±…ãªããªã£ãŸã‚‰è‡ªåˆ†ã‚‚æ¶ˆãˆã‚‹
 		if (!playerLock)
 		{
 			GetStage()->RemoveGameObject<PlayerBulletUI>(GetThis<PlayerBulletUI>());
 			return;
 		}
-		//ƒvƒŒƒCƒ„[‚ÌŒ»İ‚Ì‹…”‚É‚æ‚Á‚Ä”’l‚ª•Ï‚í‚é
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç¾åœ¨ã®çƒæ•°ã«ã‚ˆã£ã¦æ•°å€¤ãŒå¤‰ã‚ã‚‹
 		m_bulletNum =  m_player.lock()->GetBulletNum();
 
-		// ‰¼FAƒ{ƒ^ƒ“‚ÅUI‚Ì”š‚ª‰º‚ª‚é
+		// ä»®ï¼šAãƒœã‚¿ãƒ³ã§UIã®æ•°å­—ãŒä¸‹ãŒã‚‹
 		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
 		//{
 		//	m_bulletNum = max(0, m_bulletNum - 1);
@@ -131,32 +131,32 @@ namespace basecross {
 		//	m_bulletNum = 90;
 		//}
 
-		// ’e”‚ğ•¶š—ñ‚É•ÏŠ·
+		// å¼¾æ•°ã‚’æ–‡å­—åˆ—ã«å¤‰æ›
 		std::string bulletStr = std::to_string(m_bulletNum);
 		size_t digitCount = bulletStr.size();
-		Vec2 bulletPos(-100, 0);               // •\¦ˆÊ’u(CreateSprite‚Ì’l‚Æ“¯‚¶)
-		float uvWidth = 1.0f / 10.0f;          // UV‚Ì•
+		Vec2 bulletPos(-100, 0);               // è¡¨ç¤ºä½ç½®(CreateSpriteã®å€¤ã¨åŒã˜)
+		float uvWidth = 1.0f / 10.0f;          // UVã®å¹…
 
-		// Œ…”‚É‰‚¶‚ÄƒXƒvƒ‰ƒCƒg‚ğXV(UV‚¾‚¯XV)
+		// æ¡æ•°ã«å¿œã˜ã¦ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã‚’æ›´æ–°(UVã ã‘æ›´æ–°)
 		for (size_t i = 0; i < m_bulletDigits.size(); ++i)
 		{
 			auto& digitSprite = m_bulletDigits[i];
 
 			if (i < digitCount)
 			{
-				// •\¦‚·‚×‚«”š‚ğæ‚èo‚·(•¶š‚ğintŒ^‚É)
+				// è¡¨ç¤ºã™ã¹ãæ•°å­—ã‚’å–ã‚Šå‡ºã™(æ–‡å­—ã‚’intå‹ã«)
 				int digit = bulletStr[i] - '0';
 
-				// UV”ÍˆÍ
+				// UVç¯„å›²
 				float u1 = digit * uvWidth;
 				float u2 = u1 + uvWidth;
 
-				// UV‚ğİ’è‚µ‚Ä•\¦
+				// UVã‚’è¨­å®šã—ã¦è¡¨ç¤º
 				digitSprite->SetUVRect(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
 			}
 			else
 			{
-				// Œ…‚ª‘«‚è‚È‚¢ê‡‚Í”ñ•\¦
+				// æ¡ãŒè¶³ã‚Šãªã„å ´åˆã¯éè¡¨ç¤º
 				digitSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.0f, 0.0f));
 			}
 		}
@@ -181,49 +181,49 @@ namespace basecross {
 		{
 		case 0:	//A
 			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_buttonSize,      // ƒTƒCƒY
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+				L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_buttonSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_button->SetUVRect(AUV1, AUV2);
 			break;
 
 		case 1: // X
 			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_buttonSize,      // ƒTƒCƒY
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+				L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_buttonSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_button->SetUVRect(XUV1, XUV2);
 			break;
 
 		case 2: // RB
 			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_buttonSize,      // ƒTƒCƒY
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+				L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_buttonSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_button->SetUVRect(RBUV1, RBUV2);
 			break;
 
 		case 3: // RS
 			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_buttonSize,      // ƒTƒCƒY
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+				L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_buttonSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_button->SetUVRect(RSUV1, RSUV2);
 			break;
 
 		case 4: // LS
 			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_buttonSize,      // ƒTƒCƒY
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+				L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_buttonSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_button->SetUVRect(LSUV1, LSUV2);
 			break;
 
 		case 5: // Hold
 			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_buttonSize,      // ƒTƒCƒY
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+				L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_buttonSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_button->SetUVRect(HOLDAUV1, HOLDAUV2);
 			break;
 
@@ -232,44 +232,44 @@ namespace basecross {
 
 		//A
 		auto sprite = m_stage->AddGameObject<Sprite>(
-			L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-			m_buttonSize,      // ƒTƒCƒY
-			Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+			L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_buttonSize,      // ã‚µã‚¤ã‚º
+			Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 		sprite->SetUVRect(AUV1, AUV2);
 
 		//X
 		sprite = m_stage->AddGameObject<Sprite>(
-			L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-			m_buttonSize,      // ƒTƒCƒY
-			Vec3(m_buttonPos.x - 75, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+			L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_buttonSize,      // ã‚µã‚¤ã‚º
+			Vec3(m_buttonPos.x - 75, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 		sprite->SetUVRect(XUV1, XUV2);
 
 		//RB
 		sprite = m_stage->AddGameObject<Sprite>(
-			L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-			m_buttonSize,      // ƒTƒCƒY
-			Vec3(m_buttonPos.x + 75, m_buttonPos.y, 0));        // •\¦ˆÊ’u
+			L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_buttonSize,      // ã‚µã‚¤ã‚º
+			Vec3(m_buttonPos.x + 75, m_buttonPos.y, 0));        // è¡¨ç¤ºä½ç½®
 		sprite->SetUVRect(RBUV1, RBUV2);
 
 		//RS
 		sprite = m_stage->AddGameObject<Sprite>(
-			L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-			m_buttonSize,      // ƒTƒCƒY
-			Vec3(m_buttonPos.x, m_buttonPos.y + 75, 0));        // •\¦ˆÊ’u
+			L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_buttonSize,      // ã‚µã‚¤ã‚º
+			Vec3(m_buttonPos.x, m_buttonPos.y + 75, 0));        // è¡¨ç¤ºä½ç½®
 		sprite->SetUVRect(RSUV1, RSUV2);
 
 		//LS
 		sprite = m_stage->AddGameObject<Sprite>(
-			L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-			m_buttonSize,      // ƒTƒCƒY
-			Vec3(m_buttonPos.x + 75, m_buttonPos.y + 75, 0));        // •\¦ˆÊ’u
+			L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_buttonSize,      // ã‚µã‚¤ã‚º
+			Vec3(m_buttonPos.x + 75, m_buttonPos.y + 75, 0));        // è¡¨ç¤ºä½ç½®
 		sprite->SetUVRect(LSUV1, LSUV2);
 
 		//HOLD + A
 		sprite = m_stage->AddGameObject<Sprite>(
-			L"Buttons",         // ƒeƒNƒXƒ`ƒƒ–¼
-			m_buttonSize,      // ƒTƒCƒY
-			Vec3(m_buttonPos.x - 75, m_buttonPos.y + 75, 0));        // •\¦ˆÊ’u
+			L"Buttons",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_buttonSize,      // ã‚µã‚¤ã‚º
+			Vec3(m_buttonPos.x - 75, m_buttonPos.y + 75, 0));        // è¡¨ç¤ºä½ç½®
 		sprite->SetUVRect(HOLDAUV1, HOLDAUV2);
 
 	}
@@ -290,51 +290,51 @@ namespace basecross {
 
 		switch (m_textSwitch)
 		{
-		case 0:	//UŒ‚
+		case 0:	//æ”»æ’ƒ
 			m_buttonText = m_stage->AddGameObject<Sprite>(
-				L"Texts",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_textSize,      // ƒTƒCƒY
-				Vec3(m_textPos.x, m_textPos.y, 0));        // •\¦ˆÊ’u
+				L"Texts",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_textSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_textPos.x, m_textPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_buttonText->SetUVRect(ATKUV1, ATKUV2);
 			break;
 
-		case 1: // ‰ñ”ğ
+		case 1: // å›é¿
 			m_buttonText = m_stage->AddGameObject<Sprite>(
-				L"Texts",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_textSize,      // ƒTƒCƒY
-				Vec3(m_textPos.x, m_textPos.y, 0));        // •\¦ˆÊ’u
+				L"Texts",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_textSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_textPos.x, m_textPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_buttonText->SetUVRect(AVOIDUV1, AVOIDUV2);
 			break;
 
-		case 2: // ƒJƒƒ‰
+		case 2: // ã‚«ãƒ¡ãƒ©
 			m_buttonText = m_stage->AddGameObject<Sprite>(
-				L"Texts",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_textSize,      // ƒTƒCƒY
-				Vec3(m_textPos.x, m_textPos.y, 0));        // •\¦ˆÊ’u
+				L"Texts",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_textSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_textPos.x, m_textPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_buttonText->SetUVRect(CAMERAUV1, CAMERAUV2);
 			break;
 
-		case 3: // ƒ_ƒbƒVƒ…
+		case 3: // ãƒ€ãƒƒã‚·ãƒ¥
 			m_buttonText = m_stage->AddGameObject<Sprite>(
-				L"Texts",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_textSize,      // ƒTƒCƒY
-				Vec3(m_textPos.x, m_textPos.y, 0));        // •\¦ˆÊ’u
+				L"Texts",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_textSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_textPos.x, m_textPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_buttonText->SetUVRect(DASHUV1, DASHUV2);
 			break;
 
-		case 4: // ƒƒbƒNƒIƒ“
+		case 4: // ãƒ­ãƒƒã‚¯ã‚ªãƒ³
 			m_buttonText = m_stage->AddGameObject<Sprite>(
-				L"Texts",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_textSize,      // ƒTƒCƒY
-				Vec3(m_textPos.x, m_textPos.y, 0));        // •\¦ˆÊ’u
+				L"Texts",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_textSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_textPos.x, m_textPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_buttonText->SetUVRect(LOCKONUV1, LOCKONUV2);
 			break;
 
-		case 5: // ˆÚ“®
+		case 5: // ç§»å‹•
 			m_buttonText = m_stage->AddGameObject<Sprite>(
-				L"Texts",         // ƒeƒNƒXƒ`ƒƒ–¼
-				m_textSize,      // ƒTƒCƒY
-				Vec3(m_textPos.x, m_textPos.y, 0));        // •\¦ˆÊ’u
+				L"Texts",         // ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+				m_textSize,      // ã‚µã‚¤ã‚º
+				Vec3(m_textPos.x, m_textPos.y, 0));        // è¡¨ç¤ºä½ç½®
 			m_buttonText->SetUVRect(MOVEUV1, MOVEUV2);
 			break;
 
@@ -346,17 +346,17 @@ namespace basecross {
 	//-----------------------------------------------
 	void PlayerWeaponUI::OnCreate()
 	{
-		//Œ»İ‚ÌUŒ‚•û–@ŠÖŒW--------------------------------------------------
-		// ‹ßÚ
+		//ç¾åœ¨ã®æ”»æ’ƒæ–¹æ³•é–¢ä¿‚--------------------------------------------------
+		// è¿‘æ¥
 		m_weaponSprite[0] = m_stage->AddGameObject<Sprite>(
-			L"KatanaTex",  			//ƒeƒNƒXƒ`ƒƒ–¼
-			m_weaponSize,       // ƒTƒCƒY
-			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//•\¦ˆÊ’u
+			L"KatanaTex",  			//ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_weaponSize,       // ã‚µã‚¤ã‚º
+			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//è¡¨ç¤ºä½ç½®
 
 		m_weaponSprite[1] = m_stage->AddGameObject<Sprite>(
-			L"GunTex",  			//ƒeƒNƒXƒ`ƒƒ–¼
-			m_weaponSize,       // ƒTƒCƒY
-			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//•\¦ˆÊ’u
+			L"GunTex",  			//ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			m_weaponSize,       // ã‚µã‚¤ã‚º
+			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//è¡¨ç¤ºä½ç½®
 		m_weaponSprite[1]->OnClear(true);
 		//--------------------------------------------------------------------
 
@@ -366,12 +366,12 @@ namespace basecross {
 	{
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 
-		// ‰¼FXƒ{ƒ^ƒ“‚Å•ŠíUIØ‚è‘Ö‚¦
+		// ä»®ï¼šXãƒœã‚¿ãƒ³ã§æ­¦å™¨UIåˆ‡ã‚Šæ›¿ãˆ
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
 		{
 			m_weaponSprite[0]->OnClear(!m_weaponSwitchFlag);
 			m_weaponSprite[1]->OnClear(m_weaponSwitchFlag);
-			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlag‚ªtrue‚Å‚ ‚ê‚Îfalse‚ğ•Ô‚·Afalse‚Å‚ ‚ê‚Îtrue‚ğ•Ô‚·B
+			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagãŒtrueã§ã‚ã‚Œã°falseã‚’è¿”ã™ã€falseã§ã‚ã‚Œã°trueã‚’è¿”ã™ã€‚
 		}
 
 
@@ -380,61 +380,61 @@ namespace basecross {
 
 	void BossGaugeUI::OnCreate()
 	{
-		// ƒXƒe[ƒWæ“¾
+		// ã‚¹ãƒ†ãƒ¼ã‚¸å–å¾—
 		m_stage = GetStage();
 
-		// ƒQ[ƒWƒTƒCƒY (PlayerGaugeUI ‚Æ“¯‚¶)
+		// ã‚²ãƒ¼ã‚¸ã‚µã‚¤ã‚º (PlayerGaugeUI ã¨åŒã˜)
 		const Vec2 gaugeSize(300.0f, 75.0f);
 		const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
-		const Vec2 ampGaugeSize = hpGaugeSize;  // ƒA[ƒ}[ƒQ[ƒW‚à“¯‚¶‚‚³‚É
+		const Vec2 ampGaugeSize = hpGaugeSize;  // ã‚¢ãƒ¼ãƒãƒ¼ã‚²ãƒ¼ã‚¸ã‚‚åŒã˜é«˜ã•ã«
 
-		// ‰æ–Êã•”‚É•\¦
+		// ç”»é¢ä¸Šéƒ¨ã«è¡¨ç¤º
 		const float gaugePosX = 0.0f;
 		const float gaugePosY = 200.0f;
 
-		// ˜g
+		// æ 
 		m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
 			L"BossGaugeFrame",
 			gaugeSize, 
 			Vec3(gaugePosX, gaugePosY, 0));
 		m_gaugeFrameSprite->SetDrawLayer(1);
 
-		// HP ƒQ[ƒW
-		auto m_plHPSprite = m_stage->AddGameObject<Sprite>(
+		// HP ã‚²ãƒ¼ã‚¸
+		m_HPSprite = m_stage->AddGameObject<Sprite>(
 			L"BossHP",
 			hpGaugeSize,
 			Vec3(gaugePosX - (gaugeSize.x - hpGaugeSize.x) * 0.5f,
 				gaugePosY - (gaugeSize.y * 0.2f),
 				0));
-		m_plHPSprite->SetDrawLayer(2);
+		m_HPSprite->SetDrawLayer(2);
 
 	}
 
 	void BossGaugeUI::OnUpdate()
 	{
-		// ˜g‚ÌˆÊ’u‚ğŠî€‚É
+		// æ ã®ä½ç½®ã‚’åŸºæº–ã«
 		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
 
-		// HP ”ä—¦
+		// HP æ¯”ç‡
 		float hpRatio = clamp(m_HP / m_MaxHP, 0.0f, 1.0f);
 		auto hpTrans = m_HPSprite->GetComponent<Transform>();
 		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
-		// ¶’[ŒÅ’è‚Ì‚½‚ß‚Ì X ƒIƒtƒZƒbƒg
+		// å·¦ç«¯å›ºå®šã®ãŸã‚ã® X ã‚ªãƒ•ã‚»ãƒƒãƒˆ
 		{
 			const float gaugeWidth = 300.0f * 0.8f;
 			float offsetX = (hpRatio - 1.0f) * (gaugeWidth * 0.5f);
 			hpTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f), 0));
 		}
 
-		//// ƒA[ƒ}[”ä—¦
+		//// ã‚¢ãƒ¼ãƒãƒ¼æ¯”ç‡
 		//float ampRatio = clamp(m_AMP / m_MaxAMP, 0.0f, 1.0f);
 		//auto ampTrans = m_AMPSprite->GetComponent<Transform>();
 		//ampTrans->SetScale(Vec3(ampRatio, 1.0f, 1.0f));
-		//// ƒA[ƒ}[ƒQ[ƒW‚à“¯—l‚É¶’[ŒÅ’è
+		//// ã‚¢ãƒ¼ãƒãƒ¼ã‚²ãƒ¼ã‚¸ã‚‚åŒæ§˜ã«å·¦ç«¯å›ºå®š
 		//{
 		//	const float gaugeWidth = 300.0f * 0.8f;
 		//	float offsetX = (ampRatio - 1.0f) * (gaugeWidth * 0.5f);
-		//	// HPƒQ[ƒW‰º‚É 5px •ª‚¸‚ç‚µ‚½ˆÊ’u
+		//	// HPã‚²ãƒ¼ã‚¸ä¸‹ã« 5px åˆ†ãšã‚‰ã—ãŸä½ç½®
 		//	ampTrans->SetPosition(framePos + Vec3(offsetX, -(300.0f * 0.2f) - (300.0f * 0.3f) - 5.0f, 0));
 		//}
 
