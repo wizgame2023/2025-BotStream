@@ -58,6 +58,9 @@ namespace basecross {
 
 		//SE用のマネージャー取得
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		//射撃用のクロスヘア用のテクスチャ追加
+		m_spriteAiming = m_stage->AddGameObject<Sprite>(L"AimingTex", Vec2(50.0f, 50.0f));
+		//m_spriteAiming->OnClear(true);//生成したときは見えないようにする
 
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
@@ -158,6 +161,7 @@ namespace basecross {
 			m_meleeFlag = false;
 
 			//その後に射撃用のUIも出したい
+			m_spriteAiming->OnClear(false);
 
 			//注視点の変更(普段よりも先に見たい)
 			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
@@ -174,15 +178,12 @@ namespace basecross {
 			m_meleeFlag = true;
 
 			//ここはUIを出さない
-
+			m_spriteAiming->OnClear(true);
 
 			//注視点の変更
-			//注視点の変更(普段よりも先に見たい)
 			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
 				cos(m_cameraAngleX) * -5.0f,
 				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f));
-			//m_lockStageCamera->SetAt(m_cameraPos + Vec3(cosf(m_addAngleYAxis)*1.0f, m_playerPos.y, sinf(-m_addAngleYAxis) * 1.0f));
-
 		}
 
 
