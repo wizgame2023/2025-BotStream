@@ -62,6 +62,8 @@ namespace basecross {
 
 			auto ground = AddGameObject<Ground>();
 
+			//ポーズ生成
+			AddGameObject<PauseSprite>();
 
 		}
 		catch (...) {
@@ -83,7 +85,7 @@ namespace basecross {
 		m_personalSelect->OnClear(true);
 
 		// pause背景
-		float XY1 = 1450, textPosX = -400, textPosY = 300;
+		constexpr float XY1 = 1450, textPosX = -400, textPosY = 300;
 		m_pauseBack = AddGameObject<Sprite>(
 			L"PauseBack",
 			Vec2(XY1, XY1 * 0.5625f),
@@ -458,7 +460,7 @@ namespace basecross {
 	{
 		//エフェクト関係
 		EffectManager::Instance().InterfaceUpdate();
-
+		
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -483,7 +485,7 @@ namespace basecross {
 				ret.x = 1;
 
 		}
-
+		/*
 		if (!m_pauseFlag &&
 			(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
 				keybord.m_bPressedKeyTbl[VK_SPACE]))
@@ -585,7 +587,6 @@ namespace basecross {
 					auto selectPos = m_audioSelect[m_select2]->GetPosition();
 					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x + change, selectPos.y, selectPos.z));
 					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] + 0.1f, 0.0f, 1.0f);
-
 					if (!m_select2)
 					{
 						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
@@ -658,7 +659,7 @@ namespace basecross {
 				}
 			}
 		}
-
+		*/
 		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
 		{
@@ -825,6 +826,34 @@ namespace basecross {
 
 	}
 
+	void StageSato::AllPauseClear(bool clear)
+	{
+		// --- 定数定義 ------------------------------------
+		constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
+		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE → 0～1
+		constexpr int AUDIO_MATER = 10;
+
+		// ポーズのメインメニュー
+		m_pauseBack->OnClear(true);
+		m_selectSprite->OnClear(true);
+		for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
+			m_pauseTextSprite[i]->OnClear(true);
+
+		// オーディオ関係
+		for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
+		{
+			m_pauseTextSprite[i]->OnClear(clear);
+			m_audioSelect[i - MAIN_MENU_COUNT]->OnClear(clear);
+			m_speaker[i - MAIN_MENU_COUNT]->OnClear(clear);
+		}
+
+		for (int i = 0; i < AUDIO_MATER; i++)
+		{
+			m_BGMMater[i]->OnClear(clear);
+			m_SEMater[i]->OnClear(clear);
+		}
+	}
+	
 	void StageSato::AudioUIClear(bool clear)
 	{
 		// --- 定数定義 ------------------------------------

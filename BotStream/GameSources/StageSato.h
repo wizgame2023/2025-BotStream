@@ -115,6 +115,9 @@ namespace basecross {
 		// 軸の正規化
 		float NormalizeAxis(float minusSide, float plusSide);
 
+		// 全部のポーズ中のUIを表示非表示の制御
+		void AllPauseClear(bool clear);
+
 		// BGM,SE関係の表示非表示の制御
 		void AudioUIClear(bool clear);
 
