@@ -123,6 +123,14 @@ namespace basecross{
 		strTexture = texPath + L"PlayerSPMater.png";
 		app->RegisterTexture(L"PLSP", strTexture);
 
+		//敵のゲージフレーム
+		strTexture = texPath + L"BossGaugeFrame2.png";
+		app->RegisterTexture(L"BossGaugeFrame", strTexture);
+		//敵のHPバー
+		strTexture = texPath + L"BossHPMater2.png";
+		app->RegisterTexture(L"BossHPMater", strTexture);
+
+
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
 		app->RegisterTexture(L"Buttons", strTexture);
@@ -163,6 +171,10 @@ namespace basecross{
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";
 		app->RegisterTexture(L"BarTex", strTexture);
+
+		//射撃用テクスチャ
+		strTexture = texPath + L"Aiming.png";
+		app->RegisterTexture(L"AimingTex", strTexture);
 
 		//モデル
 

@@ -300,7 +300,7 @@ namespace basecross {
 		//UŒ‚ŠÔ
 		float m_timeMaxOfHitBack = 1.2f;
 		//UŒ‚ŠÔŒv‘ª
-		float m_timeOfHitBack;
+		float m_timeOfHitBack = 0.0f;
 		////Ÿ‚ÌUŒ‚‚Ì—P—\ŠÔ
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////Ÿ‚ÌUŒ‚‚ğ‚·‚é‚©‚Ìƒtƒ‰ƒO
