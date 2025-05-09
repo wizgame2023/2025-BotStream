@@ -65,9 +65,7 @@ namespace basecross {
 		//auto stage = GetStage();
 		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
 
-
-		//SE受け取り
-		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		//最初に流れる音
 		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
 
 	}
@@ -83,19 +81,10 @@ namespace basecross {
 		//親クラス処理
 		Actor::OnUpdate();
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
-
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				Friction();
-				//Dodge();//これ使いません
-			}
+		if (m_isLand) {
+			Dodge();
 		}
+
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
@@ -525,7 +514,6 @@ namespace basecross {
 		tmp.HitTime_Stand = 1.0f;//のけぞり時間
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;
-		DefAttack(.5f, tmp);
 		GetAttackPtr()->SetPos(Vec3(0, 0, 0));
 		auto AttackPtr = GetAttackPtr();
 		AttackPtr->SetCollScale(1.0f);
@@ -609,6 +597,7 @@ namespace basecross {
 			break;
 		}
 
+		GetAttackPtr()->SetHitInfo(tmp);
 	}
 
 
