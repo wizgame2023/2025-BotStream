@@ -156,7 +156,7 @@ namespace basecross {
 		const float m_spinSpeedMax = XM_2PI * 2;
 
 		float m_speed = 0;
-		const float m_accel = 12.0f;
+		const float m_accel = 10.0f;
 		const float m_speedMax = 30.0f;
 	public:
 		BossFirstSpinState(shared_ptr<GameObject>& obj) :
@@ -185,9 +185,84 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	class BossFirstBeamStartState : public StateBase {
+		float m_time = 0;
+		const float m_startup = 1.8f;
+
+		const float m_rotateThreshold = XM_PIDIV4 / 8;
+	public:
+		BossFirstBeamStartState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+	class BossFirstBeamFireState : public StateBase {
+		float m_time = 0;
+		const float m_activeTime = 1.5f;
+		int m_beamCnt = 0;
+		bool m_isFinalBlow = false;
+
+		const float m_beamHitVelBase = 4.0f;
+		const float m_beamHitVelAdd = 0.5f;
+
+		float m_attackTime = 0;
+		const float m_attackTimeMax = .05f;
+		const float m_attackTimeEnd = .75f;
+	public:
+		BossFirstBeamFireState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+	class BossFirstBeamEndState : public StateBase {
+		float m_time = 0;
+		const float m_recovery = 1.3f;
+
+	public:
+		BossFirstBeamEndState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	class BossFirstHitState : public StateBase {
 	public:
 		BossFirstHitState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	class BossFirstStunState : public StateBase {
+		float m_time = 0;
+		const float m_downTime = 2.0f;
+	public:
+		BossFirstStunState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	class BossFirstStunRecoverState : public StateBase {
+		float m_time = 0;
+		const float m_recoverTime = 1.0f;
+	public:
+		BossFirstStunRecoverState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {
 		}
 
@@ -206,6 +281,7 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
 	class BossFirstBonusState : public StateBase {
 		const float m_end = 1.2f;
 		float m_time = 0;
@@ -228,12 +304,19 @@ namespace basecross {
 			
 			AddState(L"Attack", shared_ptr<BossFirstAttackState>(new BossFirstAttackState(obj)));
 			AddState(L"Attack2", shared_ptr<BossFirstAttack2State>(new BossFirstAttack2State(obj)));
+			
 			AddState(L"SpinStart", shared_ptr<BossFirstSpinStartState>(new BossFirstSpinStartState(obj)));
 			AddState(L"Spin", shared_ptr<BossFirstSpinState>(new BossFirstSpinState(obj)));
 			AddState(L"SpinOver", shared_ptr<BossFirstSpinOverState>(new BossFirstSpinOverState(obj)));
 
+			AddState(L"BeamStart", shared_ptr<BossFirstBeamStartState>(new BossFirstBeamStartState(obj)));
+			AddState(L"BeamFire", shared_ptr<BossFirstBeamFireState>(new BossFirstBeamFireState(obj)));
+			AddState(L"BeamEnd", shared_ptr<BossFirstBeamEndState>(new BossFirstBeamEndState(obj)));
+
 			AddState(L"Bonus", shared_ptr<BossFirstBonusState>(new BossFirstBonusState(obj)));
 			AddState(L"Hit", shared_ptr<BossFirstHitState>(new BossFirstHitState(obj)));
+			AddState(L"Stun", shared_ptr<BossFirstStunState>(new BossFirstStunState(obj)));
+			AddState(L"StunRecover", shared_ptr<BossFirstStunRecoverState>(new BossFirstStunRecoverState(obj)));
 			AddState(L"Dead", shared_ptr<BossFirstDeadState>(new BossFirstDeadState(obj)));
 
 			ChangeState(L"Stand");

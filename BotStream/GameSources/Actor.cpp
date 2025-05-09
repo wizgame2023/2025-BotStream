@@ -41,7 +41,8 @@ namespace basecross {
 		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
 		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
 
-
+		//オーディオマネージャーの取得
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
 	}
 
 	void Actor::OnUpdate() {
@@ -51,6 +52,13 @@ namespace basecross {
 			return;
 		}
 		_delta = App::GetApp()->GetElapsedTime();
+
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+
+		//物理的な処理
+		Gravity();
+		Friction();
 	}
 
 	//最高速度
@@ -79,6 +87,10 @@ namespace basecross {
 
 	//摩擦(地上のみ)
 	void Actor::Friction() {
+		if (!m_doPhysics || !m_isLand) {
+			return;
+		}
+
 		//静摩擦
 		if (m_accel == Vec3(0)) {
 			m_velocity.x -= m_velocity.x * m_friction * (1000.0f / 60.0f) * _delta;
@@ -90,11 +102,21 @@ namespace basecross {
 		if (m_accel != Vec3(0)) {
 			m_velocity.x -= m_velocity.x * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
 			m_velocity.z -= m_velocity.z * m_frictionDynamic * (1000.0f / 60.0f) * _delta;
+
+			//加速度リセット
+			m_accel = Vec3(0);
 		}
 	}
 
 	//重力
 	void Actor::Gravity() {
+		if (!m_doPhysics) {
+			return;
+		}
+		
+		if (m_isLand && m_velocity.y < m_gravity * _delta) {
+			m_velocity.y = m_gravity * _delta;
+		}
 		m_velocity.y += m_gravity * _delta;
 	}
 
@@ -162,10 +184,12 @@ namespace basecross {
 	//エフェクトを出す処理
 	void Actor::AddEffect(int addEffect)
 	{
+		Vec3 fwd = GetForward();
+		float angle = -atan2(fwd.z, fwd.x) + XM_PIDIV2;
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0),Vec3(2.0f));
 			break;
 		case PlayerEffect_Attack2:
 			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
@@ -183,13 +207,16 @@ namespace basecross {
 		case EnemyEffect_ArmorBreak:
 			EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
+		case EnemyEffect_Beam:
+			EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
+			break;
 		default:
 			break;
 		}
 	}
 
-	// エフェクトのプレイ
-	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Vec3 pushPos)
+	// エフェクトのプレイ(大きさを変えることが出来る)
+	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Vec3 scale,Vec3 pushPos)
 	{
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
@@ -197,8 +224,10 @@ namespace basecross {
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		//EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 	}
 
+	// エフェクトのプレイ(色が変えることができる)
 	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Col4 changeColor, Vec3 pushPos)
 	{
 		rotate.normalize();
@@ -210,10 +239,104 @@ namespace basecross {
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
 
+	//// エフェクトのプレイ(大きさを変えることが出来る)
+	//// ここに新しいEfkPlaying作ろうと思ったけど、なんか変なエラー出たし、一番上のやつを改造しました。
+	//void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Vec3 scale, Vec3 pushPos)
+	//{
+	//	rotate.normalize();
+	//	auto trans = GetComponent<Transform>();
+	//	auto plPos = trans->GetPosition() + pushPos;
+
+	//	auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+	//	EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	//	EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
+	//}
+
 	//ポーズのフラグをオンオフする
 	void Actor::PoseSwitch(bool onOff)
 	{
 		m_poseFlag = onOff;
 	}
+	
+	/// <summary>
+	/// 飛び道具の親クラス
+	/// </summary>
+
+	//球のクラス
+	void ProjectileBase::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//ドローメッシュの設定
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		ptrDraw->SetOwnShadowActive(false);//影は消す
+		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+		//原点オブジェクトが消えていたら自分も消える
+		auto originLock = m_originObj.lock();
+		if (!originLock)
+		{
+			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			return;
+		}
+		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+
+		if (originLock->FindTag(L"Player"))
+		{
+			//Y軸のカメラの角度を受け取る
+			m_originAngle = -(cameraManager->GetAngle(L"Y")) - XM_PI;
+		}
+		else if (originLock->FindTag(L"Enemy"))
+		{
+			auto playerAngleVec = originLock->GetComponent<Transform>()->GetForward();
+			m_originAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
+			m_originAngle -= XM_PIDIV2;
+		}
+
+		HitInfoInit();
+	}
+
+	void ProjectileBase::OnUpdate()
+	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
+		Actor::OnUpdate();
+
+		//移動距離を計算する
+		Vec3 moveVec;
+
+		//原点オブジェクトを受け取る
+		auto originLock = m_originObj.lock();
+
+		moveVec.x = m_speed * cos(m_originAngle) * _delta;
+		moveVec.z = m_speed * sin(-m_originAngle) * _delta;
+
+		//プレイヤーの位置を取得して移動する
+		SetPosition(GetPosition() + moveVec);
+
+		m_canMoveDistance -= m_speed * _delta;
+		//一定時間移動したら消える
+		if (m_canMoveDistance <= 0)
+		{
+			GetStage()->RemoveGameObject<GameObject>(GetThis<GameObject>());
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		}
+	}
+
 }
 //end basecross
