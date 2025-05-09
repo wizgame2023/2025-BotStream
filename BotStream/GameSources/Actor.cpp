@@ -189,7 +189,7 @@ namespace basecross {
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0),Vec3(2.0f));
 			break;
 		case PlayerEffect_Attack2:
 			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
@@ -215,8 +215,8 @@ namespace basecross {
 		}
 	}
 
-	// エフェクトのプレイ
-	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate,Vec3 pushPos)
+	// エフェクトのプレイ(大きさを変えることが出来る)
+	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Vec3 scale,Vec3 pushPos)
 	{
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
@@ -224,8 +224,10 @@ namespace basecross {
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		//EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 	}
 
+	// エフェクトのプレイ(色が変えることができる)
 	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Col4 changeColor, Vec3 pushPos)
 	{
 		rotate.normalize();
@@ -236,6 +238,19 @@ namespace basecross {
 		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 	}
+
+	//// エフェクトのプレイ(大きさを変えることが出来る)
+	//// ここに新しいEfkPlaying作ろうと思ったけど、なんか変なエラー出たし、一番上のやつを改造しました。
+	//void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Vec3 scale, Vec3 pushPos)
+	//{
+	//	rotate.normalize();
+	//	auto trans = GetComponent<Transform>();
+	//	auto plPos = trans->GetPosition() + pushPos;
+
+	//	auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
+	//	EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+	//	EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
+	//}
 
 	//ポーズのフラグをオンオフする
 	void Actor::PoseSwitch(bool onOff)
