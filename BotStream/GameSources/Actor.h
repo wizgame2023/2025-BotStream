@@ -61,6 +61,10 @@ namespace basecross {
 		//攻撃を受けた方向
 		Vec3 m_hitDirection = Vec3(0);
 
+		//SE関係
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+
 		//ボーズ状態かどうか
 		bool m_poseFlag = false;
 
@@ -142,7 +146,7 @@ namespace basecross {
 			accel.y = vel.y;
 			accel.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
 			
-			AddVelocity(accel);
+			SetVelocity(accel);
 		}
 
 		//攻撃判定のポインタを取得
@@ -202,6 +206,43 @@ namespace basecross {
 				return false;
 			}
 		}
+
+		//SEの再生
+		void PlaySnd(wstring sndname, float volume, float loopcount) {
+			m_SE = m_SEManager->Start(sndname, loopcount, volume);
+		}
 	};
+
+	/// <summary>
+	/// 飛び道具の親クラス
+	/// </summary>
+	class ProjectileBase :public Actor
+	{
+	protected:
+		float m_speed = 1.0f;
+		float m_originAngle = 0.0f;
+		float m_canMoveDistance;//移動できる長さ
+
+		weak_ptr<Actor> m_originObj;//自分を生成したオブジェクト
+
+		//攻撃判定を設定するための関数。OnCreateに置く
+		virtual void HitInfoInit() { }
+	public:
+		ProjectileBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
+			Actor(stagePtr, pos, rot, scale),
+			m_originObj(originObj)
+		{
+
+		}
+		~ProjectileBase()
+		{
+		}
+
+		void OnCreate()override;
+		void OnUpdate()override;
+
+
+	};
+
 }
 //end basecross

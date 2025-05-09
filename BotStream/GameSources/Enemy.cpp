@@ -256,24 +256,16 @@ namespace basecross {
 
 		EnemyBase::OnUpdate();
 
+		//アーマーブレイク回復を監視
+		if (m_armor > 0 && m_prevArmor <= 0) {
+			m_isRecoveredFromArmorBreak = true;
+		}
+		m_prevArmor = m_armor;
+
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
-
-		//////デバック用
-		//wstringstream wss(L"");
-		//auto scene = App::GetApp()->GetScene<Scene>();
-		//auto quat = GetComponent<Transform>()->GetQuaternion();
-		//wss /* << L"デバッグ用文字列 "*/
-		//	<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
-		//	<< L" Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
-		//	<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
-		//	<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-		//	<< L"\nAngle : " << GetPlayerSubDirection()
-		//	<< L"\nHP : " << m_HPCurrent << " / " << m_armor << " / " << m_armorRecoverTime - m_armorRecover << endl;
-
-		//scene->SetDebugString(wss.str());
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
@@ -319,6 +311,61 @@ namespace basecross {
 		if (GetHPCurrent() <= 0) {
 			m_state->ChangeState(L"Dead");
 		}
+	}
+
+	void BossFirstBeam::OnCreate()
+	{
+		Actor::OnCreate();
+
+		m_speed = 300.0f;
+		m_originAngle = 0.0f;
+		m_canMoveDistance = 100.0f;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//原点オブジェクトが消えていたら自分も消える
+		auto originLock = m_originObj.lock();
+		if (!originLock)
+		{
+			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			return;
+		}
+		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+
+		if (originLock->FindTag(L"Player"))
+		{
+			//Y軸のカメラの角度を受け取る
+			m_originAngle = -(cameraManager->GetAngle(L"Y")) - XM_PI;
+		}
+		else if (originLock->FindTag(L"Enemy"))
+		{
+			auto playerAngleVec = originLock->GetComponent<Transform>()->GetForward();
+			m_originAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
+			m_originAngle -= XM_PIDIV2;
+		}
+
+		HitInfoInit();
+	}
+
+	void BossFirstBeam::HitInfoInit() {
+		float velX = m_isFinalBlow ? -50.0f : 0.0f;
+
+		//攻撃判定の定義
+		auto tmp = GetAttackPtr()->GetHitInfo();
+		tmp.HitOnce = true;
+		tmp.Type = AttackType::Enemy;
+		tmp.Damage = 3;
+		tmp.HitVel_Stand = Vec3(velX, m_hitBeamVel, 0);
+		tmp.HitVel_Air = Vec3(velX, m_hitBeamVel, 0);
+		tmp.HitTime_Stand = 1.2f;
+		tmp.HitTime_Air = 1.2f;
+
+		DefAttack(5.0f, tmp);
+		GetAttackPtr()->SetCollScale(4.0f);
 	}
 }
 //end basecross

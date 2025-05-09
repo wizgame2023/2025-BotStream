@@ -32,7 +32,8 @@ namespace basecross{
 		PlayerEffect_Attack3,
 		PlayerEffect_AttackEx,
 		PlayerEffect_Beam,
-		EnemyEffect_ArmorBreak
+		EnemyEffect_ArmorBreak,
+		EnemyEffect_Beam
 	};
 
 	enum ActorName
@@ -89,10 +90,6 @@ namespace basecross{
 
 		//ステートマシン
 		shared_ptr<PlayerStateMachine> m_stateMachine;
-
-		//SE関係
-		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
-		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
 		//UI関係
 		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;//現在の球数を表示するUI
@@ -195,8 +192,8 @@ namespace basecross{
 
 		shared_ptr<Transform> m_trans;
 	public:
-		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,float speed,shared_ptr<Actor> originObj,float canMoveDistance = 10.0f,int actorType = ActorName_Player):
-			Actor(stagePtr,pos,rot,scale),
+		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, float speed, shared_ptr<Actor> originObj, float canMoveDistance = 10.0f, int actorType = ActorName_Player) :
+			Actor(stagePtr, pos, rot, scale),
 			m_speed(speed),
 			m_originObj(originObj),
 			m_canMoveDistance(canMoveDistance),

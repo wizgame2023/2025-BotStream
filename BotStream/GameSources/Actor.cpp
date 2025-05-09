@@ -41,7 +41,8 @@ namespace basecross {
 		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
 		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
 
-
+		//オーディオマネージャーの取得
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
 	}
 
 	void Actor::OnUpdate() {
@@ -86,7 +87,7 @@ namespace basecross {
 
 	//摩擦(地上のみ)
 	void Actor::Friction() {
-		if (!m_doPhysics) {
+		if (!m_doPhysics || !m_isLand) {
 			return;
 		}
 
@@ -183,6 +184,8 @@ namespace basecross {
 	//エフェクトを出す処理
 	void Actor::AddEffect(int addEffect)
 	{
+		Vec3 fwd = GetForward();
+		float angle = -atan2(fwd.z, fwd.x) + XM_PIDIV2;
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
@@ -205,7 +208,7 @@ namespace basecross {
 			EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Beam:
-			EfkPlaying(L"Beam", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
 			break;
 		default:
 			break;
@@ -239,5 +242,86 @@ namespace basecross {
 	{
 		m_poseFlag = onOff;
 	}
+	
+	/// <summary>
+	/// 飛び道具の親クラス
+	/// </summary>
+
+	//球のクラス
+	void ProjectileBase::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		//ドローメッシュの設定
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		ptrDraw->SetOwnShadowActive(false);//影は消す
+		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+		//原点オブジェクトが消えていたら自分も消える
+		auto originLock = m_originObj.lock();
+		if (!originLock)
+		{
+			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			return;
+		}
+		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+
+		if (originLock->FindTag(L"Player"))
+		{
+			//Y軸のカメラの角度を受け取る
+			m_originAngle = -(cameraManager->GetAngle(L"Y")) - XM_PI;
+		}
+		else if (originLock->FindTag(L"Enemy"))
+		{
+			auto playerAngleVec = originLock->GetComponent<Transform>()->GetForward();
+			m_originAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
+			m_originAngle -= XM_PIDIV2;
+		}
+
+		HitInfoInit();
+	}
+
+	void ProjectileBase::OnUpdate()
+	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
+		Actor::OnUpdate();
+
+		//移動距離を計算する
+		Vec3 moveVec;
+
+		//原点オブジェクトを受け取る
+		auto originLock = m_originObj.lock();
+
+		moveVec.x = m_speed * cos(m_originAngle) * _delta;
+		moveVec.z = m_speed * sin(-m_originAngle) * _delta;
+
+		//プレイヤーの位置を取得して移動する
+		SetPosition(GetPosition() + moveVec);
+
+		m_canMoveDistance -= m_speed * _delta;
+		//一定時間移動したら消える
+		if (m_canMoveDistance <= 0)
+		{
+			GetStage()->RemoveGameObject<GameObject>(GetThis<GameObject>());
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		}
+	}
+
 }
 //end basecross
