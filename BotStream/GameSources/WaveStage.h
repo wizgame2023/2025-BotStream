@@ -35,6 +35,9 @@ namespace basecross {
         virtual void OnUpdate()override;
         virtual void OnDraw()override;
 
+        int GetWave();
+        void SetWave(int setWave);
+
     };
 
     class Floor : public GameObject {
@@ -84,8 +87,6 @@ namespace basecross {
         Vec3 m_Rotation;
         Vec3 m_Position;
 
-        //shared_ptr<BillBoard> m_HPGauge;
-        //shared_ptr<BillBoard> m_ArmorGauge;
 
     public:
         Door(const shared_ptr<Stage>& StagePtr,
@@ -95,6 +96,24 @@ namespace basecross {
         );
         virtual ~Door();
         virtual void OnCreate() override;
+    };
+
+    class FadeoutSprite : public GameObject {
+        vector<VertexPositionColorTexture> m_Vertices;
+        shared_ptr<PCTSpriteDraw> m_drawComp;
+        wstring m_ResKey;
+        bool m_IsFadeOut;
+        bool m_IsFadeIn;
+        float m_Color;
+
+
+        int m_waveNow;
+
+    public:
+        FadeoutSprite(const shared_ptr<Stage>& stage, const wstring& ResKey);
+        virtual ~FadeoutSprite();
+        virtual void OnCreate() override;
+        virtual void OnUpdate() override;
     };
 
 }

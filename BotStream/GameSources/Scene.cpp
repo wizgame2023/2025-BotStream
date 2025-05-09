@@ -96,6 +96,9 @@ namespace basecross{
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
+		strTexture = texPath + L"Fadeout.png";
+		app->RegisterTexture(L"Fadeout", strTexture);
+
 		// title
 		strTexture = texPath + L"TitleBack.png";
 		app->RegisterTexture(L"TitleBack", strTexture);
