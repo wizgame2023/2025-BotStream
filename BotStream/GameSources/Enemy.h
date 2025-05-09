@@ -11,6 +11,10 @@
 
 namespace basecross{
 	class EnemyStateMachine;
+
+	/// <summary>
+	/// 親クラス
+	/// </summary>
 	class EnemyBase : public Actor
 	{
 	protected:
@@ -30,7 +34,6 @@ namespace basecross{
 
 		weak_ptr<Player> m_player;
 
-		void RegisterAnim();
 
 	public:
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
@@ -95,11 +98,19 @@ namespace basecross{
 		void RotateToPlayer(const float multiply, const float threshold);
 		void RotateToPlayer(const float multiply);
 
+
 	};
 
+	/// <summary>
+	/// ステージ1のボス
+	/// </summary>
 	class BossFirst : public EnemyBase {
 		void OnDamaged() override;
+		void RegisterAnim();
 
+		//ビーム用
+		bool m_isRecoveredFromArmorBreak = false;
+		float m_prevArmor = 0.0f;
 	public:
 		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
 			EnemyBase(stagePtr, pos, rot, scale, used)
@@ -108,9 +119,39 @@ namespace basecross{
 		}
 		~BossFirst() {}
 
+		//アーマーブレイクから回復したときtrueになる
+		bool IsRecoveredFromArmorBreak() {
+			bool ret = m_isRecoveredFromArmorBreak;
+			m_isRecoveredFromArmorBreak = false;
+			return ret;
+		}
+
 		void OnCreate() override;
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+	};
+
+	/// <summary>
+	/// ボス1のビーム判定
+	/// </summary>
+	class BossFirstBeam : public ProjectileBase {
+	protected:
+		float m_hitBeamVel = 12.0f;
+		bool m_isFinalBlow = false;
+
+		void HitInfoInit() override;
+	public:
+		BossFirstBeam(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj, float hitVel, bool final) :
+			ProjectileBase(stagePtr, pos, rot, scale, originObj),
+			m_hitBeamVel(hitVel),
+			m_isFinalBlow(final)
+		{
+
+		}
+		~BossFirstBeam() {}
+
+		void OnCreate() override;
+
 	};
 }
 //end basecross

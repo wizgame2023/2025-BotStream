@@ -74,6 +74,10 @@ namespace basecross {
 			//知るか！廻る！
 			if (rnd() % 1000 <= m_spinRand)
 			boss->ChangeState(L"SpinStart");
+			
+			if (boss->IsRecoveredFromArmorBreak()) {
+				boss->ChangeState(L"BeamStart");
+			}
 		}
 	}
 	void BossFirstStandState::Exit() {
@@ -115,6 +119,7 @@ namespace basecross {
 		//攻撃判定の定義
 		if (m_time >= m_startup && !m_attacked) {
 			m_attacked = !m_attacked;
+			boss->PlaySnd(L"Enemy_Slash", 1.0f, 0);
 
 			auto tmp = boss->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
@@ -148,6 +153,7 @@ namespace basecross {
 		//攻撃判定の定義
 		if (m_time >= m_startup && !m_attacked) {
 			m_attacked = !m_attacked;
+			boss->PlaySnd(L"Enemy_Slash", 1.0f, 0);
 
 			auto tmp = boss->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
@@ -293,6 +299,81 @@ namespace basecross {
 
 	}
 
+	void BossFirstBeamStartState::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"AttackSPBeam1", true);
+		m_time = 0;
+
+	}
+	void BossFirstBeamStartState::Update(float deltatime) {
+		m_time += deltatime;
+
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->RotateToPlayer(2.0f, m_rotateThreshold);
+
+		if (m_time >= m_startup) {
+			auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+			boss->ChangeState(L"BeamFire");
+			boss->AddEffect(EnemyEffect_Beam);
+
+			boss->PlaySnd(L"Beam", 1.0f, 0);
+		}
+	}
+	void BossFirstBeamStartState::Exit() {
+
+	}
+
+	void BossFirstBeamFireState::Enter() {
+		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		p->ChangeAnim(L"AttackSPBeam2", true);
+
+		m_time = 0;
+		m_attackTime = 0;
+		m_beamCnt = 0;
+		m_isFinalBlow = false;
+	}
+	void BossFirstBeamFireState::Update(float deltatime) {
+		m_time += deltatime;
+		m_attackTime += deltatime;
+		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+
+		if (m_attackTime >= m_attackTimeMax && !m_isFinalBlow) {
+			if (m_time > m_attackTimeEnd) {
+				m_isFinalBlow = true;
+			}
+			Vec3 pos = p->GetPosition() - Vec3(0, 1.5, 0);
+			float vel = m_beamHitVelBase + (m_beamHitVelAdd * m_beamCnt);
+			p->GetStage()->AddGameObject<BossFirstBeam>(pos, Vec3(0.0f), Vec3(1.0f), p, vel, m_isFinalBlow);
+			
+			m_attackTime = 0;
+			m_beamCnt++;
+		}
+
+		if (m_time >= m_activeTime) {
+			p->ChangeState(L"BeamEnd");
+		}
+	}
+	void BossFirstBeamFireState::Exit() {
+
+	}
+
+	void BossFirstBeamEndState::Enter() {
+		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		p->ChangeAnim(L"AttackSPBeam3", true);
+		m_time = 0;
+	}
+	void BossFirstBeamEndState::Update(float deltatime) {
+		m_time += deltatime;
+
+		if (m_time >= m_recovery) {
+			auto p = dynamic_pointer_cast<BossFirst>(_obj);
+			p->ChangeState(L"Stand");
+		}
+	}
+	void BossFirstBeamEndState::Exit() {
+
+	}
+
 	void BossFirstHitState::Enter() {
 		auto p = dynamic_pointer_cast<BossFirst>(_obj);
 		p->ChangeAnim(L"HitBack", true);
@@ -303,6 +384,43 @@ namespace basecross {
 		p->HitBackStandBehavior();
 	}
 	void BossFirstHitState::Exit() {
+
+	}
+
+	void BossFirstStunState::Enter() {
+		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		p->ChangeAnim(L"KnockedDown", true);
+		p->HitBack();
+		m_time = 0;
+	}
+	void BossFirstStunState::Update(float deltatime) {
+		m_time += deltatime;
+
+		if (m_time > m_downTime) {
+			auto p = dynamic_pointer_cast<BossFirst>(_obj);
+			p->ChangeState(L"StunRecover");
+		}
+	}
+	void BossFirstStunState::Exit() {
+
+	}
+
+	void BossFirstStunRecoverState::Enter() {
+		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		p->ChangeAnim(L"WakeUp", true);
+		p->HitBack();
+		m_time = 0;
+	}
+	void BossFirstStunRecoverState::Update(float deltatime) {
+		m_time += deltatime;
+
+		if (m_time > m_recoverTime) {
+			auto p = dynamic_pointer_cast<BossFirst>(_obj);
+			p->ChangeState(L"Stand");
+		}
+
+	}
+	void BossFirstStunRecoverState::Exit() {
 
 	}
 
