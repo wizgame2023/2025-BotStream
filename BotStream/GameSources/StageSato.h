@@ -14,7 +14,7 @@ namespace basecross {
 	class StageSato : public Stage {
 		//ビューの作成
 		void CreateViewLight();
-		//void CreateSprite();
+		void CreateSprite();
 
 		//--------写すときはここをコピペすればいいと思われる--------
 
@@ -27,6 +27,14 @@ namespace basecross {
 			int Chaos = 0;
 		};
 
+
+		enum PlayerType
+		{
+			Type_Speed,
+			Type_Power,
+			Type_Balance,
+		};
+
 		//shared_ptr<Sprite> m_plHPSprite;
 		//shared_ptr<Sprite> m_plSPSprite;
 		//shared_ptr<Sprite> m_gaugeFrameSprite;
@@ -34,8 +42,17 @@ namespace basecross {
 		//shared_ptr<Sprite> m_gunSprite;
 		//shared_ptr<Sprite> m_questionSprite[5];
 		//shared_ptr<Sprite> m_answerSprite[5][3];
-		//shared_ptr<Sprite> m_selectSprite;
 		//shared_ptr<Sprite> m_resultSprite;
+
+		shared_ptr<Sprite> m_selectSprite;
+
+		shared_ptr<Sprite> m_personalSelect;
+		shared_ptr<Sprite> m_pauseBack;
+		shared_ptr<Sprite> m_pauseTextSprite[6];
+		shared_ptr<Sprite> m_speaker[2];
+		shared_ptr<Sprite> m_BGMMater[10];
+		shared_ptr<Sprite> m_SEMater[10];
+		shared_ptr<Sprite> m_audioSelect[2];
 
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
@@ -54,8 +71,19 @@ namespace basecross {
 		// 選択切り替えフラグ
 		bool m_selectFlag = false;
 		bool m_questionEndFlag = false;
+		// Audio用の選択切り替えフラグ
+		bool m_audioSelectFlag = false;
 		int m_select = 0;
 		Vec3 m_selectPos;
+
+		bool m_pauseFlag = false;
+		bool m_pauseAudioFlag = false;
+		float m_audioMax[2] = { 1.0f , 1.0f };
+		int m_audioMaxSetCol[2] = { 10, 10 };
+
+		int m_select2 = 0;
+
+		PlayerType m_type = PlayerType::Type_Speed;
 
 		// リザルト表示フラグ
 		bool m_resultFlag = false;
@@ -87,15 +115,17 @@ namespace basecross {
 		// 軸の正規化
 		float NormalizeAxis(float minusSide, float plusSide);
 
+		// 全部のポーズ中のUIを表示非表示の制御
+		void AllPauseClear(bool clear);
+
+		// BGM,SE関係の表示非表示の制御
+		void AudioUIClear(bool clear);
+
 		// 性格診断のステータス変動
 		//void PersonalStateChange(int questionID, int answerIndex);
 
 		//void StateResult(int LawCha, int EvilGood);
 
-		// 数字を画面上に表示する関数
-		// value     : 表示する数値
-		// pos       : 表示開始位置
-		// digitSize : 各桁の幅と高さ
 		void ShowNumber(int value, Vec2 pos, float digitSize);
 
 		// playerの最大HPを取得(sprite)
@@ -140,14 +170,20 @@ namespace basecross {
 			m_bulletNum = value;
 		}
 
-		//// 比率みたいなやつをあーだこーだするやつ
-		//template <typename T>
-		//T clamp(T value, T minValue, T maxValue)
-		//{
-		//	if (value < minValue) return minValue;
-		//	if (value > maxValue) return maxValue;
-		//	return value;
-		//}
+		// playerの初期性格(タイプ)を取得
+		PlayerType GetPLType()
+		{
+			return m_type;
+		}
+
+		// 比率みたいなやつをあーだこーだするやつ
+		template <typename T>
+		T clamp(T value, T minValue, T maxValue)
+		{
+			if (value < minValue) return minValue;
+			if (value > maxValue) return maxValue;
+			return value;
+		}
 
 	};
 

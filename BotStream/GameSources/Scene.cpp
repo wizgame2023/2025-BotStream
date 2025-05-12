@@ -104,6 +104,10 @@ namespace basecross{
 		strTexture = texPath + L"TitleText.png";
 		app->RegisterTexture(L"TitleText", strTexture);
 
+		// PlayerType
+		strTexture = texPath + L"PlayerTypes.png";
+		app->RegisterTexture(L"PlayerType", strTexture);
+
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);
@@ -134,6 +138,16 @@ namespace basecross{
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
 		
+		// PauseSprite
+		strTexture = texPath + L"PauseBack.png";
+		app->RegisterTexture(L"PauseBack", strTexture);
+		strTexture = texPath + L"PauseText.png";
+		app->RegisterTexture(L"PauseText", strTexture);
+		strTexture = texPath + L"AudioMater.png";
+		app->RegisterTexture(L"AudioMater", strTexture);
+		strTexture = texPath + L"AudioOther.png";
+		app->RegisterTexture(L"AudioOther", strTexture);
+
 		// TextSprite
 		strTexture = texPath + L"Texts.png";
 		app->RegisterTexture(L"Texts", strTexture);
@@ -216,6 +230,7 @@ namespace basecross{
 		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
+		app->RegisterWav(L"Enemy_Slash", SoundPath + L"Enemy_Slash.wav");
 		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
 		app->RegisterWav(L"Attack2", SoundPath + L"Attack2.wav");
