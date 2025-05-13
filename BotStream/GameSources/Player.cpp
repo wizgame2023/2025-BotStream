@@ -37,7 +37,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.7f, 0.7f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, 0.0f, 0.0f)
@@ -45,12 +45,23 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"Spearmen");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//歩き状態
-		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTest");//仮のメッシュ
+		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
+		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
+		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
+		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
+		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);//走りをやめる
+		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);//突進切り
+		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);//Attack1
+		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);//Attack2
+		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);//Attack3
+		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
+		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
+		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
+
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		ptrDraw->SetTextureResource(L"SpearmenTexture");
+		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
@@ -251,6 +262,12 @@ namespace basecross {
 				m_bulletNum = m_bulletNumMax;
 			}
 		}
+	}
+
+	//アニメーションの更新
+	void Player::UpdateAnimation(float addTime)
+	{
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(addTime);
 	}
 
 	//プレイヤーの移動処理

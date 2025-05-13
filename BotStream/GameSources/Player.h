@@ -131,6 +131,8 @@ namespace basecross{
 
 		//球がなくなった時のリロード処理
 		void ReloadBullet(float ReloadTime);
+		//アニメーションの更新
+		void UpdateAnimation(float addTime);
 
 		//HPのゲッター
 		int GetHP();
