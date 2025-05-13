@@ -335,7 +335,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(3.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
 			AttackPtr->SetCollScale(1.0f);
 		}
 
@@ -400,7 +400,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(3.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
 			AttackPtr->SetCollScale(1.0f);
 		}
 
@@ -472,7 +472,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(5.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
 			AttackPtr->SetCollScale(1.0f);
 		}
 	}
