@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<StageSato>();
 
 		}
 
@@ -216,6 +216,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
+		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
 		// ---------------------------------
 
 		//BGM

@@ -245,6 +245,7 @@ namespace basecross{
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
+		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 	public:
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
 			EnemyBase(stagePtr,pos,rot,scale,used)
