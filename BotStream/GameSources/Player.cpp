@@ -299,10 +299,10 @@ namespace basecross {
 			switch (playerState)
 			{
 			case PlayerState_Walk:
-				totalVec *= moveSize;
+				totalVec *= moveSize * 3;
 				break;
 			case PlayerState_Dash:
-				totalVec *= moveSize * 2.5f;
+				totalVec *= moveSize * 5.5f;
 				break;
 			default:
 				break;
@@ -318,7 +318,7 @@ namespace basecross {
 
 			//二次関数的な動きで回避行動をする
 			//今は向いている方向に前方回避をする
-			float dodge = 8.0f;
+			float dodge = 8.0f*2.5f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
@@ -662,10 +662,10 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f/5, 1.0f, 1.0f/5),
+			Vec3(1.0f/5, 1.0f/5, 1.0f/5),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -0.0f, 0.0f)
+			Vec3(0.0f, -0.5f, 0.0f)
 		);
 
 		//ドローメッシュの設定
@@ -688,8 +688,8 @@ namespace basecross {
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
 		//接地判定の設定
-		m_LandDetect->SetBindPos(Vec3(0, 0.0f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
+		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 		
 		//ステートマシン生成
