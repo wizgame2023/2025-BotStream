@@ -147,7 +147,7 @@ namespace basecross {
 	{
 	private:
 		//UŒ‚ŠÔ
-		float m_timeMaxOfAttack = 0.7f;
+		float m_timeMaxOfAttack = 0.8f;
 		//UŒ‚ŠÔŒv‘ª
 		float m_timeOfAttack;
 		//Ÿ‚ÌUŒ‚‚Ì—P—\ŠÔ
