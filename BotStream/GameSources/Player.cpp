@@ -664,6 +664,8 @@ namespace basecross {
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 
+		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(),L"Numbers",2, )
+
 		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
 
