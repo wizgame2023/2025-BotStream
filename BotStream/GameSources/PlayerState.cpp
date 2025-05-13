@@ -13,6 +13,10 @@ namespace basecross {
 	void PlayerStateBase::Enter()
 	{
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
+
+		//コントローラーを受け取る
+		auto inputDevice = App::GetApp()->GetInputDevice();
+		m_controller = inputDevice.GetControlerVec()[0];
 	}
 	void PlayerStateBase::Update(float deltaTime)
 	{
@@ -94,7 +98,7 @@ namespace basecross {
 			}
 		}
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
+		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
@@ -152,6 +156,14 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 		//PlayerStateBase::Update(0.0f);
+
+		//回避する瞬間にスティックを傾けていたらその方向に進む
+		auto m_stickL = Vec3(m_controller.fThumbLX,0,m_controller.fThumbLY);
+		//m_player->SetStickL(m_stickL);
+		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_player->MoveAngle(m_stickL);
+		}
 
 		m_SEManager->Start(L"Dash", 0, 0.9f);//回避SE
 
@@ -244,7 +256,7 @@ namespace basecross {
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
 		//float meleeRange = 200.0f;
-		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
+		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
@@ -316,14 +328,15 @@ namespace basecross {
 			//tmp.HitSound = L"Attack1";
 
 			tmp.HitOnce = true;//一回しかヒットしないか
-			tmp.Damage = 15;//ダメージ
-			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
-			tmp.HitTime_Stand = .8f;//のけぞり時間
+			tmp.Damage = 10;//ダメージ
+			tmp.HitVel_Stand = Vec3(-2, 1, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
+			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			//tmp.ForceRecover = true;
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->SetCollScale(8.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(3.0f, 5.0f, 5.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 
 		//攻撃の時間計測
@@ -381,11 +394,14 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 17;
-			tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
-			tmp.HitTime_Stand = .3f;
+			tmp.Damage = 12;
+			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
+			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_player->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(3.0f, 5.0f, 5.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 
 	}
@@ -450,11 +466,14 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 20;
+			tmp.Damage = 18;
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_player->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(5.0f, 5.0f, 5.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 	}
 	void PlayerAttack3State::Update(float deltaTime)
@@ -522,14 +541,15 @@ namespace basecross {
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 40;
+			tmp.Damage = 25;
 			tmp.HitVel_Stand = Vec3(-20, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(0, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->SetCollScale(12.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(10.0f, 5.0f, 10.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 
 	}
@@ -644,6 +664,7 @@ namespace basecross {
 	//ダメージを受けた際のステート
 	void PlayerHitState::Enter()
 	{
+
 		PlayerStateBase::Enter();
 
 		m_SEManager->Start(L"DamageVoiceSE");
