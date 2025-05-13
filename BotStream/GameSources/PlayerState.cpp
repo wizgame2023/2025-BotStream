@@ -13,6 +13,10 @@ namespace basecross {
 	void PlayerStateBase::Enter()
 	{
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
+
+		//コントローラーを受け取る
+		auto inputDevice = App::GetApp()->GetInputDevice();
+		m_controller = inputDevice.GetControlerVec()[0];
 	}
 	void PlayerStateBase::Update(float deltaTime)
 	{
@@ -83,7 +87,7 @@ namespace basecross {
 		}
 
 		//歩きステートのアニメーション再生
-		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime * 5);
+		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime*1.5f);
 	
 		//回避していいフラグ状態だったら回避ステートに変更
 		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
@@ -94,7 +98,7 @@ namespace basecross {
 			}
 		}
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
+		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
@@ -153,7 +157,19 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		//PlayerStateBase::Update(0.0f);
 
-		m_SEManager->Start(L"Dash", 0, 0.9f);//回避SE
+		//回避する瞬間にスティックを傾けていたらその方向に進む
+		auto m_stickL = Vec3(m_controller.fThumbLX,0,m_controller.fThumbLY);
+		//m_player->SetStickL(m_stickL);
+		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_player->MoveAngle(m_stickL);
+		}
+
+		//回避SE
+		m_SEManager->Start(L"Dash", 0, 0.9f);
+		//回避アニメーション
+		m_player->ChangeAnim(L"Dodge");
+
 
 		//回避していいか確認する
 		//m_playerDodgeFlag = m_player->GetDodgeFlag();
@@ -171,6 +187,9 @@ namespace basecross {
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
 		m_player->PlayerMove(PlayerState_Dodge);
+
+		//アニメーション更新
+		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime*1.7f);
 
 		//回避した後の処理(どっちのステートに行くかの処理)
 		bool endDodgeFlag = m_player->GetEndDodgeFlag();
@@ -220,7 +239,7 @@ namespace basecross {
 		//歩きアニメーション再生
 		if (move.length() != 0)
 		{
-			m_player->ChangeAnim(L"Walk");
+			m_player->ChangeAnim(L"Dash");
 		}
 		else
 		{
@@ -228,7 +247,7 @@ namespace basecross {
 		}
 
 		//ダッシュステートのアニメーション再生
-		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime * 7);
+		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime*1.5f);
 
 		//Aボタン離したらorスティックを離したら歩くステートに変更する
 		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A)
@@ -244,7 +263,7 @@ namespace basecross {
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
 		//float meleeRange = 200.0f;
-		if (m_controller.wButtons & XINPUT_GAMEPAD_X)
+		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
@@ -302,13 +321,17 @@ namespace basecross {
 	void PlayerAttack1State::Enter()
 	{
 		PlayerStateBase::Enter();
-		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
+		//Attack1アニメーションに変更
+		m_player->ChangeAnim(L"Attack1");
 	}
 	void PlayerAttack1State::Update(float deltaTime)
 	{
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
+
+		//アニメーションの更新
+		m_player->UpdateAnimation(deltaTime*1.2f);
     
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
@@ -316,14 +339,15 @@ namespace basecross {
 			//tmp.HitSound = L"Attack1";
 
 			tmp.HitOnce = true;//一回しかヒットしないか
-			tmp.Damage = 15;//ダメージ
-			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
-			tmp.HitTime_Stand = .8f;//のけぞり時間
+			tmp.Damage = 10;//ダメージ
+			tmp.HitVel_Stand = Vec3(-2, 1, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
+			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			//tmp.ForceRecover = true;
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->SetCollScale(8.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 
 		//攻撃の時間計測
@@ -376,16 +400,21 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
+		//Attack2アニメーションに変更
+		m_player->ChangeAnim(L"Attack2");
 	
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 17;
-			tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
-			tmp.HitTime_Stand = .3f;
+			tmp.Damage = 12;
+			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
+			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_player->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 
 	}
@@ -393,6 +422,9 @@ namespace basecross {
 	{
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
+
+		//アニメーションの更新
+		m_player->UpdateAnimation(deltaTime*1.7f);
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -446,21 +478,30 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack2", 0, 0.9f);//SE再生
 
+		//Attack3アニメーションに変更
+		m_player->ChangeAnim(L"Attack3");
+
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 20;
+			tmp.Damage = 18;
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(1, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_player->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 	}
 	void PlayerAttack3State::Update(float deltaTime)
 	{
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
+
+		//アニメーションの更新
+		m_player->UpdateAnimation(deltaTime * 1.8f);
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -518,18 +559,22 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
 
+		//AttackExアニメーションに変更
+		m_player->ChangeAnim(L"AttackEx");
+
 		//攻撃判定の定義
 		if (m_timeOfAttack <= 0) {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 40;
+			tmp.Damage = 25;
 			tmp.HitVel_Stand = Vec3(-20, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(0, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->SetCollScale(12.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(10.0f, 5.0f, 10.0f);
+			AttackPtr->SetCollScale(1.0f);
 		}
 
 	}
@@ -537,6 +582,9 @@ namespace basecross {
 	{
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
+
+		//アニメーションの更新
+		m_player->UpdateAnimation(deltaTime*2.2f);
 
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
@@ -644,6 +692,7 @@ namespace basecross {
 	//ダメージを受けた際のステート
 	void PlayerHitState::Enter()
 	{
+
 		PlayerStateBase::Enter();
 
 		m_SEManager->Start(L"DamageVoiceSE");

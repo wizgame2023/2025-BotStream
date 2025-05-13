@@ -32,7 +32,7 @@ namespace basecross {
 		float _delta;
 		//速度
 		Vec3 m_velocity;
-		//加速度(Friction関数で使用するのでvelocityを変動させる場合はこの変数を使ってください)
+		//加速度(Friction関数で使用)
 		Vec3 m_accel;
 		//最高速
 		float m_speedMax = 10;
@@ -60,6 +60,10 @@ namespace basecross {
 		float m_hitbacktime = 0;
 		//攻撃を受けた方向
 		Vec3 m_hitDirection = Vec3(0);
+
+		//SE関係
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
 		//ボーズ状態かどうか
 		bool m_poseFlag = false;
@@ -132,13 +136,18 @@ namespace basecross {
 		void HitBack() {
 			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
 
+			//どちらから攻撃されたかを計算
 			Vec3 nrm = m_hitDirection.normalize();
 			float dir = atan2f(nrm.z, nrm.x);
 
-			Vec3 vel = m_GetHitInfo.HitVel_Stand;
-			m_velocity.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
-			m_velocity.y = vel.y;
-			m_velocity.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
+			Vec3 vel = (m_isLand) ? m_GetHitInfo.HitVel_Stand : m_GetHitInfo.HitVel_Air;
+
+			Vec3 accel;
+			accel.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
+			accel.y = vel.y;
+			accel.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
+			
+			SetVelocity(accel);
 		}
 
 		//攻撃判定のポインタを取得
@@ -161,7 +170,12 @@ namespace basecross {
 		void SetVelocity(Vec3 vel) {
 			m_velocity = vel;
 		}
+		void AddVelocity(Vec3 vel) {
+			m_accel = vel;
+			m_velocity += vel;
+		}
 
+		//前方ベクトルの取得
 		Vec3 GetForward() {
 			Vec3 vec = GetComponent<Transform>()->GetForward();
 
@@ -175,6 +189,10 @@ namespace basecross {
 			return fixedVec;
 		}
 
+		//地面の上にいるか否かのゲッター
+		bool GetLand() {
+			return m_isLand;
+		}
 
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {
@@ -189,6 +207,43 @@ namespace basecross {
 				return false;
 			}
 		}
+
+		//SEの再生
+		void PlaySnd(wstring sndname, float volume, float loopcount) {
+			m_SE = m_SEManager->Start(sndname, loopcount, volume);
+		}
 	};
+
+	/// <summary>
+	/// 飛び道具の親クラス
+	/// </summary>
+	class ProjectileBase :public Actor
+	{
+	protected:
+		float m_speed = 1.0f;
+		float m_originAngle = 0.0f;
+		float m_canMoveDistance;//移動できる長さ
+
+		weak_ptr<Actor> m_originObj;//自分を生成したオブジェクト
+
+		//攻撃判定を設定するための関数。OnCreateに置く
+		virtual void HitInfoInit() { }
+	public:
+		ProjectileBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
+			Actor(stagePtr, pos, rot, scale),
+			m_originObj(originObj)
+		{
+
+		}
+		~ProjectileBase()
+		{
+		}
+
+		void OnCreate()override;
+		void OnUpdate()override;
+
+
+	};
+
 }
 //end basecross

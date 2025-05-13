@@ -37,7 +37,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.7f, 0.7f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, 0.0f, 0.0f)
@@ -45,16 +45,29 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"Spearmen");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//歩き状態
-		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTest");//仮のメッシュ
+		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
+		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
+		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
+		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
+		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);//走りをやめる
+		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);//突進切り
+		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);//Attack1
+		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);//Attack2
+		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);//Attack3
+		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
+		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
+		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
+
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		ptrDraw->SetTextureResource(L"SpearmenTexture");
+		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);
+
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -65,15 +78,21 @@ namespace basecross {
 		//auto stage = GetStage();
 		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
 
-
-		//SE受け取り
-		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		//最初に流れる音
 		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
 
+
+		auto trans = GetComponent<Transform>();
+		m_EfkPos = trans->GetPosition();
+
+		m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
 	}
 
 	void Player::OnUpdate()
 	{	
+		//auto num = EffectManager::Instance().PlayEffect(L"ArmorBreak", m_pos);
+		//num;
+
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
 		if (m_poseFlag)
 		{
@@ -82,6 +101,9 @@ namespace basecross {
 
 		//親クラス処理
 		Actor::OnUpdate();
+
+		EffectManager::Instance().SetPosition(m_testEffect, m_EfkPos);
+
 
 		//着地判定(無効化時間中ならそれを減算する)
 		OnLanding();
@@ -96,6 +118,7 @@ namespace basecross {
 				//Dodge();//これ使いません
 			}
 		}
+
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
 		auto stage = GetStage();
@@ -151,7 +174,8 @@ namespace basecross {
 			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
 			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
-			EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
+			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
+
 		}
 		//-------------------------------------------------------------
 
@@ -240,6 +264,12 @@ namespace basecross {
 		}
 	}
 
+	//アニメーションの更新
+	void Player::UpdateAnimation(float addTime)
+	{
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(addTime);
+	}
+
 	//プレイヤーの移動処理
 	void Player::PlayerMove(int playerState)
 	{
@@ -250,7 +280,8 @@ namespace basecross {
 		//プレイヤーの向き
 		if (move.length() != 0)
 		{
-			m_angle = atan2(move.z, move.x);
+			//m_Angleの方向に回転するようにする
+			//m_angle = atan2(move.z, move.x);
 			m_rot.y = -m_angle;
 
 			m_trans->SetRotation(m_rot);
@@ -264,26 +295,20 @@ namespace basecross {
 	{
 		// 入力デバイス取得
 		InputDevice inputDevice = App::GetApp()->GetInputDevice();
-		CONTROLER_STATE controller = inputDevice.GetControlerVec()[0];
-		Vec3 stick = Vec3(controller.fThumbLX, 0, controller.fThumbLY);
+		m_controller = inputDevice.GetControlerVec()[0];
+		m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 		Vec3 totalVec;
 
 		if (playerState == PlayerState_Walk || playerState == PlayerState_Dash)//徒歩、ダッシュ処理
 		{
-			auto trans = GetTransform();
-			auto camera = OnGetDrawCamera();
+			//auto trans = GetTransform();
+			//auto camera = OnGetDrawCamera();
 
 			//スティックの向きと距離
-			float moveSize = stick.length();
-			float moveAngle = atan2(-stick.x, stick.z);
+			float moveSize = m_stickL.length();
 
-			//自分の位置とカメラの位置からカメラの角度を算出
-			auto front = trans->GetPosition() - camera->GetEye();
-			front.y = 0;
-			front.normalize();
-			float frontAngle = atan2(front.z, front.x);
-
-			float totalAngle = frontAngle + moveAngle;
+			//進む方向を決める
+			float totalAngle = MoveAngle(m_stickL);
 			totalVec = Vec3(cos(totalAngle), 0, sin(totalAngle));
 			totalVec.normalize();
 
@@ -291,10 +316,10 @@ namespace basecross {
 			switch (playerState)
 			{
 			case PlayerState_Walk:
-				totalVec *= moveSize;
+				totalVec *= moveSize * 3;
 				break;
 			case PlayerState_Dash:
-				totalVec *= moveSize * 2.5f;
+				totalVec *= moveSize * 5.5f;
 				break;
 			default:
 				break;
@@ -310,7 +335,7 @@ namespace basecross {
 
 			//二次関数的な動きで回避行動をする
 			//今は向いている方向に前方回避をする
-			float dodge = 8.0f;
+			float dodge = 8.0f*2.5f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
@@ -318,7 +343,7 @@ namespace basecross {
 			if (m_dodgeTime > XMConvertToRadians(20.0f))
 			{
 				//Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
-				if (controller.bConnected && controller.wButtons & XINPUT_GAMEPAD_A)
+				if (m_controller.bConnected && m_controller.wButtons & XINPUT_GAMEPAD_A)
 				{
 					m_dashFlag = true;
 					m_dodgeTime = 0.0f;
@@ -333,6 +358,31 @@ namespace basecross {
 			}
 		}
 		return totalVec;
+	}
+
+	//動く方向を決める処理
+	float Player::MoveAngle(Vec3 stickL)
+	{
+		auto trans = GetTransform();
+		auto camera = OnGetDrawCamera();
+
+		//スティックの向きと距離
+		float moveSize = stickL.length();
+		float moveAngle = atan2(-stickL.x, stickL.z);
+
+		//自分の位置とカメラの位置からカメラの角度を算出
+		auto front = trans->GetPosition() - camera->GetEye();
+		front.y = 0;
+		front.normalize();
+		float frontAngle = atan2(front.z, front.x);
+
+		//合計の角度
+		float totalAngle = frontAngle + moveAngle;
+		if (stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_angle = totalAngle;//今向いている方向を渡す
+		}
+		return totalAngle;
 	}
 
 	////エフェクトを出す処理
@@ -525,7 +575,6 @@ namespace basecross {
 		tmp.HitTime_Stand = 1.0f;//のけぞり時間
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;
-		DefAttack(.5f, tmp);
 		GetAttackPtr()->SetPos(Vec3(0, 0, 0));
 		auto AttackPtr = GetAttackPtr();
 		AttackPtr->SetCollScale(1.0f);
@@ -570,7 +619,7 @@ namespace basecross {
 		auto pos = m_trans->GetPosition();
 		m_trans->SetPosition(pos + moveVec);
 
-		m_canMoveDistance -= moveVec.x + moveVec.z + moveVec.y;
+		m_canMoveDistance -= abs(moveVec.x) + abs(moveVec.z) + abs(moveVec.y);
 		//一定距離移動したら消える
 		if (m_canMoveDistance <= 0.0f)
 		{
@@ -609,6 +658,7 @@ namespace basecross {
 			break;
 		}
 
+		GetAttackPtr()->SetHitInfo(tmp);
 	}
 
 
@@ -629,10 +679,10 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f/5, 1.0f, 1.0f/5),
+			Vec3(1.0f/5, 1.0f/5, 1.0f/5),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -0.0f, 0.0f)
+			Vec3(0.0f, -0.5f, 0.0f)
 		);
 
 		//ドローメッシュの設定
@@ -647,14 +697,17 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(false);//デバック用
+		ptrColl->SetDrawActive(true);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");
 
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
-		m_LandDetect->SetCollScale(1.5f);
+		//接地判定の設定
+		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		//m_LandDetect->SetCollScale(3.0f);
 		
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
