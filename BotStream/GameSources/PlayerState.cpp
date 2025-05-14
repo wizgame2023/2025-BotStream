@@ -332,6 +332,8 @@ namespace basecross {
 
 		//アニメーションの更新
 		m_player->UpdateAnimation(deltaTime*1.2f);
+		//移動処理
+		m_player->PlayerMove(PlayerState_Attack1);
     
 		//攻撃判定の定義
 		if (m_timeOfAttack >= m_timeOfStartAttack && AttackCollisionFlag)
@@ -429,6 +431,8 @@ namespace basecross {
 
 		//アニメーションの更新
 		m_player->UpdateAnimation(deltaTime*1.9f);
+		//移動処理
+		m_player->PlayerMove(PlayerState_Attack2);
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -523,6 +527,8 @@ namespace basecross {
 
 		//アニメーションの更新
 		m_player->UpdateAnimation(deltaTime * 1.8f);
+		//移動処理
+		m_player->PlayerMove(PlayerState_Attack3);
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;

@@ -119,7 +119,7 @@ namespace basecross {
 		virtual void AddEffect(int addEffect);
 
 		//ポーズのフラグをオンオフする関数
-		void PoseSwitch(bool onOff);
+		void SetPose(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {

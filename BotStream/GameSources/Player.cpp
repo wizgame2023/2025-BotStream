@@ -115,7 +115,6 @@ namespace basecross {
 			}
 			else {
 				Friction();
-				//Dodge();//これ使いません
 			}
 		}
 
@@ -143,25 +142,8 @@ namespace basecross {
 		}
 
 
-		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		//{
-		//	m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
-		//}
-		//// 仮：Bボタンで必殺技溜め
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		//{
-		//	m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
-		//}
-
-
 		//ステート処理
 		m_stateMachine->Update();
-		//m_stateMachine->ChangeState(L"Walk");//ステート変更
-
-		//動く処理(仮)
-		//PlayerMove();
-
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -199,6 +181,7 @@ namespace basecross {
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
+	//ジャンプ処理
 	void Player::Jump() {
 		// 入力デバイス取得
 		auto inputDevice = App::GetApp()->GetInputDevice();
@@ -356,6 +339,36 @@ namespace basecross {
 				}
 
 			}
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack1)
+		{
+			//移動スピード
+			float speed = 0.5f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack2)
+		{
+			//移動スピード
+			float speed = 0.25f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack3)
+		{
+			//移動スピード
+			float speed = 0.7f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
 		}
 		return totalVec;
 	}
