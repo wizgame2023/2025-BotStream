@@ -151,6 +151,7 @@ namespace basecross {
             EnemyNum = 1;
 
             //ƒEƒF[ƒu‚Q“G
+            //“G‚ðŒÄ‚Ño‚·‚Æ‚«‚Í“¯‚¶•¨‚ð2‰ñ‘‚©‚È‚¢‚Æ‚È‚º‚©‚¿‚á‚ñ‚Æo‚Ä‚±‚È‚¢
             enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
             enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
             enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
