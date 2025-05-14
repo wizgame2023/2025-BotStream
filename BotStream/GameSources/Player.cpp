@@ -477,10 +477,14 @@ namespace basecross {
 		return m_endDodgeFlag;
 	}
 
-
+	//衝突判定
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
-		DetectBeingAttacked(Other);//攻撃を受けた判定
+		//回避中ならダメージ判定は受けない
+		if (!FindTag(L"DodgeNow"))
+		{
+			DetectBeingAttacked(Other);
+		}
 	}
 
 	//ダメージを受けたらヒットステートに移動する
@@ -814,6 +818,7 @@ namespace basecross {
 			m_HPBer->SetPercent(HPPercent);
 
 		}
+
 
 	}
 
