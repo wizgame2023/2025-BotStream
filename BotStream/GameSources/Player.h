@@ -245,8 +245,17 @@ namespace basecross{
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
+		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
+		int m_AttackType = Zako_Melee;
+
 		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 	public:
+		enum EnemyZakoAttackType
+		{
+			Zako_Melee,//近距離型
+			Zako_Long//遠距離型
+		};
+
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
 			EnemyBase(stagePtr,pos,rot,scale,used)
 		{
@@ -266,6 +275,12 @@ namespace basecross{
 
 		//ビルボードの処理
 		void UpdateHPBer();
+
+		//攻撃のタイプのゲッタ
+		int GetAttackType()
+		{
+			return m_AttackType;
+		}
 	};
 	
 }

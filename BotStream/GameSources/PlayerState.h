@@ -408,7 +408,62 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//攻撃をするときのステート
+	//接近戦をするときの準備ステート
+	class EnemyZakoPreparationforMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	////攻撃をするときのステート(近距離)
+	//class EnemyZakoShotState :public EnemyZakoStateBase
+	//{
+	//private:
+	//	float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+	//	float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
+	//public:
+	//	EnemyZakoShotState(shared_ptr<GameObject>& obj) :
+	//		EnemyZakoStateBase(obj)
+	//	{
+
+	//	}
+
+	//	virtual void Enter();
+	//	virtual void Update(float deltatime);
+	//	virtual void Exit();
+
+	//};
+
+	//球を打つ直前の軸合わせのときのステート
+	class EnemyZakoAlignmentState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(遠距離)
 	class EnemyZakoShotState :public EnemyZakoStateBase
 	{
 	private:
@@ -451,6 +506,8 @@ namespace basecross {
 		{
 			AddState(L"Stand", shared_ptr<EnemyZakoStandState>(new EnemyZakoStandState(obj)));
 			AddState(L"Shot", shared_ptr<EnemyZakoShotState>(new EnemyZakoShotState(obj)));
+			AddState(L"Alignment", shared_ptr<EnemyZakoAlignmentState>(new EnemyZakoAlignmentState(obj)));
+			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoPreparationforMeleeState>(new EnemyZakoPreparationforMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
 		
 			ChangeState(L"Stand");
