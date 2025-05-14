@@ -157,6 +157,7 @@ namespace basecross {
 
 		//UŒ‚”»’è‚Ì“à—e‚ðXV‚·‚é
 		void DefAttack(float activetime, HitInfo info) {
+			m_AttackCol->SetMoveContact(false);
 			m_AttackCol->SetHitInfo(info);
 			m_AttackCol->ActivateCollision(activetime);
 		}
@@ -211,6 +212,14 @@ namespace basecross {
 		//SE‚ÌÄ¶
 		void PlaySnd(wstring sndname, float volume, float loopcount) {
 			m_SE = m_SEManager->Start(sndname, loopcount, volume);
+		}
+
+		//SE‚Ì’âŽ~
+		void StopSnd() {
+			if (m_SE == nullptr) {
+				return;
+			}
+			m_SEManager->Stop(m_SE);
 		}
 	};
 

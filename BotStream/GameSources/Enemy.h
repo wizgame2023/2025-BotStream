@@ -132,6 +132,42 @@ namespace basecross{
 	};
 
 	/// <summary>
+	/// ƒ{ƒX1‚ÌÕŒ‚”g
+	/// </summary>
+	class BossFirstShockwave : public ProjectileBase {
+	protected:
+		shared_ptr<CollisionCapsule> m_innerCollision;
+
+		//Œ»İ‚Ì”¼Œa
+		float m_radius = 0;
+		//L‚ª‚é‘¬“x
+		float m_radiateSpeed = 36.0f;
+		//”¼Œa‚ÌÅ‘å
+		float m_radiusMax = 72.0f;
+		//ŠO‰~‚Æ“à‰~‚Ì·
+		float m_widthCircle = .2f;
+
+		const float m_height = 2.0f;
+
+		int m_isPlayerInsideCnt = 0;
+		const int m_isPlayerInsideCntMax = 100;
+
+		void HitInfoInit() override;
+	public:
+		BossFirstShockwave(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
+			ProjectileBase(stagePtr, pos, rot, scale, originObj)
+		{
+
+		}
+		~BossFirstShockwave() {}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+
+		void OnCollisionExcute(shared_ptr<GameObject>& Other) override;
+	};
+
+	/// <summary>
 	/// ƒ{ƒX1‚Ìƒr[ƒ€”»’è
 	/// </summary>
 	class BossFirstBeam : public ProjectileBase {

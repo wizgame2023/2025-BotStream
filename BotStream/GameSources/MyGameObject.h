@@ -30,6 +30,13 @@ namespace basecross {
 			GetComponent<Transform>()->SetQuaternion(quat);
 		}
 
+		Vec3 GetScale() {
+			return GetComponent<Transform>()->GetScale();
+		}
+		void SetScale(Vec3 scale) {
+			GetComponent<Transform>()->SetScale(scale);
+		}
+
 		//クォータニオン基準での回転処理 1q:最初の回転 v:回転軸 rad:回転量
 		Quat RotateQuat(const Quat q, const Vec3 v, const float rad) {
 			Quat r = Quat(cos(rad / 2), v.x * sin(rad / 2), v.y * sin(rad / 2), v.z * sin(rad / 2));
