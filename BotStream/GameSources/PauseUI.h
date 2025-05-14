@@ -55,6 +55,9 @@ namespace basecross {
 		// BGM,SEŠÖŒW‚Ì•\¦”ñ•\¦‚Ì§Œä
 		void AudioUIClear(bool clear);
 
+		//Actor‚ğ~‚ß‚éˆ—
+		void MoveSwitchActor(bool OnOff);
+
 		template <typename T>
 		T clamp(T value, T minValue, T maxValue)
 		{

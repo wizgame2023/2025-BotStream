@@ -67,6 +67,7 @@ namespace basecross {
 		{
 			m_pauseBack->OnClear(true);
 			m_selectSprite->OnClear(true);
+			MoveSwitchActor(m_pauseFlag);//アクタークラスを一時停止から復活させる
 			for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
 				m_pauseTextSprite[i]->OnClear(true);
 			// （もし m_BGMMater など別配列があればここで全部 OnClear(true)）
@@ -77,6 +78,7 @@ namespace basecross {
 			// 背景と選択してるところは常に表示
 			m_pauseBack->OnClear(false);
 			m_selectSprite->OnClear(false);
+			MoveSwitchActor(m_pauseFlag);//アクタークラスを一時停止
 
 			// メインメニュー or オーディオメニューの切り替え
 			if (!m_pauseAudioFlag)
@@ -378,5 +380,48 @@ namespace basecross {
 		m_selectSprite->OnClear(true);
 		m_selectSprite->SetDrawLayer(2);
 
+	}
+
+	//Actorを一時停止させたり動かしたりする処理(ポーズ状態)
+	void PauseSprite::MoveSwitchActor(bool OnOff)
+	{
+		//スイッチがオンだと止まる
+		if (OnOff)
+		{
+			auto objVec = GetStage()->GetGameObjectVec();
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+
+				if (actor)
+				{
+					actor->SetPose(true);
+				}
+				if (cameraManager)
+				{
+					cameraManager->SetPose(true);
+				}
+			}
+		}
+		//オフなら動く
+		if (!OnOff)
+		{
+			auto objVec = GetStage()->GetGameObjectVec();
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);	
+				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+
+				if (actor)
+				{
+					actor->SetPose(false);
+				}
+				if (cameraManager)
+				{
+					cameraManager->SetPose(false);
+				}
+			}
+		}
 	}
 }
