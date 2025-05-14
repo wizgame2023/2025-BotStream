@@ -47,12 +47,13 @@ namespace basecross {
 
         shared_ptr<FadeoutSprite> fadeout;
         fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
+        SetSharedGameObject(L"Fadeout", fadeout);
         fadeout->SetDrawLayer(3);
 
         CreateSharedObjectGroup(L"Actor");
 
-        auto player = AddGameObject<Player>(Vec3(0.0f, 5.0f, -330.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));        
-        SetSharedGameObject(L"Player", player); //-340
+        auto player = AddGameObject<Player>(Vec3(0.0f, 5.0f, -330.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+        SetSharedGameObject(L"Player", player);
 
         auto enemyMgr = AddGameObject<EnemyManager>();
         SetSharedGameObject(L"EnemyManager", enemyMgr);
@@ -98,6 +99,15 @@ namespace basecross {
         auto player = GetSharedGameObject<Player>(L"Player");
         auto enemyMgr = GetSharedGameObject<EnemyManager>(L"EnemyManager");
         auto boss = GetSharedGameObject<BossFirst>(L"Boss");
+        auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
+
+        fadeout->GetBlackFlag();
+        m_BlackFlag = fadeout->GetBlackFlag();
+        fadeout->GetFadeOutFlag();
+        m_IsFadeOutFlag = fadeout->GetFadeOutFlag();
+        fadeout->GetFadeInFlag();
+        m_IsFadeInFlag = fadeout->GetFadeInFlag();
+
 
         player->GetHP();
         auto plaHP = player->GetHP();
@@ -109,9 +119,18 @@ namespace basecross {
 
         EffectManager::Instance().InterfaceUpdate();
 
-        GetWave();
+
 
         if (m_waveNow == 1 && EnemyNum == 0)
+        {
+            m_IsFadeOutFlag = true;
+        }
+        if (m_waveNow == 2 && EnemyNum == 0)
+        {
+            m_IsFadeOutFlag = true;
+        }
+
+        if (m_BlackFlag == true && m_waveNow == 1 && EnemyNum == 0)
         {
             //wave２になった
             m_waveNow = 2;
@@ -119,16 +138,22 @@ namespace basecross {
             player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 5.0f, -75.0f));
             player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
 
+            m_IsFadeInFlag = true;
+            m_ClearFlag = true;
+        }
+
+        if(m_ClearFlag == true && m_waveNow == 2)
+        {
             EnemyNum = 1;
 
             //ウェーブ２敵
-            //enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-            //enemyMgr->InstEnemy(Vec3(5.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-            //enemyMgr->InstEnemy(Vec3(-5.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-            //enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-            //enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-            //enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-            //enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f,0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(5.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(-5.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(15.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
+            enemyMgr->InstEnemy(Vec3(-15.0f, 5.5f,0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
             enemyMgr->InstEnemy(Vec3(20.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
             enemyMgr->InstEnemy(Vec3(-20.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
             enemyMgr->InstEnemy(Vec3(25.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
@@ -142,15 +167,23 @@ namespace basecross {
             enemyMgr->InstEnemy(Vec3(45.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
             enemyMgr->InstEnemy(Vec3(-45.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
 
+            m_ClearFlag = false;
         }
 
-        if (m_waveNow == 2 && EnemyNum == 0)
+        if (m_BlackFlag == true && m_waveNow == 2 && EnemyNum == 0)
         {
             //ボス戦開始
             m_waveNow = 3;
 
             player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 5.0f, 165.0f));
             player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            
+            m_IsFadeInFlag = true;
+            m_ClearFlag = true;
+        }
+
+        if(m_ClearFlag == true && m_waveNow == 3)
+        {
 
             EnemyNum = 1;
 
@@ -160,6 +193,7 @@ namespace basecross {
             GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
 
+            m_ClearFlag = false;
         }
 
         if (m_waveNow == 3)
@@ -182,24 +216,15 @@ namespace basecross {
 
         }
 
-        SetWave(m_waveNow);
+        fadeout->SetFadeOutFlag(m_IsFadeOutFlag);
+        fadeout->SetFadeInFlag(m_IsFadeInFlag);
+        fadeout->SetBlackFlag(m_BlackFlag);
     }
 
     void WaveStage::OnDraw()
     {
         EffectManager::Instance().InterfaceDraw();
     }
-
-    int WaveStage::GetWave()
-    {
-        return m_waveNow;
-    }
-
-    void WaveStage::SetWave(int setWave)
-    {
-        m_waveNow = setWave;
-    }
-
 
     //床作成
     void WaveStage::CreateFloor()
@@ -208,21 +233,21 @@ namespace basecross {
         {
             //Boss
             {
-                Vec3(210.0f, 1.0f, 210.0f),
+                Vec3(212.0f, 3.0f, 212.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, -2.0f, 260.0f)
+                Vec3(0.0f, -3.0f, 260.0f)
             },
             //Wave2
             {
-                Vec3(170.0f, 1.0f, 170.0f),
+                Vec3(172.0f, 3.0f, 172.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, -2.0f, 0.0f)
+                Vec3(0.0f, -3.0f, 0.0f)
             },
             //Wave1
             {
-                Vec3(170.0f, 1.0f, 170.0f),
+                Vec3(172.0f, 3.0f, 172.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, -2.0f, -260.0f)
+                Vec3(0.0f, -3.0f, -260.0f)
             }
 
         };
@@ -277,77 +302,77 @@ namespace basecross {
             //Boss
             //右
             {
-                Vec3(41.0f, 0.1f, 210.0f),
+                Vec3(41.0f, 1.0f, 210.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(105.0f, 19.0f, 260.0f)
+                Vec3(105.5f, 19.0f, 260.0f)
             },
             //左
             {
-                Vec3(41.0f, 0.1f, 210.0f),
+                Vec3(41.0f, 1.0f, 210.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-105.0f, 19.0f, 260.0f)
+                Vec3(-105.5f, 19.0f, 260.0f)
             },
             //前
             {
-                Vec3(41.0f, 0.1f, 210.0f),
+                Vec3(41.0f, 1.0f, 210.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 365.0f)
+                Vec3(0.0f, 19.0f, 365.5f)
             },
             //後
             {
-                Vec3(41.0f, 0.1f, 210.0f),
+                Vec3(41.0f, 1.0f, 210.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 155.0f)
+                Vec3(0.0f, 19.0f, 154.5f)
             },
             //Wave2
             //右
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(85.0f, 19.0f, 0.0f)
+                Vec3(85.5f, 19.0f, 0.0f)
             },
             //左
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-85.0f, 19.0f, 0.0f)
+                Vec3(-85.5f, 19.0f, 0.0f)
             },
             //前
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 85.0f)
+                Vec3(0.0f, 19.0f, 85.5f)
             },
             //後
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -85.0f)
+                Vec3(0.0f, 19.0f, -85.5f)
             },
             //Wave1
             //右
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(85.0f, 19.0f, -260.0f)
+                Vec3(85.5f, 19.0f, -260.0f)
             },
             //左
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-85.0f, 19.0f, -260.0f)
+                Vec3(-85.5f, 19.0f, -260.0f)
             },
             //前
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -175.0f)
+                Vec3(0.0f, 19.0f, -174.5f)
             },
              //後
             {
-                Vec3(41.0f, 0.1f, 170.0f),
+                Vec3(41.0f, 1.0f, 170.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -345.0f)
+                Vec3(0.0f, 19.0f, -345.5f)
             },
         };
         for (auto v : vec)
@@ -495,9 +520,10 @@ namespace basecross {
     FadeoutSprite::FadeoutSprite(const shared_ptr<Stage>& stage, const wstring& ResKey) :
         GameObject(stage),
         m_ResKey(ResKey),
-        m_IsFadeOut(false),
-        m_IsFadeIn(false),
-        m_Color(0.0f)
+        m_IsFadeOutFlag(false),
+        m_IsFadeInFlag(false),
+        m_Color(0.0f),
+        m_BlackFlag(false)
     {
     }
 
@@ -532,33 +558,64 @@ namespace basecross {
     void FadeoutSprite::OnUpdate() {
 
 
-        if (m_waveNow == 2 && m_IsFadeIn == false && m_IsFadeOut == false)
-        {
-            m_IsFadeOut = true;
-        }
 
-        if (m_IsFadeOut == true)
+        if (m_IsFadeOutFlag == true)
         {
             m_Color += 0.01;
         }
 
         if (m_Color >= 1)
         {
-            m_IsFadeOut = false;
             m_Color = 1;
+            m_BlackFlag = true;
+            m_IsFadeOutFlag = false;
         }
 
-        if (m_IsFadeOut == false)
+
+        if (m_IsFadeInFlag == true)
         {
-            m_IsFadeIn = true;
+            m_BlackFlag = false;
+            m_Color -= 0.005;
         }
 
-        if (m_IsFadeIn == true)
+        if (m_Color <= 0)
         {
-            m_Color -= 0.001;
+            m_Color = 0;
+            m_IsFadeInFlag = false;
         }
+
         m_drawComp->SetDiffuse(Col4(m_Color, m_Color, m_Color, m_Color));
 
+    }
+
+    void FadeoutSprite::SetBlackFlag(int setBlackFlag)
+    {
+        m_BlackFlag = setBlackFlag;
+    }
+
+    bool FadeoutSprite::GetBlackFlag()
+    {
+        return m_BlackFlag;
+    }
+
+    void FadeoutSprite::SetFadeOutFlag(int setFadeOutFlag)
+    {
+        m_IsFadeOutFlag = setFadeOutFlag;
+    }
+
+    bool FadeoutSprite::GetFadeOutFlag()
+    {
+        return m_IsFadeOutFlag;
+    }
+
+    void FadeoutSprite::SetFadeInFlag(int setFadeInFlag)
+    {
+        m_IsFadeInFlag = setFadeInFlag;
+    }
+
+    bool FadeoutSprite::GetFadeInFlag()
+    {
+        return m_IsFadeInFlag;
     }
 
 }

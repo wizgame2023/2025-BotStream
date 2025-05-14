@@ -25,6 +25,13 @@ namespace basecross {
 
         float TimeOfGameClear = 0.0f;//ÉQÅ[ÉÄÉNÉäÉAÇ∑ÇÈÇΩÇﬂÇÃéûä‘åvë™
 
+        bool m_NextWave = false;
+
+        bool m_IsFadeOutFlag = false;
+        bool m_IsFadeInFlag = false;
+        bool m_BlackFlag = false;
+        bool m_ClearFlag = false;
+
 
     public:
         //ç\ízÇ∆îjä¸
@@ -35,8 +42,6 @@ namespace basecross {
         virtual void OnUpdate()override;
         virtual void OnDraw()override;
 
-        int GetWave();
-        void SetWave(int setWave);
 
     };
 
@@ -102,18 +107,24 @@ namespace basecross {
         vector<VertexPositionColorTexture> m_Vertices;
         shared_ptr<PCTSpriteDraw> m_drawComp;
         wstring m_ResKey;
-        bool m_IsFadeOut;
-        bool m_IsFadeIn;
+        bool m_IsFadeOutFlag = false;
+        bool m_IsFadeInFlag = false;
         float m_Color;
-
-
-        int m_waveNow;
+        bool m_BlackFlag = false;
 
     public:
         FadeoutSprite(const shared_ptr<Stage>& stage, const wstring& ResKey);
         virtual ~FadeoutSprite();
         virtual void OnCreate() override;
         virtual void OnUpdate() override;
+
+        bool GetBlackFlag();
+        void SetBlackFlag(int setBlackFlag);
+        bool GetFadeOutFlag();
+        void SetFadeOutFlag(int setFadeOutFlag);
+        bool GetFadeInFlag();
+        void SetFadeInFlag(int setFadeInFlag);
+
     };
 
 }
