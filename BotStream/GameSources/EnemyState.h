@@ -67,7 +67,8 @@ namespace basecross {
 		float m_time = 0;
 		const float m_startAttack = 3.0f;
 		const float m_startAttackRand = 10;
-		const float m_spinRand = 400;
+		const float m_spinRand = 600;
+		const float m_slamRand = 250;
 		const float m_farDist = 10;
 
 		random_device rnd;
@@ -85,6 +86,10 @@ namespace basecross {
 	class BossFirstChaseState : public StateBase {
 		const float m_rotateThreshold = XM_PIDIV4 / 4;
 		const float m_closeDist = 8;
+		const float m_chaseSpeed = 20;
+
+		random_device rnd;
+		const float m_slamRand = 500;
 	public:
 		BossFirstChaseState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {

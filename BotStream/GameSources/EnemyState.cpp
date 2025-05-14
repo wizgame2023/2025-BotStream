@@ -72,10 +72,15 @@ namespace basecross {
 			}
 
 			//知るか！廻る！
-			if (rnd() % 1000 <= m_spinRand)
-			//boss->ChangeState(L"SpinStart");
-			boss->ChangeState(L"SlamStart");
-			
+			if (rnd() % 1000 <= m_spinRand) {
+				boss->ChangeState(L"SpinStart");
+			}
+
+			//やっぱ叩くかも…
+			if (rnd() % 1000 <= m_slamRand) {
+				boss->ChangeState(L"SlamStart");
+			}
+
 			if (boss->IsRecoveredFromArmorBreak()) {
 				boss->ChangeState(L"BeamStart");
 			}
@@ -95,12 +100,19 @@ namespace basecross {
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->RotateToPlayer(1.0f, m_rotateThreshold);
 
-		boss->SetVelocity(boss->GetForward() * 20);
+		boss->SetVelocity(boss->GetForward() * m_chaseSpeed);
 
 		if (boss->GetPlayerDist() < m_closeDist) {
 			//近い！
-			//boss->ChangeState(L"Attack");
-			boss->ChangeState(L"SlamStart");
+			if (rnd() % 1000 <= m_slamRand) {
+				//叩く！
+				boss->ChangeState(L"SlamStart");
+			}
+			else {
+				//刺す！
+				boss->ChangeState(L"Attack");
+			}
+			
 		}
 	}
 	void BossFirstChaseState::Exit() {

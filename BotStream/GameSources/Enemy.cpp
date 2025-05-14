@@ -365,8 +365,6 @@ namespace basecross {
 		m_innerCollision->SetAfterCollision(AfterCollision::None);
 		HitInfoInit();
 
-		m_innerCollision->SetDrawActive(true);
-		m_AttackCol->GetCollisionPtr()->SetDrawActive(true);
 		m_doPhysics = false;
 	}
 
@@ -380,20 +378,21 @@ namespace basecross {
 		_delta = App::GetApp()->GetElapsedTime();
 
 		if (m_radius >= m_radiusMax || m_AttackCol->GetMoveContact()) {
-			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
 			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
 			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
 			return;
 		}
 
 		m_radius += m_radiateSpeed * _delta;
 
-		SetScale(Vec3(m_radius - m_widthCircle, m_height * 2, m_radius - m_widthCircle));
+		SetScale(Vec3(m_radius - m_widthCircle, m_height, m_radius - m_widthCircle));
 
 		m_AttackCol->SetScale(Vec3(m_radius, m_height, m_radius));
 
 		//ƒvƒŒƒCƒ„[‚ª“à‘¤‚É‚¢‚½‚çUŒ‚”»’è‚ðÁ‚·
-		m_AttackCol->GetCollisionPtr()->SetUpdateActive(m_isPlayerInsideCnt <= 0);
+		float playerInside = m_isPlayerInsideCnt <= 0 ? 1 : 0;
+		m_AttackCol->ActivateCollision(playerInside);
 
 		if (m_isPlayerInsideCnt > 0) {
 			m_isPlayerInsideCnt--;
@@ -407,8 +406,8 @@ namespace basecross {
 		tmp.HitOnce = true;
 		tmp.Type = AttackType::Enemy;
 		tmp.Damage = 8;
-		tmp.HitVel_Stand = Vec3(-10, 20, 0);
-		tmp.HitVel_Air = Vec3(-8, 16, 0);
+		tmp.HitVel_Stand = Vec3(-10, 40, 0);
+		tmp.HitVel_Air = Vec3(-8, 20, 0);
 		tmp.HitTime_Stand = 1.5f;
 		tmp.HitTime_Air = 1.0f;
 

@@ -141,16 +141,16 @@ namespace basecross{
 		//Œ»İ‚Ì”¼Œa
 		float m_radius = 0;
 		//L‚ª‚é‘¬“x
-		float m_radiateSpeed = 36.0f;
+		float m_radiateSpeed = 54.0f;
 		//”¼Œa‚ÌÅ‘å
-		float m_radiusMax = 72.0f;
+		float m_radiusMax = 108.0f;
 		//ŠO‰~‚Æ“à‰~‚Ì·
-		float m_widthCircle = .2f;
+		float m_widthCircle = .5f;
 
 		const float m_height = 2.0f;
 
 		int m_isPlayerInsideCnt = 0;
-		const int m_isPlayerInsideCntMax = 100;
+		const int m_isPlayerInsideCntMax = 1;
 
 		void HitInfoInit() override;
 	public:
