@@ -65,6 +65,9 @@ namespace basecross {
 			//ポーズ生成
 			AddGameObject<PauseSprite>();
 
+			// テスト用ボスゲージ
+			AddGameObject<BossGaugeUI>();
+
 		}
 		catch (...) {
 			throw;
