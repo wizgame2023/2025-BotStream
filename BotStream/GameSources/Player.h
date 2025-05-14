@@ -62,7 +62,7 @@ namespace basecross{
 		//回避のクールタイムを測る変数
 		float m_dodgeCoolTime = 0.0f;
 		//回避のクールタイムの時間
-		float m_maxDodgeCoolTime = 0.8f;
+		float m_maxDodgeCoolTime = 0.3f;
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
@@ -96,6 +96,9 @@ namespace basecross{
 		//UI関係
 		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;//現在の球数を表示するUI
 
+		//コントローラー関係
+		CONTROLER_STATE m_controller;
+		Vec3 m_stickL;
 
 		void Jump();
 
@@ -104,6 +107,10 @@ namespace basecross{
 
 		//回避処理
 		void Dodge();
+
+		//エフェクトテスト用
+		Vec3 m_EfkPos;
+		Handle m_testEffect;
 
 	public:
 		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale,int HP = 100,int attack = 10,int defense = 1);
@@ -119,9 +126,13 @@ namespace basecross{
 		void PlayerMove(int playerState);
 		//移動ベクトルの計算処理
 		Vec3 GetMoveVector(int playerState);
+		//移動方向の処理
+		float MoveAngle(Vec3 stickL);
 
 		//球がなくなった時のリロード処理
 		void ReloadBullet(float ReloadTime);
+		//アニメーションの更新
+		void UpdateAnimation(float addTime);
 
 		//HPのゲッター
 		int GetHP();
@@ -167,6 +178,11 @@ namespace basecross{
 		{
 			return m_GetHitInfo;
 		}
+		//スティックの傾きを受け取るセッター
+		void Player::SetStickL(Vec3 SetStickL)
+		{
+			m_stickL = SetStickL;
+		}
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
@@ -186,7 +202,7 @@ namespace basecross{
 		float m_speed = 1.0f;
 		float m_AngleYAxis = 0.0f;//y軸の角度
 		float m_angleXAxis = 0.0f;//x軸の角度
-		float m_canMoveDistance;//移動できる長さ
+		float m_canMoveDistance = 0.0f;//移動できる長さ
 
 		//攻撃しているアクター
 		int m_actorType;
@@ -194,9 +210,10 @@ namespace basecross{
 		weak_ptr<Actor> m_originObj;//自分を生成したオブジェクト
 
 		shared_ptr<Transform> m_trans;
+
 	public:
-		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, float speed, shared_ptr<Actor> originObj, float canMoveDistance = 10.0f, int actorType = ActorName_Player) :
-			Actor(stagePtr, pos, rot, scale),
+		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,float speed,shared_ptr<Actor> originObj,float canMoveDistance = 30.0f,int actorType = ActorName_Player):
+			Actor(stagePtr,pos,rot,scale),
 			m_speed(speed),
 			m_originObj(originObj),
 			m_canMoveDistance(canMoveDistance),
@@ -228,7 +245,17 @@ namespace basecross{
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
+		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
+		int m_AttackType = Zako_Melee;
+
+		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 	public:
+		enum EnemyZakoAttackType
+		{
+			Zako_Melee,//近距離型
+			Zako_Long//遠距離型
+		};
+
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
 			EnemyBase(stagePtr,pos,rot,scale,used)
 		{
@@ -248,6 +275,12 @@ namespace basecross{
 
 		//ビルボードの処理
 		void UpdateHPBer();
+
+		//攻撃のタイプのゲッタ
+		int GetAttackType()
+		{
+			return m_AttackType;
+		}
 	};
 	
 }
