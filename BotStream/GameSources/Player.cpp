@@ -37,7 +37,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f, 1.0f, 1.0f),
+			Vec3(0.7f, 0.7f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, 0.0f, 0.0f)
@@ -45,12 +45,23 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"Spearmen");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//歩き状態
-		ptrDraw->AddAnimation(L"Walk", 0, 100, true, 60.0f);//歩き状態
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTest");//仮のメッシュ
+		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
+		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
+		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
+		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
+		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);//走りをやめる
+		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);//突進切り
+		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);//Attack1
+		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);//Attack2
+		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);//Attack3
+		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
+		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
+		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
+
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		ptrDraw->SetTextureResource(L"SpearmenTexture");
+		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
@@ -104,7 +115,6 @@ namespace basecross {
 			}
 			else {
 				Friction();
-				//Dodge();//これ使いません
 			}
 		}
 
@@ -132,25 +142,8 @@ namespace basecross {
 		}
 
 
-		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		//{
-		//	m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
-		//}
-		//// 仮：Bボタンで必殺技溜め
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		//{
-		//	m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
-		//}
-
-
 		//ステート処理
 		m_stateMachine->Update();
-		//m_stateMachine->ChangeState(L"Walk");//ステート変更
-
-		//動く処理(仮)
-		//PlayerMove();
-
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -188,6 +181,7 @@ namespace basecross {
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
+	//ジャンプ処理
 	void Player::Jump() {
 		// 入力デバイス取得
 		auto inputDevice = App::GetApp()->GetInputDevice();
@@ -253,6 +247,12 @@ namespace basecross {
 		}
 	}
 
+	//アニメーションの更新
+	void Player::UpdateAnimation(float addTime)
+	{
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(addTime);
+	}
+
 	//プレイヤーの移動処理
 	void Player::PlayerMove(int playerState)
 	{
@@ -299,10 +299,10 @@ namespace basecross {
 			switch (playerState)
 			{
 			case PlayerState_Walk:
-				totalVec *= moveSize;
+				totalVec *= moveSize * 3;
 				break;
 			case PlayerState_Dash:
-				totalVec *= moveSize * 2.5f;
+				totalVec *= moveSize * 5.5f;
 				break;
 			default:
 				break;
@@ -318,7 +318,7 @@ namespace basecross {
 
 			//二次関数的な動きで回避行動をする
 			//今は向いている方向に前方回避をする
-			float dodge = 8.0f;
+			float dodge = 8.0f*2.5f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
@@ -339,6 +339,36 @@ namespace basecross {
 				}
 
 			}
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack1)
+		{
+			//移動スピード
+			float speed = 0.5f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack2)
+		{
+			//移動スピード
+			float speed = 0.25f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack3)
+		{
+			//移動スピード
+			float speed = 0.7f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
 		}
 		return totalVec;
 	}
@@ -662,10 +692,10 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f/5, 1.0f, 1.0f/5),
+			Vec3(1.0f/5, 1.0f/5, 1.0f/5),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -0.0f, 0.0f)
+			Vec3(0.0f, -0.5f, 0.0f)
 		);
 
 		//ドローメッシュの設定
@@ -688,8 +718,8 @@ namespace basecross {
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
 		//接地判定の設定
-		m_LandDetect->SetBindPos(Vec3(0, 0.0f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
+		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 		
 		//ステートマシン生成
@@ -699,6 +729,8 @@ namespace basecross {
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
+
+		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(),L"Numbers",2, )
 
 		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}

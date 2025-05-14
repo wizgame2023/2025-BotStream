@@ -29,12 +29,12 @@ namespace basecross {
 
 		if (m_ActiveTime > 0) {
 			m_collision->SetUpdateActive(true);
-			//m_collision->SetDrawActive(true);
+			m_collision->SetDrawActive(true);
 			m_ActiveTime -= delta;
 		}
 		else {
 			m_collision->SetUpdateActive(false);
-			//m_collision->SetDrawActive(false);
+			m_collision->SetDrawActive(false);
 		}
 	}
 

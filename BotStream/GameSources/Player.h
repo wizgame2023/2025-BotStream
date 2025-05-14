@@ -62,7 +62,7 @@ namespace basecross{
 		//回避のクールタイムを測る変数
 		float m_dodgeCoolTime = 0.0f;
 		//回避のクールタイムの時間
-		float m_maxDodgeCoolTime = 0.8f;
+		float m_maxDodgeCoolTime = 0.3f;
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
@@ -131,6 +131,8 @@ namespace basecross{
 
 		//球がなくなった時のリロード処理
 		void ReloadBullet(float ReloadTime);
+		//アニメーションの更新
+		void UpdateAnimation(float addTime);
 
 		//HPのゲッター
 		int GetHP();
@@ -243,6 +245,7 @@ namespace basecross{
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
+		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 	public:
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
 			EnemyBase(stagePtr,pos,rot,scale,used)
