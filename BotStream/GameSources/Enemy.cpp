@@ -179,12 +179,22 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
 		//近接2
 		ptrDraw->AddAnimation(L"AttackClose2", 719, 80, false, 60.0f);
+
 		//回転発生
 		ptrDraw->AddAnimation(L"AttackSpin1", 800, 49, false, 60.0f);
 		//回転持続
 		ptrDraw->AddAnimation(L"AttackSpin2", 850, 75, false, 30.0f);
 		//回転硬直
 		ptrDraw->AddAnimation(L"AttackSpin3", 926, 84, false, 60.0f);
+
+		//叩きつけ予備動作
+		ptrDraw->AddAnimation(L"AttackSlamStart", 1010, 65, false, 60.0f);
+		//叩きつけ1発目
+		ptrDraw->AddAnimation(L"AttackSlam1", 1075, 12, false, 60.0f);
+		//叩きつけ2発目
+		ptrDraw->AddAnimation(L"AttackSlam2", 1088, 22, false, 60.0f);
+		//叩きつけ終了
+		ptrDraw->AddAnimation(L"AttackSlamEnd", 1110, 90, false, 60.0f);
 
 		//極太ビーム用意
 		ptrDraw->AddAnimation(L"AttackSPBeam1", 1500, 75, false, 60.0f);
@@ -313,6 +323,108 @@ namespace basecross {
 		}
 	}
 
+	/// <summary>
+	/// ボス1の衝撃波
+	/// </summary>
+	void BossFirstShockwave::OnCreate()
+	{
+		Actor::OnCreate();
+
+		m_speed = 0;
+		m_originAngle = 0;
+		m_canMoveDistance = 0;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		m_trans->SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+		
+		//原点オブジェクトが消えていたら自分も消える
+		auto originLock = m_originObj.lock();
+		if (!originLock)
+		{
+			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			return;
+		}
+		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+
+		if (originLock->FindTag(L"Player"))
+		{
+			//Y軸のカメラの角度を受け取る
+			m_originAngle = -(cameraManager->GetAngle(L"Y")) - XM_PI;
+		}
+		else if (originLock->FindTag(L"Enemy"))
+		{
+			auto playerAngleVec = originLock->GetComponent<Transform>()->GetForward();
+			m_originAngle = atan2f(playerAngleVec.z, -playerAngleVec.x);
+			m_originAngle -= XM_PIDIV2;
+		}
+
+		m_innerCollision = AddComponent<CollisionCapsule>();
+		m_innerCollision->SetAfterCollision(AfterCollision::None);
+		HitInfoInit();
+
+		m_doPhysics = false;
+	}
+
+	void BossFirstShockwave::OnUpdate()
+	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+		_delta = App::GetApp()->GetElapsedTime();
+
+		if (m_radius >= m_radiusMax || m_AttackCol->GetMoveContact()) {
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			return;
+		}
+
+		m_radius += m_radiateSpeed * _delta;
+
+		SetScale(Vec3(m_radius - m_widthCircle, m_height, m_radius - m_widthCircle));
+
+		m_AttackCol->SetScale(Vec3(m_radius, m_height, m_radius));
+
+		//プレイヤーが内側にいたら攻撃判定を消す
+		float playerInside = m_isPlayerInsideCnt <= 0 ? 1 : 0;
+		m_AttackCol->ActivateCollision(playerInside);
+
+		if (m_isPlayerInsideCnt > 0) {
+			m_isPlayerInsideCnt--;
+		}
+	}
+
+	void BossFirstShockwave::HitInfoInit() {
+
+		//攻撃判定の定義
+		auto tmp = GetAttackPtr()->GetHitInfo();
+		tmp.HitOnce = true;
+		tmp.Type = AttackType::Enemy;
+		tmp.Damage = 8;
+		tmp.HitVel_Stand = Vec3(-10, 40, 0);
+		tmp.HitVel_Air = Vec3(-8, 20, 0);
+		tmp.HitTime_Stand = 1.5f;
+		tmp.HitTime_Air = 1.0f;
+
+		DefAttack(5, tmp);
+		GetAttackPtr()->SetCollScale(.5f);
+		GetAttackPtr()->SetCollHeight(m_height);
+	}
+
+	void BossFirstShockwave::OnCollisionExcute(shared_ptr<GameObject>& Other) {
+		if (Other->FindTag(L"Player")) {
+			m_isPlayerInsideCnt = m_isPlayerInsideCntMax;
+		}
+	}
+
+	/// <summary>
+	/// ボス1のビーム判定
+	/// </summary>
 	void BossFirstBeam::OnCreate()
 	{
 		Actor::OnCreate();

@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<StageSato>();
+			ResetActiveStage<TitleStage>();
 
 		}
 
@@ -231,11 +231,17 @@ namespace basecross{
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
-		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
-		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
+
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
 		app->RegisterWav(L"Enemy_Slash", SoundPath + L"Enemy_Slash.wav");
+		app->RegisterWav(L"Enemy_Spin", SoundPath + L"Enemy_Spin.wav");
+		app->RegisterWav(L"Enemy_SpinFinish", SoundPath + L"Enemy_SpinFinish.wav");
+		app->RegisterWav(L"Enemy_Slam", SoundPath + L"Enemy_Slam.wav");
 		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
+		app->RegisterWav(L"Enemy_Defeat", SoundPath + L"Enemy_Defeat.wav");
+
+		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
+		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
 		app->RegisterWav(L"Attack2", SoundPath + L"Attack2.wav");
 		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");
