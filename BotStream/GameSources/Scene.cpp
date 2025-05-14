@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<StageSato>();
 
 		}
 
@@ -182,6 +182,9 @@ namespace basecross{
 		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//仮のプレイヤーメッシュ(槍兵)
 		app->RegisterResource(L"Spearmen", boneMultiModelMesh);
 
+		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Player_test.bmf");//仮のプレイヤーメッシュ
+		app->RegisterResource(L"PlayerModelTest", boneMultiModelMesh);
+
 		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ
 		app->RegisterResource(L"Enemy_A", boneModelMesh);
 
@@ -213,6 +216,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
+		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
 		// ---------------------------------
 
 		//BGM

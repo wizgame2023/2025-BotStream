@@ -165,6 +165,16 @@ namespace basecross{
 			return m_lockStageCamera->GetAt();
 		}
 
+		//ポーズフラグのゲッタセッタ
+		bool GetPose()
+		{
+			return m_poseFlag;
+		}
+		void SetPose(bool onOff)
+		{
+			m_poseFlag = onOff;
+		}
+
 		//ターゲット対象を渡す関数
 		shared_ptr<Actor> GetTargetObj();
 	};

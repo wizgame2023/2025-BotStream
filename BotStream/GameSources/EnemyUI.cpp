@@ -147,4 +147,121 @@ namespace basecross {
 		m_parsecond = parcent;
 	}
 
+
+	//--------------------------------------------------
+	//  ボスのHPゲージ
+	//--------------------------------------------------
+
+	void BossGaugeUI::OnCreate()
+	{
+		m_stage = GetStage();
+		CreateSprite();
+		ClearBossGaugeUI(true);
+	}
+
+	void BossGaugeUI::OnUpdate()
+	{
+		Vec3 framePos = m_gaugeFrameSp->GetComponent<Transform>()->GetPosition();
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+
+		// 比率でスケーリング(HP)
+		float hpRatio = m_hitPoint / m_hitPointMax;
+		hpRatio = clamp(hpRatio, 0.0f, 1.0f);
+
+		auto hpTrans = m_hitPointSp->GetComponent<Transform>();
+		hpTrans->SetScale(Vec3(hpRatio, 1.0f, 1.0f));
+
+		// 左端固定
+		const float gaugeWidth = 300.0f * 0.8f;
+		float hpOffsetX = (hpRatio - 1.0f) * (gaugeWidth * 0.965f);
+		hpTrans->SetPosition(Vec3(20.0f + hpOffsetX, -200.0f, 0.0f));
+
+		// 枠の位置からの相対座標（プラマイ補正）
+		Vec3 hpOffset(0.0f * 0.066f, 0.7f, 0.0f);
+		hpTrans->SetPosition(framePos + hpOffset + Vec3(hpOffsetX, 0.0f, 0.0f));
+
+	}
+
+	void BossGaugeUI::CreateSprite()
+	{
+		float frameSizeX = 500, frameSizeY = 75;
+		m_gaugeFrameSp = m_stage->AddGameObject<Sprite>(
+			L"BossGaugeFrame",
+			Vec2(frameSizeX, frameSizeY),
+			Vec3(0.0f, 350.0f, 0.0f)
+		);
+		
+		auto framePos = m_gaugeFrameSp->GetPosition();
+
+		m_hitPointSp = m_stage->AddGameObject<Sprite>(
+			L"BossHPMater",
+			Vec2(frameSizeX * 0.966f, frameSizeY * 0.826f),
+			Vec3(framePos.x, framePos.y + 0.7f, framePos.z)
+		);
+	}
+	// END ---------------------------------------------------
+
+	//--------------------------------------------------
+	//  敵にダメージを与えた時のUIみたいなやつ
+	//--------------------------------------------------
+
+	void EnemyDamageBill::OnCreate()
+	{
+		auto PtrTransform = GetComponent<Transform>();
+		if (!m_actor.expired()) {
+			auto SeekPtr = m_actor.lock();
+			auto SeekTransPtr = SeekPtr->GetComponent<Transform>();
+			auto Pos = SeekTransPtr->GetPosition();
+			Pos.y += m_pushY;
+			PtrTransform->SetPosition(Pos);
+			PtrTransform->SetScale(m_scale);
+			PtrTransform->SetQuaternion(SeekTransPtr->GetQuaternion());
+			//変更できるスクエアリソースを作成
+
+			//Squareの作成(ヘルパー関数を利用)
+			MeshUtill::CreateSquare(1.0f, m_vertices, m_indices);
+
+			SetBillUV(Vec2(0.0f, 0.0f), Vec2(1.0f, 1.0f));
+
+			//頂点の型を変えた新しい頂点を作成
+			vector<VertexPositionColorTexture> new_vertices;
+			for (auto& v : m_vertices) {
+				VertexPositionColorTexture nv;
+				nv.position = v.position;
+				nv.color = Col4(1.0f, 0.0f, 0.0f, 1.0f);//赤
+				nv.textureCoordinate = v.textureCoordinate;
+				new_vertices.push_back(nv);
+			}
+			//新しい頂点を使ってメッシュリソースの作成
+			m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, m_indices, true);
+
+			auto DrawComp = AddComponent<PCTStaticDraw>();
+			DrawComp->SetMeshResource(m_SquareMeshResource);
+			DrawComp->SetTextureResource(m_textureName);
+			SetAlphaActive(true);
+			SetDrawLayer(m_layer);
+		}
+
+	}
+
+	void EnemyDamageBill::OnUpdate()
+	{
+
+	}
+
+	void EnemyDamageBill::SetBillUV(Vec2 topLeft, Vec2 botRight)
+	{
+		//UV値の変更
+		//左上頂点
+		m_vertices[0].textureCoordinate = Vec2(topLeft);
+		//右上頂点
+		m_vertices[1].textureCoordinate = Vec2(botRight.x, topLeft.y);
+		//左下頂点
+		m_vertices[2].textureCoordinate = Vec2(topLeft.x, botRight.y);
+		//右下頂点
+		m_vertices[3].textureCoordinate = Vec2(botRight);
+
+	}
+	// END ---------------------------------------------------
 }

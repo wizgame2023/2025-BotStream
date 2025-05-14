@@ -253,7 +253,7 @@ namespace basecross {
 	//}
 
 	//ポーズのフラグをオンオフする
-	void Actor::PoseSwitch(bool onOff)
+	void Actor::SetPose(bool onOff)
 	{
 		m_poseFlag = onOff;
 	}
