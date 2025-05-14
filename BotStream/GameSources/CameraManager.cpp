@@ -22,7 +22,8 @@ namespace basecross {
 		m_speedXAxis(speedXAxis),
 		m_speedYAxis(speedYAxis),
 		m_contrloerVec(Vec2(0.0f,0.0f)),
-		m_movePlayerAngleFlag(false)
+		m_movePlayerAngleFlag(false),
+		m_poseFlag(false)
 	{
 
 	}
@@ -81,6 +82,11 @@ namespace basecross {
 		if (!m_lockStageCamera)
 		{
 			GetStage()->RemoveGameObject<CameraManager>(GetThis<CameraManager>());
+			return;
+		}
+		//ポーズフラグがオンならカメラ移動はできない
+		if (m_poseFlag)
+		{
 			return;
 		}
 
