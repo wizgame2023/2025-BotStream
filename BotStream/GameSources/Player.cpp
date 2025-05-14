@@ -344,7 +344,7 @@ namespace basecross {
 		if (playerState == PlayerState_Attack1)
 		{
 			//移動スピード
-			float speed = 1.0f;
+			float speed = 0.5f;
 
 			//前に進む
 			totalVec.z = sin(m_angle) * speed;
@@ -354,7 +354,7 @@ namespace basecross {
 		if (playerState == PlayerState_Attack2)
 		{
 			//移動スピード
-			float speed = 0.5f;
+			float speed = 0.25f;
 
 			//前に進む
 			totalVec.z = sin(m_angle) * speed;
@@ -364,7 +364,7 @@ namespace basecross {
 		if (playerState == PlayerState_Attack3)
 		{
 			//移動スピード
-			float speed = 1.2f;
+			float speed = 0.7f;
 
 			//前に進む
 			totalVec.z = sin(m_angle) * speed;
