@@ -30,8 +30,7 @@ namespace basecross {
         bool m_IsFadeOutFlag = false;
         bool m_IsFadeInFlag = false;
         bool m_BlackFlag = false;
-        bool m_ClearFlag = false;
-
+        bool m_NextWaveFlag = false;
 
     public:
         //ç\ízÇ∆îjä¸
@@ -41,6 +40,9 @@ namespace basecross {
         virtual void OnCreate()override;
         virtual void OnUpdate()override;
         virtual void OnDraw()override;
+
+        bool GetNextWaveFlag();
+        void SetNextWaveFlag(int setNextWaveFlag);
 
 
     };

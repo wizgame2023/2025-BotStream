@@ -52,13 +52,13 @@ namespace basecross {
 
         CreateSharedObjectGroup(L"Actor");
 
-        auto player = AddGameObject<Player>(Vec3(0.0f, 5.0f, -330.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+        auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -330.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
         SetSharedGameObject(L"Player", player);
 
         auto enemyMgr = AddGameObject<EnemyManager>();
         SetSharedGameObject(L"EnemyManager", enemyMgr);
 
-        auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 10.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+        auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
         SetSharedGameObject(L"Boss", boss);
         //enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
 
@@ -66,17 +66,17 @@ namespace basecross {
         SetSharedGameObject(L"PlayerUI", playerUI);
 
         //wave1ìG
-        enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(20.0f, 5.5f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(-20.0f, 5.5f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(30.0f, 5.5f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(-30.0f, 5.5f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(40.0f, 5.5f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(-40.0f, 5.5f, -275.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(50.0f, 5.5f, -285.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-        enemyMgr->InstEnemy(Vec3(-50.0f, 5.5f, -215.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(40.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(-40.0f,2.0f, -275.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(50.0f, 2.0f, -285.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+        enemyMgr->InstEnemy(Vec3(-50.0f,2.0f, -215.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
 
         auto cameraManager = AddGameObject<CameraManager>();
         SetSharedGameObject(L"CameraManager", cameraManager);
@@ -134,65 +134,61 @@ namespace basecross {
             m_IsFadeOutFlag = true;
         }
 
-        if (m_BlackFlag == true && m_waveNow == 1 && EnemyNum == 0)
+        if (m_BlackFlag == true)
         {
-            //waveÇQÇ…Ç»Ç¡ÇΩ
+            m_NextWaveFlag = true;
+        }
+
+
+        if (m_NextWaveFlag == true && m_waveNow == 1)
+        {
+
             m_waveNow = 2;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 5.0f, -75.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 0.0f, -75.0f));
             player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
 
             m_IsFadeInFlag = true;
-            m_ClearFlag = true;
-        }
-
-        if(m_ClearFlag == true && m_waveNow == 2)
-        {
-            EnemyNum = 1;
+            m_NextWaveFlag = false;
 
             //ÉEÉFÅ[ÉuÇQìG
-            //ìGÇåƒÇ—èoÇ∑Ç∆Ç´ÇÕìØÇ∂ï®Ç2âÒèëÇ©Ç»Ç¢Ç∆Ç»Ç∫Ç©ÇøÇ·ÇÒÇ∆èoÇƒÇ±Ç»Ç¢
-            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(20.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-20.0f, 5.5f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(30.0f, 5.5f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-30.0f, 5.5f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(40.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-40.0f, 5.5f, 5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(50.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-50.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(40.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-40.0f,2.0f, 5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(50.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-50.0f,2.0f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
 
-            enemyMgr->InstEnemy(Vec3(0.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 5.5f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f, 5.5f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(20.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-20.0f, 5.5f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(30.0f, 5.5f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-30.0f, 5.5f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(40.0f, 5.5f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-40.0f, 5.5f, 5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(50.0f, 5.5f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
-            enemyMgr->InstEnemy(Vec3(-50.0f, 5.5f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(40.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-40.0f,2.0f, 5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(50.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+            enemyMgr->InstEnemy(Vec3(-50.0f,2.0f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
 
-            m_ClearFlag = false;
         }
 
-        if (m_BlackFlag == true && m_waveNow == 2 && EnemyNum == 0)
+
+        if (m_NextWaveFlag == true && m_waveNow == 2)
         {
             //É{ÉXêÌäJén
             m_waveNow = 3;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 5.0f, 165.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 0.0f, 165.0f));
             player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
-            
-            m_IsFadeInFlag = true;
-            m_ClearFlag = true;
-        }
 
-        if(m_ClearFlag == true && m_waveNow == 3)
-        {
+            m_IsFadeInFlag = true;
+            m_NextWaveFlag = false;
 
             EnemyNum = 1;
 
@@ -202,7 +198,6 @@ namespace basecross {
             GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
             GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
 
-            m_ClearFlag = false;
         }
 
         if (m_waveNow == 3)
@@ -234,6 +229,17 @@ namespace basecross {
     {
         EffectManager::Instance().InterfaceDraw();
     }
+
+    void WaveStage::SetNextWaveFlag(int setNextWaveFlag)
+    {
+        m_NextWaveFlag = setNextWaveFlag;
+    }
+
+    bool WaveStage::GetNextWaveFlag()
+    {
+        return m_NextWaveFlag;
+    }
+
 
     //è∞çÏê¨
     void WaveStage::CreateFloor()
