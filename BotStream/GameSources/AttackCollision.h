@@ -96,6 +96,9 @@ namespace basecross {
 
 		//攻撃のスペック
 		HitInfo m_info;
+
+		//当たったらtrueになるやつ
+		bool m_moveContact = false;
 		//持続時間
 		float m_ActiveTime = 0.0f;
 	public:
@@ -139,6 +142,10 @@ namespace basecross {
 		void SetHitInfo(HitInfo info) {
 			this->m_info = info;
 		}
+
+		bool GetMoveContact();
+		void SetMoveContact(bool mc);
+
 	};
 }
 //end basecross
