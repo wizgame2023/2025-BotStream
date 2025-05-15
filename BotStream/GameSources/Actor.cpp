@@ -135,6 +135,7 @@ namespace basecross {
 		isAttacked = isAttacked || (FindTag(L"Player") && info.Type == AttackType::Enemy);
 		//攻撃を受けたら
 		if (isAttacked) {
+			atk->SetMoveContact(true);
 			//攻撃判定から攻撃のデータを取得
 			m_GetHitInfo = info;
 

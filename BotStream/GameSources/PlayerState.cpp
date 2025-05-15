@@ -778,13 +778,75 @@ namespace basecross {
 
 
 	//雑魚敵のステートマージした後EnemyStateファイルに移動する
-
 	//何もないときのステート
 	void EnemyZakoStandState::Enter()
 	{
 
 	}
 	void EnemyZakoStandState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+		auto attackType = m_enemyZako->GetAttackType();
+
+		auto isLand = m_enemyZako->GetLand();//着地しているかのフラグ
+
+		//雑魚敵のタイプによって攻撃の方法が変わる
+		//遠距離
+		m_timeOfShot += deltaTime;
+		if (attackType == m_enemyZako->Zako_Long && isLand)
+		{
+			m_enemyZako->ChangeState(L"Alignment");//軸合わせから始まる
+		}
+		//近距離
+		if (attackType == m_enemyZako->Zako_Melee && isLand)
+		{
+			m_enemyZako->ChangeState(L"PreparationforMelee");//接近して攻撃する
+		}
+	}
+	void EnemyZakoStandState::Exit()
+	{
+		//打つカウントダウンリセット
+		m_timeOfShot = 0.0f;
+	}
+
+	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
+	void EnemyZakoPreparationforMeleeState::Enter()
+	{
+
+	}
+	void EnemyZakoPreparationforMeleeState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+		auto meleeRange = 3.0f;//接近攻撃有効範囲
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+
+		//Playerの方向に回転する
+		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
+
+		//進む距離を決める
+		m_enemyZako->SetVelocity(m_enemyZako->GetForward() * 5.0f);
+
+		//有効範囲まで近づけたら近接攻撃をする
+		if (m_enemyZako->GetPlayerDist() < meleeRange)
+		{
+			//m_enemyZako->ChangeState(L"Melee");
+		}
+
+	}
+	void EnemyZakoPreparationforMeleeState::Exit()
+	{
+		//打つカウントダウンリセット
+		m_timeOfShot = 0.0f;
+	}
+
+
+	//球を打つ直前の軸合わせのステート
+	void EnemyZakoAlignmentState::Enter()
+	{
+
+	}
+	void EnemyZakoAlignmentState::Update(float deltaTime)
 	{
 		auto stage = m_enemyZako->GetStage();
 
@@ -824,7 +886,7 @@ namespace basecross {
 			m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
 		}
 	}
-	void EnemyZakoStandState::Exit()
+	void EnemyZakoAlignmentState::Exit()
 	{
 		//打つカウントダウンリセット
 		m_timeOfShot = 0.0f;
