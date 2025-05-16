@@ -196,6 +196,15 @@ namespace basecross {
 		//叩きつけ終了
 		ptrDraw->AddAnimation(L"AttackSlamEnd", 1110, 90, false, 60.0f);
 
+		//飛び道具予備動作
+		ptrDraw->AddAnimation(L"AttackSphereStart", 1210, 15, false, 60.0f);
+		//飛び道具1発目
+		ptrDraw->AddAnimation(L"AttackSphere1", 1225, 25, false, 30.0f);
+		//飛び道具2発目
+		ptrDraw->AddAnimation(L"AttackSphere2", 1275, 55, false, 60.0f);
+		//飛び道具終了
+		ptrDraw->AddAnimation(L"AttackSphereEnd", 1330, 45, false, 60.0f);
+
 		//極太ビーム用意
 		ptrDraw->AddAnimation(L"AttackSPBeam1", 1500, 75, false, 60.0f);
 		//極太ビーム展開
@@ -478,6 +487,101 @@ namespace basecross {
 
 		DefAttack(5.0f, tmp);
 		GetAttackPtr()->SetCollScale(4.0f);
+	}
+
+	/// <summary>
+	/// ボス1のエネルギー弾
+	/// </summary>
+	void BossFirstSphere::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//Transform設定
+		SetPosition(m_pos);
+		SetQuaternion(m_face);
+		SetScale(m_scale);
+
+		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
+
+		m_doPhysics = false;
+
+		//AddEffect(EnemyEffect_Sphere);
+		//仮
+		auto ptrDraw = AddComponent<PNTStaticDraw>();
+		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		ptrDraw->SetOwnShadowActive(false);//影は消す
+		ptrDraw->SetDrawActive(true);
+		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+
+		//攻撃判定の定義
+		auto tmp = GetAttackPtr()->GetHitInfo();
+		tmp.HitOnce = true;
+		tmp.Type = AttackType::Enemy;
+		tmp.Damage = 3;
+		tmp.HitVel_Stand = Vec3(-8, 5, 0);
+		tmp.HitVel_Air = Vec3(-6, 3, 0);
+		tmp.HitTime_Stand = .4f;
+		tmp.HitTime_Air = .4f;
+
+		DefAttack(100.0f, tmp);
+		GetAttackPtr()->SetCollScale(4.0f);
+
+		SetVelocity(GetForward() * m_firstMoveSpeed);
+	}
+
+	void BossFirstSphere::OnUpdate() {
+		Actor::OnUpdate();
+
+		bool doDisappear = m_AttackCol->GetMoveContact();
+		doDisappear = doDisappear || (m_disappear && m_disappearTime >= m_disappearTimeMax);
+
+		if (doDisappear) {
+			RemoveSelf();
+		}
+
+		if (m_disappear) {
+			m_disappearTime += _delta;
+			return;
+		}
+
+		m_time += _delta;
+
+		//最初にfirstの設定で宙に浮く
+		//次にプレイヤーの位置を取ってその方向に加速
+		if (!m_towardPlayer) {
+			SetVelocity(GetVelocity() - (GetVelocity() * m_speedDown * (1000.0f / 60.0f) * _delta));
+			if (m_time >= m_firstMoveTime) {
+				//プレイヤーの胸の高さ分。ここをどうするか少し考え
+				Vec3 v = m_player->GetPosition() + Vec3(0, 4, 0) - GetPosition();
+				m_secondMoveAngle = v.normalize();
+				m_towardPlayer = true;
+			}
+		}
+		else {
+			AddVelocity(m_secondMoveAngle * m_secondMoveSpeed * _delta);
+		}
+
+		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+	}
+
+	void BossFirstSphere::CreateChildObjects() {
+		auto stage = GetStage();
+
+		//着地判定の生成
+		m_LandDetect = nullptr;
+
+		//攻撃判定の生成
+		m_AttackCol = stage->AddGameObject<BossFirstSphereCollision>(GetThis<BossFirstSphere>());
+		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+	}
+
+	void BossFirstSphereCollision::OnCollisionEnter(shared_ptr<GameObject>& Other) {
+		if (Other->FindTag(L"Player") || Other->FindTag(L"Terrain")) {
+			m_obj->CollidedWithTerrain();
+		}
 	}
 }
 //end basecross

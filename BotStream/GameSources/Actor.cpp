@@ -33,13 +33,7 @@ namespace basecross {
 		//描画コンポーネントの追加
 		AddComponent<PNTBoneModelDraw>();
 
-		//着地判定の生成
-		m_LandDetect = stage->AddGameObject<LandDetect>();
-		m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
-
-		//攻撃判定の生成
-		m_AttackCol = GetStage()->AddGameObject<AttackCollision>();
-		m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+		CreateChildObjects();
 
 		//オーディオマネージャーの取得
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
@@ -54,7 +48,9 @@ namespace basecross {
 		_delta = App::GetApp()->GetElapsedTime();
 
 		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
+		if (m_LandDetect) {
+			OnLanding();
+		}
 
 		//物理的な処理
 		Gravity();
@@ -210,6 +206,9 @@ namespace basecross {
 			break;
 		case EnemyEffect_Beam:
 			EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
+			break;
+		case EnemyEffect_Sphere:
+			EfkPlaying(L"EnergySphere", angle, Vec3(0, 1, 0));
 			break;
 		default:
 			break;
