@@ -322,6 +322,8 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 
+		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
+
 		//Attack1アニメーションに変更
 		m_player->ChangeAnim(L"Attack1");
 	}
@@ -809,6 +811,57 @@ namespace basecross {
 		m_timeOfShot = 0.0f;
 	}
 
+	//接近戦をするときのステート
+	void EnemyZakoMeleeState::Enter()
+	{
+		auto LandFlag = m_enemyZako->GetLand();
+		auto testVector = m_enemyZako->GetVelocity();
+
+		//攻撃っぽいアニメーションにしてみる
+		m_enemyZako->ChangeAnim(L"Down");
+		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+	}
+	void EnemyZakoMeleeState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+		m_timeOfAttack += deltaTime;
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+
+		//攻撃判定の生成
+		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
+		{
+			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Damage = 5;
+			tmp.HitVel_Stand = Vec3(-3, 5, 0);
+			tmp.HitTime_Stand = .8f;
+			tmp.Type = AttackType::Enemy;
+			//tmp.ForceRecover = false;//ノックバックする
+			m_enemyZako->DefAttack(.5f, tmp);
+			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_enemyZako->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
+			AttackPtr->SetCollScale(1.0f);
+
+			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
+			m_Attack = false;//攻撃判定が複数発生させないようにする
+		}
+
+		//一定時間たったら攻撃ステートをやめる
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+	}
+	void EnemyZakoMeleeState::Exit()
+	{
+		m_Attack = true;
+		m_timeOfAttack = 0.0f;
+	}
+
 	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
 	void EnemyZakoPreparationforMeleeState::Enter()
 	{
@@ -818,29 +871,47 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		//アニメーション更新時間設定
-		m_enemyZako->SetAddTimeAnimation(deltaTime*2.5f);
 
-		auto meleeRange = 3.0f;//接近攻撃有効範囲
-		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+		auto meleeRange = 10.0f;//接近攻撃有効範囲
 
 		//Playerの方向に回転する
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		//進む距離を決める
-		m_enemyZako->SetVelocity(m_enemyZako->GetForward() * 5.0f);
-
-		//有効範囲まで近づけたら近接攻撃をする
+		auto attackFlag = m_enemyZako->GetAttackFlag();
+		//有効範囲まで近づけたら近接攻撃をするそうでなければ、そこまで移動
 		if (m_enemyZako->GetPlayerDist() < meleeRange)
 		{
-			//m_enemyZako->ChangeState(L"Melee");
+			//攻撃のために立ち止まるので立つアニメーションに変更
+			m_enemyZako->ChangeAnim(L"Stand");
+
+			//攻撃フラグがオンなら攻撃できる
+			if (!attackFlag) return;
+			m_enemyZako->ChangeState(L"Melee");
+		}
+		else if (m_enemyZako->GetPlayerDist() >= meleeRange)
+		{
+			//移動中なのでそれに合わせたアニメーション
+			m_enemyZako->ChangeAnim(L"Walk");
+
+			//進む距離を決める
+			auto move = m_enemyZako->GetForward() * 10.0f;
+
+			auto LandFlag = m_enemyZako->GetLand();
+			if (LandFlag)
+			{
+				move.y = 0.0f;
+			}
+
+			m_enemyZako->SetVelocity(move);
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 
 	}
 	void EnemyZakoPreparationforMeleeState::Exit()
 	{
-		//打つカウントダウンリセット
-		m_timeOfShot = 0.0f;
+
 	}
 
 
