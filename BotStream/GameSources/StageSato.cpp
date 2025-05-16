@@ -40,25 +40,30 @@ namespace basecross {
 			//auto playerUIButton = AddGameObject<PlayerButtonUI>(Vec2(100,100),Vec2(50,50));
 			//SetSharedGameObject(L"PlayerButton", playerUIButton);
 
-			////Player作成
-			//auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-			//SetSharedGameObject(L"Player", player);
+			//Player作成
+			m_player = AddGameObject<Player>(Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+			SetSharedGameObject(L"Player", m_player);
 
-			////エネミーマネージャー
-			//auto enemyMgr = AddGameObject<EnemyManager>();
-			//SetSharedGameObject(L"EnemyManager", enemyMgr);
+			//エネミーマネージャー
+			auto enemyMgr = AddGameObject<EnemyManager>();
+			SetSharedGameObject(L"EnemyManager", enemyMgr);
 
-			////カメラマネージャ作成
-			//auto cameraManager = AddGameObject<CameraManager>();
-			//SetSharedGameObject(L"CameraManager", cameraManager);
+			//カメラマネージャ作成
+			auto cameraManager = AddGameObject<CameraManager>();
+			SetSharedGameObject(L"CameraManager", cameraManager);
 
 			//Player関係のUI生成
-			//auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
-			//SetSharedGameObject(L"PlayerGauge", playerGauge);
-			//auto playerUI = AddGameObject<PlayerGaugeUI>(100);
-			//SetSharedGameObject(L"PlayerUI", playerUI);
+			auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
+			SetSharedGameObject(L"PlayerGauge", playerGauge);
+			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+			SetSharedGameObject(L"PlayerUI", playerUI);
 
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
+
+			auto actorPtr = static_pointer_cast<GameObject>(m_player);
+
+			DamageBill(actorPtr, 19);
+
 
 			auto ground = AddGameObject<Ground>();
 
@@ -119,11 +124,13 @@ namespace basecross {
 			m_pauseTextSprite[i]->OnClear(true);
 		}
 
+
+
 		// BGMTextPos
 		auto BGMPos = m_pauseTextSprite[4]->GetPosition();
 		// SETextPos
 		auto SEPos = m_pauseTextSprite[5]->GetPosition();
-	
+
 		// audioメーター
 		//for (int i = 0; i < 2; i++)
 		//{
@@ -213,6 +220,8 @@ namespace basecross {
 			m_selectPos);        // 表示位置
 		m_selectSprite->OnClear(true);
 		m_selectSprite->SetDrawLayer(2);
+
+
 		/*
 		//コントローラー関係--------------------------------------------------
 		const float buttonPosX = 500, buttonPosY = -200;
@@ -463,7 +472,7 @@ namespace basecross {
 	{
 		//エフェクト関係
 		EffectManager::Instance().InterfaceUpdate();
-		
+
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -488,191 +497,17 @@ namespace basecross {
 				ret.x = 1;
 
 		}
-		/*
-		if (!m_pauseFlag &&
-			(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
-				keybord.m_bPressedKeyTbl[VK_SPACE]))
-		{
-			m_pauseFlag = true;
-			m_pauseAudioFlag = false;
-			m_select2 = 0;     // メニューインデックス 0 からスタート
-			m_selectFlag = false; // デッドゾーンフラグクリア
-		}
 
-		// --- 定数定義 ------------------------------------
-		constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
-		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE → 0～1
-		const float dead = 0.3f;            // デッドゾーン
+		//// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
+		//if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
+		//{
+		//	// デバッグ用の適当な変数
+		//	m_resultFlag = true;
 
-		// --- 2) Pause OFF → 完全非表示 ------------------
-		if (!m_pauseFlag)
-		{
-			m_pauseBack->OnClear(true);
-			m_selectSprite->OnClear(true);
-			for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
-				m_pauseTextSprite[i]->OnClear(true);
-			// （もし m_BGMMater など別配列があればここで全部 OnClear(true)）
-		}
-		// --- Pause ON → 必要要素だけ表示 -------------
-		else
-		{
-			// 背景と選択してるところは常に表示
-			m_pauseBack->OnClear(false);
-			m_selectSprite->OnClear(false);
+		//	m_type = static_cast<PlayerType>(m_select);
+		//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
+		//}
 
-			// メインメニュー or オーディオメニューの切り替え
-			if (!m_pauseAudioFlag)
-			{
-				// メイン4つだけ表示
-				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
-					m_pauseTextSprite[i]->OnClear(false);
-				// Audio項目は隠す
-				AudioUIClear(true);
-			}
-			else
-			{
-				// メイン項目を隠して
-				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
-					m_pauseTextSprite[i]->OnClear(true);
-				// Audio項目だけ表示
-				AudioUIClear(false);
-			}
-
-			// --- スティック上下でメニュー移動 -----------
-			// デッドゾーンから復帰したら次の倒し判定をリセット
-			if (fabs(ret.y) < dead)
-				m_selectFlag = false;
-
-			// 今のメニュー数に応じて最大インデックス決定
-			int maxIndex = m_pauseAudioFlag
-				? (AUDIO_MENU_COUNT - 1)
-				: (MAIN_MENU_COUNT - 1);
-
-			// 下倒し：++m_select2
-			if (ret.y <= -dead && !m_selectFlag)
-			{
-				m_select2 = clamp(m_select2 + 1, 0, maxIndex);
-				m_selectFlag = true;
-			}
-			// 上倒し：--m_select2
-			else if (ret.y >= dead && !m_selectFlag)
-			{
-				m_select2 = clamp(m_select2 - 1, 0, maxIndex);
-				m_selectFlag = true;
-			}
-
-			// --- 選択描画位置更新 --------------------
-			Vec3 base = m_selectPos;
-			if (m_pauseAudioFlag)
-				base.x += 600;  // Audioメニューだけ右寄せ
-
-			float offsetY = m_pauseAudioFlag
-				? (m_select2 * 200 + 50)
-				: (m_select2 * 150);
-			m_selectSprite->SetPosition(
-				Vec3(base.x, base.y - offsetY, base.z)
-			);
-
-			// --- Audio設定の更新処理 --------------------
-			if (m_pauseAudioFlag)
-			{
-				// デッドゾーン定義
-				constexpr float dead = 0.3f;
-				constexpr float change = 50.0f;
-				
-				// 左右いずれかのデッドゾーン復帰でフラグクリア
-				if (fabs(ret.x) < dead)
-					m_audioSelectFlag = false;
-
-				// スティックを右に倒したら +0.1f
-				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[m_select2] < 1.0f)
-				{
-					auto selectPos = m_audioSelect[m_select2]->GetPosition();
-					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x + change, selectPos.y, selectPos.z));
-					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] + 0.1f, 0.0f, 1.0f);
-					if (!m_select2)
-					{
-						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
-					}
-					else
-					{
-						m_SEMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
-					}
-					m_audioMaxSetCol[m_select2] += 1;
-					m_audioSelectFlag = true;
-				}
-				// スティックを左に倒したら -0.1f
-				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[m_select2] > 0.1f)
-				{
-					auto selectPos = m_audioSelect[m_select2]->GetPosition();
-					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x - change, selectPos.y, selectPos.z));
-					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] - 0.1f, 0.0f, 1.0f);
-					m_audioMaxSetCol[m_select2] -= 1;
-					if (!m_select2)
-					{
-						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-					}
-					else
-					{
-						m_SEMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-					}
-
-					m_audioSelectFlag = true;
-				}
-			}
-
-			// --- 決定（Bボタン or Enter） ----------------
-			if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B) ||
-				keybord.m_bPressedKeyTbl[VK_RETURN])
-			{
-				if (!m_pauseAudioFlag)
-				{
-					switch (m_select2)
-					{
-					case 0: // 再開
-						m_pauseFlag = false;
-						break;
-					case 1: // ステージセレクトへ遷移
-						PostEvent(0.0f,
-							GetThis<ObjectInterface>(),
-							App::GetApp()->GetScene<Scene>(),
-							L"ToStageSelect");
-						m_pauseFlag = false;
-						break;
-					case 2: // オーディオ設定へ
-						// メインを隠してAudio表示に移行
-						m_pauseAudioFlag = true;
-						m_select2 = 0;
-						m_selectFlag = false;
-						break;
-					case 3: // ゲーム終了（必要なら実装）
-					default:
-						break;
-					}
-				}
-				else
-				{
-					// Audioメニュー中の決定処理
-					if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B) ||
-						keybord.m_bPressedKeyTbl[VK_RETURN])
-					{
-						m_select2 = 0;
-						m_pauseAudioFlag = false;
-					}
-				}
-			}
-		}
-		*/
-		// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
-		{
-			// デバッグ用の適当な変数
-			m_resultFlag = true;
-
-			m_type = static_cast<PlayerType>(m_select);
-			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
-		}
-		
 
 			/*
 			//// 仮：Xボタンで武器UI切り替え
@@ -725,7 +560,7 @@ namespace basecross {
 			//}
 			*/
 
-			DebugLog();
+		DebugLog();
 
 	}
 
@@ -733,6 +568,81 @@ namespace basecross {
 	{
 		EffectManager::Instance().InterfaceDraw();
 	}
+
+	// Enemy やダメージを受ける箇所で呼び出す例
+	void StageSato::DamageBill(shared_ptr<GameObject> target, int damage)
+	{
+		/*
+		// 数値を文字列に変換
+		std::string str = std::to_string(damage);
+		shared_ptr<BillBoard> damageBB[2];
+		for (size_t i = 0; i < str.size(); ++i)
+		{
+			char setDamage = str[i];
+
+			short int digit = setDamage - '0';
+			
+			// 1) BillBoard を生成
+			damageBB[i] = AddGameObject<BillBoard>(
+				target,					// ← ビルボードを付ける対象
+				L"Numbers",				// ← テクスチャ
+				3,						// レイヤー
+				5.0f,					// キャラ位置からの高さ
+				Vec3(1.5f, 1.5f, 1.0f),	// 大きさ
+				Col4(1.0f,1.0f,1.0f,1.0f),
+				i * 50.0f
+			);
+
+			// 2) ダメージ値を 1桁ずつ切り出して UV 設定
+			// 数字スプライトシートの１文字分の幅
+			const float uvWidth = 1.0f / 10.0f;
+
+			// 例として「1桁目」だけ表示する場合
+			int d = damage % 10;
+			Vec2 uv0(d * uvWidth, 0.0f);
+			Vec2 uv1((d + 1) * uvWidth, 1.0f);
+			damageBB[i]->SetBillUV(uv0, uv1);
+
+		}
+		*/
+
+		// ダメージを文字列に変換
+		std::string str = std::to_string(damage);
+		// ビルボードを入れる配列は最大桁数分
+		std::vector<shared_ptr<BillBoard>> damageBB(str.size());
+
+		const float uvWidth = 1.0f / 10.0f;
+
+		for (size_t i = 0; i < str.size(); ++i)
+		{
+			// 文字から数字に直す
+			int digit = str[i] - '0';
+
+			// 1) BillBoard を生成（i * オフセットで左右に並べる）
+			damageBB[i] = AddGameObject<BillBoard>(
+				target,                     // 付ける対象
+				L"Numbers",                 // テクスチャ
+				3,                          // レイヤー
+				5.0f,                       // 対象からの高さ
+				Vec3(1.5f, 1.5f, 1.0f),     // 大きさ
+				Col4(1, 1, 1, 1),
+				i * 50.0f                   // 左右オフセット
+			);
+
+			// 2) その桁の数字に対応するUVを設定
+			Vec2 uv0(digit * uvWidth, 0.0f);
+			Vec2 uv1((digit + 1) * uvWidth, 1.0f);
+			damageBB[i]->SetBillUV(uv0, uv1);
+		}
+		//――――――――――――――――――――――
+		// 3) 1秒後に自分で消えるようにタイマーをセット
+	}
+
+	//// ----------------------------------------------------------
+	//// 使い方：敵にダメージを与えるコードの中で…
+	//enemy->ApplyDamage(50);
+	//DamageBill(enemy, 50);
+
 
 	// 使わないかもだけど一応残す
 	void StageSato::ShowNumber(int value, Vec2 pos, float digitSize)
@@ -856,7 +766,7 @@ namespace basecross {
 			m_SEMater[i]->OnClear(clear);
 		}
 	}
-	
+
 	void StageSato::AudioUIClear(bool clear)
 	{
 		// --- 定数定義 ------------------------------------

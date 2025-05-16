@@ -87,7 +87,7 @@ namespace basecross {
 		}
 
 		//歩きステートのアニメーション再生
-		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime*1.5f);
+		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 	
 		//回避していいフラグ状態だったら回避ステートに変更
 		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
@@ -189,7 +189,7 @@ namespace basecross {
 		m_player->PlayerMove(PlayerState_Dodge);
 
 		//アニメーション更新
-		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime*1.7f);
+		m_player->SetAddTimeAnimation(deltaTime * 1.7f);
 
 		//回避した後の処理(どっちのステートに行くかの処理)
 		bool endDodgeFlag = m_player->GetEndDodgeFlag();
@@ -247,7 +247,7 @@ namespace basecross {
 		}
 
 		//ダッシュステートのアニメーション再生
-		m_player->GetComponent<PNTBoneModelDraw>()->UpdateAnimation(deltaTime*1.5f);
+		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 
 		//Aボタン離したらorスティックを離したら歩くステートに変更する
 		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A)
@@ -322,6 +322,8 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 
+		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
+
 		//Attack1アニメーションに変更
 		m_player->ChangeAnim(L"Attack1");
 	}
@@ -331,7 +333,7 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->UpdateAnimation(deltaTime*1.2f);
+		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack1);
     
@@ -430,7 +432,7 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->UpdateAnimation(deltaTime*1.9f);
+		m_player->SetAddTimeAnimation(deltaTime * 1.9f);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack2);
 
@@ -526,7 +528,7 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->UpdateAnimation(deltaTime * 1.8f);
+		m_player->SetAddTimeAnimation(deltaTime * 1.8f);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack3);
 
@@ -618,7 +620,7 @@ namespace basecross {
 		m_timeOfAttack += deltaTime;
 
 		//アニメーションの更新
-		m_player->UpdateAnimation(deltaTime*2.2f);
+		m_player->SetAddTimeAnimation(deltaTime * 2.2f);
 
 		//攻撃判定の定義
 		if (m_timeOfAttack >= m_timeOfStartAttack && AttackCollisionFlag)
@@ -781,7 +783,7 @@ namespace basecross {
 	//何もないときのステート
 	void EnemyZakoStandState::Enter()
 	{
-
+		m_enemyZako->ChangeAnim(L"Stand");//立つアニメーションに変更
 	}
 	void EnemyZakoStandState::Update(float deltaTime)
 	{
@@ -809,35 +811,107 @@ namespace basecross {
 		m_timeOfShot = 0.0f;
 	}
 
+	//接近戦をするときのステート
+	void EnemyZakoMeleeState::Enter()
+	{
+		auto LandFlag = m_enemyZako->GetLand();
+		auto testVector = m_enemyZako->GetVelocity();
+
+		//攻撃っぽいアニメーションにしてみる
+		m_enemyZako->ChangeAnim(L"Down");
+		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+	}
+	void EnemyZakoMeleeState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+		m_timeOfAttack += deltaTime;
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+
+		//攻撃判定の生成
+		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
+		{
+			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Damage = 5;
+			tmp.HitVel_Stand = Vec3(-3, 5, 0);
+			tmp.HitTime_Stand = .8f;
+			tmp.Type = AttackType::Enemy;
+			//tmp.ForceRecover = false;//ノックバックする
+			m_enemyZako->DefAttack(.5f, tmp);
+			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_enemyZako->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
+			AttackPtr->SetCollScale(1.0f);
+
+			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
+			m_Attack = false;//攻撃判定が複数発生させないようにする
+		}
+
+		//一定時間たったら攻撃ステートをやめる
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+	}
+	void EnemyZakoMeleeState::Exit()
+	{
+		m_Attack = true;
+		m_timeOfAttack = 0.0f;
+	}
+
 	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
 	void EnemyZakoPreparationforMeleeState::Enter()
 	{
-
+		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 	}
 	void EnemyZakoPreparationforMeleeState::Update(float deltaTime)
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		auto meleeRange = 3.0f;//接近攻撃有効範囲
-		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+
+		auto meleeRange = 10.0f;//接近攻撃有効範囲
 
 		//Playerの方向に回転する
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		//進む距離を決める
-		m_enemyZako->SetVelocity(m_enemyZako->GetForward() * 5.0f);
-
-		//有効範囲まで近づけたら近接攻撃をする
+		auto attackFlag = m_enemyZako->GetAttackFlag();
+		//有効範囲まで近づけたら近接攻撃をするそうでなければ、そこまで移動
 		if (m_enemyZako->GetPlayerDist() < meleeRange)
 		{
-			//m_enemyZako->ChangeState(L"Melee");
+			//攻撃のために立ち止まるので立つアニメーションに変更
+			m_enemyZako->ChangeAnim(L"Stand");
+
+			//攻撃フラグがオンなら攻撃できる
+			if (!attackFlag) return;
+			m_enemyZako->ChangeState(L"Melee");
+		}
+		else if (m_enemyZako->GetPlayerDist() >= meleeRange)
+		{
+			//移動中なのでそれに合わせたアニメーション
+			m_enemyZako->ChangeAnim(L"Walk");
+
+			//進む距離を決める
+			auto move = m_enemyZako->GetForward() * 10.0f;
+
+			auto LandFlag = m_enemyZako->GetLand();
+			if (LandFlag)
+			{
+				move.y = 0.0f;
+			}
+
+			m_enemyZako->SetVelocity(move);
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 
 	}
 	void EnemyZakoPreparationforMeleeState::Exit()
 	{
-		//打つカウントダウンリセット
-		m_timeOfShot = 0.0f;
+
 	}
 
 
@@ -892,7 +966,7 @@ namespace basecross {
 		m_timeOfShot = 0.0f;
 	}
 
-	//攻撃をするステート
+	//攻撃をするステート(遠距離)
 	void EnemyZakoShotState::Enter()
 	{
 		auto stage = m_enemyZako->GetStage();
@@ -900,6 +974,8 @@ namespace basecross {
 		//弾生成
 		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 10.0f,
 			dynamic_pointer_cast<Actor>(m_enemyZako),10.0f,ActorName_Enemy);
+
+		m_enemyZako->ChangeAnim(L"Shot");//撃つアニメーションに変更
 	}
 	void EnemyZakoShotState::Update(float deltaTime)
 	{
@@ -907,6 +983,9 @@ namespace basecross {
 
 		////目標となる角度取得
 		auto angleTarget = m_enemyZako->GetPlayerSubDirection();
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime);
 
 		//一定時間たったらStandステートに戻る
 		m_timeOfAttack += deltaTime;
@@ -931,11 +1010,16 @@ namespace basecross {
 		m_enemyZako->HitBack();
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
+
+		m_enemyZako->ChangeAnim(L"Stand");//ダメージを受けたアニメーションに変更
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
 		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
+		
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime);
 	}
 	void EnemyZakoHitState::Exit()
 	{

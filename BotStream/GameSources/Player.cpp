@@ -89,7 +89,7 @@ namespace basecross {
 	}
 
 	void Player::OnUpdate()
-	{	
+	{
 		//auto num = EffectManager::Instance().PlayEffect(L"ArmorBreak", m_pos);
 		//num;
 
@@ -157,6 +157,12 @@ namespace basecross {
 			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
+			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			
+			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
+			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+
+			//EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 1));
 
 		}
 		//-------------------------------------------------------------
@@ -177,7 +183,7 @@ namespace basecross {
 		//DebugLog();
 
 		//アニメーション再生
-		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
@@ -318,7 +324,7 @@ namespace basecross {
 
 			//二次関数的な動きで回避行動をする
 			//今は向いている方向に前方回避をする
-			float dodge = 8.0f*2.5f;
+			float dodge = 8.0f * 2.5f;
 			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
 
@@ -550,7 +556,7 @@ namespace basecross {
 			return;
 		}
 		auto cameraManager = GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
-		
+
 		if (originLock->FindTag(L"Player"))
 		{
 			//弾がカメラの注視点の方向に進むように角度を計算する
@@ -652,7 +658,7 @@ namespace basecross {
 	{
 		//敵や障害物に弾が当たったら消える
 		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
-		if (obj->FindTag(L"Enemy")||obj->FindTag(L"Terrain"))
+		if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
 		}
@@ -660,7 +666,7 @@ namespace basecross {
 
 	//攻撃をしているのは誰か決める処理
 	void Bullet::SetAttackActor(int actorName)
-	{		
+	{
 		auto tmp = GetAttackPtr()->GetHitInfo();
 
 		switch (actorName)
@@ -696,7 +702,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(1.0f/5, 1.0f/5, 1.0f/5),
+			Vec3(1.0f / 5, 1.0f / 5, 1.0f / 5),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, -0.5f, 0.0f)
@@ -711,8 +717,14 @@ namespace basecross {
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
+		//アニメーション追加
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
+		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);//デバック用
 
@@ -725,7 +737,7 @@ namespace basecross {
 		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
 		//m_LandDetect->SetCollScale(3.0f);
-		
+
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
@@ -734,7 +746,7 @@ namespace basecross {
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 
-		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(),L"Numbers",2, )
+		m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
 
 		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
@@ -758,34 +770,19 @@ namespace basecross {
 				Gravity();
 			}
 			else {
-				Friction();
+				//Friction();
 			}
 		}
 
 
 		//HPバーの処理
 		UpdateHPBer();
-		//if (!m_used)
-		//{
-		//	m_billBoard->SetScale(Vec3(0.0f));
-		//	m_billBoardSecond->SetScale(Vec3(0.0f));
-		//}
-		//if (m_used)
-		//{
-		//	m_billBoard->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-		//	m_billBoardSecond->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-		//	
-		//	//HPの割合によってゲージが減る
-		//	float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
-		//	m_billBoardSecond->SetPercent(HPPercent);
-
-		//}
-
-
+		//攻撃のクールタイム
+		TimeOfAttackCool();
 
 		//HPがゼロになったら消える
 		if (m_HPCurrent <= 0)
-		{		
+		{
 			RemoveTag(L"LockOnCan");
 			RemoveTag(L"LockOnTarget");
 
@@ -795,6 +792,9 @@ namespace basecross {
 			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
 			//GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
+
+		//アニメーション更新
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
@@ -820,6 +820,22 @@ namespace basecross {
 		}
 
 
+	}
+
+	//攻撃のクールタイム
+	void EnemyZako::TimeOfAttackCool()
+	{
+		//攻撃のクールタイム
+		if (!m_attackFlag)
+		{
+			m_timeCountOfAttackCool += _delta;
+			//クールタイム過ぎたら攻撃できるようになる
+			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
+			{
+				m_timeCountOfAttackCool = 0.0f;//リセット
+				m_attackFlag = true;
+			}
+		}
 	}
 
 	//コリジョン判定
