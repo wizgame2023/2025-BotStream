@@ -15,7 +15,7 @@ namespace basecross {
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体 [0]はボス向け)
-		shared_ptr<EnemyBase> m_enemies[11];
+		shared_ptr<EnemyBase> m_enemies[23];
 	public:
 		EnemyManager(const shared_ptr<Stage>& stagePtr) : 
 			MyGameObject(stagePtr)
@@ -28,8 +28,8 @@ namespace basecross {
 					isFirstofVector = !isFirstofVector;
 					continue;
 				}
-
-				e = GetStage()->AddGameObject<EnemyBase>(Vec3(0), Vec3(0), Vec3(0));
+				auto test = 0.0f;
+				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));//ここを雑魚敵のクラスに変える
 			}
 		}
 		~EnemyManager() {}

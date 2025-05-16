@@ -21,7 +21,16 @@ namespace basecross {
         void CreateDoor();
 
         int m_waveNow = 0;//åªç›ÇÃwave
+        int m_bossCurrentHP = 99999;//BOSSÇÃåªç›ÇÃHP
 
+        float TimeOfGameClear = 0.0f;//ÉQÅ[ÉÄÉNÉäÉAÇ∑ÇÈÇΩÇﬂÇÃéûä‘åvë™
+
+        bool m_NextWave = false;
+
+        bool m_IsFadeOutFlag = false;
+        bool m_IsFadeInFlag = false;
+        bool m_BlackFlag = false;
+        bool m_NextWaveFlag = false;
 
     public:
         //ç\ízÇ∆îjä¸
@@ -31,6 +40,10 @@ namespace basecross {
         virtual void OnCreate()override;
         virtual void OnUpdate()override;
         virtual void OnDraw()override;
+
+        bool GetNextWaveFlag();
+        void SetNextWaveFlag(int setNextWaveFlag);
+
 
     };
 
@@ -81,8 +94,6 @@ namespace basecross {
         Vec3 m_Rotation;
         Vec3 m_Position;
 
-        //shared_ptr<BillBoard> m_HPGauge;
-        //shared_ptr<BillBoard> m_ArmorGauge;
 
     public:
         Door(const shared_ptr<Stage>& StagePtr,
@@ -92,6 +103,30 @@ namespace basecross {
         );
         virtual ~Door();
         virtual void OnCreate() override;
+    };
+
+    class FadeoutSprite : public GameObject {
+        vector<VertexPositionColorTexture> m_Vertices;
+        shared_ptr<PCTSpriteDraw> m_drawComp;
+        wstring m_ResKey;
+        bool m_IsFadeOutFlag = false;
+        bool m_IsFadeInFlag = false;
+        float m_Color;
+        bool m_BlackFlag = false;
+
+    public:
+        FadeoutSprite(const shared_ptr<Stage>& stage, const wstring& ResKey);
+        virtual ~FadeoutSprite();
+        virtual void OnCreate() override;
+        virtual void OnUpdate() override;
+
+        bool GetBlackFlag();
+        void SetBlackFlag(int setBlackFlag);
+        bool GetFadeOutFlag();
+        void SetFadeOutFlag(int setFadeOutFlag);
+        bool GetFadeInFlag();
+        void SetFadeInFlag(int setFadeInFlag);
+
     };
 
 }

@@ -43,6 +43,8 @@
 
 //UI関係
 #include "PlayerUI.h"
+#include "EnemyUI.h"
+#include "PauseUI.h"
 
 //開発ステージ用
 #include "StageAbe.h"
@@ -50,6 +52,8 @@
 #include "StageSato.h"
 #include "StageTuboi.h"
 #include "WaveStage.h"
+#include "TitleStage.h"
+#include "StageSelect.h"
 #include "GameClearScene.h"
 #include "GameOverScene.h"
 

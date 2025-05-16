@@ -21,6 +21,9 @@ namespace basecross {
 		shared_ptr<Actor> m_targetObj = nullptr;//ロックオン時の対象
 		float m_targetDistance;//ターゲット対象との距離
 
+		bool m_dodgeFlag = true;//回避できるかのフラグ
+		bool m_meleeFlag = true;//接近戦できるかのフラグ
+
 		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
@@ -69,6 +72,8 @@ namespace basecross {
 	class PlayerDodgeState : public PlayerStateBase
 	{
 	private:
+		//回避していいかのフラグ
+		bool m_playerDodgeFlag = false;
 	public:
 		PlayerDodgeState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
@@ -113,8 +118,14 @@ namespace basecross {
 	private:
 		//攻撃時間
 		float m_timeMaxOfAttack = 0.5f;
+		//攻撃発生時間
+		float m_timeOfStartAttack = 0.1f;
 		//攻撃時間計測
-		float m_timeOfAttack;
+		float m_timeOfAttack = 0.0f;
+		//回避可能時間
+		float m_timeOfStartDodge = 0.35f;
+		//攻撃判定出現フラグ
+		bool AttackCollisionFlag = true;
 		//次の攻撃の猶予時間
 		float m_graceTimeOfNextAttack = 0.3f;
 		//次の攻撃をするかのフラグ
@@ -142,9 +153,15 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.7f;
+		float m_timeMaxOfAttack = 0.8f;
+		//攻撃発生時間
+		float m_timeOfStartAttack = 0.3f;
 		//攻撃時間計測
 		float m_timeOfAttack;
+		//回避可能時間
+		float m_timeOfStartDodge = 0.4f;
+		//攻撃判定出現フラグ
+		bool AttackCollisionFlag = true;
 		//次の攻撃の猶予時間
 		float m_graceTimeOfNextAttack = 0.5f;
 		//次の攻撃をするかのフラグ
@@ -173,8 +190,12 @@ namespace basecross {
 	private:
 		//攻撃時間
 		float m_timeMaxOfAttack = 1.0f;
+		//攻撃発生時間
+		float m_timeOfStartAttack = 0.3f;
 		//攻撃時間計測
 		float m_timeOfAttack;
+		//攻撃判定出現フラグ
+		bool AttackCollisionFlag = true;
 		//次の攻撃の猶予時間
 		float m_graceTimeOfNextAttack = 0.9f;
 		//次の攻撃をするかのフラグ
@@ -203,8 +224,12 @@ namespace basecross {
 	private:
 		//攻撃時間
 		float m_timeMaxOfAttack = 1.2f;
+		//攻撃発生時間
+		float m_timeOfStartAttack = 0.3f;
 		//攻撃時間計測
 		float m_timeOfAttack;
+		//攻撃判定出現フラグ
+		bool AttackCollisionFlag = true;
 		////次の攻撃の猶予時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
@@ -295,7 +320,7 @@ namespace basecross {
 		//攻撃時間
 		float m_timeMaxOfHitBack = 1.2f;
 		//攻撃時間計測
-		float m_timeOfHitBack;
+		float m_timeOfHitBack = 0.0f;
 		////次の攻撃の猶予時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
@@ -382,6 +407,84 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	//接近戦をするときの準備ステート
+	class EnemyZakoPreparationforMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(近距離)
+	class EnemyZakoMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
+
+		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
+	public:
+		EnemyZakoMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//球を打つ直前の軸合わせのときのステート
+	class EnemyZakoAlignmentState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(遠距離)
+	class EnemyZakoShotState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoShotState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
 	
 	//ダメージを受けた雑魚敵
 	class EnemyZakoHitState :public EnemyZakoStateBase
@@ -406,6 +509,10 @@ namespace basecross {
 		EnemyZakoStateMachine(shared_ptr<GameObject>& obj)
 		{
 			AddState(L"Stand", shared_ptr<EnemyZakoStandState>(new EnemyZakoStandState(obj)));
+			AddState(L"Shot", shared_ptr<EnemyZakoShotState>(new EnemyZakoShotState(obj)));
+			AddState(L"Alignment", shared_ptr<EnemyZakoAlignmentState>(new EnemyZakoAlignmentState(obj)));
+			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoPreparationforMeleeState>(new EnemyZakoPreparationforMeleeState(obj)));
+			AddState(L"Melee", shared_ptr<EnemyZakoMeleeState>(new EnemyZakoMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
 		
 			ChangeState(L"Stand");

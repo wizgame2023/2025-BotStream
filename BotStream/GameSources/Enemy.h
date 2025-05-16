@@ -11,6 +11,10 @@
 
 namespace basecross{
 	class EnemyStateMachine;
+
+	/// <summary>
+	/// 親クラス
+	/// </summary>
 	class EnemyBase : public Actor
 	{
 	protected:
@@ -30,7 +34,6 @@ namespace basecross{
 
 		weak_ptr<Player> m_player;
 
-		void RegisterAnim();
 
 	public:
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
@@ -49,13 +52,16 @@ namespace basecross{
 		//初期化処理(敵をスポーンさせるとき使う？)
 		void Initialize(Vec3 pos, Vec3 rot, Vec3 scale) {
 			m_used = true;
+
 			auto ptr = GetComponent<Transform>();
 			ptr->SetPosition(pos);
 			ptr->SetRotation(rot);
 			ptr->SetScale(scale);
+
 			SetDrawActive(true);
 			SetUpdateActive(true);
 			m_LandDetect->SetUpdateActive(true);
+			m_landDetectDisableTime = 0;
 		}
 		//初期化処理(引数無し)
 		void Initialize() {
@@ -67,6 +73,16 @@ namespace basecross{
 
 		bool GetUsed() {
 			return m_used;
+		}
+
+		//アーマーの状況を0.0f～1.0fで返す
+		float GetArmorePercentage() {
+			if (m_armor > 0) {
+				return m_armor / m_armorMax;
+			}
+			else {
+				return m_armorRecover / m_armorRecoverTime;
+			}
 		}
 
 		//プレイヤーとの距離(Vec3)
@@ -82,11 +98,19 @@ namespace basecross{
 		void RotateToPlayer(const float multiply, const float threshold);
 		void RotateToPlayer(const float multiply);
 
+
 	};
 
+	/// <summary>
+	/// ステージ1のボス
+	/// </summary>
 	class BossFirst : public EnemyBase {
 		void OnDamaged() override;
+		void RegisterAnim();
 
+		//ビーム用
+		bool m_isRecoveredFromArmorBreak = false;
+		float m_prevArmor = 0.0f;
 	public:
 		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
 			EnemyBase(stagePtr, pos, rot, scale, used)
@@ -95,9 +119,136 @@ namespace basecross{
 		}
 		~BossFirst() {}
 
+		//アーマーブレイクから回復したときtrueになる
+		bool IsRecoveredFromArmorBreak() {
+			bool ret = m_isRecoveredFromArmorBreak;
+			m_isRecoveredFromArmorBreak = false;
+			return ret;
+		}
+
 		void OnCreate() override;
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+	};
+
+	/// <summary>
+	/// ボス1の衝撃波
+	/// </summary>
+	class BossFirstShockwave : public ProjectileBase {
+	protected:
+		shared_ptr<CollisionCapsule> m_innerCollision;
+
+		//現在の半径
+		float m_radius = 0;
+		//広がる速度
+		float m_radiateSpeed = 54.0f;
+		//半径の最大
+		float m_radiusMax = 108.0f;
+		//外円と内円の差
+		float m_widthCircle = .5f;
+
+		const float m_height = 2.0f;
+
+		int m_isPlayerInsideCnt = 0;
+		const int m_isPlayerInsideCntMax = 1;
+
+		void HitInfoInit() override;
+	public:
+		BossFirstShockwave(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
+			ProjectileBase(stagePtr, pos, rot, scale, originObj)
+		{
+
+		}
+		~BossFirstShockwave() {}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+
+		void OnCollisionExcute(shared_ptr<GameObject>& Other) override;
+	};
+
+	/// <summary>
+	/// ボス1のビーム判定
+	/// </summary>
+	class BossFirstBeam : public ProjectileBase {
+	protected:
+		float m_hitBeamVel = 12.0f;
+		bool m_isFinalBlow = false;
+
+		void HitInfoInit() override;
+	public:
+		BossFirstBeam(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj, float hitVel, bool final) :
+			ProjectileBase(stagePtr, pos, rot, scale, originObj),
+			m_hitBeamVel(hitVel),
+			m_isFinalBlow(final)
+		{
+
+		}
+		~BossFirstBeam() {}
+
+		void OnCreate() override;
+
+	};
+
+	/// <summary>
+	/// ボス1のエネルギー弾
+	/// </summary>
+	class BossFirstSphere : public Actor {
+	protected:
+		float m_time = 0;
+		bool m_disappear = false;
+		Quat m_face;
+
+		const float m_firstMoveSpeed = 120.0f;
+		float m_firstMoveTime = .8f;
+		const float m_speedDown = .65f;
+
+		float m_disappearTime = 0;
+		const float m_disappearTimeMax = .6f;
+
+		bool m_towardPlayer = false;
+
+		Vec3 m_secondMoveAngle;
+		const float m_secondMoveSpeed = 80.0f;
+
+		shared_ptr<Player> m_player;
+
+		void CreateChildObjects() override;
+	public:
+		BossFirstSphere(const shared_ptr<Stage>& stagePtr, Vec3 pos, Quat rot, Vec3 scale, float towardPlayerTime) :
+			Actor(stagePtr, pos, Vec3(0), scale),
+			m_face(rot),
+			m_firstMoveTime(towardPlayerTime)
+		{
+
+		}
+		~BossFirstSphere() {}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+
+		void CollidedWithTerrain() {
+			m_disappear = true;
+		}
+	};
+
+	/// <summary>
+	/// エネルギー弾専用の当たり判定オブジェクト
+	/// </summary>
+	class BossFirstSphereCollision : public AttackCollision {
+		shared_ptr<BossFirstSphere> m_obj;
+
+	public:
+		BossFirstSphereCollision(const shared_ptr<Stage>& stagePtr, const shared_ptr<BossFirstSphere>& obj) :
+			AttackCollision(stagePtr),
+			m_obj(obj)
+		{
+
+		}
+		~BossFirstSphereCollision() {
+
+		}
+		void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
 	};
 }
 //end basecross

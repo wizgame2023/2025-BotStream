@@ -92,10 +92,13 @@ namespace basecross {
 
 	class AttackCollision : public MyGameObject
 	{
-		shared_ptr<CollisionSphere> m_collision;
+		shared_ptr<CollisionCapsule> m_collision;
 
 		//攻撃のスペック
 		HitInfo m_info;
+
+		//当たったらtrueになるやつ
+		bool m_moveContact = false;
 		//持続時間
 		float m_ActiveTime = 0.0f;
 	public:
@@ -105,7 +108,7 @@ namespace basecross {
 		void OnCreate() override;
 		void OnUpdate() override;
 
-		shared_ptr<CollisionSphere> GetCollisionPtr() {
+		shared_ptr<CollisionCapsule> GetCollisionPtr() {
 			return m_collision;
 		}
 
@@ -121,6 +124,11 @@ namespace basecross {
 		void SetCollScale(float scale) {
 			m_collision->SetMakedRadius(scale);
 		}
+		//判定の高さを変える
+		void SetCollHeight(float scale) {
+			m_collision->SetMakedHeight(scale);
+		}
+
 		//判定の持続時間を設定
 		void ActivateCollision(float activetime) {
 			m_ActiveTime = activetime;
@@ -134,6 +142,10 @@ namespace basecross {
 		void SetHitInfo(HitInfo info) {
 			this->m_info = info;
 		}
+
+		bool GetMoveContact();
+		void SetMoveContact(bool mc);
+
 	};
 }
 //end basecross

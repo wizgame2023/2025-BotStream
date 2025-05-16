@@ -36,6 +36,7 @@ namespace basecross{
 		shared_ptr<Camera> m_lockStageCamera;//ロックできたステージ上のカメラ
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
 		shared_ptr<Stage> m_stage;
+		shared_ptr<Sprite> m_spriteAttack = nullptr;
 		float m_delta;
 
 		CONTROLER_STATE m_controler;//コントローラー
@@ -49,6 +50,9 @@ namespace basecross{
 		float m_speedYAxis;//y軸の回転スピード
 		float m_addAngleXAxis;//X軸の追加回転度
 		float m_addAngleYAxis;//Y軸の追加回転度
+
+		//スプライト
+		shared_ptr<Sprite> m_spriteAiming = nullptr;//射撃用のクロスヘアのスプライト
 
 
 		shared_ptr<CameraRayCast> m_cameraRayCast;
@@ -80,6 +84,10 @@ namespace basecross{
 
 		float m_meleeRange;//近接戦闘の範囲
 		bool m_meleeFlag;//近接戦闘していいかのフラグ	
+
+		bool m_poseFlag;//ポーズのフラグ
+
+		//テストの
 		
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
@@ -90,7 +98,7 @@ namespace basecross{
 		};
 
 	public:
-		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 20.0f,float targetRange = 25.0f,float melleRange = 5.0f,
+		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 15.0f,float targetRange = 25.0f,float melleRange = 5.0f,
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
@@ -115,11 +123,57 @@ namespace basecross{
 		void CameraPosUpdate();//カメラのポジションの更新
 		void InertialRotation();//慣性付きの回転処理
 		
-		void GetMeleeRange();
-		void SetMeleeRange();
+		//近距離攻撃をするかの処理のゲッター
+		bool GetMeleeFlag();
+		//void SetMeleeFlag(bool onOff);
 
 		//ターゲット対象との距離を渡す
 		float GetTargetDis();
+
+		//ポーズ処理のオンオフ
+		void PoseSwitch(bool onOff);
+
+		//近遠どちらの攻撃をするかの処理
+		void MeleeFlagUpdate();
+
+		//ロックオン処理
+		void LockOn(shared_ptr<Player> player);
+		//ロックオンする敵を決める処理
+		void SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle);
+		//ロックオンを解除する条件
+		void ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec);
+
+		//角度のゲッタセッタ
+		//第一引数　X軸かY軸どちらの軸の角度を取るか
+		float GetAngle(wstring XorY)
+		{
+			if (XorY == L"X")
+			{
+				return m_cameraAngleX;
+			}
+			if (XorY == L"Y")
+			{
+				return m_cameraAngleY;
+			}
+
+			return 0;
+		}
+
+		//カメラのAtゲッタ
+		Vec3 GetCameraAt()
+		{
+			return m_lockStageCamera->GetAt();
+		}
+
+		//ポーズフラグのゲッタセッタ
+		bool GetPose()
+		{
+			return m_poseFlag;
+		}
+		void SetPose(bool onOff)
+		{
+			m_poseFlag = onOff;
+		}
 
 		//ターゲット対象を渡す関数
 		shared_ptr<Actor> GetTargetObj();

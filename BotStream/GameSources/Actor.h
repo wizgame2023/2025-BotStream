@@ -32,7 +32,7 @@ namespace basecross {
 		float _delta;
 		//速度
 		Vec3 m_velocity;
-		//加速度(Friction関数で使用するのでvelocityを変動させる場合はこの変数を使ってください)
+		//加速度(Friction関数で使用)
 		Vec3 m_accel;
 		//最高速
 		float m_speedMax = 10;
@@ -48,16 +48,25 @@ namespace basecross {
 		float m_frictionThreshold = .5f;
 
 		//着地判定を無効化する時間
-		float m_disableLandDetect = 0.0f;
+		float m_landDetectDisableTime = 0.0f;
 		//地上にいるか否か
 		bool m_isLand = false;
 		//向いている角度
 		float m_angle;
+		//重力・摩擦処理の有無
+		bool m_doPhysics = true;
 
 		//喰らいモーション時間
 		float m_hitbacktime = 0;
 		//攻撃を受けた方向
 		Vec3 m_hitDirection = Vec3(0);
+
+		//SE関係
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+
+		//ボーズ状態かどうか
+		bool m_poseFlag = false;
 
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
@@ -74,7 +83,7 @@ namespace basecross {
 		void Gravity();
 
 		//攻撃を受けた時の処理(継承用)
-		virtual void OnDamaged() { }
+		virtual void OnDamaged() {}
 
 		//ダメージ計算式
 		int CalculateDamage(int damage) {
@@ -91,13 +100,35 @@ namespace basecross {
 		}
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate);
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor);
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
+		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
+		//void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
 		// 地面着地
 		void OnLanding();
 
 		//OnCollisionEnterに置く
 		void DetectBeingAttacked(shared_ptr<GameObject>& other);
+
+		//OnCreateで実行
+		virtual void CreateChildObjects() {
+			auto stage = GetStage();
+
+			//着地判定の生成
+			m_LandDetect = stage->AddGameObject<LandDetect>();
+			m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+
+			//攻撃判定の生成
+			m_AttackCol = stage->AddGameObject<AttackCollision>();
+			m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+		}
+
+		//削除処理
+		void RemoveSelf() {
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			GetStage()->RemoveGameObject<Actor>(GetThis<Actor>());
+		}
+
 	public:
 		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		~Actor();
@@ -107,6 +138,9 @@ namespace basecross {
 
 		//エフェクトを出す処理
 		virtual void AddEffect(int addEffect);
+
+		//ポーズのフラグをオンオフする関数
+		void SetPose(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
@@ -123,13 +157,18 @@ namespace basecross {
 		void HitBack() {
 			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
 
+			//どちらから攻撃されたかを計算
 			Vec3 nrm = m_hitDirection.normalize();
 			float dir = atan2f(nrm.z, nrm.x);
 
-			Vec3 vel = m_GetHitInfo.HitVel_Stand;
-			m_velocity.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
-			m_velocity.y = vel.y;
-			m_velocity.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
+			Vec3 vel = (m_isLand) ? m_GetHitInfo.HitVel_Stand : m_GetHitInfo.HitVel_Air;
+
+			Vec3 accel;
+			accel.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
+			accel.y = vel.y;
+			accel.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
+			
+			SetVelocity(accel);
 		}
 
 		//攻撃判定のポインタを取得
@@ -139,6 +178,7 @@ namespace basecross {
 
 		//攻撃判定の内容を更新する
 		void DefAttack(float activetime, HitInfo info) {
+			m_AttackCol->SetMoveContact(false);
 			m_AttackCol->SetHitInfo(info);
 			m_AttackCol->ActivateCollision(activetime);
 		}
@@ -152,7 +192,12 @@ namespace basecross {
 		void SetVelocity(Vec3 vel) {
 			m_velocity = vel;
 		}
+		void AddVelocity(Vec3 vel) {
+			m_accel = vel;
+			m_velocity += vel;
+		}
 
+		//前方ベクトルの取得
 		Vec3 GetForward() {
 			Vec3 vec = GetComponent<Transform>()->GetForward();
 
@@ -166,6 +211,10 @@ namespace basecross {
 			return fixedVec;
 		}
 
+		//地面の上にいるか否かのゲッター
+		bool GetLand() {
+			return m_isLand;
+		}
 
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {
@@ -180,7 +229,51 @@ namespace basecross {
 				return false;
 			}
 		}
+
+		//SEの再生
+		void PlaySnd(wstring sndname, float volume, float loopcount) {
+			m_SE = m_SEManager->Start(sndname, loopcount, volume);
+		}
+
+		//SEの停止
+		void StopSnd() {
+			if (m_SE == nullptr) {
+				return;
+			}
+			m_SEManager->Stop(m_SE);
+		}
 	};
-	
+
+	/// <summary>
+	/// 飛び道具の親クラス
+	/// </summary>
+	class ProjectileBase :public Actor
+	{
+	protected:
+		float m_speed = 1.0f;
+		float m_originAngle = 0.0f;
+		float m_canMoveDistance;//移動できる長さ
+
+		weak_ptr<Actor> m_originObj;//自分を生成したオブジェクト
+
+		//攻撃判定を設定するための関数。OnCreateに置く
+		virtual void HitInfoInit() { }
+	public:
+		ProjectileBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
+			Actor(stagePtr, pos, rot, scale),
+			m_originObj(originObj)
+		{
+
+		}
+		~ProjectileBase()
+		{
+		}
+
+		void OnCreate()override;
+		void OnUpdate()override;
+
+
+	};
+
 }
 //end basecross

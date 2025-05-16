@@ -18,7 +18,7 @@ namespace basecross {
 	}
 
 	void AttackCollision::OnCreate() {
-		m_collision = AddComponent<CollisionSphere>();
+		m_collision = AddComponent<CollisionCapsule>();
 		m_collision->SetAfterCollision(AfterCollision::None);
 
 		m_collision->SetMakedRadius(10);
@@ -29,13 +29,21 @@ namespace basecross {
 
 		if (m_ActiveTime > 0) {
 			m_collision->SetUpdateActive(true);
-			//m_collision->SetDrawActive(true);
+			m_collision->SetDrawActive(true);
 			m_ActiveTime -= delta;
 		}
 		else {
 			m_collision->SetUpdateActive(false);
-			//m_collision->SetDrawActive(false);
+			m_collision->SetDrawActive(false);
 		}
+	}
+
+	bool AttackCollision::GetMoveContact() {
+		return m_moveContact;
+	}
+
+	void AttackCollision::SetMoveContact(bool mc) {
+		m_moveContact = mc;
 	}
 
 }

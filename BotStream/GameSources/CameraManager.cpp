@@ -22,7 +22,8 @@ namespace basecross {
 		m_speedXAxis(speedXAxis),
 		m_speedYAxis(speedYAxis),
 		m_contrloerVec(Vec2(0.0f,0.0f)),
-		m_movePlayerAngleFlag(false)
+		m_movePlayerAngleFlag(false),
+		m_poseFlag(false)
 	{
 
 	}
@@ -49,7 +50,7 @@ namespace basecross {
 		m_lockStageCamera->SetAt(playerPos);
 
 		//スプライト追加
-		m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
+		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
@@ -58,6 +59,9 @@ namespace basecross {
 
 		//SE用のマネージャー取得
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		//射撃用のクロスヘア用のテクスチャ追加
+		m_spriteAiming = m_stage->AddGameObject<Sprite>(L"AimingTex", Vec2(50.0f, 50.0f));
+		//m_spriteAiming->OnClear(true);//生成したときは見えないようにする
 
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
@@ -80,10 +84,15 @@ namespace basecross {
 			GetStage()->RemoveGameObject<CameraManager>(GetThis<CameraManager>());
 			return;
 		}
+		//ポーズフラグがオンならカメラ移動はできない
+		if (m_poseFlag)
+		{
+			return;
+		}
 
 		//プレイヤーを取得
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
-		m_playerPos = player->GetComponent<Transform>()->GetPosition();	
+		m_playerPos = player->GetComponent<Transform>()->GetPosition();
 
 		// インプットデバイスオブジェクト
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
@@ -101,122 +110,102 @@ namespace basecross {
 		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
 		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
+		//近遠どちらの攻撃をするかの処理
+		MeleeFlagUpdate();
 
-		//LockOnCanがいないならロックオンできない＆選択を初期化
-		if (m_targets.size() <= 0 && m_targetObj)
+		//近接戦闘していいかによってスプライトが変わる
+		if (!m_meleeFlag)
 		{
-			LockOff(enemyVec);//ロックオンの解除
+			m_spriteAttack->SetTexture(L"KatanaTex");
 		}
+		if (m_meleeFlag)
+		{
+			m_spriteAttack->SetTexture(L"GunTex");
+		}
+
+		//ロックオンを解除する条件処理
+		//ConditionsLockOff(enemyVec);
 
 		//ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		float playerAngle = player->GetAngle();
-		//ロックオンが出来てロックオンのしてないなら使う、使ってたら使わない どちらでもなければそうでないならプレイヤーの向いている方向に向く
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+		//ロックオン対象の敵を決める処理
+		//SelectTargetObj(enemyVec, playerAngle);
+		
+		
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
 		{
-			//ロックオンするか決める処理
-			if (m_lockOnFlag && !m_lockOnUse)
-			{
-				float min = 99999;
-				//距離を測ってPlayerから一番近い敵をロックオンする
-				for (auto enemy : m_targets)
-				{
-					Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
-					Vec3 distanceVec = enemyPos - m_playerPos;//敵とプレイヤーとの距離ベクトル
-					float ditance = abs(distanceVec.x) + abs(distanceVec.z);
-					if (min > ditance)
-					{
-						min = ditance;
-						m_targetDis = abs(distanceVec.x) + abs(distanceVec.z);//対象との距離を保存する
-						m_targetObj = enemy;//LockOnTargetを決める
-					}
-				}
-
-				m_lockOnUse = true;//ロックオン使用
-				m_targetObj->AddTag(L"LockOnTarget");
-				m_SEManager->Start(L"LockOnSE", 0, 0.9f);//ロックオン用SE再生
-			}
-			else if (m_lockOnFlag && m_lockOnUse)
-			{
-				m_targetDis = 0.0f;
-				LockOff(enemyVec);//ロックオンの解除
-			}
-			else if (!m_lockOnFlag && !m_movePlayerAngleFlag)
-			{
+			//if (!m_lockOnFlag && !m_movePlayerAngleFlag)
+			//{
 				//Playerの向いている方向に移動するフラグをオンにする
 				m_movePlayerAngleFlag = true;	
 				//向く座標を決める
 				m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
-				auto a = 0;
-			}
+			//}
 		}
-		//フラグがオンになったらPlayerの向きに移動する
-		if (m_movePlayerAngleFlag)
+		////フラグがオンになったらPlayerの向きに移動する
+		//if (m_movePlayerAngleFlag)
+		//{
+		//	//Playerの向いている方向の鏡合わせになるように角度を変更する
+		//	MovePlayerAngle(m_targetAngleY);
+		//}
+
+		////角度リセット(デバック用)
+		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		//{
+		//	m_cameraAngleY = XMConvertToRadians(270.0f);
+		//}
+
+
+		//LBを押している最中は射撃モードに移行する
+		if (m_controler.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 		{
-			//Playerの向いている方向の鏡合わせになるように角度を変更する
-			MovePlayerAngle(m_targetAngleY);
+			//Playerとの距離を縮めて狙いを定めているっぽくする
+			m_range = 10.0f;
+
+			//銃使うフラグにした
+			m_meleeFlag = false;
+
+			//その後に射撃用のUIも出したい
+			m_spriteAiming->OnClear(false);
+
+			//注視点の変更(普段よりも先に見たい)
+			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
+				cos(m_cameraAngleX) * -15.0f,
+				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f));
+
 		}
-		//角度リセット(デバック用)
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		else
 		{
-			m_cameraAngleY = XMConvertToRadians(270.0f);
+			//Playerとの距離を縮めて狙いを定めているっぽくする
+			m_range = 15.0f;
+
+			//銃を使わないフラグ
+			m_meleeFlag = true;
+
+			//ここはUIを出さない
+			m_spriteAiming->OnClear(true);
+
+			//注視点の変更
+			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
+				cos(m_cameraAngleX) * -5.0f,
+				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f));
 		}
+
+
+		//現在の注視点を見れるようにする
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		{
+			player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		}
+
 
 		//ロックオンするときの処理
-		if (m_lockOnUse)
-		{		
-			//ロックオンするときの材料作成
-			UpdateTargesDeta(m_playerPos);
+		//LockOn(player);
 
-			float targetAngle;
-			//ターゲット対象のなす角を受け取る
-			for (auto enemy : m_targesDeta)
-			{
-				if (enemy.leftOrRight == Middle)
-				{
-					targetAngle = enemy.lockOnAngle;
-				}
-			}
-
-			//ターゲット対象からスティックを傾けている方向のターゲット候補に変える処理
-			if (m_contrloerVec.x <= -0.9f && m_stickFlag)//対象の左隣にいる候補に移す
-			{
-				//現在の対象の方向と一番近い候補がターゲット対象になる
-				ChangeLockOn(Left, targetAngle);
-				m_stickFlag = false;//入力を受け付けない
-			}
-			if (m_contrloerVec.x >= 0.9f && m_stickFlag)//対象の右隣にいる候補に移す
-			{
-				//現在の対象の方向と一番近い候補がターゲット対象になる
-				ChangeLockOn(Right, targetAngle);
-				m_stickFlag = false;//入力を受け付けない
-			}
-
-			//スティックを傾けた後スティックを元に戻したら入力を受け入れる
-			if (!m_stickFlag && m_contrloerVec.x == 0.0f)
-			{
-				m_stickFlag = true;//入力を受け付ける
-			}
-
-			//ロックオンしていいか判断する
-			if (m_lockOnChangeFlag)
-			{
-				m_lockOnChangeFlag = false;
-				m_lockOnUse = true;//ロックオン使用
-				m_targetObj = m_targets[m_lockOnNum];
-				m_targets[m_lockOnNum]->AddTag(L"LockOnTarget");
-			}
-
-			LockOn(m_targetObj, player);//ロックオン
-		}//ロックオンできない時
-		else if (!m_lockOnUse)
-		{
-			//注視点はPlayerの位置よりも少し先にしたい
-			m_lockStageCamera->SetAt(m_playerPos+Vec3(0.0f,3.0f,0.0f));
-		}
 
 		//LockOnCanはどのオブジェクト達になるのか処理
-		LockOnCandidate(enemyVec, m_playerPos);
+		//LockOnCandidate(enemyVec, m_playerPos);
 		//角度の調整0~360度までしか出ないようにする
 		AdjustmentAngle();
 		//カメラの位置更新
@@ -227,6 +216,7 @@ namespace basecross {
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 
+		//ロックオン対象との距離を計算
 		if (m_targetObj)
 		{
 			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
@@ -332,38 +322,6 @@ namespace basecross {
 		float maxAddAngleXAxis = 0.025f;
 		float maxAddAngleYAxis = 0.08f;
 		
-		////x軸回転の慣性処理
-		//if (m_addAngleXAxis > 0)
-		//{
-		//	if (m_addAngleXAxis > maxAddAngleXAxis)
-		//	{
-		//		m_addAngleXAxis = maxAddAngleXAxis;
-		//	}
-		//}
-		//else if (m_addAngleXAxis < 0)
-		//{
-		//	//x軸回転の慣性処理
-		//	if (m_addAngleXAxis < -maxAddAngleXAxis)
-		//	{
-		//		m_addAngleXAxis = -maxAddAngleXAxis;
-		//	}
-		//}
-		////Y軸回転の慣性処理
-		//if (m_addAngleYAxis > 0)
-		//{
-		//	if (m_addAngleYAxis > maxAddAngleYAxis)
-		//	{
-		//		m_addAngleYAxis = maxAddAngleYAxis;
-		//	}
-		//}
-		//else if (m_addAngleYAxis < 0)
-		//{
-		//	if (m_addAngleYAxis < -maxAddAngleYAxis)
-		//	{
-		//		m_addAngleYAxis = -maxAddAngleYAxis;
-		//	}
-		//}
-
 		m_cameraAngleX += m_addAngleXAxis * m_delta;//追加
 		m_cameraAngleY += -m_addAngleYAxis * m_delta;//追加
 
@@ -380,15 +338,24 @@ namespace basecross {
 		size_t triangleNumber; // レイが交差したポリゴンの番号
 		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
 
-		//まず、障害物がなかった時の位置を入れる
-		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
-			(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
-			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		//まず、障害物がなかった時の位置を入れる(この数値は接近戦をするか射撃をするかによって変わる)
+		if (m_meleeFlag)
+		{
+			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
+				(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
+				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		}
+		else if (!m_meleeFlag)
+		{
+			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
+				(m_playerPos.y + 5.0f) + cos(m_cameraAngleX) * m_range,
+				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		}
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
 		{
-			auto obstacles = dynamic_pointer_cast<ObjectNotMove>(obj);//当たり判定の対象		
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
 			float hitLength = min;//Playerと障害物の距離の長さ
 
 			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
@@ -397,7 +364,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();
+				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
 				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
@@ -407,6 +374,7 @@ namespace basecross {
 			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
 			{
 				min = hitLength;
+				hitPos.y = m_cameraPos.y;//Y座標は変えないようにする
 				m_cameraPos = hitPos;
 			}
 		}
@@ -702,6 +670,129 @@ namespace basecross {
 		}
 	}
 
+	//ロックオンを解除する処理
+	void CameraManager::ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec)
+	{
+		//LockOnCanがいないならロックオンできない＆選択を初期化
+		if (m_targets.size() <= 0 && m_targetObj)
+		{
+			LockOff(enemyVec);//ロックオンの解除
+		}
+		//ロックオン中にLockOnTargetが居なくなったらロックオン解除する
+		if (m_lockOnUse)
+		{
+			auto test = m_targetObj->GetUsed();
+			if (!test)
+			{
+				LockOff(enemyVec);//ロックオンの解除
+			}
+		}
+	}
+
+	//ロックオンする敵を決める処理
+	void CameraManager::SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle)
+	{
+		//ロックオンが出来てロックオンのしてないなら使う、使ってたら使わない どちらでもなければそうでないならプレイヤーの向いている方向に向く
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+		{
+			//ロックオンするか決める処理
+			if (m_lockOnFlag && !m_lockOnUse)
+			{
+				//ロックオンする敵を決める
+				float min = 99999;
+				//距離を測ってPlayerから一番近い敵をロックオンする
+				for (auto enemy : m_targets)
+				{
+					Vec3 enemyPos = enemy->GetComponent<Transform>()->GetPosition();
+					Vec3 distanceVec = enemyPos - m_playerPos;//敵とプレイヤーとの距離ベクトル
+					float ditance = abs(distanceVec.x) + abs(distanceVec.z);
+					if (min > ditance)
+					{
+						min = ditance;
+						m_targetDis = abs(distanceVec.x) + abs(distanceVec.z);//対象との距離を保存する
+						m_targetObj = enemy;//LockOnTargetを決める
+					}
+				}
+
+				m_lockOnUse = true;//ロックオン使用
+				m_targetObj->AddTag(L"LockOnTarget");
+				m_SEManager->Start(L"LockOnSE", 0, 0.9f);//ロックオン用SE再生
+			}
+			else if (m_lockOnFlag && m_lockOnUse)
+			{
+				m_targetDis = 0.0f;
+				LockOff(enemyVec);//ロックオンの解除
+			}
+			else if (!m_lockOnFlag && !m_movePlayerAngleFlag)
+			{
+				//Playerの向いている方向に移動するフラグをオンにする
+				m_movePlayerAngleFlag = true;
+				//向く座標を決める
+				m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+				auto a = 0;
+			}
+		}
+
+	}
+
+	//ロックオン処理
+	void CameraManager::LockOn(shared_ptr<Player> player)
+	{
+		//ロックオンするときの処理
+		if (m_lockOnUse)
+		{
+			//ロックオンするときの材料作成
+			UpdateTargesDeta(m_playerPos);
+
+			float targetAngle;
+			//ターゲット対象のなす角を受け取る
+			for (auto enemy : m_targesDeta)
+			{
+				if (enemy.leftOrRight == Middle)
+				{
+					targetAngle = enemy.lockOnAngle;
+				}
+			}
+
+			//ターゲット対象からスティックを傾けている方向のターゲット候補に変える処理
+			if (m_contrloerVec.x <= -0.9f && m_stickFlag)//対象の左隣にいる候補に移す
+			{
+				//現在の対象の方向と一番近い候補がターゲット対象になる
+				ChangeLockOn(Left, targetAngle);
+				m_stickFlag = false;//入力を受け付けない
+			}
+			if (m_contrloerVec.x >= 0.9f && m_stickFlag)//対象の右隣にいる候補に移す
+			{
+				//現在の対象の方向と一番近い候補がターゲット対象になる
+				ChangeLockOn(Right, targetAngle);
+				m_stickFlag = false;//入力を受け付けない
+			}
+
+			//スティックを傾けた後スティックを元に戻したら入力を受け入れる
+			if (!m_stickFlag && m_contrloerVec.x == 0.0f)
+			{
+				m_stickFlag = true;//入力を受け付ける
+			}
+
+			//ロックオンしていいか判断する
+			if (m_lockOnChangeFlag)
+			{
+				m_lockOnChangeFlag = false;
+				m_lockOnUse = true;//ロックオン使用
+				m_targetObj = m_targets[m_lockOnNum];
+				m_targets[m_lockOnNum]->AddTag(L"LockOnTarget");
+			}
+
+			LockOn(m_targetObj, player);//ロックオン
+		}//ロックオンできない時
+		else if (!m_lockOnUse)
+		{
+			//注視点はPlayerの位置よりも少し先にしたい
+			m_lockStageCamera->SetAt(m_playerPos + Vec3(0.0f, 3.0f, 0.0f));
+		}
+
+	}
+
 	//ターゲット対象を渡す関数
 	shared_ptr<Actor> CameraManager::GetTargetObj()
 	{
@@ -713,6 +804,35 @@ namespace basecross {
 	{
 		return m_targetDis;
 	}
+
+	//ポーズ処理のオンオフ
+	void CameraManager::PoseSwitch(bool onOff)
+	{
+		m_poseFlag = onOff;
+	}
+
+	//近遠どちらの攻撃をするかの処理
+	void CameraManager::MeleeFlagUpdate()
+	{
+		//近距離攻撃の有効範囲
+		float meleeRange = 200.0f;
+		if (m_targetDis >= meleeRange)
+		{
+			m_meleeFlag = true;
+		}
+		if (m_targetDis < meleeRange)
+		{
+			m_meleeFlag = false;
+		}
+	}
+
+	//近距離攻撃をするかの処理のゲッター
+	bool CameraManager::GetMeleeFlag()
+	{
+		return m_meleeFlag;
+	}
+
+
 
 	//ロックオン範囲を知らせるためのオブジェクト
 	//第一引数　ロックオン有効範囲,第二引数　ロックオン範囲の中心となるオブジェクト
@@ -742,7 +862,7 @@ namespace basecross {
 		//ドローメッシュの設定
 		m_ptrDraw = AddComponent<PNTStaticDraw>();
 		m_ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		m_ptrDraw->SetTextureResource(L"PLGauge");
+		m_ptrDraw->SetTextureResource(L"BarTex");
 		m_ptrDraw->SetOwnShadowActive(false);//影は消す
 		m_ptrDraw->SetDrawActive(true);
 
@@ -922,7 +1042,7 @@ namespace basecross {
 		//コリジョン生成
 		auto ptrColl = AddComponent<CollisionObb>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 
 		
 		//攻撃判定の定義

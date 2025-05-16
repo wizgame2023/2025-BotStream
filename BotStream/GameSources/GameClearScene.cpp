@@ -97,26 +97,26 @@ namespace basecross {
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 		{
-			//switch (m_select)
-			//{
-			//// 次のステージ
-			//case 0:
-			//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage2");
-			//	break;
-			//// セレクトステージ
-			//case 1:
-			//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToSelectStage");
-			//	break;
-			//// タイトル
-			//case 2:
-			//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
-			//	break;
+			switch (m_select)
+			{
+			// 次のステージ
+			case 0:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage2");
+				break;
+			// セレクトステージ
+			case 1:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToSelectStage");
+				break;
+			// タイトル
+			case 2:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToGameStage");
+				break;
 
-			////例外が起きたらタイトル
-			//default:
-			//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
-			//	break;
-			//}
+			//例外が起きたらタイトル
+			default:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToGameStage");
+				break;
+			}
 		}
 	}
 
