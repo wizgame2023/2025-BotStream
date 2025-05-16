@@ -265,6 +265,11 @@ namespace basecross{
 		float m_addTimeAnimation = 0.0f;
 		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 
+		//攻撃のクールダウン関係
+		bool m_attackFlag = true;
+		float m_timeOfAttackCool = 5.0f;
+		float m_timeCountOfAttackCool = 0.0f;
+
 	public:
 		enum EnemyZakoAttackType
 		{
@@ -292,10 +297,23 @@ namespace basecross{
 		//ビルボードの処理
 		void UpdateHPBer();
 
+		//攻撃のクールタイム
+		void TimeOfAttackCool();
+
 		//攻撃のタイプのゲッタ
 		int GetAttackType()
 		{
 			return m_AttackType;
+		}
+
+		//攻撃フラグのゲッタセッタ
+		bool GetAttackFlag()
+		{
+			return m_attackFlag;
+		}
+		void SetAttackFlag(bool attackFlag)
+		{
+			m_attackFlag = attackFlag;
 		}
 
 		//アニメーションの追加時間のゲッタセッタ

@@ -718,7 +718,7 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
 
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);//デバック用
 
@@ -764,13 +764,15 @@ namespace basecross {
 				Gravity();
 			}
 			else {
-				Friction();
+				//Friction();
 			}
 		}
 
 
 		//HPバーの処理
 		UpdateHPBer();
+		//攻撃のクールタイム
+		TimeOfAttackCool();
 
 		//HPがゼロになったら消える
 		if (m_HPCurrent <= 0)
@@ -812,6 +814,22 @@ namespace basecross {
 		}
 
 
+	}
+
+	//攻撃のクールタイム
+	void EnemyZako::TimeOfAttackCool()
+	{
+		//攻撃のクールタイム
+		if (!m_attackFlag)
+		{
+			m_timeCountOfAttackCool += _delta;
+			//クールタイム過ぎたら攻撃できるようになる
+			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
+			{
+				m_timeCountOfAttackCool = 0.0f;//リセット
+				m_attackFlag = true;
+			}
+		}
 	}
 
 	//コリジョン判定
