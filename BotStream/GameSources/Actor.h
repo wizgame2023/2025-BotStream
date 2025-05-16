@@ -108,6 +108,27 @@ namespace basecross {
 
 		//OnCollisionEnter‚É’u‚­
 		void DetectBeingAttacked(shared_ptr<GameObject>& other);
+
+		//OnCreate‚ÅŽÀs
+		virtual void CreateChildObjects() {
+			auto stage = GetStage();
+
+			//’…’n”»’è‚Ì¶¬
+			m_LandDetect = stage->AddGameObject<LandDetect>();
+			m_LandDetect->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+
+			//UŒ‚”»’è‚Ì¶¬
+			m_AttackCol = stage->AddGameObject<AttackCollision>();
+			m_AttackCol->GetComponent<Transform>()->SetParent(dynamic_pointer_cast<GameObject>(GetThis<Actor>()));
+		}
+
+		//íœˆ—
+		void RemoveSelf() {
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			GetStage()->RemoveGameObject<Actor>(GetThis<Actor>());
+		}
+
 	public:
 		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		~Actor();

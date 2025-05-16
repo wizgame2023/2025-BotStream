@@ -189,6 +189,67 @@ namespace basecross{
 		void OnCreate() override;
 
 	};
+
+	/// <summary>
+	/// ボス1のエネルギー弾
+	/// </summary>
+	class BossFirstSphere : public Actor {
+	protected:
+		float m_time = 0;
+		bool m_disappear = false;
+		Quat m_face;
+
+		const float m_firstMoveSpeed = 120.0f;
+		float m_firstMoveTime = .8f;
+		const float m_speedDown = .65f;
+
+		float m_disappearTime = 0;
+		const float m_disappearTimeMax = .6f;
+
+		bool m_towardPlayer = false;
+
+		Vec3 m_secondMoveAngle;
+		const float m_secondMoveSpeed = 80.0f;
+
+		shared_ptr<Player> m_player;
+
+		void CreateChildObjects() override;
+	public:
+		BossFirstSphere(const shared_ptr<Stage>& stagePtr, Vec3 pos, Quat rot, Vec3 scale, float towardPlayerTime) :
+			Actor(stagePtr, pos, Vec3(0), scale),
+			m_face(rot),
+			m_firstMoveTime(towardPlayerTime)
+		{
+
+		}
+		~BossFirstSphere() {}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+
+		void CollidedWithTerrain() {
+			m_disappear = true;
+		}
+	};
+
+	/// <summary>
+	/// エネルギー弾専用の当たり判定オブジェクト
+	/// </summary>
+	class BossFirstSphereCollision : public AttackCollision {
+		shared_ptr<BossFirstSphere> m_obj;
+
+	public:
+		BossFirstSphereCollision(const shared_ptr<Stage>& stagePtr, const shared_ptr<BossFirstSphere>& obj) :
+			AttackCollision(stagePtr),
+			m_obj(obj)
+		{
+
+		}
+		~BossFirstSphereCollision() {
+
+		}
+		void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+	};
 }
 //end basecross
 
