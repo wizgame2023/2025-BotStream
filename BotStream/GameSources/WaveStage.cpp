@@ -12,14 +12,8 @@ namespace basecross {
     //	ゲームステージクラス実体
     //--------------------------------------------------------------------------------------
     void WaveStage::CreateViewLight() {
-        //全体確認カメラ
+        //カメラ
         const Vec3 eye(0.0f, 350.0f, -20.0f);
-        //Wave1確認カメラ
-        //const Vec3 eye(0.0f, 1.0f, -25.5f);
-        //Wave2確認カメラ
-        //const Vec3 eye(0.0f, 1.0f, -5.3f);
-        //Boss確認カメラ
-        //const Vec3 eye(0.0f, 1.0f, 24.5f);
 
         const Vec3 at(0.0f, 0.0f, 0.0f);
         auto PtrView = CreateView<SingleView>();
@@ -190,7 +184,6 @@ namespace basecross {
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
 
-            EnemyNum = 1;
 
             enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
 
@@ -317,25 +310,25 @@ namespace basecross {
             //Boss
             //右
             {
-                Vec3(41.0f, 1.0f, 210.5f),
+                Vec3(41.0f, 3.0f, 210.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(105.5f, 19.0f, 260.0f)
             },
             //左
             {
-                Vec3(41.0f, 1.0f, 210.5f),
+                Vec3(41.0f, 3.0f, 210.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(-105.5f, 19.0f, 260.0f)
             },
             //前
             {
-                Vec3(41.0f, 1.0f, 210.5f),
+                Vec3(41.0f, 3.0f, 210.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, 365.5f)
             },
             //後
             {
-                Vec3(41.0f, 1.0f, 210.5f),
+                Vec3(41.0f, 3.0f, 210.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, 154.5f)
             },
