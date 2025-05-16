@@ -45,7 +45,8 @@ namespace basecross {
 			MyGameObject(stagePtr),
 			m_hitPointMax(hitMax),
 			m_armorPointMax(armMax)
-		{ }
+		{
+		}
 		virtual ~BossGaugeUI() {}
 
 		void CreateSprite();
@@ -56,6 +57,11 @@ namespace basecross {
 		float GetBossMaxHPSprite()
 		{
 			return m_hitPointMax;
+		}
+
+		void SetBossMaxHPSprite(float maxHP)
+		{
+			m_hitPointMax = maxHP;
 		}
 
 		// ボスのゲージ表示非表示
@@ -91,11 +97,12 @@ namespace basecross {
 		) :
 			BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale),
 			m_indices(vector<uint16_t>())
-		{}
+		{
+		}
 
 		virtual ~EnemyDamageBill() {}
 
-		void SetBillUV(Vec2 topLeft, Vec2 botRight);
+		void ShowDamage(int value, float digitSize/*, BillBoard bill*/);
 
 		virtual void OnCreate()override;
 		virtual void OnUpdate()override;

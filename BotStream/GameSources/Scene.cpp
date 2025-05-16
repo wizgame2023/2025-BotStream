@@ -220,6 +220,11 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
+		// 連続攻撃
+		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slash03Efk", efkPath + L"slash03.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slash04Efk", efkPath + L"slash04.efkefc");
 		// ---------------------------------
 
 		//BGM
