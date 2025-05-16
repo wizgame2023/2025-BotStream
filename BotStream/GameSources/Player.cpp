@@ -177,7 +177,7 @@ namespace basecross {
 		//DebugLog();
 
 		//アニメーション再生
-		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
@@ -711,8 +711,14 @@ namespace basecross {
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
+		//アニメーション追加
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
+		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);//デバック用
 
@@ -758,30 +764,15 @@ namespace basecross {
 				Gravity();
 			}
 			else {
-				Friction();
+				//Friction();
 			}
 		}
 
 
 		//HPバーの処理
 		UpdateHPBer();
-		//if (!m_used)
-		//{
-		//	m_billBoard->SetScale(Vec3(0.0f));
-		//	m_billBoardSecond->SetScale(Vec3(0.0f));
-		//}
-		//if (m_used)
-		//{
-		//	m_billBoard->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-		//	m_billBoardSecond->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-		//	
-		//	//HPの割合によってゲージが減る
-		//	float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
-		//	m_billBoardSecond->SetPercent(HPPercent);
-
-		//}
-
-
+		//攻撃のクールタイム
+		TimeOfAttackCool();
 
 		//HPがゼロになったら消える
 		if (m_HPCurrent <= 0)
@@ -795,6 +786,9 @@ namespace basecross {
 			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
 			//GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
+
+		//アニメーション更新
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
@@ -820,6 +814,22 @@ namespace basecross {
 		}
 
 
+	}
+
+	//攻撃のクールタイム
+	void EnemyZako::TimeOfAttackCool()
+	{
+		//攻撃のクールタイム
+		if (!m_attackFlag)
+		{
+			m_timeCountOfAttackCool += _delta;
+			//クールタイム過ぎたら攻撃できるようになる
+			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
+			{
+				m_timeCountOfAttackCool = 0.0f;//リセット
+				m_attackFlag = true;
+			}
+		}
 	}
 
 	//コリジョン判定

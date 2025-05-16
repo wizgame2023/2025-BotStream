@@ -80,13 +80,7 @@ namespace basecross {
 			auto SeekPtr = m_actor.lock();
 			auto SeekTransPtr = SeekPtr->GetComponent<Transform>();
 
-			////インデックスを作成するための配列
-			//vector<uint16_t> indices;
-			////Squareの作成(ヘルパー関数を利用)
-			//MeshUtill::CreateSquare(1.0f, m_vertices, indices);
-
 			//アニメーション処理/////////////////////////////////////////
-			auto test = m_vertices[1].position;
 			m_vertices[1].position.x = -0.5f + (1.0f * m_parsecond);
 			m_vertices[3].position.x = -0.5f + (1.0f * m_parsecond);
 			m_vertices[1].position.y = 0.5f;
@@ -107,10 +101,7 @@ namespace basecross {
 				new_vertices.push_back(nv);
 			}
 			//新しい頂点を使ってメッシュリソースの作成
-			//m_SquareMeshResource
 			m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, m_indices, true);
-			//GetStage()->RemoveGameObject<VertexPositionColorTexture>(m_SquareMeshResource);
-
 
 			auto PtrTransform = GetComponent<Transform>();
 			auto Pos = SeekTransPtr->GetPosition();
