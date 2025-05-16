@@ -258,6 +258,8 @@ namespace basecross{
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
+		shared_ptr<BillBoard> m_damageBill = nullptr;
+
 		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
 		int m_AttackType = Zako_Melee;
 

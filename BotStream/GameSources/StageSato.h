@@ -54,6 +54,10 @@ namespace basecross {
 		shared_ptr<Sprite> m_SEMater[10];
 		shared_ptr<Sprite> m_audioSelect[2];
 
+		shared_ptr<BillBoard> m_testBill;
+
+		shared_ptr<Player> m_player;
+
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
 		// 質問の内容を入れておくためのリスト
@@ -111,6 +115,9 @@ namespace basecross {
 
 		// デバッグ用文字列
 		void DebugLog();
+
+		//ダメージビルボード
+		void DamageBill(shared_ptr<GameObject> target, int damage);
 
 		// 軸の正規化
 		float NormalizeAxis(float minusSide, float plusSide);

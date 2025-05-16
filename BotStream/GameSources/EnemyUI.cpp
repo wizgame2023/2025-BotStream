@@ -182,7 +182,7 @@ namespace basecross {
 			Vec2(frameSizeX, frameSizeY),
 			Vec3(0.0f, 350.0f, 0.0f)
 		);
-		
+
 		auto framePos = m_gaugeFrameSp->GetPosition();
 
 		m_hitPointSp = m_stage->AddGameObject<Sprite>(
@@ -213,7 +213,7 @@ namespace basecross {
 			//Squareの作成(ヘルパー関数を利用)
 			MeshUtill::CreateSquare(1.0f, m_vertices, m_indices);
 
-			SetBillUV(Vec2(0.0f, 0.0f), Vec2(1.0f, 1.0f));
+			//SetBillUV(Vec2(0.0f, 0.0f), Vec2(0.1f, 1.0f));
 
 			//頂点の型を変えた新しい頂点を作成
 			vector<VertexPositionColorTexture> new_vertices;
@@ -238,21 +238,39 @@ namespace basecross {
 
 	void EnemyDamageBill::OnUpdate()
 	{
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 
+		auto PtrCamera = GetStage()->GetView()->GetTargetCamera();
+		auto PtrTransform = GetComponent<Transform>();
+
+		Quat Qt;
+		//向きをカメラ目線にする
+		Qt = Billboard(PtrCamera->GetAt() - PtrCamera->GetEye());
+
+		PtrTransform->SetQuaternion(Qt);
 	}
 
-	void EnemyDamageBill::SetBillUV(Vec2 topLeft, Vec2 botRight)
-	{
-		//UV値の変更
-		//左上頂点
-		m_vertices[0].textureCoordinate = Vec2(topLeft);
-		//右上頂点
-		m_vertices[1].textureCoordinate = Vec2(botRight.x, topLeft.y);
-		//左下頂点
-		m_vertices[2].textureCoordinate = Vec2(topLeft.x, botRight.y);
-		//右下頂点
-		m_vertices[3].textureCoordinate = Vec2(botRight);
 
+	// ダメージ表示
+	void EnemyDamageBill::ShowDamage(int value, float digitSize/*, BillBoard bill*/)
+	{
+		// 数値を文字列に変換
+		std::string str = std::to_string(value);
+		// UVの幅
+		float uvWidth = 1.0f / 10.0f;
+
+		for (size_t i = 0; i < str.size(); ++i)
+		{
+			char setValue = str[i];
+
+			if (setValue < '0' || setValue > '9') continue;
+
+			int digit = setValue - '0';
+			float u1 = digit * uvWidth;
+			float u2 = u1 + uvWidth;
+
+			SetBillUV(Vec2(u1, 0.0f), Vec2(u2, 1.0f));
+		}
 	}
 	// END ---------------------------------------------------
 }

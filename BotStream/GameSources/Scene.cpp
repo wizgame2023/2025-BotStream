@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<StageSato>();
+			ResetActiveStage<TitleStage>();
 
 		}
 
@@ -96,6 +96,9 @@ namespace basecross{
 		//テクスチャ
 		wstring strTexture = texPath + L"StoneBrick.png";
 		app->RegisterTexture(L"StoneBrick", strTexture);
+		strTexture = texPath + L"Fadeout.png";
+		app->RegisterTexture(L"Fadeout", strTexture);
+
 		// title
 		strTexture = texPath + L"TitleBack.png";
 		app->RegisterTexture(L"TitleBack", strTexture);
@@ -217,6 +220,11 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
+		// 連続攻撃
+		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slash03Efk", efkPath + L"slash03.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Slash04Efk", efkPath + L"slash04.efkefc");
 		// ---------------------------------
 
 		//BGM
@@ -231,11 +239,17 @@ namespace basecross{
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
-		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
-		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
+
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
 		app->RegisterWav(L"Enemy_Slash", SoundPath + L"Enemy_Slash.wav");
+		app->RegisterWav(L"Enemy_Spin", SoundPath + L"Enemy_Spin.wav");
+		app->RegisterWav(L"Enemy_SpinFinish", SoundPath + L"Enemy_SpinFinish.wav");
+		app->RegisterWav(L"Enemy_Slam", SoundPath + L"Enemy_Slam.wav");
 		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
+		app->RegisterWav(L"Enemy_Defeat", SoundPath + L"Enemy_Defeat.wav");
+
+		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
+		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
 		app->RegisterWav(L"Attack2", SoundPath + L"Attack2.wav");
 		app->RegisterWav(L"Attack3", SoundPath + L"Attack3.wav");
