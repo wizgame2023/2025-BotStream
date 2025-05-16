@@ -72,9 +72,15 @@ namespace basecross {
 			}
 
 			//ímÇÈÇ©ÅIâÙÇÈÅI
-			if (rnd() % 1000 <= m_spinRand)
-			boss->ChangeState(L"SpinStart");
-			
+			if (rnd() % 1000 <= m_spinRand) {
+				boss->ChangeState(L"SpinStart");
+			}
+
+			//Ç‚Ç¡Çœí@Ç≠Ç©Ç‡Åc
+			if (rnd() % 1000 <= m_slamRand) {
+				boss->ChangeState(L"SlamStart");
+			}
+
 			if (boss->IsRecoveredFromArmorBreak()) {
 				boss->ChangeState(L"BeamStart");
 			}
@@ -94,11 +100,19 @@ namespace basecross {
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->RotateToPlayer(1.0f, m_rotateThreshold);
 
-		boss->SetVelocity(boss->GetForward() * 20);
+		boss->SetVelocity(boss->GetForward() * m_chaseSpeed);
 
 		if (boss->GetPlayerDist() < m_closeDist) {
 			//ãﬂÇ¢ÅI
-			boss->ChangeState(L"Attack");
+			if (rnd() % 1000 <= m_slamRand) {
+				//í@Ç≠ÅI
+				boss->ChangeState(L"SlamStart");
+			}
+			else {
+				//éhÇ∑ÅI
+				boss->ChangeState(L"Attack");
+			}
+			
 		}
 	}
 	void BossFirstChaseState::Exit() {
@@ -195,6 +209,7 @@ namespace basecross {
 	void BossFirstSpinState::Enter() {
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->ChangeAnim(L"AttackSpin2", true);
+		boss->PlaySnd(L"Enemy_Spin", 1.0f, 0);
 		m_end = m_allFrame + m_allFramePlus * (1.0f - (boss->GetHPCurrent() / boss->GetHPMax()));
 
 		//èâä˙âª
@@ -266,6 +281,8 @@ namespace basecross {
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->ChangeAnim(L"AttackSpin3", true);
 
+		boss->StopSnd();
+		boss->PlaySnd(L"Enemy_SpinFinish", 1.0f, 0);
 		//ÇøÇÂÇ¡Ç∆Ç∏Ç¬å∏ë¨Ç∑ÇÈä¥Ç∂
 		m_spinSpeed = m_spinSpeedMax;
 		m_time = 0;
@@ -312,7 +329,6 @@ namespace basecross {
 		boss->RotateToPlayer(2.0f, m_rotateThreshold);
 
 		if (m_time >= m_startup) {
-			auto boss = dynamic_pointer_cast<BossFirst>(_obj);
 			boss->ChangeState(L"BeamFire");
 			boss->AddEffect(EnemyEffect_Beam);
 
@@ -341,7 +357,7 @@ namespace basecross {
 			if (m_time > m_attackTimeEnd) {
 				m_isFinalBlow = true;
 			}
-			Vec3 pos = p->GetPosition() - Vec3(0, 1.5, 0);
+			Vec3 pos = p->GetPosition() + Vec3(0, -1.5, 0);
 			float vel = m_beamHitVelBase + (m_beamHitVelAdd * m_beamCnt);
 			p->GetStage()->AddGameObject<BossFirstBeam>(pos, Vec3(0.0f), Vec3(1.0f), p, vel, m_isFinalBlow);
 			
@@ -371,6 +387,107 @@ namespace basecross {
 		}
 	}
 	void BossFirstBeamEndState::Exit() {
+
+	}
+
+	void BossFirstSlamStartState::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"AttackSlamStart", true);
+		m_time = 0;
+
+	}
+	void BossFirstSlamStartState::Update(float deltatime) {
+		m_time += deltatime;
+
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->RotateToPlayer(2.0f, m_rotateThreshold);
+
+		if (m_time >= m_endTime) {
+			boss->ChangeState(L"Slam1");
+		}
+	}
+	void BossFirstSlamStartState::Exit() {
+
+	}
+
+	void BossFirstSlam1State::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"AttackSlam1", true);
+		m_time = 0;
+		m_attacked = false;
+	}
+	void BossFirstSlam1State::Update(float deltatime) {
+		m_time += deltatime;
+
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+
+		//çUåÇîªíËÇÃíËã`
+		if (m_time >= m_attackTime && !m_attacked) {
+			m_attacked = !m_attacked;
+			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
+
+			auto tmp = boss->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Type = AttackType::Enemy;
+			tmp.Damage = 12;
+			tmp.HitVel_Stand = Vec3(-5, 0, 0);
+			tmp.HitTime_Stand = 1.2f;
+			boss->DefAttack(.3f, tmp);
+			boss->GetAttackPtr()->SetCollScale(10.0f);
+			boss->GetAttackPtr()->SetPos(Vec3(3.0f, 1, 0));
+		}
+
+		if (m_time >= m_endTime) {
+			boss->ChangeState(L"Slam2");
+		}
+	}
+	void BossFirstSlam1State::Exit() {
+
+	}
+
+	void BossFirstSlam2State::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"AttackSlam2", true);
+		m_time = 0;
+		m_attacked = false;
+	}
+	void BossFirstSlam2State::Update(float deltatime) {
+		m_time += deltatime;
+
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+
+		//çUåÇîªíËÇÃíËã`
+		if (m_time >= m_attackTime && !m_attacked) {
+			m_attacked = !m_attacked;
+			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
+			
+			Vec3 pos = boss->GetPosition() + boss->GetForward() * 10 + Vec3(0, 2, 0);
+			boss->GetStage()->AddGameObject<BossFirstShockwave>(pos, Vec3(0.0f), Vec3(1.0f), boss);
+		}
+
+
+		if (m_time >= m_endTime) {
+			boss->ChangeState(L"SlamEnd");
+		}
+	}
+	void BossFirstSlam2State::Exit() {
+
+	}
+
+	void BossFirstSlamEndState::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"AttackSlamEnd", true);
+		m_time = 0;
+	}
+	void BossFirstSlamEndState::Update(float deltatime) {
+		m_time += deltatime;
+
+		if (m_time >= m_endTime) {
+			auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+			boss->ChangeState(L"Stand");
+		}
+	}
+	void BossFirstSlamEndState::Exit() {
 
 	}
 
@@ -425,9 +542,11 @@ namespace basecross {
 	}
 
 	void BossFirstDeadState::Enter() {
-		auto p = dynamic_pointer_cast<BossFirst>(_obj);
-		p->ChangeAnim(L"KnockedDown", true);
-		p->HitBack();
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"KnockedDown", true);
+		boss->HitBack();
+
+		boss->PlaySnd(L"Enemy_Defeat", 1.0f, 0);
 	}
 	void BossFirstDeadState::Update(float deltatime) {
 
@@ -437,17 +556,24 @@ namespace basecross {
 	}
 
 	void BossFirstBonusState::Enter() {
-		auto p = dynamic_pointer_cast<BossFirst>(_obj);
-		p->ChangeAnim(L"Bonus", false);
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"Bonus", false);
 
 		m_time = 0;
+		m_sndPlayed = false;
 	}
 	void BossFirstBonusState::Update(float deltatime) {
 		m_time += deltatime;
 
-		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+
+		if (m_time >= m_sndTime && !m_sndPlayed) {
+			boss->PlaySnd(L"Enemy_Slash", 1.0f, 0);
+			m_sndPlayed = true;
+		}
+
 		if (m_time >= m_end) {
-			p->ChangeState(L"Stand");
+			boss->ChangeState(L"Stand");
 		}
 	}
 	void BossFirstBonusState::Exit() {

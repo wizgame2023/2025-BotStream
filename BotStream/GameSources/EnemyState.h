@@ -62,12 +62,13 @@ namespace basecross {
 	// BOSS1
 	//------------------------------------------------------------------------------------------
 
-	//立ち
+	// 立ち
 	class BossFirstStandState : public StateBase {
 		float m_time = 0;
 		const float m_startAttack = 3.0f;
 		const float m_startAttackRand = 10;
-		const float m_spinRand = 400;
+		const float m_spinRand = 600;
+		const float m_slamRand = 250;
 		const float m_farDist = 10;
 
 		random_device rnd;
@@ -81,10 +82,14 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//前進
+	// プレイヤー追跡
 	class BossFirstChaseState : public StateBase {
 		const float m_rotateThreshold = XM_PIDIV4 / 4;
 		const float m_closeDist = 8;
+		const float m_chaseSpeed = 20;
+
+		random_device rnd;
+		const float m_slamRand = 500;
 	public:
 		BossFirstChaseState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {
@@ -95,6 +100,7 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// 近接1
 	class BossFirstAttackState : public StateBase {
 		float m_time = 0;
 		float m_startup = .6f;
@@ -111,6 +117,8 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	// 近接2
 	class BossFirstAttack2State : public StateBase {
 		float m_time = 0;
 		const float m_startup = .5f;
@@ -128,6 +136,7 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// 回転開始
 	class BossFirstSpinStartState : public StateBase {
 		float m_time = 0;
 		const float m_startup = .9f;
@@ -141,6 +150,8 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	// 回転
 	class BossFirstSpinState : public StateBase {
 		bool m_attacked = false;
 
@@ -167,6 +178,8 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	// 回転終わり
 	class BossFirstSpinOverState : public StateBase {
 		float m_time = 0;
 		const float m_end = 1.4f;
@@ -185,6 +198,7 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// ビーム開始
 	class BossFirstBeamStartState : public StateBase {
 		float m_time = 0;
 		const float m_startup = 1.8f;
@@ -199,6 +213,8 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	// ビーム発射
 	class BossFirstBeamFireState : public StateBase {
 		float m_time = 0;
 		const float m_activeTime = 1.5f;
@@ -220,6 +236,8 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 	};
+
+	// ビーム終了
 	class BossFirstBeamEndState : public StateBase {
 		float m_time = 0;
 		const float m_recovery = 1.3f;
@@ -234,6 +252,74 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// 叩きつけ初動
+	class BossFirstSlamStartState : public StateBase {
+		float m_time = 0;
+		const float m_endTime = 1.1f;
+		const float m_rotateThreshold = XM_PIDIV4 / 4;
+
+	public:
+		BossFirstSlamStartState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// 叩きつけ1段目
+	class BossFirstSlam1State : public StateBase {
+		float m_time = 0;
+		const float m_attackTime = .2f;
+		const float m_endTime = .5f;
+
+		bool m_attacked = false;
+
+	public:
+		BossFirstSlam1State(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// 叩きつけ2段目
+	class BossFirstSlam2State : public StateBase {
+		float m_time = 0;
+		const float m_attackTime = .35f;
+		const float m_endTime = .4f;
+
+		bool m_attacked = false;
+
+	public:
+		BossFirstSlam2State(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// 叩きつけ終了
+	class BossFirstSlamEndState : public StateBase {
+		float m_time = 0;
+		const float m_endTime = 1.5f;
+
+	public:
+		BossFirstSlamEndState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// 被弾
 	class BossFirstHitState : public StateBase {
 	public:
 		BossFirstHitState(shared_ptr<GameObject>& obj) :
@@ -245,6 +331,7 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// アマブレ
 	class BossFirstStunState : public StateBase {
 		float m_time = 0;
 		const float m_downTime = 2.0f;
@@ -258,6 +345,7 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// アマブレ復帰
 	class BossFirstStunRecoverState : public StateBase {
 		float m_time = 0;
 		const float m_recoverTime = 1.0f;
@@ -271,6 +359,7 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// 死亡
 	class BossFirstDeadState : public StateBase {
 	public:
 		BossFirstDeadState(shared_ptr<GameObject>& obj) :
@@ -282,9 +371,14 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// ボーナス行動(何の意味もない威嚇)
 	class BossFirstBonusState : public StateBase {
 		const float m_end = 1.2f;
+		const float m_sndTime = .4f;
+		bool m_sndPlayed = false;
+
 		float m_time = 0;
+
 	public:
 		BossFirstBonusState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {
@@ -312,6 +406,11 @@ namespace basecross {
 			AddState(L"BeamStart", shared_ptr<BossFirstBeamStartState>(new BossFirstBeamStartState(obj)));
 			AddState(L"BeamFire", shared_ptr<BossFirstBeamFireState>(new BossFirstBeamFireState(obj)));
 			AddState(L"BeamEnd", shared_ptr<BossFirstBeamEndState>(new BossFirstBeamEndState(obj)));
+
+			AddState(L"SlamStart", shared_ptr<BossFirstSlamStartState>(new BossFirstSlamStartState(obj)));
+			AddState(L"Slam1", shared_ptr<BossFirstSlam1State>(new BossFirstSlam1State(obj)));
+			AddState(L"Slam2", shared_ptr<BossFirstSlam2State>(new BossFirstSlam2State(obj)));
+			AddState(L"SlamEnd", shared_ptr<BossFirstSlamEndState>(new BossFirstSlamEndState(obj)));
 
 			AddState(L"Bonus", shared_ptr<BossFirstBonusState>(new BossFirstBonusState(obj)));
 			AddState(L"Hit", shared_ptr<BossFirstHitState>(new BossFirstHitState(obj)));

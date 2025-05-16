@@ -115,7 +115,6 @@ namespace basecross {
 			}
 			else {
 				Friction();
-				//Dodge();//これ使いません
 			}
 		}
 
@@ -143,25 +142,8 @@ namespace basecross {
 		}
 
 
-		//// 仮：Yボタンでプレイヤーの(見かけ上の)HPが減る
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_Y)
-		//{
-		//	m_HPCurrent = m_HPCurrent - 10.0f;  // ← 10ずつ減る想定
-		//}
-		//// 仮：Bボタンで必殺技溜め
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		//{
-		//	m_SPCurrent = m_SPCurrent + 10.0f; // 今の設定だと10回押すと最大になる
-		//}
-
-
 		//ステート処理
 		m_stateMachine->Update();
-		//m_stateMachine->ChangeState(L"Walk");//ステート変更
-
-		//動く処理(仮)
-		//PlayerMove();
-
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -201,10 +183,11 @@ namespace basecross {
 		//DebugLog();
 
 		//アニメーション再生
-		//GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta * 5);
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
+	//ジャンプ処理
 	void Player::Jump() {
 		// 入力デバイス取得
 		auto inputDevice = App::GetApp()->GetInputDevice();
@@ -363,6 +346,36 @@ namespace basecross {
 
 			}
 		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack1)
+		{
+			//移動スピード
+			float speed = 0.5f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack2)
+		{
+			//移動スピード
+			float speed = 0.25f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
+		//攻撃ステート時の移動
+		if (playerState == PlayerState_Attack3)
+		{
+			//移動スピード
+			float speed = 0.7f;
+
+			//前に進む
+			totalVec.z = sin(m_angle) * speed;
+			totalVec.x = cos(m_angle) * speed;
+		}
 		return totalVec;
 	}
 
@@ -470,10 +483,14 @@ namespace basecross {
 		return m_endDodgeFlag;
 	}
 
-
+	//衝突判定
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
-		DetectBeingAttacked(Other);//攻撃を受けた判定
+		//回避中ならダメージ判定は受けない
+		if (!FindTag(L"DodgeNow"))
+		{
+			DetectBeingAttacked(Other);
+		}
 	}
 
 	//ダメージを受けたらヒットステートに移動する
@@ -700,8 +717,14 @@ namespace basecross {
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
+		//アニメーション追加
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
+		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionObb>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);//デバック用
 
@@ -747,30 +770,15 @@ namespace basecross {
 				Gravity();
 			}
 			else {
-				Friction();
+				//Friction();
 			}
 		}
 
 
 		//HPバーの処理
 		UpdateHPBer();
-		//if (!m_used)
-		//{
-		//	m_billBoard->SetScale(Vec3(0.0f));
-		//	m_billBoardSecond->SetScale(Vec3(0.0f));
-		//}
-		//if (m_used)
-		//{
-		//	m_billBoard->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-		//	m_billBoardSecond->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-		//	
-		//	//HPの割合によってゲージが減る
-		//	float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
-		//	m_billBoardSecond->SetPercent(HPPercent);
-
-		//}
-
-
+		//攻撃のクールタイム
+		TimeOfAttackCool();
 
 		//HPがゼロになったら消える
 		if (m_HPCurrent <= 0)
@@ -784,6 +792,9 @@ namespace basecross {
 			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
 			//GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
+
+		//アニメーション更新
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
@@ -808,6 +819,23 @@ namespace basecross {
 
 		}
 
+
+	}
+
+	//攻撃のクールタイム
+	void EnemyZako::TimeOfAttackCool()
+	{
+		//攻撃のクールタイム
+		if (!m_attackFlag)
+		{
+			m_timeCountOfAttackCool += _delta;
+			//クールタイム過ぎたら攻撃できるようになる
+			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
+			{
+				m_timeCountOfAttackCool = 0.0f;//リセット
+				m_attackFlag = true;
+			}
+		}
 	}
 
 	//コリジョン判定

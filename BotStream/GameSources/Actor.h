@@ -119,7 +119,7 @@ namespace basecross {
 		virtual void AddEffect(int addEffect);
 
 		//ポーズのフラグをオンオフする関数
-		void PoseSwitch(bool onOff);
+		void SetPose(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
@@ -157,6 +157,7 @@ namespace basecross {
 
 		//攻撃判定の内容を更新する
 		void DefAttack(float activetime, HitInfo info) {
+			m_AttackCol->SetMoveContact(false);
 			m_AttackCol->SetHitInfo(info);
 			m_AttackCol->ActivateCollision(activetime);
 		}
@@ -211,6 +212,14 @@ namespace basecross {
 		//SEの再生
 		void PlaySnd(wstring sndname, float volume, float loopcount) {
 			m_SE = m_SEManager->Start(sndname, loopcount, volume);
+		}
+
+		//SEの停止
+		void StopSnd() {
+			if (m_SE == nullptr) {
+				return;
+			}
+			m_SEManager->Stop(m_SE);
 		}
 	};
 
