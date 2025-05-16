@@ -9,26 +9,15 @@
 namespace basecross {
 
 	BillBoard::BillBoard(const shared_ptr<Stage>& StagePtr,
-		shared_ptr<GameObject>& actorPtr, size_t Number, float pushY, Vec3 scale) :
+		shared_ptr<GameObject>& actorPtr, wstring spriteName, int layer, float pushY, Vec3 scale, Col4 color, float pushX) :
 		MyGameObject(StagePtr),
 		m_actor(actorPtr),
-		m_Number(Number),
-		m_textureName(L"Clear"),
-		m_pushY(pushY),
-		m_scale(scale),
-		m_color(Col4(1.0f, 1.0f, 1.0f, 1.0f)),
-		m_layer(2)
-	{}
-	BillBoard::BillBoard(const shared_ptr<Stage>& StagePtr,
-		shared_ptr<GameObject>& actorPtr, wstring spriteName, int layer, float pushY, Vec3 scale, Col4 color) :
-		MyGameObject(StagePtr),
-		m_actor(actorPtr),
-		m_Number(0),
 		m_textureName(spriteName),
 		m_pushY(pushY),
 		m_scale(scale),
 		m_color(color),
-		m_layer(layer)
+		m_layer(layer),
+		m_pushX(pushX)
 	{}
 	BillBoard::~BillBoard() {}
 
@@ -41,15 +30,16 @@ namespace basecross {
 			auto SeekTransPtr = SeekPtr->GetComponent<Transform>();
 			auto Pos = SeekTransPtr->GetPosition();
 			Pos.y += m_pushY;
+			Pos.x += m_pushX;
 			PtrTransform->SetPosition(Pos);
 			PtrTransform->SetScale(m_scale);
 			PtrTransform->SetQuaternion(SeekTransPtr->GetQuaternion());
 			//変更できるスクエアリソースを作成
 
 			//インデックスを作成するための配列
-			vector<uint16_t> indices;
+			//vector<uint16_t> indices;
 			//Squareの作成(ヘルパー関数を利用)
-			MeshUtill::CreateSquare(1.0f, m_vertices, indices);
+			MeshUtill::CreateSquare(1.0f, m_vertices, m_indices);
 			//UV値の変更
 			//左上頂点
 			m_vertices[0].textureCoordinate = Vec2(0, 0);
@@ -70,7 +60,7 @@ namespace basecross {
 				new_vertices.push_back(nv);
 			}
 			//新しい頂点を使ってメッシュリソースの作成
-			m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, indices, true);
+			m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, m_indices, true);
 
 			auto DrawComp = AddComponent<PCTStaticDraw>();
 			DrawComp->SetMeshResource(m_SquareMeshResource);
@@ -129,6 +119,38 @@ namespace basecross {
 		m_pushY = pushY;
 	}
 
+	void BillBoard::SetBillUV(Vec2 topLeft, Vec2 botRight)
+	{
+		//UV値の変更
+		//左上頂点
+		m_vertices[0].textureCoordinate = Vec2(topLeft);
+		//右上頂点
+		m_vertices[1].textureCoordinate = Vec2(botRight.x, topLeft.y);
+		//左下頂点
+		m_vertices[2].textureCoordinate = Vec2(topLeft.x, botRight.y);
+		//右下頂点
+		m_vertices[3].textureCoordinate = Vec2(botRight);
+
+		//新しい頂点に更新
+		vector<VertexPositionColorTexture> new_vertices;
+		for (auto& v : m_vertices) {
+			VertexPositionColorTexture nv;
+			nv.position = v.position;
+			nv.color = Col4(1.0f, 1.0f, 1.0f, 1.0f);//赤
+			nv.textureCoordinate = v.textureCoordinate;
+			new_vertices.push_back(nv);
+		}
+
+		//新しい頂点を使ってメッシュリソースの作成
+		m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, m_indices, true);
+
+		//メッシュの更新
+		auto DrawComp = GetComponent<PCTStaticDraw>();
+		DrawComp->SetMeshResource(m_SquareMeshResource);
+		DrawComp->SetTextureResource(m_textureName);
+
+
+	}
 
 }
 //end basecross

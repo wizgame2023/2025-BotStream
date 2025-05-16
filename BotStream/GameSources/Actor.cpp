@@ -186,7 +186,7 @@ namespace basecross {
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0),Vec3(2.0f));
+			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Attack2:
 			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
@@ -224,7 +224,7 @@ namespace basecross {
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
-		//EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
+		EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 	}
 
 	// エフェクトのプレイ(色が変えることができる)

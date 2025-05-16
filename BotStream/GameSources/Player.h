@@ -91,6 +91,9 @@ namespace basecross{
 		//shared_ptr<GameStage> m_Stage;
 		shared_ptr<StageSato> m_Stage;
 
+		//アニメーションの更新時間
+		float m_addTimeAnimation = 1.0f * _delta;
+
 		//ステートマシン
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
@@ -185,6 +188,16 @@ namespace basecross{
 			m_stickL = SetStickL;
 		}
 
+		//アニメーションの追加時間のゲッタセッタ
+		float GetAddTimeAnimation()
+		{
+			return m_addTimeAnimation;
+		}
+		void SetAddTimeAnimation(float addTimeAnimation)
+		{
+			m_addTimeAnimation = addTimeAnimation;
+		}
+
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
 		void OnDamaged()override;
@@ -246,10 +259,20 @@ namespace basecross{
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
+		shared_ptr<BillBoard> m_damageBill = nullptr;
+
 		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
 		int m_AttackType = Zako_Melee;
 
+		//アニメーションの更新時間
+		float m_addTimeAnimation = 0.0f;
 		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
+
+		//攻撃のクールダウン関係
+		bool m_attackFlag = true;
+		float m_timeOfAttackCool = 5.0f;
+		float m_timeCountOfAttackCool = 0.0f;
+
 	public:
 		enum EnemyZakoAttackType
 		{
@@ -277,10 +300,33 @@ namespace basecross{
 		//ビルボードの処理
 		void UpdateHPBer();
 
+		//攻撃のクールタイム
+		void TimeOfAttackCool();
+
 		//攻撃のタイプのゲッタ
 		int GetAttackType()
 		{
 			return m_AttackType;
+		}
+
+		//攻撃フラグのゲッタセッタ
+		bool GetAttackFlag()
+		{
+			return m_attackFlag;
+		}
+		void SetAttackFlag(bool attackFlag)
+		{
+			m_attackFlag = attackFlag;
+		}
+
+		//アニメーションの追加時間のゲッタセッタ
+		float GetAddTimeAnimation()
+		{
+			return m_addTimeAnimation;
+		}
+		void SetAddTimeAnimation(float addTimeAnimation)
+		{
+			m_addTimeAnimation = addTimeAnimation;
 		}
 	};
 	

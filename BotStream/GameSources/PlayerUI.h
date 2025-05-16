@@ -24,13 +24,14 @@ namespace basecross {
 		float m_playerSP = 0.0f;        // 初期値SP
 
 	public:
-		PlayerGaugeUI(const std::shared_ptr<Stage>& stagePtr,int HPMax = 1000.0f,int SPMax = 100.0f):
+		PlayerGaugeUI(const std::shared_ptr<Stage>& stagePtr, int HPMax = 1000.0f, int SPMax = 100.0f) :
 			MyGameObject(stagePtr),
 			m_playerMaxHP(HPMax),
 			m_playerHP(HPMax),
 			m_playerSP(0.0f),
 			m_playerMaxSP(SPMax)
-		{}
+		{
+		}
 		virtual ~PlayerGaugeUI() {}
 
 		virtual void OnCreate() override;
@@ -109,18 +110,19 @@ namespace basecross {
 		float m_digitSize = 40;
 		// 文字の位置
 		Vec2 m_digitPos;
-		
+
 	public:
 		// digitPos:位置設定
 		// bulletNum:最大装填数
 		// digitSize:文字の大きさ
-		PlayerBulletUI(const std::shared_ptr<Stage>& stagePtr,shared_ptr<Player> player, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
+		PlayerBulletUI(const std::shared_ptr<Stage>& stagePtr, shared_ptr<Player> player, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
 			MyGameObject(stagePtr),
 			m_digitPos(digitPos),
 			m_bulletNum(bulletNum),
 			m_digitSize(digitSize),
 			m_player(player)
-		{}
+		{
+		}
 		virtual ~PlayerBulletUI() {}
 
 		//弾の数のセッター
@@ -192,7 +194,8 @@ namespace basecross {
 			m_textPos(textPos),
 			m_textSize(textSize),
 			m_textSwitch(textSwitch)
-		{}
+		{
+		}
 		virtual ~PlayerButtonText() {}
 
 		virtual void OnCreate() override;
@@ -218,7 +221,8 @@ namespace basecross {
 			MyGameObject(stagePtr),
 			m_weaponPos(weaponPos),
 			m_weaponSize(weaponSize)
-		{}
+		{
+		}
 
 		virtual ~PlayerWeaponUI() {}
 
@@ -226,4 +230,5 @@ namespace basecross {
 		virtual void OnUpdate() override;
 
 	};
-} // namespace basecross
+}
+// namespace basecross
