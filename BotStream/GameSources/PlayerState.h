@@ -425,6 +425,7 @@ namespace basecross {
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
 		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_speed = 1.0f;//足の速さ
 	public:
 		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -435,6 +436,8 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltatime);
 		virtual void Exit();
+
+		void SppedChange();//脚のスピードを変える処理
 	};
 
 	//攻撃をするときのステート(近距離)
@@ -465,7 +468,9 @@ namespace basecross {
 	{
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
-		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_timeMaxOfShot = 3.0f;//打つ時間の保存用変数
+
+		float m_speed = 1.0f;//足の速度
 	public:
 		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)

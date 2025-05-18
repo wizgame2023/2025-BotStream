@@ -261,15 +261,13 @@ namespace basecross {
 		}
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		//LockOnTargetの距離によって攻撃方法を変えるロックオンしてなければ近距離のみ
-		//float meleeRange = 200.0f;
 		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
 			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
 		}
 		if (AttackButton)
 		{
-			//攻撃する際距離によって攻撃方法を変える
+			//攻撃する際状況によってステートの遷移が変わる
 			if (m_meleeFlag)
 			{//近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
@@ -351,7 +349,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(6.0f, 5.0f, 3.0f);
 			AttackPtr->SetCollScale(1.0f);
 			AttackPtr->ActivateCollision(m_timeMaxOfAttackFirst);
 
@@ -450,7 +448,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(3.0f, 5.0f, 5.0f);//横長の当たり判定
 			AttackPtr->SetCollScale(1.0f);
 			AttackPtr->ActivateCollision(m_timeMaxOfAttackFirst);
 
@@ -468,7 +466,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(6.0f, 5.0f, 3.0f);//縦長の当たり判定
 			AttackPtr->SetCollScale(1.0f);
 			AttackPtr->ActivateCollision(m_timeMaxOfAttackSecond);
 
@@ -559,7 +557,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(5.0f, 5.0f, 7.0f);
 			AttackPtr->SetCollScale(1.0f);
 			AttackPtr->ActivateCollision(m_timeMaxOfAttackFirst);
 
@@ -577,7 +575,7 @@ namespace basecross {
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(7.0f, 5.0f, 5.0f);
+			AttackPtr->GetComponent<Transform>()->SetScale(5.0f, 5.0f, 7.0f);
 			AttackPtr->SetCollScale(1.0f);
 			AttackPtr->ActivateCollision(m_timeMaxOfAttackSecond);
 
@@ -839,6 +837,9 @@ namespace basecross {
 		//攻撃っぽいアニメーションにしてみる
 		m_enemyZako->ChangeAnim(L"Down");
 		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+
+		//攻撃しているタグ追加
+		m_enemyZako->AddTag(L"AttackNow");
 	}
 	void EnemyZakoMeleeState::Update(float deltaTime)
 	{
@@ -879,58 +880,117 @@ namespace basecross {
 	{
 		m_Attack = true;
 		m_timeOfAttack = 0.0f;
+
+		//攻撃しているタグ削除
+		m_enemyZako->RemoveTag(L"AttackNow");
 	}
 
 	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
 	void EnemyZakoPreparationforMeleeState::Enter()
 	{
 		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+
+		//初期のプレイヤーとの距離によって足の速さを変える
+		auto playerdist = m_enemyZako->GetPlayerDist();
+		SppedChange();
+
+		//デバック用
+		auto test = m_speed;
+		auto a = 0;
 	}
 	void EnemyZakoPreparationforMeleeState::Update(float deltaTime)
 	{
+		//プレイヤとの距離によってスピードを変える
+		SppedChange();
+
 		auto stage = m_enemyZako->GetStage();
-
-
-		auto meleeRange = 10.0f;//接近攻撃有効範囲
+		auto meleeRange = 8.0f;//接近攻撃有効範囲
 
 		//Playerの方向に回転する
 		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		auto attackFlag = m_enemyZako->GetAttackFlag();
-		//有効範囲まで近づけたら近接攻撃をするそうでなければ、そこまで移動
-		if (m_enemyZako->GetPlayerDist() < meleeRange)
+		auto attackFlag = m_enemyZako->GetAttackFlag();//攻撃フラグを受け取る
+
+		//攻撃のクールタイムを過ぎていれば接近そうでなければ離れる
+		if (attackFlag)
 		{
-			//攻撃のために立ち止まるので立つアニメーションに変更
-			m_enemyZako->ChangeAnim(L"Stand");
-
-			//攻撃フラグがオンなら攻撃できる
-			if (!attackFlag) return;
-			m_enemyZako->ChangeState(L"Melee");
-		}
-		else if (m_enemyZako->GetPlayerDist() >= meleeRange)
-		{
-			//移動中なのでそれに合わせたアニメーション
-			m_enemyZako->ChangeAnim(L"Walk");
-
-			//進む距離を決める
-			auto move = m_enemyZako->GetForward() * 10.0f;
-
-			auto LandFlag = m_enemyZako->GetLand();
-			if (LandFlag)
+			//有効範囲まで近づけたら近接攻撃をするそうでなければ、そこまで移動
+			if (m_enemyZako->GetPlayerDist() < meleeRange)
 			{
-				move.y = 0.0f;
+				//攻撃のために立ち止まるので立つアニメーションに変更
+				m_enemyZako->ChangeAnim(L"Stand");
+
+				//攻撃フラグがオンなら攻撃できる
+				if (!attackFlag) return;
+				m_enemyZako->ChangeState(L"Melee");
+			}
+			else if (m_enemyZako->GetPlayerDist() >= meleeRange)
+			{
+				//移動中なのでそれに合わせたアニメーション
+				m_enemyZako->ChangeAnim(L"Walk");
+
+				//進む距離を決める
+				auto move = m_enemyZako->GetForward() * m_speed;
+
+				auto LandFlag = m_enemyZako->GetLand();
+				if (LandFlag)
+				{
+					move.y = 0.0f;
+				}
+
+				m_enemyZako->SetVelocity(move);
+				//アニメーション更新時間設定
+				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+			}
+		}
+		else if (!attackFlag)//プレイヤーから距離を取る
+		{
+			if (m_enemyZako->GetPlayerDist() < meleeRange * 3.0f)
+			{
+				//移動中なのでそれに合わせたアニメーション
+				m_enemyZako->ChangeAnim(L"Walk");
+
+				//進む距離を決める
+				auto move = m_enemyZako->GetForward() * -(m_speed * 0.8);
+
+				auto LandFlag = m_enemyZako->GetLand();
+				if (LandFlag)
+				{
+					move.y = 0.0f;
+				}
+
+				m_enemyZako->SetVelocity(move);
+				//アニメーション更新時間設定
+				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 			}
 
-			m_enemyZako->SetVelocity(move);
-			//アニメーション更新時間設定
-			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
+
 
 	}
 	void EnemyZakoPreparationforMeleeState::Exit()
 	{
 
+	}
+
+	//プレイヤーとの距離によって脚のスピードを変える処理
+	void EnemyZakoPreparationforMeleeState::SppedChange()
+	{
+		//距離によってスピードを変える
+		auto playerdist = m_enemyZako->GetPlayerDist();
+		if (playerdist > 50.0f)//遠
+		{
+			m_speed = 15.0f;
+		}
+		else if (playerdist > 30.0f)//中
+		{
+			m_speed = 7.0f;
+		}
+		else//近い
+		{
+			m_speed = 10.0f;
+		}
 	}
 
 
@@ -943,33 +1003,50 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		//目標となる角度取得
-		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
-		//auto angleTarget = atan2f(targetVec.z, targetVec.x);
+		//Playerの方向に回転する
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		
-		//Playerのいる方向を計算
-		auto playerPos = stage->GetSharedGameObject<Player>(L"Player")->GetPosition();
-		auto EnemyPos = m_enemyZako->GetPosition();
-		auto targetVec = playerPos - EnemyPos;
-		auto angleTarget = (atan2f(targetVec.z, -targetVec.x)/2);
-		angleTarget += XMConvertToRadians(90.0f);
+		//有効範囲まで接近する、プレイヤーにある程度近づかれたら距離を取る
+		auto Range = 25.0f;
+		if (m_enemyZako->GetPlayerDist() >= Range)//近づく
+		{
+			//移動中なのでそれに合わせたアニメーション
+			m_enemyZako->ChangeAnim(L"Walk");
 
-		//大体その方向に向いたらPlayerの方向に向いているとみなす
-		if (abs(angleTarget) < XMConvertToRadians(3.0f))
-		{
-			angleTarget = 0.0f;
+			//進む距離を決める
+			m_speed = 10.0f;
+			auto move = m_enemyZako->GetForward() * m_speed;
+
+			auto LandFlag = m_enemyZako->GetLand();
+			if (LandFlag)
+			{
+				move.y = 0.0f;
+			}
+
+			m_enemyZako->SetVelocity(move);
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
-		//回転処理
-		if (angleTarget != 0.0f)
+		if (m_enemyZako->GetPlayerDist() <= Range - 5.0f)//離れる
 		{
-			auto qt = m_enemyZako->GetComponent<Transform>()->GetBeforeQuaternion();
-			qt.y = 0.0f;
-			////qt.y += angleTarget;
-			qt = qt * Quat(0.0f, sin(angleTarget) / 2.0f, 0.0f, cos(angleTarget) / 2.0f);
-			m_enemyZako->GetComponent<Transform>()->SetQuaternion(qt);
+			//移動中なのでそれに合わせたアニメーション
+			m_enemyZako->ChangeAnim(L"Walk");
+
+			//進む距離を決める
+			m_speed = -7.0f;
+			auto move = m_enemyZako->GetForward() * m_speed;
+
+			auto LandFlag = m_enemyZako->GetLand();
+			if (LandFlag)
+			{
+				move.y = 0.0f;
+			}
+
+			m_enemyZako->SetVelocity(move);
+			//アニメーション更新時間設定(後ろに進むので逆再生にしたい)
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
-		
 
 		//一定時間たったら攻撃する
 		m_timeOfShot += deltaTime;
@@ -991,8 +1068,8 @@ namespace basecross {
 		auto stage = m_enemyZako->GetStage();
 		auto posEnemy = m_enemyZako->GetPosition();
 		//弾生成
-		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 10.0f,
-			dynamic_pointer_cast<Actor>(m_enemyZako),10.0f,ActorName_Enemy);
+		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 30.0f,
+			dynamic_pointer_cast<Actor>(m_enemyZako),30.0f,ActorName_Enemy);
 
 		m_enemyZako->ChangeAnim(L"Shot");//撃つアニメーションに変更
 	}
