@@ -280,8 +280,9 @@ namespace basecross{
 			Zako_Long//遠距離型
 		};
 
-		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
-			EnemyBase(stagePtr,pos,rot,scale,used)
+		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee):
+			EnemyBase(stagePtr,pos,rot,scale,used),
+			m_AttackType(attackType)
 		{
 
 		}

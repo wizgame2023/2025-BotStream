@@ -847,7 +847,15 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::OnDamaged()
 	{
-		m_state->ChangeState(L"Hit");
+		//攻撃時はノックバックしないようにする(実験)(強すぎるかもしれないのでテストプレイしてもらおうかな)
+		if (!FindTag(L"AttackNow"))
+		{
+			m_state->ChangeState(L"Hit");
+		}
+		else if (FindTag(L"AttackNow"))
+		{
+			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		}
 	}
 
 

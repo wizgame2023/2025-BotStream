@@ -118,8 +118,9 @@ namespace basecross {
 	private:
 		//攻撃時間
 		float m_timeMaxOfAttack = 0.5f;
+		float m_timeMaxOfAttackFirst = 0.3f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.1f;
+		float m_timeOfStartAttack = 0.2f;
 		//攻撃時間計測
 		float m_timeOfAttack = 0.0f;
 		//回避可能時間
@@ -153,15 +154,20 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.8f;
+		float m_timeMaxOfAttackTotal = 0.8f;
+
+		float m_timeMaxOfAttackFirst = 0.1f;
+		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f;
+		//攻撃発生時間
+		float m_timeOfStartAttackSecond = 0.6f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		//回避可能時間
 		float m_timeOfStartDodge = 0.4f;
-		//攻撃判定出現フラグ
-		bool AttackCollisionFlag = true;
+		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
+		int m_attackCollisionFlag = 0;
 		//次の攻撃の猶予時間
 		float m_graceTimeOfNextAttack = 0.5f;
 		//次の攻撃をするかのフラグ
@@ -189,13 +195,18 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 1.0f;
+		float m_timeMaxOfAttackTotal = 1.0f;
+
+		float m_timeMaxOfAttackFirst = 0.1f;
+		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f;
+		//攻撃発生時間
+		float m_timeOfStartAttackSecond = 0.6f;
 		//攻撃時間計測
 		float m_timeOfAttack;
-		//攻撃判定出現フラグ
-		bool AttackCollisionFlag = true;
+		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
+		int m_attackCollisionFlag = 0;
 		//次の攻撃の猶予時間
 		float m_graceTimeOfNextAttack = 0.9f;
 		//次の攻撃をするかのフラグ
@@ -414,6 +425,7 @@ namespace basecross {
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
 		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_speed = 1.0f;//足の速さ
 	public:
 		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -424,6 +436,8 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltatime);
 		virtual void Exit();
+
+		void SppedChange();//脚のスピードを変える処理
 	};
 
 	//攻撃をするときのステート(近距離)
@@ -454,7 +468,9 @@ namespace basecross {
 	{
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
-		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_timeMaxOfShot = 3.0f;//打つ時間の保存用変数
+
+		float m_speed = 1.0f;//足の速度
 	public:
 		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)

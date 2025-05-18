@@ -91,14 +91,19 @@ namespace basecross {
 		//SetSharedGameObject(L"Boss", boss);
 		//enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
 
-		//enemyMgr->InstEnemy(Vec3(-10.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.4f, 0.4f, 0.4f));
-		enemyMgr->InstEnemy(Vec3(10.0f, 0.0f, -10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.7f * 5.0f, 0.7f, 0.7f * 5.0f));
-		//enemyMgr->InstEnemy(Vec3(10.0f, 0.0f, +10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-		//enemyMgr->InstEnemy(Vec3(-10.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-		//enemyMgr->InstEnemy(Vec3(-10.0f, 0.0f, -10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-		//enemyMgr->InstEnemy(Vec3(-10.0f, 0.0f, +10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-		//enemyMgr->InstEnemy(Vec3(0.0f, 0.0f, +10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-		//enemyMgr->InstEnemy(Vec3(0.0f, 0.0f, -10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		enemyMgr->InstEnemy(Vec3(-12.0f, 10.0f, 5.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(12.0f, 10.0f, -15.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(12.0f, 10.0f, +15.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(-12.0f, 10.0f, 5.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(-12.0f, 10.0f, -15.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(-12.0f, 10.0f, +15.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(2.0f, 10.0f, +15.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		enemyMgr->InstEnemy(Vec3(2.0f, 10.0f, -15.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+		AddGameObject<EnemyZako>(Vec3(-5.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f), true, EnemyZako::Zako_Long);
+		AddGameObject<EnemyZako>(Vec3(20.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f), true, EnemyZako::Zako_Long);
+		AddGameObject<EnemyZako>(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f), true, EnemyZako::Zako_Long);
+
+
 
 		//ìGÇÃçUåÇîªíË
 		auto enemyAttackObj = AddGameObject<EnemyCube>(Vec3(-20.0f, -1.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(3.0f, 1.0f, 3.0f), Col4(1.0f, 0.0f, 1.0f, 1.0f));
