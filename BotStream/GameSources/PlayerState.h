@@ -519,5 +519,138 @@ namespace basecross {
 		}
 	};
 
+	// 飛ぶザコのステート----------------------------------------------------------
+
+	//何もないときのステート
+	class EnemyZakoFlyingStandState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingStandState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//接近戦をするときの準備ステート
+	class EnemyZakoFlyingPreparationforMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingPreparationforMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(近距離)
+	class EnemyZakoFlyingMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
+
+		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
+	public:
+		EnemyZakoFlyingMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//球を打つ直前の軸合わせのときのステート
+	class EnemyZakoFlyingAlignmentState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingAlignmentState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(遠距離)
+	class EnemyZakoFlyingShotState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingShotState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//ダメージを受けたとき
+	class EnemyZakoFlyingHitState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoFlyingHitState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+
+	// 飛ぶ敵のステートマシン
+	class EnemyZakoFlyingStateMachine :public StateMachineBase
+	{
+	public:
+		EnemyZakoFlyingStateMachine(shared_ptr<GameObject>& obj)
+		{
+			AddState(L"Stand", shared_ptr<EnemyZakoFlyingStandState>(new EnemyZakoFlyingStandState(obj)));
+			AddState(L"Shot", shared_ptr<EnemyZakoFlyingShotState>(new EnemyZakoFlyingShotState(obj)));
+			AddState(L"Alignment", shared_ptr<EnemyZakoFlyingAlignmentState>(new EnemyZakoFlyingAlignmentState(obj)));
+			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoFlyingPreparationforMeleeState>(new EnemyZakoFlyingPreparationforMeleeState(obj)));
+			AddState(L"Melee", shared_ptr<EnemyZakoFlyingMeleeState>(new EnemyZakoFlyingMeleeState(obj)));
+			AddState(L"Hit", shared_ptr<EnemyZakoFlyingHitState>(new EnemyZakoFlyingHitState(obj)));
+
+			ChangeState(L"Stand");
+		}
+	};
+
 }
 //end basecross

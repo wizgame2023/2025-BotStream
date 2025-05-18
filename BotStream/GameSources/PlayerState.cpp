@@ -1026,5 +1026,160 @@ namespace basecross {
 
 	}
 
+
+	//--------------------------------------------
+	// 飛ぶザコのステート
+	// -------------------------------------------
+	
+	// 何もないときのステート----------------------
+	void EnemyZakoFlyingStandState::Enter()
+	{
+		m_enemyZako->ChangeAnim(L"Stand");//待機アニメーションに変更
+	}
+
+	void EnemyZakoFlyingStandState::Update(float deltatime)
+	{
+		auto stage = m_enemyZako->GetStage();
+		auto attackType = m_enemyZako->GetAttackType();
+
+		auto isLand = m_enemyZako->GetLand();//着地(滞空？)しているかのフラグ
+
+	}
+
+	void EnemyZakoFlyingStandState::Exit()
+	{
+
+	}
+	// END-----------------------------------------
+
+	//接近戦をするときの準備ステート-----------------
+	void EnemyZakoFlyingPreparationforMeleeState::Enter()
+	{
+		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+	}
+
+	void EnemyZakoFlyingPreparationforMeleeState::Update(float deltaTime)
+	{
+		auto stage = m_enemyZako->GetStage();
+
+
+		auto meleeRange = 10.0f;//接近攻撃有効範囲
+
+		//Playerの方向に回転する
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
+
+		auto attackFlag = m_enemyZako->GetAttackFlag();
+		//有効範囲まで近づけたら近接攻撃をするそうでなければ、そこまで移動
+		if (m_enemyZako->GetPlayerDist() < meleeRange)
+		{
+			//攻撃のために立ち止まるので立つアニメーションに変更
+			m_enemyZako->ChangeAnim(L"Stand");
+
+			//攻撃フラグがオンなら攻撃できる
+			if (!attackFlag) return;
+			m_enemyZako->ChangeState(L"Melee");
+		}
+		else if (m_enemyZako->GetPlayerDist() >= meleeRange)
+		{
+			//移動中なのでそれに合わせたアニメーション
+			m_enemyZako->ChangeAnim(L"Walk");
+
+			//進む距離を決める
+			auto move = m_enemyZako->GetForward() * 10.0f;
+
+			auto LandFlag = m_enemyZako->GetLand();
+			if (LandFlag)
+			{
+				move.y = 0.0f;
+			}
+
+			m_enemyZako->SetVelocity(move);
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+		}
+	}
+
+	void EnemyZakoFlyingPreparationforMeleeState::Exit()
+	{
+
+	}
+	// END--------------------------------------------
+
+	// 攻撃をするときのステート(近距離)-----
+	void EnemyZakoFlyingMeleeState::Enter()
+	{
+
+	}
+
+	void EnemyZakoFlyingMeleeState::Update(float deltatime)
+	{
+
+	}
+
+	void EnemyZakoFlyingMeleeState::Exit()
+	{
+
+	}
+	// END-----------------------------------
+
+	// 遠距離の直前の軸合わせの時のステート-----
+	void EnemyZakoFlyingAlignmentState::Enter()
+	{
+
+	}
+
+	void EnemyZakoFlyingAlignmentState::Update(float deltatime)
+	{
+
+	}
+
+	void EnemyZakoFlyingAlignmentState::Exit()
+	{
+
+	}
+	// END--------------------------------------
+
+	// 攻撃をするときのステート(遠距離)-----
+	void EnemyZakoFlyingShotState::Enter()
+	{
+
+	}
+
+	void EnemyZakoFlyingShotState::Update(float deltatime)
+	{
+
+	}
+
+	void EnemyZakoFlyingShotState::Exit()
+	{
+
+	}
+	// END-----------------------------------
+
+	//ダメージを受けたとき-------------------
+	void EnemyZakoFlyingHitState::Enter()
+	{
+		auto hitInfo = m_enemyZako->GetHitInfo();
+		auto HPNow = m_enemyZako->GetHPCurrent();
+
+		// ダメージ処理
+		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
+
+		// ダメージを受けたアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Stand");
+	}
+
+	void EnemyZakoFlyingHitState::Update(float deltatime)
+	{
+
+	}
+
+	void EnemyZakoFlyingHitState::Exit()
+	{
+
+	}
+	// END------------------------------------
+
 }
 //end basecross
