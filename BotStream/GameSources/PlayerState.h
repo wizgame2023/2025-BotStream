@@ -118,8 +118,9 @@ namespace basecross {
 	private:
 		//UŒ‚ŠÔ
 		float m_timeMaxOfAttack = 0.5f;
+		float m_timeMaxOfAttackFirst = 0.3f;
 		//UŒ‚”­¶ŠÔ
-		float m_timeOfStartAttack = 0.1f;
+		float m_timeOfStartAttack = 0.2f;
 		//UŒ‚ŠÔŒv‘ª
 		float m_timeOfAttack = 0.0f;
 		//‰ñ”ğ‰Â”\ŠÔ
@@ -153,15 +154,20 @@ namespace basecross {
 	{
 	private:
 		//UŒ‚ŠÔ
-		float m_timeMaxOfAttack = 0.8f;
+		float m_timeMaxOfAttackTotal = 0.8f;
+
+		float m_timeMaxOfAttackFirst = 0.1f;
+		float m_timeMaxOfAttackSecond = 0.1f;
 		//UŒ‚”­¶ŠÔ
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f;
+		//UŒ‚”­¶ŠÔ
+		float m_timeOfStartAttackSecond = 0.6f;
 		//UŒ‚ŠÔŒv‘ª
 		float m_timeOfAttack;
 		//‰ñ”ğ‰Â”\ŠÔ
 		float m_timeOfStartDodge = 0.4f;
-		//UŒ‚”»’èoŒ»ƒtƒ‰ƒO
-		bool AttackCollisionFlag = true;
+		//UŒ‚”»’èoŒ»ƒtƒ‰ƒO(‚Q’i–Ú‚ÍUŒ‚‚Ìƒtƒ‰ƒO‚ğ2‚Â‚Ù‚µ‚¢‚Ì‚ÅintŒ^‚ÅÄŒ»)
+		int m_attackCollisionFlag = 0;
 		//Ÿ‚ÌUŒ‚‚Ì—P—\ŠÔ
 		float m_graceTimeOfNextAttack = 0.5f;
 		//Ÿ‚ÌUŒ‚‚ğ‚·‚é‚©‚Ìƒtƒ‰ƒO
@@ -189,13 +195,18 @@ namespace basecross {
 	{
 	private:
 		//UŒ‚ŠÔ
-		float m_timeMaxOfAttack = 1.0f;
+		float m_timeMaxOfAttackTotal = 1.0f;
+
+		float m_timeMaxOfAttackFirst = 0.1f;
+		float m_timeMaxOfAttackSecond = 0.1f;
 		//UŒ‚”­¶ŠÔ
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f;
+		//UŒ‚”­¶ŠÔ
+		float m_timeOfStartAttackSecond = 0.6f;
 		//UŒ‚ŠÔŒv‘ª
 		float m_timeOfAttack;
-		//UŒ‚”»’èoŒ»ƒtƒ‰ƒO
-		bool AttackCollisionFlag = true;
+		//UŒ‚”»’èoŒ»ƒtƒ‰ƒO(‚Q’i–Ú‚ÍUŒ‚‚Ìƒtƒ‰ƒO‚ğ2‚Â‚Ù‚µ‚¢‚Ì‚ÅintŒ^‚ÅÄŒ»)
+		int m_attackCollisionFlag = 0;
 		//Ÿ‚ÌUŒ‚‚Ì—P—\ŠÔ
 		float m_graceTimeOfNextAttack = 0.9f;
 		//Ÿ‚ÌUŒ‚‚ğ‚·‚é‚©‚Ìƒtƒ‰ƒO
