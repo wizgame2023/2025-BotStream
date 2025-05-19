@@ -112,12 +112,52 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//攻撃ステートの元となるクラス
+	class PlayerAttackBaseState :public PlayerStateBase
+	{
+	protected:
+		//攻撃時間
+		float m_timeMaxOfAttack = 0.8f;
+		float m_timeMaxOfAttackFirst = 0.3f;
+
+		//攻撃発生時間
+		float m_timeOfStartAttack = 0.2f;
+		//攻撃時間計測
+		float m_timeOfAttack = 0.0f;
+
+		//次の攻撃ボタン受付時間
+		float m_graceTimeOfNextAttack = 0.4f;
+		//次の攻撃をするかのフラグ
+		float m_nestAttackFlag = false;
+	public:
+		PlayerAttackBaseState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerAttackBaseState()
+		{
+		}
+
+		virtual void Enter() {};
+		virtual void Update(float deltaTime) {};
+		virtual void Exit() {};
+
+		//攻撃コリジョン発生
+		virtual void AttackCollisionOccurs() {};
+		//次の攻撃発生フラグ処理
+		virtual void NextAttackFlag();
+		//次のステート移動処理
+		virtual void NextState() {};
+	};
+
+
 	//攻撃ステート(一番最初に出てくる攻撃)
-	class PlayerAttack1State :public PlayerStateBase
+	class PlayerAttack1State :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.5f;
+		float m_timeMaxOfAttack = 0.8f;
 		float m_timeMaxOfAttackFirst = 0.3f;
 		//攻撃発生時間
 		float m_timeOfStartAttack = 0.2f;
@@ -127,8 +167,8 @@ namespace basecross {
 		float m_timeOfStartDodge = 0.35f;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
-		//次の攻撃の猶予時間
-		float m_graceTimeOfNextAttack = 0.3f;
+		//次の攻撃ボタン受付時間
+		float m_graceTimeOfNextAttack = 0.4f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -136,7 +176,7 @@ namespace basecross {
 
 	public:
 		PlayerAttack1State(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -147,28 +187,34 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次の攻撃発生フラグ処理
+		void NextAttackFlag()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(２番目に出る攻撃)
-	class PlayerAttack2State :public PlayerStateBase
+	class PlayerAttack2State :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttackTotal = 0.8f;
+		float m_timeMaxOfAttackTotal = 1.2f;
 
 		float m_timeMaxOfAttackFirst = 0.1f;
 		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
 		float m_timeOfStartAttackFirst = 0.3f;
-		//攻撃発生時間
 		float m_timeOfStartAttackSecond = 0.6f;
 		//攻撃時間計測
-		float m_timeOfAttack;
+		float m_timeOfAttack = 0.0f;
 		//回避可能時間
 		float m_timeOfStartDodge = 0.4f;
 		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
 		int m_attackCollisionFlag = 0;
-		//次の攻撃の猶予時間
+		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 0.5f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
@@ -177,7 +223,7 @@ namespace basecross {
 
 	public:
 		PlayerAttack2State(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -188,14 +234,21 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次の攻撃発生フラグ処理
+		void NextAttackFlag()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(3番目に出る攻撃)
-	class PlayerAttack3State :public PlayerStateBase
+	class PlayerAttack3State :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttackTotal = 1.0f;
+		float m_timeMaxOfAttackTotal = 1.2f;
 
 		float m_timeMaxOfAttackFirst = 0.1f;
 		float m_timeMaxOfAttackSecond = 0.1f;
@@ -207,16 +260,16 @@ namespace basecross {
 		float m_timeOfAttack;
 		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
 		int m_attackCollisionFlag = 0;
-		//次の攻撃の猶予時間
+		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 0.9f;
 		//次の攻撃をするかのフラグ
-		float m_nestAttackFlag = false;
+		//float m_nestAttackFlag = false;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
 		PlayerAttack3State(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -227,10 +280,15 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(最後に出る攻撃)
-	class PlayerAttackExState :public PlayerStateBase
+	class PlayerAttackExState :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
@@ -241,7 +299,7 @@ namespace basecross {
 		float m_timeOfAttack;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
-		////次の攻撃の猶予時間
+		//次の攻撃ボタン受付時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
 		//float m_nestAttackFlag = false;
@@ -250,7 +308,7 @@ namespace basecross {
 
 	public:
 		PlayerAttackExState(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -261,6 +319,11 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(必殺技)
@@ -271,7 +334,7 @@ namespace basecross {
 		float m_timeMaxOfAttack = 2.0f;
 		//攻撃時間計測
 		float m_timeOfAttack;
-		////次の攻撃の猶予時間
+		//次の攻撃ボタン受付時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
 		//float m_nestAttackFlag = false;

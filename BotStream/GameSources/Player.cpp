@@ -158,7 +158,7 @@ namespace basecross {
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-			
+
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 
@@ -847,7 +847,7 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::OnDamaged()
 	{
-		//攻撃時はノックバックしないようにする(実験)(強すぎるかもしれないのでテストプレイしてもらおうかな)
+		//攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
 		if (!FindTag(L"AttackNow"))
 		{
 			m_state->ChangeState(L"Hit");
@@ -856,6 +856,8 @@ namespace basecross {
 		{
 			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
 		}
+
+		//m_state->ChangeState(L"Hit");
 	}
 
 
