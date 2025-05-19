@@ -1109,11 +1109,49 @@ namespace basecross {
 	// 攻撃をするときのステート(近距離)-----
 	void EnemyZakoFlyingMeleeState::Enter()
 	{
+		auto LandFlag = m_enemyZako->GetLand();
+		auto testVector = m_enemyZako->GetVelocity();
+
+		//攻撃っぽいアニメーションにしてみる
+		m_enemyZako->ChangeAnim(L"Down");
+		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 
 	}
 
-	void EnemyZakoFlyingMeleeState::Update(float deltatime)
+	void EnemyZakoFlyingMeleeState::Update(float deltaTime)
 	{
+		auto stage = m_enemyZako->GetStage();
+
+		m_timeOfAttack += deltaTime;
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+
+		//攻撃判定の生成
+		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
+		{
+			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Damage = 5;
+			tmp.HitVel_Stand = Vec3(-3, 5, 0);
+			tmp.HitTime_Stand = .8f;
+			tmp.Type = AttackType::Enemy;
+			//tmp.ForceRecover = false;//ノックバックする
+			m_enemyZako->DefAttack(.5f, tmp);
+			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_enemyZako->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
+			AttackPtr->SetCollScale(1.0f);
+
+			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
+			m_Attack = false;//攻撃判定が複数発生させないようにする
+		}
+
+		//一定時間たったら攻撃ステートをやめる
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
 
 	}
 
@@ -1129,13 +1167,52 @@ namespace basecross {
 
 	}
 
-	void EnemyZakoFlyingAlignmentState::Update(float deltatime)
+	void EnemyZakoFlyingAlignmentState::Update(float deltaTime)
 	{
+		auto stage = m_enemyZako->GetStage();
+
+		//目標となる角度取得
+		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
+		//auto angleTarget = atan2f(targetVec.z, targetVec.x);
+
+
+		//Playerのいる方向を計算
+		auto playerPos = stage->GetSharedGameObject<Player>(L"Player")->GetPosition();
+		auto EnemyPos = m_enemyZako->GetPosition();
+		auto targetVec = playerPos - EnemyPos;
+		auto angleTarget = (atan2f(targetVec.z, -targetVec.x) / 2);
+		angleTarget += XMConvertToRadians(90.0f);
+
+		//大体その方向に向いたらPlayerの方向に向いているとみなす
+		if (abs(angleTarget) < XMConvertToRadians(3.0f))
+		{
+			angleTarget = 0.0f;
+		}
+		//回転処理
+		if (angleTarget != 0.0f)
+		{
+			auto qt = m_enemyZako->GetComponent<Transform>()->GetBeforeQuaternion();
+			qt.y = 0.0f;
+			////qt.y += angleTarget;
+			qt = qt * Quat(0.0f, sin(angleTarget) / 2.0f, 0.0f, cos(angleTarget) / 2.0f);
+			m_enemyZako->GetComponent<Transform>()->SetQuaternion(qt);
+		}
+
+
+		//一定時間たったら攻撃する
+		m_timeOfShot += deltaTime;
+		if (m_timeOfShot >= m_timeMaxOfShot)
+		{
+			m_timeOfShot = 0.0f;//リセット
+			m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+		}
 
 	}
 
 	void EnemyZakoFlyingAlignmentState::Exit()
 	{
+		//打つカウントダウンリセット
+		m_timeOfShot = 0.0f;
 
 	}
 	// END--------------------------------------
@@ -1170,8 +1247,13 @@ namespace basecross {
 		m_enemyZako->ChangeAnim(L"Stand");
 	}
 
-	void EnemyZakoFlyingHitState::Update(float deltatime)
+	void EnemyZakoFlyingHitState::Update(float deltaTime)
 	{
+		//一定時間たったらStandステートに戻る
+		m_enemyZako->HitBackStandBehavior();
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime);
 
 	}
 
@@ -1180,6 +1262,11 @@ namespace basecross {
 
 	}
 	// END------------------------------------
+
+	//-------------------------------------------------------
+	// 飛ぶザコのステート終端
+	//-------------------------------------------------------
+
 
 }
 //end basecross
