@@ -535,6 +535,7 @@ namespace basecross {
 	void BossFirstSphere::OnUpdate() {
 		Actor::OnUpdate();
 
+		//è¡ñ≈Ç∑ÇÈèåè
 		bool doDisappear = m_AttackCol->GetMoveContact();
 		doDisappear = doDisappear || (m_disappear && m_disappearTime >= m_disappearTimeMax);
 
@@ -542,6 +543,7 @@ namespace basecross {
 			RemoveSelf();
 		}
 
+		//è¡ñ≈Ç∑ÇÈÇ‹Ç≈Ç…è≠Çµéûä‘Çê›ÇØÇÈ
 		if (m_disappear) {
 			m_disappearTime += _delta;
 			return;
@@ -564,7 +566,7 @@ namespace basecross {
 			AddVelocity(m_secondMoveAngle * m_secondMoveSpeed * _delta);
 		}
 
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		UpdatePosition();
 	}
 
 	void BossFirstSphere::CreateChildObjects() {
