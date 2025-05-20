@@ -158,7 +158,7 @@ namespace basecross {
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-			
+
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 
@@ -746,7 +746,7 @@ namespace basecross {
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 
-		m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
+		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
 
 		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
@@ -847,7 +847,17 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::OnDamaged()
 	{
-		m_state->ChangeState(L"Hit");
+		//攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
+		if (!FindTag(L"AttackNow"))
+		{
+			m_state->ChangeState(L"Hit");
+		}
+		else if (FindTag(L"AttackNow"))
+		{
+			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		}
+
+		//m_state->ChangeState(L"Hit");
 	}
 
 

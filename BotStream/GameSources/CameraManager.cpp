@@ -10,7 +10,7 @@ namespace basecross {
 	CameraManager::CameraManager(const shared_ptr<Stage>& stagePtr, float range, float targetRange,float meleeRange,float speedXAxis,float speedYAxis) :
 		MyGameObject(stagePtr),
 		m_cameraAngleY(XMConvertToRadians(270.0f)),
-		m_cameraAngleX(XMConvertToRadians(85.0f)),
+		m_cameraAngleX(XMConvertToRadians(105.0f)),
 		m_range(range),
 		m_targetRange(targetRange),
 		m_lockOnFlag(false),
@@ -143,12 +143,12 @@ namespace basecross {
 				m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
 			//}
 		}
-		////フラグがオンになったらPlayerの向きに移動する
-		//if (m_movePlayerAngleFlag)
-		//{
-		//	//Playerの向いている方向の鏡合わせになるように角度を変更する
-		//	MovePlayerAngle(m_targetAngleY);
-		//}
+		//フラグがオンになったらPlayerの向きに移動する
+		if (m_movePlayerAngleFlag)
+		{
+			//Playerの向いている方向の鏡合わせになるように角度を変更する
+			MovePlayerAngle(m_targetAngleY);
+		}
 
 		////角度リセット(デバック用)
 		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)

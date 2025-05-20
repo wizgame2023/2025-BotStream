@@ -50,6 +50,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WaveStage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ZakoState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Actor.cpp" />
@@ -85,5 +86,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WaveStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ZakoState.cpp" />
   </ItemGroup>
 </Project>

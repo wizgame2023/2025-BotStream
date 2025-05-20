@@ -141,6 +141,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyUI.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ZakoState.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -241,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyUI.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ZakoState.cpp">
+      <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
