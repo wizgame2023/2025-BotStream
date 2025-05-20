@@ -510,7 +510,7 @@ namespace basecross {
 		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
 		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
 
-		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+		float m_timeOfAttackAdd = 0.7f;//攻撃判定の発生時間
 
 		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
