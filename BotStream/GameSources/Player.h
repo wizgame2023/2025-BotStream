@@ -274,10 +274,12 @@ namespace basecross{
 		float m_timeCountOfAttackCool = 0.0f;
 
 	public:
+		// 雑魚敵の種類を追加するときはここに書く
 		enum EnemyZakoAttackType
 		{
 			Zako_Melee,//近距離型
-			Zako_Long//遠距離型
+			Zako_Long,//遠距離型
+			Zako_Flying,//滞空型
 		};
 
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee):
@@ -331,6 +333,85 @@ namespace basecross{
 		}
 	};
 	
+	//class EnemyZakoFlying : public EnemyBase
+	//{
+	//private:
+	//	void OnDamaged() override;
+
+	//	//HPバー用のビルボード
+	//	shared_ptr<BillBoard> m_HPFrame = nullptr;
+	//	shared_ptr<BillBoardGauge> m_HPBer = nullptr;
+
+	//	shared_ptr<BillBoard> m_damageBill = nullptr;
+
+	//	//攻撃のタイプ　テスト用に近距離にしたいのでそうする
+	//	int m_AttackType = Zako_Melee;
+
+	//	//アニメーションの更新時間
+	//	float m_addTimeAnimation = 0.0f;
+	//	//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
+
+	//	//攻撃のクールダウン関係
+	//	bool m_attackFlag = true;
+	//	float m_timeOfAttackCool = 5.0f;
+	//	float m_timeCountOfAttackCool = 0.0f;
+
+	//public:
+	//	enum EnemyZakoAttackType
+	//	{
+	//		Zako_Melee,//近距離型
+	//		Zako_Long//遠距離型
+	//	};
+
+	//	EnemyZakoFlying(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
+	//		EnemyBase(stagePtr,pos,rot,scale,used)
+	//	{
+
+	//	}
+	//	~EnemyZakoFlying() {}
+
+	//	//受けた攻撃の情報を渡すゲッター
+	//	HitInfo EnemyZakoFlying::GetHitInfo()
+	//	{
+	//		return m_GetHitInfo;
+	//	}
+
+	//	void OnCreate() override;
+	//	void OnUpdate() override;
+	//	virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+
+	//	//ビルボードの処理
+	//	void UpdateHPBer();
+
+	//	//攻撃のクールタイム
+	//	void TimeOfAttackCool();
+
+	//	//攻撃のタイプのゲッタ
+	//	int GetAttackType()
+	//	{
+	//		return m_AttackType;
+	//	}
+
+	//	//攻撃フラグのゲッタセッタ
+	//	bool GetAttackFlag()
+	//	{
+	//		return m_attackFlag;
+	//	}
+	//	void SetAttackFlag(bool attackFlag)
+	//	{
+	//		m_attackFlag = attackFlag;
+	//	}
+
+	//	//アニメーションの追加時間のゲッタセッタ
+	//	float GetAddTimeAnimation()
+	//	{
+	//		return m_addTimeAnimation;
+	//	}
+	//	void SetAddTimeAnimation(float addTimeAnimation)
+	//	{
+	//		m_addTimeAnimation = addTimeAnimation;
+	//	}
+	//};
 }
 //end basecross
 
