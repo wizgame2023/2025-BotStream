@@ -188,8 +188,10 @@ namespace basecross{
 		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Player_test.bmf");//仮のプレイヤーメッシュ
 		app->RegisterResource(L"PlayerModelTest", boneMultiModelMesh);
 
-		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ
+		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ(遠距離)
 		app->RegisterResource(L"Enemy_A", boneModelMesh);
+		boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_C.bmf");//雑魚敵のメッシュ(近距離)
+		app->RegisterResource(L"Enemy_C", boneModelMesh);
 
 		//ボーンマルチメッシュ用テクスチャ
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
@@ -220,6 +222,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
+		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");

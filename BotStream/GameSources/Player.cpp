@@ -158,7 +158,7 @@ namespace basecross {
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-			
+
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 
@@ -486,8 +486,8 @@ namespace basecross {
 	//衝突判定
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
-		//回避中ならダメージ判定は受けない
-		if (!FindTag(L"DodgeNow"))
+		//無敵判定時ならダメージ判定は受けない
+		if (!FindTag(L"invincible"))
 		{
 			DetectBeingAttacked(Other);
 		}
@@ -710,18 +710,31 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMeshResource(L"Enemy_A");
+		//攻撃タイプによって見た目が変わる
+		if (m_AttackType == Zako_Long)
+		{
+			ptrDraw->SetMeshResource(L"Enemy_A");
+		}
+		if (m_AttackType == Zako_Melee)
+		{
+			ptrDraw->SetMeshResource(L"Enemy_C");
+		}
 		ptrDraw->SetDiffuse(Col4(0.5f));
 		//ptrDraw->SetEmissive(Col4(1));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
-		//アニメーション追加
+		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
 		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
 		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+		if (m_AttackType == Zako_Melee)
+		{
+			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
+			ptrDraw->AddAnimation(L"Melee_Scratch", 700, 22, false, 24.0f);
+		}
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
@@ -746,7 +759,7 @@ namespace basecross {
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 
-		m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
+		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
 
 		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
@@ -847,6 +860,16 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::OnDamaged()
 	{
+		////攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
+		//if (!FindTag(L"AttackNow"))
+		//{
+		//	m_state->ChangeState(L"Hit");
+		//}
+		//else if (FindTag(L"AttackNow"))
+		//{
+		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//}
+
 		m_state->ChangeState(L"Hit");
 	}
 

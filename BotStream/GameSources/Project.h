@@ -32,6 +32,7 @@
 
 //State
 #include "EnemyState.h"
+#include "ZakoState.h"
 #include "PlayerState.h"
 
 //Actor
