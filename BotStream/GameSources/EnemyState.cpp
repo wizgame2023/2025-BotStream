@@ -81,6 +81,12 @@ namespace basecross {
 				boss->ChangeState(L"SlamStart");
 			}
 
+			//時代は飛び道具でしょ
+			if (rnd() % 1000 <= m_sphereRand) {
+				boss->ChangeState(L"SphereStart");
+			}
+
+			//あーもうキレたわ　終わりだよお前
 			if (boss->IsRecoveredFromArmorBreak()) {
 				boss->ChangeState(L"BeamStart");
 			}
@@ -95,12 +101,18 @@ namespace basecross {
 
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->ChangeAnim(L"Walk", true);
+		m_time = 0;
 	}
 	void BossFirstChaseState::Update(float deltatime) {
+		m_time += deltatime;
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj);
 		boss->RotateToPlayer(1.0f, m_rotateThreshold);
 
 		boss->SetVelocity(boss->GetForward() * m_chaseSpeed);
+
+		if (m_time >= m_sphereSwitchTime && rnd() % 1000 <= m_sphereRand) {
+			boss->ChangeState(L"SphereStart");
+		}
 
 		if (boss->GetPlayerDist() < m_closeDist) {
 			//近い！
@@ -316,6 +328,96 @@ namespace basecross {
 
 	}
 
+	void BossFirstSphereStartState::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"Rotate", true);
+		m_time = 0;
+		m_finishRotate = false;
+	}
+	void BossFirstSphereStartState::Update(float deltatime) {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->RotateToPlayer(m_rotateSpeed, m_rotateThreshold);
+
+		if (boss->GetPlayerSubDirection() <= m_rotateThreshold && !m_finishRotate) {
+			m_finishRotate = true;
+			boss->ChangeAnim(L"AttackSphereStart", false);
+		}
+
+		if (m_finishRotate) {
+			m_time += deltatime;
+		}
+
+		if (m_time >= m_startup)
+		{
+			boss->ChangeState(L"Sphere1");
+		}
+	}
+	void BossFirstSphereStartState::Exit() {
+
+	}
+
+	void BossFirstSphere1State::Enter() {
+		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		p->ChangeAnim(L"AttackSphere1", true);
+
+		m_time = 0;
+		m_attacked[0] = false;
+		m_attacked[1] = false;
+	}
+	void BossFirstSphere1State::Update(float deltatime) {
+		m_time += deltatime;
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+
+		//飛び道具
+		if (m_time >= m_fireTime[0] && !m_attacked[0]) {
+			m_attacked[0] = !m_attacked[0];
+			boss->PlaySnd(L"Beam", 1.0f, 0);
+
+			Vec3 pos = boss->GetPosition() + FirePosAdjust(boss->GetForward(), m_firePos[0]) + m_fireHeight;
+			boss->GetStage()->AddGameObject<BossFirstSphere>(pos, boss->GetQuaternion(), Vec3(1.0f), m_towardPlayerTime[0]);
+
+			pos = boss->GetPosition() + FirePosAdjust(boss->GetForward(), m_firePos[1]) + m_fireHeight;
+			boss->GetStage()->AddGameObject<BossFirstSphere>(pos, boss->GetQuaternion(), Vec3(1.0f), m_towardPlayerTime[1]);
+		}
+
+		//飛び道具②
+		if (m_time >= m_fireTime[1] && !m_attacked[1]) {
+			m_attacked[1] = !m_attacked[1];
+			boss->PlaySnd(L"Beam", 1.0f, 0);
+
+			Vec3 pos = boss->GetPosition() + FirePosAdjust(boss->GetForward(), m_firePos[2]) + m_fireHeight;
+			boss->GetStage()->AddGameObject<BossFirstSphere>(pos, boss->GetQuaternion(), Vec3(1.0f), m_towardPlayerTime[2]);
+
+			pos = boss->GetPosition() + FirePosAdjust(boss->GetForward(), m_firePos[3]) + m_fireHeight;
+			boss->GetStage()->AddGameObject<BossFirstSphere>(pos, boss->GetQuaternion(), Vec3(1.0f), m_towardPlayerTime[3]);
+		}
+
+		if (m_time >= m_endTime) {
+			boss->ChangeState(L"Stand");
+		}
+	}
+	void BossFirstSphere1State::Exit() {
+
+	}
+
+	void BossFirstSphereEndState::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+		boss->ChangeAnim(L"AttackSphereEnd", true);
+		m_time = 0;
+	}
+	void BossFirstSphereEndState::Update(float deltatime) {
+		m_time += deltatime;
+
+		if (m_time >= m_recoveryTime)
+		{
+			auto boss = dynamic_pointer_cast<BossFirst>(_obj);
+			boss->ChangeState(L"Stand");
+		}
+	}
+	void BossFirstSphereEndState::Exit() {
+
+	}
+
 	void BossFirstBeamStartState::Enter() {
 		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
 		boss->ChangeAnim(L"AttackSPBeam1", true);
@@ -351,22 +453,22 @@ namespace basecross {
 	void BossFirstBeamFireState::Update(float deltatime) {
 		m_time += deltatime;
 		m_attackTime += deltatime;
-		auto p = dynamic_pointer_cast<BossFirst>(_obj);
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj);
 
 		if (m_attackTime >= m_attackTimeMax && !m_isFinalBlow) {
 			if (m_time > m_attackTimeEnd) {
 				m_isFinalBlow = true;
 			}
-			Vec3 pos = p->GetPosition() + Vec3(0, -1.5, 0);
+			Vec3 pos = boss->GetPosition() + Vec3(0, -1.5, 0);
 			float vel = m_beamHitVelBase + (m_beamHitVelAdd * m_beamCnt);
-			p->GetStage()->AddGameObject<BossFirstBeam>(pos, Vec3(0.0f), Vec3(1.0f), p, vel, m_isFinalBlow);
+			boss->GetStage()->AddGameObject<BossFirstBeam>(pos, Vec3(0.0f), Vec3(1.0f), boss, vel, m_isFinalBlow);
 			
 			m_attackTime = 0;
 			m_beamCnt++;
 		}
 
 		if (m_time >= m_activeTime) {
-			p->ChangeState(L"BeamEnd");
+			boss->ChangeState(L"BeamEnd");
 		}
 	}
 	void BossFirstBeamFireState::Exit() {
@@ -461,6 +563,7 @@ namespace basecross {
 			m_attacked = !m_attacked;
 			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
 			
+			//10はずらす直線距離
 			Vec3 pos = boss->GetPosition() + boss->GetForward() * 10 + Vec3(0, 2, 0);
 			boss->GetStage()->AddGameObject<BossFirstShockwave>(pos, Vec3(0.0f), Vec3(1.0f), boss);
 		}

@@ -1,60 +1,61 @@
 /*!
 @file ZakoState.cpp
-@brief G‹›‚ÌƒXƒe[ƒg
+@brief Å½Gâ€¹â€ºâ€šÄšÂƒXÂƒeÂ[Âƒg
 */
 
 #include "stdafx.h"
 #include "Project.h"
 
 namespace basecross {
+
 	/*
 
 	//-------------------------------------------------
-	// ’ÊíG‹›“G‚ÌƒXƒe[ƒgæ“ª
+	// â€™Ä˜Å¹Ã­Å½Gâ€¹â€ºâ€œGâ€šÄšÂƒXÂƒeÂ[ÂƒgÂÄ‡â€œÅ
 	//-------------------------------------------------
 
-	//‰½‚à‚È‚¢‚Æ‚«‚ÌƒXƒe[ƒg
+	//â€°Ëâ€šÅ•â€šÄŒâ€šË˜â€šÄ†â€šÂ«â€šÄšÂƒXÂƒeÂ[Âƒg
 	void EnemyZakoStandState::Enter()
 	{
-		m_enemyZako->ChangeAnim(L"Stand");//—§‚ÂƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Stand");//â€”Â§â€šÃ‚ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 	}
 	void EnemyZakoStandState::Update(float deltaTime)
 	{
 		auto stage = m_enemyZako->GetStage();
 		auto attackType = m_enemyZako->GetAttackType();
 
-		auto isLand = m_enemyZako->GetLand();//’…’n‚µ‚Ä‚¢‚é‚©‚Ìƒtƒ‰ƒO
+		auto isLand = m_enemyZako->GetLand();//â€™â€¦â€™nâ€šÂµâ€šÃ„â€šË˜â€šÃ©â€šÂ©â€šÄšÂƒtÂƒâ€°ÂƒO
 
-		//G‹›“G‚Ìƒ^ƒCƒv‚É‚æ‚Á‚ÄUŒ‚‚Ì•û–@‚ª•Ï‚í‚é
-		//‰“‹——£
+		//Å½Gâ€¹â€ºâ€œGâ€šÄšÂƒ^ÂƒCÂƒvâ€šÃ‰â€šÄ‡â€šÃâ€šÃ„Å¤UÅšâ€šâ€šÄšâ€¢Å±â€“@â€šÅâ€¢Äâ€šÃ­â€šÃ©
+		//â€°â€œâ€¹â€”â€”Å
 		m_timeOfShot += deltaTime;
 		if (attackType == m_enemyZako->Zako_Long && isLand)
 		{
-			m_enemyZako->ChangeState(L"Alignment");//²‡‚í‚¹‚©‚çn‚Ü‚é
+			m_enemyZako->ChangeState(L"Alignment");//Å½Ë›Å¤â€¡â€šÃ­â€šÄ…â€šÂ©â€šÃ§Å½nâ€šÃœâ€šÃ©
 		}
-		//‹ß‹——£
+		//â€¹ÃŸâ€¹â€”â€”Å
 		if (attackType == m_enemyZako->Zako_Melee && isLand)
 		{
-			m_enemyZako->ChangeState(L"PreparationforMelee");//Ú‹ß‚µ‚ÄUŒ‚‚·‚é
+			m_enemyZako->ChangeState(L"PreparationforMelee");//ÂÃšâ€¹ÃŸâ€šÂµâ€šÃ„Å¤UÅšâ€šâ€šÂ·â€šÃ©
 		}
 	}
 	void EnemyZakoStandState::Exit()
 	{
-		//‘Å‚ÂƒJƒEƒ“ƒgƒ_ƒEƒ“ƒŠƒZƒbƒg
+		//â€˜Ä¹â€šÃ‚ÂƒJÂƒEÂƒâ€œÂƒgÂƒ_ÂƒEÂƒâ€œÂƒÅ ÂƒZÂƒbÂƒg
 		m_timeOfShot = 0.0f;
 	}
 
-	//Ú‹ßí‚ğ‚·‚é‚Æ‚«‚ÌƒXƒe[ƒg
+	//ÂÃšâ€¹ÃŸÂÃ­â€šÄ‘â€šÂ·â€šÃ©â€šÄ†â€šÂ«â€šÄšÂƒXÂƒeÂ[Âƒg
 	void EnemyZakoMeleeState::Enter()
 	{
 		auto LandFlag = m_enemyZako->GetLand();
 		auto testVector = m_enemyZako->GetVelocity();
 
-		//UŒ‚‚Á‚Û‚¢ƒAƒjƒ[ƒVƒ‡ƒ“‚É‚µ‚Ä‚İ‚é
+		//Å¤UÅšâ€šâ€šÃâ€šÅ°â€šË˜ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€šÂµâ€šÃ„â€šÃâ€šÃ©
 		m_enemyZako->ChangeAnim(L"Down");
-		//m_enemyZako->ChangeAnim(L"Walk");//•à‚­ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		//m_enemyZako->ChangeAnim(L"Walk");//â€¢Å•â€šÂ­ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 
-		//UŒ‚‚µ‚Ä‚¢‚éƒ^ƒO’Ç‰Á
+		//Å¤UÅšâ€šâ€šÂµâ€šÃ„â€šË˜â€šÃ©Âƒ^ÂƒOâ€™Ã‡â€°Ã
 		m_enemyZako->AddTag(L"AttackNow");
 	}
 	void EnemyZakoMeleeState::Update(float deltaTime)
@@ -63,10 +64,10 @@ namespace basecross {
 
 		m_timeOfAttack += deltaTime;
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+		//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 
-		//UŒ‚”»’è‚Ì¶¬
+		//Å¤UÅšâ€šâ€Â»â€™Äâ€šÄšÂÂ¶ÂÂ¬
 		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
 		{
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
@@ -75,18 +76,18 @@ namespace basecross {
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .8f;
 			tmp.Type = AttackType::Enemy;
-			//tmp.ForceRecover = false;//ƒmƒbƒNƒoƒbƒN‚·‚é
+			//tmp.ForceRecover = false;//ÂƒmÂƒbÂƒNÂƒoÂƒbÂƒNâ€šÂ·â€šÃ©
 			m_enemyZako->DefAttack(.5f, tmp);
 			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_enemyZako->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
 			AttackPtr->SetCollScale(1.0f);
 
-			m_enemyZako->SetAttackFlag(false);//UŒ‚”»’è‚ª•¡””­¶‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
-			m_Attack = false;//UŒ‚”»’è‚ª•¡””­¶‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
+			m_enemyZako->SetAttackFlag(false);//Å¤UÅšâ€šâ€Â»â€™Äâ€šÅâ€¢Ë‡Ââ€â€Â­ÂÂ¶â€šÅ‚â€šÄ…â€šÄŒâ€šË˜â€šÄ‡â€šÂ¤â€šÃ‰â€šÂ·â€šÃ©
+			m_Attack = false;//Å¤UÅšâ€šâ€Â»â€™Äâ€šÅâ€¢Ë‡Ââ€â€Â­ÂÂ¶â€šÅ‚â€šÄ…â€šÄŒâ€šË˜â€šÄ‡â€šÂ¤â€šÃ‰â€šÂ·â€šÃ©
 		}
 
-		//ˆê’èŠÔ‚½‚Á‚½‚çUŒ‚ƒXƒe[ƒg‚ğ‚â‚ß‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§Å¤UÅšâ€šÂƒXÂƒeÂ[Âƒgâ€šÄ‘â€šÃ¢â€šÃŸâ€šÃ©
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
 			m_enemyZako->ChangeState(L"Stand");
@@ -97,56 +98,56 @@ namespace basecross {
 		m_Attack = true;
 		m_timeOfAttack = 0.0f;
 
-		//UŒ‚‚µ‚Ä‚¢‚éƒ^ƒOíœ
+		//Å¤UÅšâ€šâ€šÂµâ€šÃ„â€šË˜â€šÃ©Âƒ^ÂƒOÅ¤Ã­Å¹Å›
 		m_enemyZako->RemoveTag(L"AttackNow");
 	}
 
-	//Ú‹ßí‚ğ‚·‚é‚Æ‚«‚Ì€”õƒXƒe[ƒg(UŒ‚‚Å‚«‚é‹——£‚É‚È‚é‚Ü‚Å‹ß‚Ã‚­)
+	//ÂÃšâ€¹ÃŸÂÃ­â€šÄ‘â€šÂ·â€šÃ©â€šÄ†â€šÂ«â€šÄšÅ¹â‚¬â€Å‘ÂƒXÂƒeÂ[Âƒg(Å¤UÅšâ€šâ€šÄ¹â€šÂ«â€šÃ©â€¹â€”â€”Åâ€šÃ‰â€šÄŒâ€šÃ©â€šÃœâ€šÄ¹â€¹ÃŸâ€šÄ‚â€šÂ­)
 	void EnemyZakoPreparationforMeleeState::Enter()
 	{
-		m_enemyZako->ChangeAnim(L"Walk");//•à‚­ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Walk");//â€¢Å•â€šÂ­ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 
-		//‰Šú‚ÌƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚É‚æ‚Á‚Ä‘«‚Ì‘¬‚³‚ğ•Ï‚¦‚é
+		//Å¹â€°Å Ãºâ€šÄšÂƒvÂƒÅšÂƒCÂƒâ€Â[â€šÄ†â€šÄšâ€¹â€”â€”Åâ€šÃ‰â€šÄ‡â€šÃâ€šÃ„â€˜Â«â€šÄšâ€˜Â¬â€šÅ‚â€šÄ‘â€¢Äâ€šÂ¦â€šÃ©
 		auto playerdist = m_enemyZako->GetPlayerDist();
 		SppedChange();
 
-		//ƒfƒoƒbƒN—p
+		//ÂƒfÂƒoÂƒbÂƒNâ€”p
 		auto test = m_speed;
 		auto a = 0;
 	}
 	void EnemyZakoPreparationforMeleeState::Update(float deltaTime)
 	{
-		//ƒvƒŒƒCƒ„‚Æ‚Ì‹——£‚É‚æ‚Á‚ÄƒXƒs[ƒh‚ğ•Ï‚¦‚é
+		//ÂƒvÂƒÅšÂƒCÂƒâ€â€šÄ†â€šÄšâ€¹â€”â€”Åâ€šÃ‰â€šÄ‡â€šÃâ€šÃ„ÂƒXÂƒsÂ[Âƒhâ€šÄ‘â€¢Äâ€šÂ¦â€šÃ©
 		SppedChange();
 
 		auto stage = m_enemyZako->GetStage();
-		auto meleeRange = 8.0f;//Ú‹ßUŒ‚—LŒø”ÍˆÍ
+		auto meleeRange = 8.0f;//ÂÃšâ€¹ÃŸÅ¤UÅšâ€šâ€”LÅšÅ™â€ÃÂˆÃ
 
-		//Player‚Ì•ûŒü‚É‰ñ“]‚·‚é
-		auto PushAngle = XM_PIDIV4 / 4;//‰ñ“]‚Ì‚¸‚ê
+		//Playerâ€šÄšâ€¢Å±ÅšÃ¼â€šÃ‰â€°Å„â€œ]â€šÂ·â€šÃ©
+		auto PushAngle = XM_PIDIV4 / 4;//â€°Å„â€œ]â€šÄšâ€šÂ¸â€šÄ™
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		auto attackFlag = m_enemyZako->GetAttackFlag();//UŒ‚ƒtƒ‰ƒO‚ğó‚¯æ‚é
+		auto attackFlag = m_enemyZako->GetAttackFlag();//Å¤UÅšâ€šÂƒtÂƒâ€°ÂƒOâ€šÄ‘Å½Ã³â€šÅ»Å½Ä‡â€šÃ©
 
-		//UŒ‚‚ÌƒN[ƒ‹ƒ^ƒCƒ€‚ğ‰ß‚¬‚Ä‚¢‚ê‚ÎÚ‹ß‚»‚¤‚Å‚È‚¯‚ê‚Î—£‚ê‚é
+		//Å¤UÅšâ€šâ€šÄšÂƒNÂ[Âƒâ€¹Âƒ^ÂƒCÂƒâ‚¬â€šÄ‘â€°ÃŸâ€šÂ¬â€šÃ„â€šË˜â€šÄ™â€šÃÂÃšâ€¹ÃŸâ€šÂ»â€šÂ¤â€šÄ¹â€šÄŒâ€šÅ»â€šÄ™â€šÃâ€”Åâ€šÄ™â€šÃ©
 		if (attackFlag)
 		{
-			//—LŒø”ÍˆÍ‚Ü‚Å‹ß‚Ã‚¯‚½‚ç‹ßÚUŒ‚‚ğ‚·‚é‚»‚¤‚Å‚È‚¯‚ê‚ÎA‚»‚±‚Ü‚ÅˆÚ“®
+			//â€”LÅšÅ™â€ÃÂˆÃâ€šÃœâ€šÄ¹â€¹ÃŸâ€šÄ‚â€šÅ»â€šËâ€šÃ§â€¹ÃŸÂÃšÅ¤UÅšâ€šâ€šÄ‘â€šÂ·â€šÃ©â€šÂ»â€šÂ¤â€šÄ¹â€šÄŒâ€šÅ»â€šÄ™â€šÃÂAâ€šÂ»â€šÂ±â€šÃœâ€šÄ¹ÂˆÃšâ€œÂ®
 			if (m_enemyZako->GetPlayerDist() < meleeRange)
 			{
-				//UŒ‚‚Ì‚½‚ß‚É—§‚¿~‚Ü‚é‚Ì‚Å—§‚ÂƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+				//Å¤UÅšâ€šâ€šÄšâ€šËâ€šÃŸâ€šÃ‰â€”Â§â€šÅ¼Å½~â€šÃœâ€šÃ©â€šÄšâ€šÄ¹â€”Â§â€šÃ‚ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 				m_enemyZako->ChangeAnim(L"Stand");
 
-				//UŒ‚ƒtƒ‰ƒO‚ªƒIƒ“‚È‚çUŒ‚‚Å‚«‚é
+				//Å¤UÅšâ€šÂƒtÂƒâ€°ÂƒOâ€šÅÂƒIÂƒâ€œâ€šÄŒâ€šÃ§Å¤UÅšâ€šâ€šÄ¹â€šÂ«â€šÃ©
 				if (!attackFlag) return;
 				m_enemyZako->ChangeState(L"Melee");
 			}
 			else if (m_enemyZako->GetPlayerDist() >= meleeRange)
 			{
-				//ˆÚ“®’†‚È‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“
+				//ÂˆÃšâ€œÂ®â€™â€ â€šÄŒâ€šÄšâ€šÄ¹â€šÂ»â€šÄ™â€šÃ‰Å¤â€¡â€šÃ­â€šÄ…â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œ
 				m_enemyZako->ChangeAnim(L"Walk");
 
-				//i‚Ş‹——£‚ğŒˆ‚ß‚é
+				//Âiâ€šÅ¢â€¹â€”â€”Åâ€šÄ‘ÅšÂˆâ€šÃŸâ€šÃ©
 				auto move = m_enemyZako->GetForward() * m_speed;
 
 				auto LandFlag = m_enemyZako->GetLand();
@@ -156,18 +157,18 @@ namespace basecross {
 				}
 
 				m_enemyZako->SetVelocity(move);
-				//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+				//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 			}
 		}
-		else if (!attackFlag)//ƒvƒŒƒCƒ„[‚©‚ç‹——£‚ğæ‚é
+		else if (!attackFlag)//ÂƒvÂƒÅšÂƒCÂƒâ€Â[â€šÂ©â€šÃ§â€¹â€”â€”Åâ€šÄ‘Å½Ä‡â€šÃ©
 		{
 			if (m_enemyZako->GetPlayerDist() < meleeRange * 3.0f)
 			{
-				//ˆÚ“®’†‚È‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“
+				//ÂˆÃšâ€œÂ®â€™â€ â€šÄŒâ€šÄšâ€šÄ¹â€šÂ»â€šÄ™â€šÃ‰Å¤â€¡â€šÃ­â€šÄ…â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œ
 				m_enemyZako->ChangeAnim(L"Walk");
 
-				//i‚Ş‹——£‚ğŒˆ‚ß‚é
+				//Âiâ€šÅ¢â€¹â€”â€”Åâ€šÄ‘ÅšÂˆâ€šÃŸâ€šÃ©
 				auto move = m_enemyZako->GetForward() * -(m_speed * 0.8);
 
 				auto LandFlag = m_enemyZako->GetLand();
@@ -177,7 +178,7 @@ namespace basecross {
 				}
 
 				m_enemyZako->SetVelocity(move);
-				//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+				//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 			}
 
@@ -190,27 +191,27 @@ namespace basecross {
 
 	}
 
-	//ƒvƒŒƒCƒ„[‚Æ‚Ì‹——£‚É‚æ‚Á‚Ä‹r‚ÌƒXƒs[ƒh‚ğ•Ï‚¦‚éˆ—
+	//ÂƒvÂƒÅšÂƒCÂƒâ€Â[â€šÄ†â€šÄšâ€¹â€”â€”Åâ€šÃ‰â€šÄ‡â€šÃâ€šÃ„â€¹râ€šÄšÂƒXÂƒsÂ[Âƒhâ€šÄ‘â€¢Äâ€šÂ¦â€šÃ©Å¹Âˆâ€”Å¥
 	void EnemyZakoPreparationforMeleeState::SppedChange()
 	{
-		//‹——£‚É‚æ‚Á‚ÄƒXƒs[ƒh‚ğ•Ï‚¦‚é
+		//â€¹â€”â€”Åâ€šÃ‰â€šÄ‡â€šÃâ€šÃ„ÂƒXÂƒsÂ[Âƒhâ€šÄ‘â€¢Äâ€šÂ¦â€šÃ©
 		auto playerdist = m_enemyZako->GetPlayerDist();
-		if (playerdist > 50.0f)//‰“
+		if (playerdist > 50.0f)//â€°â€œ
 		{
 			m_speed = 15.0f;
 		}
-		else if (playerdist > 30.0f)//’†
+		else if (playerdist > 30.0f)//â€™â€ 
 		{
 			m_speed = 7.0f;
 		}
-		else//‹ß‚¢
+		else//â€¹ÃŸâ€šË˜
 		{
 			m_speed = 10.0f;
 		}
 	}
 
 
-	//‹…‚ğ‘Å‚Â’¼‘O‚Ì²‡‚í‚¹‚ÌƒXƒe[ƒg
+	//â€¹â€¦â€šÄ‘â€˜Ä¹â€šÃ‚â€™Ä½â€˜Oâ€šÄšÅ½Ë›Å¤â€¡â€šÃ­â€šÄ…â€šÄšÂƒXÂƒeÂ[Âƒg
 	void EnemyZakoAlignmentState::Enter()
 	{
 
@@ -219,18 +220,18 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		//Player‚Ì•ûŒü‚É‰ñ“]‚·‚é
-		auto PushAngle = XM_PIDIV4 / 4;//‰ñ“]‚Ì‚¸‚ê
+		//Playerâ€šÄšâ€¢Å±ÅšÃ¼â€šÃ‰â€°Å„â€œ]â€šÂ·â€šÃ©
+		auto PushAngle = XM_PIDIV4 / 4;//â€°Å„â€œ]â€šÄšâ€šÂ¸â€šÄ™
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		//—LŒø”ÍˆÍ‚Ü‚ÅÚ‹ß‚·‚éAƒvƒŒƒCƒ„[‚É‚ ‚é’ö“x‹ß‚Ã‚©‚ê‚½‚ç‹——£‚ğæ‚é
+		//â€”LÅšÅ™â€ÃÂˆÃâ€šÃœâ€šÄ¹ÂÃšâ€¹ÃŸâ€šÂ·â€šÃ©ÂAÂƒvÂƒÅšÂƒCÂƒâ€Â[â€šÃ‰â€šÂ â€šÃ©â€™Ã¶â€œxâ€¹ÃŸâ€šÄ‚â€šÂ©â€šÄ™â€šËâ€šÃ§â€¹â€”â€”Åâ€šÄ‘Å½Ä‡â€šÃ©
 		auto Range = 25.0f;
-		if (m_enemyZako->GetPlayerDist() >= Range)//‹ß‚Ã‚­
+		if (m_enemyZako->GetPlayerDist() >= Range)//â€¹ÃŸâ€šÄ‚â€šÂ­
 		{
-			//ˆÚ“®’†‚È‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“
+			//ÂˆÃšâ€œÂ®â€™â€ â€šÄŒâ€šÄšâ€šÄ¹â€šÂ»â€šÄ™â€šÃ‰Å¤â€¡â€šÃ­â€šÄ…â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œ
 			m_enemyZako->ChangeAnim(L"Walk");
 
-			//i‚Ş‹——£‚ğŒˆ‚ß‚é
+			//Âiâ€šÅ¢â€¹â€”â€”Åâ€šÄ‘ÅšÂˆâ€šÃŸâ€šÃ©
 			m_speed = 10.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
@@ -241,15 +242,15 @@ namespace basecross {
 			}
 
 			m_enemyZako->SetVelocity(move);
-			//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+			//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
-		if (m_enemyZako->GetPlayerDist() <= Range - 5.0f)//—£‚ê‚é
+		if (m_enemyZako->GetPlayerDist() <= Range - 5.0f)//â€”Åâ€šÄ™â€šÃ©
 		{
-			//ˆÚ“®’†‚È‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“
+			//ÂˆÃšâ€œÂ®â€™â€ â€šÄŒâ€šÄšâ€šÄ¹â€šÂ»â€šÄ™â€šÃ‰Å¤â€¡â€šÃ­â€šÄ…â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œ
 			m_enemyZako->ChangeAnim(L"Walk");
 
-			//i‚Ş‹——£‚ğŒˆ‚ß‚é
+			//Âiâ€šÅ¢â€¹â€”â€”Åâ€šÄ‘ÅšÂˆâ€šÃŸâ€šÃ©
 			m_speed = -7.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
@@ -260,46 +261,46 @@ namespace basecross {
 			}
 
 			m_enemyZako->SetVelocity(move);
-			//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è(Œã‚ë‚Éi‚Ş‚Ì‚Å‹tÄ¶‚É‚µ‚½‚¢)
+			//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä(ÅšÄƒâ€šÃ«â€šÃ‰Âiâ€šÅ¢â€šÄšâ€šÄ¹â€¹tÅ¤Ã„ÂÂ¶â€šÃ‰â€šÂµâ€šËâ€šË˜)
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 
-		//ˆê’èŠÔ‚½‚Á‚½‚çUŒ‚‚·‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§Å¤UÅšâ€šâ€šÂ·â€šÃ©
 		m_timeOfShot += deltaTime;
 		if (m_timeOfShot >= m_timeMaxOfShot)
 		{
-			m_timeOfShot = 0.0f;//ƒŠƒZƒbƒg
-			m_enemyZako->ChangeState(L"Shot");//‘Å‚ÂƒXƒe[ƒg‚ª‚È‚¢‚Ì‚ÅƒRƒƒ“ƒgƒAƒEƒg
+			m_timeOfShot = 0.0f;//ÂƒÅ ÂƒZÂƒbÂƒg
+			m_enemyZako->ChangeState(L"Shot");//â€˜Ä¹â€šÃ‚ÂƒXÂƒeÂ[Âƒgâ€šÅâ€šÄŒâ€šË˜â€šÄšâ€šÄ¹ÂƒRÂƒÂÂƒâ€œÂƒgÂƒAÂƒEÂƒg
 		}
 	}
 	void EnemyZakoAlignmentState::Exit()
 	{
-		//‘Å‚ÂƒJƒEƒ“ƒgƒ_ƒEƒ“ƒŠƒZƒbƒg
+		//â€˜Ä¹â€šÃ‚ÂƒJÂƒEÂƒâ€œÂƒgÂƒ_ÂƒEÂƒâ€œÂƒÅ ÂƒZÂƒbÂƒg
 		m_timeOfShot = 0.0f;
 	}
 
-	//UŒ‚‚ğ‚·‚éƒXƒe[ƒg(‰“‹——£)
+	//Å¤UÅšâ€šâ€šÄ‘â€šÂ·â€šÃ©ÂƒXÂƒeÂ[Âƒg(â€°â€œâ€¹â€”â€”Å)
 	void EnemyZakoShotState::Enter()
 	{
 		auto stage = m_enemyZako->GetStage();
 		auto posEnemy = m_enemyZako->GetPosition();
-		//’e¶¬
+		//â€™eÂÂ¶ÂÂ¬
 		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 30.0f,
 			dynamic_pointer_cast<Actor>(m_enemyZako), 30.0f, ActorName_Enemy);
 
-		m_enemyZako->ChangeAnim(L"Shot");//Œ‚‚ÂƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Shot");//Åšâ€šâ€šÃ‚ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 	}
 	void EnemyZakoShotState::Update(float deltaTime)
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		////–Ú•W‚Æ‚È‚éŠp“xæ“¾
+		////â€“Ãšâ€¢Wâ€šÄ†â€šÄŒâ€šÃ©Å pâ€œxÅ½Ä‡â€œÄ¾
 		auto angleTarget = m_enemyZako->GetPlayerSubDirection();
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+		//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 		m_enemyZako->SetAddTimeAnimation(deltaTime);
 
-		//ˆê’èŠÔ‚½‚Á‚½‚çStandƒXƒe[ƒg‚É–ß‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§StandÂƒXÂƒeÂ[Âƒgâ€šÃ‰â€“ÃŸâ€šÃ©
 		m_timeOfAttack += deltaTime;
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
@@ -308,29 +309,29 @@ namespace basecross {
 	}
 	void EnemyZakoShotState::Exit()
 	{
-		//‘Å‚ÂƒJƒEƒ“ƒgƒ_ƒEƒ“ƒŠƒZƒbƒg
+		//â€˜Ä¹â€šÃ‚ÂƒJÂƒEÂƒâ€œÂƒgÂƒ_ÂƒEÂƒâ€œÂƒÅ ÂƒZÂƒbÂƒg
 		m_timeOfAttack = 0.0f;
 	}
 
 
-	//ƒ_ƒ[ƒW‚ğó‚¯‚½ƒXƒe[ƒg
+	//Âƒ_ÂƒÂÂ[ÂƒWâ€šÄ‘Å½Ã³â€šÅ»â€šËÂƒXÂƒeÂ[Âƒg
 	void EnemyZakoHitState::Enter()
 	{
 		auto hitInfo = m_enemyZako->GetHitInfo();
 		auto HPNow = m_enemyZako->GetHPCurrent();
-		//UŒ‚‚ğó‚¯‚½‚Ì‚ÅƒqƒbƒgƒoƒbƒN‚·‚é
+		//Å¤UÅšâ€šâ€šÄ‘Å½Ã³â€šÅ»â€šËâ€šÄšâ€šÄ¹ÂƒqÂƒbÂƒgÂƒoÂƒbÂƒNâ€šÂ·â€šÃ©
 		m_enemyZako->HitBack();
-		//ƒ_ƒ[ƒWˆ—
+		//Âƒ_ÂƒÂÂ[ÂƒWÅ¹Âˆâ€”Å¥
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 
-		m_enemyZako->ChangeAnim(L"Stand");//ƒ_ƒ[ƒW‚ğó‚¯‚½ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Stand");//Âƒ_ÂƒÂÂ[ÂƒWâ€šÄ‘Å½Ã³â€šÅ»â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
-		//ˆê’èŠÔ‚½‚Á‚½‚çStandƒXƒe[ƒg‚É–ß‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§StandÂƒXÂƒeÂ[Âƒgâ€šÃ‰â€“ÃŸâ€šÃ©
 		m_enemyZako->HitBackStandBehavior();
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+		//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 		m_enemyZako->SetAddTimeAnimation(deltaTime);
 	}
 	void EnemyZakoHitState::Exit()
@@ -338,18 +339,18 @@ namespace basecross {
 
 	}
 	//-------------------------------------------------
-	// ’ÊíG‹›“G‚ÌƒXƒe[ƒgI’[
+	// â€™Ä˜Å¹Ã­Å½Gâ€¹â€ºâ€œGâ€šÄšÂƒXÂƒeÂ[ÂƒgÅ¹Iâ€™[
 	//-------------------------------------------------
 
 
 	//-------------------------------------------------
-	// ”ò‚ÔƒUƒR‚ÌƒXƒe[ƒgæ“ª
+	// â€Åˆâ€šÃ”ÂƒUÂƒRâ€šÄšÂƒXÂƒeÂ[ÂƒgÂÄ‡â€œÅ
 	// ------------------------------------------------
 
-	// ‰½‚à‚È‚¢‚Æ‚«‚ÌƒXƒe[ƒg----------------------
+	// â€°Ëâ€šÅ•â€šÄŒâ€šË˜â€šÄ†â€šÂ«â€šÄšÂƒXÂƒeÂ[Âƒg----------------------
 	void EnemyZakoFlyingStandState::Enter()
 	{
-		m_enemyZako->ChangeAnim(L"Stand");//‘Ò‹@ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Stand");//â€˜Å‡â€¹@ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 	}
 
 	void EnemyZakoFlyingStandState::Update(float deltatime)
@@ -357,7 +358,7 @@ namespace basecross {
 		auto stage = m_enemyZako->GetStage();
 		auto attackType = m_enemyZako->GetAttackType();
 
-		auto isLand = m_enemyZako->GetLand();//’…’n(‘Ø‹óH)‚µ‚Ä‚¢‚é‚©‚Ìƒtƒ‰ƒO
+		auto isLand = m_enemyZako->GetLand();//â€™â€¦â€™n(â€˜Å˜â€¹Ã³ÂH)â€šÂµâ€šÃ„â€šË˜â€šÃ©â€šÂ©â€šÄšÂƒtÂƒâ€°ÂƒO
 
 	}
 
@@ -367,10 +368,10 @@ namespace basecross {
 	}
 	// END-----------------------------------------
 
-	//Ú‹ßí‚ğ‚·‚é‚Æ‚«‚Ì€”õƒXƒe[ƒg-----------------
+	//ÂÃšâ€¹ÃŸÂÃ­â€šÄ‘â€šÂ·â€šÃ©â€šÄ†â€šÂ«â€šÄšÅ¹â‚¬â€Å‘ÂƒXÂƒeÂ[Âƒg-----------------
 	void EnemyZakoFlyingPreparationforMeleeState::Enter()
 	{
-		m_enemyZako->ChangeAnim(L"Walk");//•à‚­ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Walk");//â€¢Å•â€šÂ­ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 	}
 
 	void EnemyZakoFlyingPreparationforMeleeState::Update(float deltaTime)
@@ -378,29 +379,29 @@ namespace basecross {
 		auto stage = m_enemyZako->GetStage();
 
 
-		auto meleeRange = 10.0f;//Ú‹ßUŒ‚—LŒø”ÍˆÍ
+		auto meleeRange = 10.0f;//ÂÃšâ€¹ÃŸÅ¤UÅšâ€šâ€”LÅšÅ™â€ÃÂˆÃ
 
-		//Player‚Ì•ûŒü‚É‰ñ“]‚·‚é
-		auto PushAngle = XM_PIDIV4 / 4;//‰ñ“]‚Ì‚¸‚ê
+		//Playerâ€šÄšâ€¢Å±ÅšÃ¼â€šÃ‰â€°Å„â€œ]â€šÂ·â€šÃ©
+		auto PushAngle = XM_PIDIV4 / 4;//â€°Å„â€œ]â€šÄšâ€šÂ¸â€šÄ™
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
 		auto attackFlag = m_enemyZako->GetAttackFlag();
-		//—LŒø”ÍˆÍ‚Ü‚Å‹ß‚Ã‚¯‚½‚ç‹ßÚUŒ‚‚ğ‚·‚é‚»‚¤‚Å‚È‚¯‚ê‚ÎA‚»‚±‚Ü‚ÅˆÚ“®
+		//â€”LÅšÅ™â€ÃÂˆÃâ€šÃœâ€šÄ¹â€¹ÃŸâ€šÄ‚â€šÅ»â€šËâ€šÃ§â€¹ÃŸÂÃšÅ¤UÅšâ€šâ€šÄ‘â€šÂ·â€šÃ©â€šÂ»â€šÂ¤â€šÄ¹â€šÄŒâ€šÅ»â€šÄ™â€šÃÂAâ€šÂ»â€šÂ±â€šÃœâ€šÄ¹ÂˆÃšâ€œÂ®
 		if (m_enemyZako->GetPlayerDist() < meleeRange)
 		{
-			//UŒ‚‚Ì‚½‚ß‚É—§‚¿~‚Ü‚é‚Ì‚Å—§‚ÂƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+			//Å¤UÅšâ€šâ€šÄšâ€šËâ€šÃŸâ€šÃ‰â€”Â§â€šÅ¼Å½~â€šÃœâ€šÃ©â€šÄšâ€šÄ¹â€”Â§â€šÃ‚ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 			m_enemyZako->ChangeAnim(L"Stand");
 
-			//UŒ‚ƒtƒ‰ƒO‚ªƒIƒ“‚È‚çUŒ‚‚Å‚«‚é
+			//Å¤UÅšâ€šÂƒtÂƒâ€°ÂƒOâ€šÅÂƒIÂƒâ€œâ€šÄŒâ€šÃ§Å¤UÅšâ€šâ€šÄ¹â€šÂ«â€šÃ©
 			if (!attackFlag) return;
 			m_enemyZako->ChangeState(L"Melee");
 		}
 		else if (m_enemyZako->GetPlayerDist() >= meleeRange)
 		{
-			//ˆÚ“®’†‚È‚Ì‚Å‚»‚ê‚É‡‚í‚¹‚½ƒAƒjƒ[ƒVƒ‡ƒ“
+			//ÂˆÃšâ€œÂ®â€™â€ â€šÄŒâ€šÄšâ€šÄ¹â€šÂ»â€šÄ™â€šÃ‰Å¤â€¡â€šÃ­â€šÄ…â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œ
 			m_enemyZako->ChangeAnim(L"Walk");
 
-			//i‚Ş‹——£‚ğŒˆ‚ß‚é
+			//Âiâ€šÅ¢â€¹â€”â€”Åâ€šÄ‘ÅšÂˆâ€šÃŸâ€šÃ©
 			auto move = m_enemyZako->GetForward() * 10.0f;
 
 			auto LandFlag = m_enemyZako->GetLand();
@@ -410,7 +411,7 @@ namespace basecross {
 			}
 
 			m_enemyZako->SetVelocity(move);
-			//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+			//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 	}
@@ -421,15 +422,15 @@ namespace basecross {
 	}
 	// END--------------------------------------------
 
-	// UŒ‚‚ğ‚·‚é‚Æ‚«‚ÌƒXƒe[ƒg(‹ß‹——£)-----
+	// Å¤UÅšâ€šâ€šÄ‘â€šÂ·â€šÃ©â€šÄ†â€šÂ«â€šÄšÂƒXÂƒeÂ[Âƒg(â€¹ÃŸâ€¹â€”â€”Å)-----
 	void EnemyZakoFlyingMeleeState::Enter()
 	{
 		auto LandFlag = m_enemyZako->GetLand();
 		auto testVector = m_enemyZako->GetVelocity();
 
-		//UŒ‚‚Á‚Û‚¢ƒAƒjƒ[ƒVƒ‡ƒ“‚É‚µ‚Ä‚İ‚é
+		//Å¤UÅšâ€šâ€šÃâ€šÅ°â€šË˜ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€šÂµâ€šÃ„â€šÃâ€šÃ©
 		m_enemyZako->ChangeAnim(L"Down");
-		//m_enemyZako->ChangeAnim(L"Walk");//•à‚­ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		//m_enemyZako->ChangeAnim(L"Walk");//â€¢Å•â€šÂ­ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 
 	}
 
@@ -439,10 +440,10 @@ namespace basecross {
 
 		m_timeOfAttack += deltaTime;
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+		//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 
-		//UŒ‚”»’è‚Ì¶¬
+		//Å¤UÅšâ€šâ€Â»â€™Äâ€šÄšÂÂ¶ÂÂ¬
 		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
 		{
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
@@ -451,18 +452,18 @@ namespace basecross {
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .8f;
 			tmp.Type = AttackType::Enemy;
-			//tmp.ForceRecover = false;//ƒmƒbƒNƒoƒbƒN‚·‚é
+			//tmp.ForceRecover = false;//ÂƒmÂƒbÂƒNÂƒoÂƒbÂƒNâ€šÂ·â€šÃ©
 			m_enemyZako->DefAttack(.5f, tmp);
 			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_enemyZako->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
 			AttackPtr->SetCollScale(1.0f);
 
-			m_enemyZako->SetAttackFlag(false);//UŒ‚”»’è‚ª•¡””­¶‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
-			m_Attack = false;//UŒ‚”»’è‚ª•¡””­¶‚³‚¹‚È‚¢‚æ‚¤‚É‚·‚é
+			m_enemyZako->SetAttackFlag(false);//Å¤UÅšâ€šâ€Â»â€™Äâ€šÅâ€¢Ë‡Ââ€â€Â­ÂÂ¶â€šÅ‚â€šÄ…â€šÄŒâ€šË˜â€šÄ‡â€šÂ¤â€šÃ‰â€šÂ·â€šÃ©
+			m_Attack = false;//Å¤UÅšâ€šâ€Â»â€™Äâ€šÅâ€¢Ë‡Ââ€â€Â­ÂÂ¶â€šÅ‚â€šÄ…â€šÄŒâ€šË˜â€šÄ‡â€šÂ¤â€šÃ‰â€šÂ·â€šÃ©
 		}
 
-		//ˆê’èŠÔ‚½‚Á‚½‚çUŒ‚ƒXƒe[ƒg‚ğ‚â‚ß‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§Å¤UÅšâ€šÂƒXÂƒeÂ[Âƒgâ€šÄ‘â€šÃ¢â€šÃŸâ€šÃ©
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
 			m_enemyZako->ChangeState(L"Stand");
@@ -476,7 +477,7 @@ namespace basecross {
 	}
 	// END-----------------------------------
 
-	// ‰“‹——£‚Ì’¼‘O‚Ì²‡‚í‚¹‚Ì‚ÌƒXƒe[ƒg-----
+	// â€°â€œâ€¹â€”â€”Åâ€šÄšâ€™Ä½â€˜Oâ€šÄšÅ½Ë›Å¤â€¡â€šÃ­â€šÄ…â€šÄšÅ½Å¾â€šÄšÂƒXÂƒeÂ[Âƒg-----
 	void EnemyZakoFlyingAlignmentState::Enter()
 	{
 
@@ -486,24 +487,24 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		//–Ú•W‚Æ‚È‚éŠp“xæ“¾
+		//â€“Ãšâ€¢Wâ€šÄ†â€šÄŒâ€šÃ©Å pâ€œxÅ½Ä‡â€œÄ¾
 		//auto angleTarget = m_enemyZako->GetPlayerSubDirection();
 		//auto angleTarget = atan2f(targetVec.z, targetVec.x);
 
 
-		//Player‚Ì‚¢‚é•ûŒü‚ğŒvZ
+		//Playerâ€šÄšâ€šË˜â€šÃ©â€¢Å±ÅšÃ¼â€šÄ‘ÅšvÅ½Z
 		auto playerPos = stage->GetSharedGameObject<Player>(L"Player")->GetPosition();
 		auto EnemyPos = m_enemyZako->GetPosition();
 		auto targetVec = playerPos - EnemyPos;
 		auto angleTarget = (atan2f(targetVec.z, -targetVec.x) / 2);
 		angleTarget += XMConvertToRadians(90.0f);
 
-		//‘å‘Ì‚»‚Ì•ûŒü‚ÉŒü‚¢‚½‚çPlayer‚Ì•ûŒü‚ÉŒü‚¢‚Ä‚¢‚é‚Æ‚İ‚È‚·
+		//â€˜Äºâ€˜Äšâ€šÂ»â€šÄšâ€¢Å±ÅšÃ¼â€šÃ‰ÅšÃ¼â€šË˜â€šËâ€šÃ§Playerâ€šÄšâ€¢Å±ÅšÃ¼â€šÃ‰ÅšÃ¼â€šË˜â€šÃ„â€šË˜â€šÃ©â€šÄ†â€šÃâ€šÄŒâ€šÂ·
 		if (abs(angleTarget) < XMConvertToRadians(3.0f))
 		{
 			angleTarget = 0.0f;
 		}
-		//‰ñ“]ˆ—
+		//â€°Å„â€œ]Å¹Âˆâ€”Å¥
 		if (angleTarget != 0.0f)
 		{
 			auto qt = m_enemyZako->GetComponent<Transform>()->GetBeforeQuaternion();
@@ -514,34 +515,34 @@ namespace basecross {
 		}
 
 
-		//ˆê’èŠÔ‚½‚Á‚½‚çUŒ‚‚·‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§Å¤UÅšâ€šâ€šÂ·â€šÃ©
 		m_timeOfShot += deltaTime;
 		if (m_timeOfShot >= m_timeMaxOfShot)
 		{
-			m_timeOfShot = 0.0f;//ƒŠƒZƒbƒg
-			m_enemyZako->ChangeState(L"Shot");//‘Å‚ÂƒXƒe[ƒg‚ª‚È‚¢‚Ì‚ÅƒRƒƒ“ƒgƒAƒEƒg
+			m_timeOfShot = 0.0f;//ÂƒÅ ÂƒZÂƒbÂƒg
+			m_enemyZako->ChangeState(L"Shot");//â€˜Ä¹â€šÃ‚ÂƒXÂƒeÂ[Âƒgâ€šÅâ€šÄŒâ€šË˜â€šÄšâ€šÄ¹ÂƒRÂƒÂÂƒâ€œÂƒgÂƒAÂƒEÂƒg
 		}
 
 	}
 
 	void EnemyZakoFlyingAlignmentState::Exit()
 	{
-		//‘Å‚ÂƒJƒEƒ“ƒgƒ_ƒEƒ“ƒŠƒZƒbƒg
+		//â€˜Ä¹â€šÃ‚ÂƒJÂƒEÂƒâ€œÂƒgÂƒ_ÂƒEÂƒâ€œÂƒÅ ÂƒZÂƒbÂƒg
 		m_timeOfShot = 0.0f;
 
 	}
 	// END--------------------------------------
 
-	// UŒ‚‚ğ‚·‚é‚Æ‚«‚ÌƒXƒe[ƒg(‰“‹——£)-----
+	// Å¤UÅšâ€šâ€šÄ‘â€šÂ·â€šÃ©â€šÄ†â€šÂ«â€šÄšÂƒXÂƒeÂ[Âƒg(â€°â€œâ€¹â€”â€”Å)-----
 	void EnemyZakoFlyingShotState::Enter()
 	{
 		auto stage = m_enemyZako->GetStage();
 		auto posEnemy = m_enemyZako->GetPosition();
-		//’e¶¬
+		//â€™eÂÂ¶ÂÂ¬
 		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 10.0f,
 			dynamic_pointer_cast<Actor>(m_enemyZako), 10.0f, ActorName_Enemy);
 
-		m_enemyZako->ChangeAnim(L"Shot");//Œ‚‚ÂƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		m_enemyZako->ChangeAnim(L"Shot");//Åšâ€šâ€šÃ‚ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 
 	}
 
@@ -549,13 +550,13 @@ namespace basecross {
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		////–Ú•W‚Æ‚È‚éŠp“xæ“¾
+		////â€“Ãšâ€¢Wâ€šÄ†â€šÄŒâ€šÃ©Å pâ€œxÅ½Ä‡â€œÄ¾
 		auto angleTarget = m_enemyZako->GetPlayerSubDirection();
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+		//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 		m_enemyZako->SetAddTimeAnimation(deltaTime);
 
-		//ˆê’èŠÔ‚½‚Á‚½‚çStandƒXƒe[ƒg‚É–ß‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§StandÂƒXÂƒeÂ[Âƒgâ€šÃ‰â€“ÃŸâ€šÃ©
 		m_timeOfAttack += deltaTime;
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
 		{
@@ -566,31 +567,31 @@ namespace basecross {
 
 	void EnemyZakoFlyingShotState::Exit()
 	{
-		//‘Å‚ÂƒJƒEƒ“ƒgƒ_ƒEƒ“ƒŠƒZƒbƒg
+		//â€˜Ä¹â€šÃ‚ÂƒJÂƒEÂƒâ€œÂƒgÂƒ_ÂƒEÂƒâ€œÂƒÅ ÂƒZÂƒbÂƒg
 		m_timeOfAttack = 0.0f;
 
 	}
 	// END-----------------------------------
 
-	//ƒ_ƒ[ƒW‚ğó‚¯‚½‚Æ‚«-------------------
+	//Âƒ_ÂƒÂÂ[ÂƒWâ€šÄ‘Å½Ã³â€šÅ»â€šËâ€šÄ†â€šÂ«-------------------
 	void EnemyZakoFlyingHitState::Enter()
 	{
 		auto hitInfo = m_enemyZako->GetHitInfo();
 		auto HPNow = m_enemyZako->GetHPCurrent();
 
-		// ƒ_ƒ[ƒWˆ—
+		// Âƒ_ÂƒÂÂ[ÂƒWÅ¹Âˆâ€”Å¥
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 
-		// ƒ_ƒ[ƒW‚ğó‚¯‚½ƒAƒjƒ[ƒVƒ‡ƒ“‚É•ÏX
+		// Âƒ_ÂƒÂÂ[ÂƒWâ€šÄ‘Å½Ã³â€šÅ»â€šËÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œâ€šÃ‰â€¢ÄÅ¤X
 		m_enemyZako->ChangeAnim(L"Stand");
 	}
 
 	void EnemyZakoFlyingHitState::Update(float deltaTime)
 	{
-		//ˆê’èŠÔ‚½‚Á‚½‚çStandƒXƒe[ƒg‚É–ß‚é
+		//ÂˆÄ™â€™ÄÅ½Å¾Å Ã”â€šËâ€šÃâ€šËâ€šÃ§StandÂƒXÂƒeÂ[Âƒgâ€šÃ‰â€“ÃŸâ€šÃ©
 		m_enemyZako->HitBackStandBehavior();
 
-		//ƒAƒjƒ[ƒVƒ‡ƒ“XVŠÔİ’è
+		//ÂƒAÂƒjÂƒÂÂ[ÂƒVÂƒâ€¡Âƒâ€œÅ¤XÂVÅ½Å¾Å Ã”ÂÃâ€™Ä
 		m_enemyZako->SetAddTimeAnimation(deltaTime);
 
 	}
@@ -602,8 +603,9 @@ namespace basecross {
 	// END------------------------------------
 
 	//-------------------------------------------------------
-	// ”ò‚ÔƒUƒR‚ÌƒXƒe[ƒgI’[
+	// â€Åˆâ€šÃ”ÂƒUÂƒRâ€šÄšÂƒXÂƒeÂ[ÂƒgÅ¹Iâ€™[
 	//-------------------------------------------------------
 
 	*/
+
 }

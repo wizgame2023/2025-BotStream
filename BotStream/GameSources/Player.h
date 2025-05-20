@@ -35,7 +35,8 @@ namespace basecross{
 		PlayerEffect_AttackEx,
 		PlayerEffect_Beam,
 		EnemyEffect_ArmorBreak,
-		EnemyEffect_Beam
+		EnemyEffect_Beam,
+		EnemyEffect_Sphere
 	};
 
 	enum ActorName
@@ -281,8 +282,9 @@ namespace basecross{
 			Zako_Flying,//滞空型
 		};
 
-		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
-			EnemyBase(stagePtr,pos,rot,scale,used)
+		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee):
+			EnemyBase(stagePtr,pos,rot,scale,used),
+			m_AttackType(attackType)
 		{
 
 		}

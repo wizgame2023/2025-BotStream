@@ -1,7 +1,7 @@
 #pragma once
 /*!
 @file ZakoState.h
-@brief �G���̃X�e�[�g
+@brief ŽG‹›‚ĚXe[g
 */
 
 #include "stdafx.h"
@@ -9,7 +9,7 @@
 namespace basecross {
 	/*
 
-	//�G���G�̃X�e�[�g�̌��ƂȂ�N���X
+	//ŽG‹›“G‚ĚXe[g‚ĚŚł‚Ć‚Č‚éN‰X
 	class EnemyZakoStateBase :public StateBase
 	{
 	protected:
@@ -27,12 +27,12 @@ namespace basecross {
 		virtual void Exit() {}
 	};
 
-	//�����Ȃ��Ƃ��̃X�e�[�g
+	//‰˝‚ŕ‚Č‚˘‚Ć‚«‚ĚXe[g
 	class EnemyZakoStandState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfShot = 4.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 	public:
 		EnemyZakoStandState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -45,13 +45,13 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//�ڋߐ������Ƃ��̏����X�e�[�g
+	//Ú‹ßí‚đ‚·‚é‚Ć‚«‚ĚŹ€”őXe[g
 	class EnemyZakoPreparationforMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfShot = 4.0f;//�ł��Ԃ̕ۑ��p�ϐ�
-		float m_speed = 1.0f;//���̑���
+		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_speed = 1.0f;//‘«‚Ě‘¬‚ł
 	public:
 		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -63,19 +63,19 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 
-		void SppedChange();//�r�̃X�s�[�h��ς��鏈��
+		void SppedChange();//‹r‚ĚXs[h‚đ•Ď‚¦‚éŹ—ť
 	};
 
-	//�U��������Ƃ��̃X�e�[�g(�ߋ���)
+	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‹ß‹——Ł)
 	class EnemyZakoMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//�U�����Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfAttack = 2.0f;//�U�����Ԃ̕ۑ��p�ϐ�
+		float m_timeOfAttack = 0.0f;//ŤUŚ‚ŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfAttack = 2.0f;//ŤUŚ‚ŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 
-		float m_timeOfAttackAdd = 1.2f;//�U������̔�������
+		float m_timeOfAttackAdd = 1.2f;//ŤUŚ‚”»’č‚Ě”­¶ŽžŠÔ
 
-		bool m_Attack = true;//�U��������o�������̃t���O
+		bool m_Attack = true;//ŤUŚ‚”»’č‚đŹo‚µ‚˝‚©‚Ět‰O
 	public:
 		EnemyZakoMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -89,14 +89,14 @@ namespace basecross {
 
 	};
 
-	//����ł��O�̎����킹�̂Ƃ��̃X�e�[�g
+	//‹…‚đ‘Ĺ‚Â’Ľ‘O‚ĚŽ˛Ť‡‚í‚ą‚Ě‚Ć‚«‚ĚXe[g
 	class EnemyZakoAlignmentState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfShot = 3.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfShot = 3.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 
-		float m_speed = 1.0f;//���̑��x
+		float m_speed = 1.0f;//‘«‚Ě‘¬“x
 	public:
 		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -109,12 +109,12 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//�U��������Ƃ��̃X�e�[�g(������)
+	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‰“‹——Ł)
 	class EnemyZakoShotState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfAttack = 1.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfAttack = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfAttack = 1.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 	public:
 		EnemyZakoShotState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -128,7 +128,7 @@ namespace basecross {
 
 	};
 
-	//�_���[�W���󂯂��G���G
+	//_[W‚đŽó‚Ż‚˝ŽG‹›“G
 	class EnemyZakoHitState :public EnemyZakoStateBase
 	{
 	private:
@@ -161,14 +161,14 @@ namespace basecross {
 		}
 	};
 
-	// ��ԃU�R�̃X�e�[�g----------------------------------------------------------
+	// ”ň‚ÔUR‚ĚXe[g----------------------------------------------------------
 
-	//�����Ȃ��Ƃ��̃X�e�[�g
+	//‰˝‚ŕ‚Č‚˘‚Ć‚«‚ĚXe[g
 	class EnemyZakoFlyingStandState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfShot = 4.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 	public:
 		EnemyZakoFlyingStandState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -181,12 +181,12 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//�ڋߐ������Ƃ��̏����X�e�[�g
+	//Ú‹ßí‚đ‚·‚é‚Ć‚«‚ĚŹ€”őXe[g
 	class EnemyZakoFlyingPreparationforMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfShot = 4.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 	public:
 		EnemyZakoFlyingPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -199,16 +199,16 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//�U��������Ƃ��̃X�e�[�g(�ߋ���)
+	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‹ß‹——Ł)
 	class EnemyZakoFlyingMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//�U�����Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfAttack = 2.0f;//�U�����Ԃ̕ۑ��p�ϐ�
+		float m_timeOfAttack = 0.0f;//ŤUŚ‚ŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfAttack = 2.0f;//ŤUŚ‚ŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 
-		float m_timeOfAttackAdd = 1.2f;//�U������̔�������
+		float m_timeOfAttackAdd = 1.2f;//ŤUŚ‚”»’č‚Ě”­¶ŽžŠÔ
 
-		bool m_Attack = true;//�U��������o�������̃t���O
+		bool m_Attack = true;//ŤUŚ‚”»’č‚đŹo‚µ‚˝‚©‚Ět‰O
 	public:
 		EnemyZakoFlyingMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -222,12 +222,12 @@ namespace basecross {
 
 	};
 
-	//����ł��O�̎����킹�̂Ƃ��̃X�e�[�g
+	//‹…‚đ‘Ĺ‚Â’Ľ‘O‚ĚŽ˛Ť‡‚í‚ą‚Ě‚Ć‚«‚ĚXe[g
 	class EnemyZakoFlyingAlignmentState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfShot = 4.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 	public:
 		EnemyZakoFlyingAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -240,12 +240,12 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//�U��������Ƃ��̃X�e�[�g(������)
+	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‰“‹——Ł)
 	class EnemyZakoFlyingShotState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//�ł��Ԍo�߂𑪂�ϐ�
-		float m_timeMaxOfAttack = 1.0f;//�ł��Ԃ̕ۑ��p�ϐ�
+		float m_timeOfAttack = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
+		float m_timeMaxOfAttack = 1.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
 	public:
 		EnemyZakoFlyingShotState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -259,7 +259,7 @@ namespace basecross {
 
 	};
 
-	//�_���[�W���󂯂��Ƃ�
+	//_[W‚đŽó‚Ż‚˝‚Ć‚«
 	class EnemyZakoFlyingHitState :public EnemyZakoStateBase
 	{
 	private:
@@ -277,7 +277,7 @@ namespace basecross {
 	};
 
 
-	// ��ԓG�̃X�e�[�g�}�V��
+	// ”ň‚Ô“G‚ĚXe[g}V“
 	class EnemyZakoFlyingStateMachine :public StateMachineBase
 	{
 	public:

@@ -67,8 +67,9 @@ namespace basecross {
 		float m_time = 0;
 		const float m_startAttack = 3.0f;
 		const float m_startAttackRand = 10;
-		const float m_spinRand = 600;
+		const float m_spinRand = 400;
 		const float m_slamRand = 250;
+		const float m_sphereRand = 200;
 		const float m_farDist = 10;
 
 		random_device rnd;
@@ -84,12 +85,16 @@ namespace basecross {
 
 	// プレイヤー追跡
 	class BossFirstChaseState : public StateBase {
+		float m_time = 0.0f;
+
 		const float m_rotateThreshold = XM_PIDIV4 / 4;
 		const float m_closeDist = 8;
 		const float m_chaseSpeed = 20;
+		const float m_sphereSwitchTime = 1.0f;
 
 		random_device rnd;
 		const float m_slamRand = 500;
+		const float m_sphereRand = 2;
 	public:
 		BossFirstChaseState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {
@@ -190,6 +195,81 @@ namespace basecross {
 
 	public:
 		BossFirstSpinOverState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// エネルギー弾開始
+	class BossFirstSphereStartState : public StateBase {
+		float m_time = 0;
+		const float m_startup = .5f;
+		bool m_finishRotate = false;
+
+		const float m_rotateSpeed = 2.0f;
+		const float m_rotateThreshold = XM_PIDIV4 / 8;
+	public:
+		BossFirstSphereStartState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// エネルギー弾1
+	class BossFirstSphere1State : public StateBase {
+		float m_time = 0;
+		const float m_fireTime[2] = { .25f, .3f };
+		const float m_endTime = 1.0f;
+		bool m_attacked[2] = { false };
+
+		const Vec3 m_firePos[4] = {
+			Vec3(3, 0, -6),
+			Vec3(3, 0, 6),
+			Vec3(3, 0, -3),
+			Vec3(3, 0, 3)
+		};
+		const float m_towardPlayerTime[4] = {
+			.8f,
+			1.7f,
+			1.1f,
+			1.4f
+		};
+		const Vec3 m_fireHeight = Vec3(0, 7, 0);
+
+		Vec3 FirePosAdjust(Vec3 fwd, Vec3 pos) {
+			Vec3 ret;
+
+			auto face = atan2f(fwd.z, fwd.x);
+
+			ret.x = (cosf(face) * pos.x) - (sinf(face) * pos.z);
+			ret.y = pos.y;
+			ret.z = (cosf(face) * pos.z) + (sinf(face) * pos.x);
+
+			return ret;
+		}
+	public:
+		BossFirstSphere1State(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// エネルギー弾終わり
+	class BossFirstSphereEndState : public StateBase {
+		float m_time = 0;
+		const float m_recoveryTime = .75f;
+
+	public:
+		BossFirstSphereEndState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {
 		}
 
@@ -402,6 +482,9 @@ namespace basecross {
 			AddState(L"SpinStart", shared_ptr<BossFirstSpinStartState>(new BossFirstSpinStartState(obj)));
 			AddState(L"Spin", shared_ptr<BossFirstSpinState>(new BossFirstSpinState(obj)));
 			AddState(L"SpinOver", shared_ptr<BossFirstSpinOverState>(new BossFirstSpinOverState(obj)));
+
+			AddState(L"SphereStart", shared_ptr<BossFirstSphereStartState>(new BossFirstSphereStartState(obj)));
+			AddState(L"Sphere1", shared_ptr<BossFirstSphere1State>(new BossFirstSphere1State(obj)));
 
 			AddState(L"BeamStart", shared_ptr<BossFirstBeamStartState>(new BossFirstBeamStartState(obj)));
 			AddState(L"BeamFire", shared_ptr<BossFirstBeamFireState>(new BossFirstBeamFireState(obj)));
