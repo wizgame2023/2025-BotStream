@@ -15,7 +15,7 @@ namespace basecross {
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体 [0]はボス向け)
-		shared_ptr<EnemyBase> m_enemies[23];
+		shared_ptr<EnemyBase> m_enemies[15];
 	public:
 		EnemyManager(const shared_ptr<Stage>& stagePtr) : 
 			MyGameObject(stagePtr)
