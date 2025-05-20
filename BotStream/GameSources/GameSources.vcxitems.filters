@@ -144,6 +144,10 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ZakoState.h">
       <Filter>State</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)PartsManager.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Parts.h">
+      <Filter>ObjectMove</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -248,5 +252,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)ZakoState.cpp">
       <Filter>State</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)PartsManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Parts.cpp" />
   </ItemGroup>
 </Project>
