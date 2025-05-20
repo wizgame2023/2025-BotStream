@@ -174,7 +174,7 @@ namespace basecross {
 		//回避していいか確認する
 		//m_playerDodgeFlag = m_player->GetDodgeFlag();
 		//回避タグ追加
-		m_player->AddTag(L"DodgeNow");
+		m_player->AddTag(L"invincible");
 
 		//回避判定が開始されたことを伝える
 		m_player->SetEndDodgeFlag(true);
@@ -215,7 +215,7 @@ namespace basecross {
 	void PlayerDodgeState::Exit()//終了処理
 	{
 		//回避タグ削除
-		m_player->RemoveTag(L"DodgeNow");
+		m_player->RemoveTag(L"invincible");
 	}
 
 
@@ -811,6 +811,8 @@ namespace basecross {
 		//hitInfo.Damage
 		m_player->HitBack();
 		m_player->SetHP(HPNow - hitInfo.Damage);
+
+		m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
 	}
 	void PlayerHitState::Update(float deltaTime)
 	{
@@ -827,7 +829,7 @@ namespace basecross {
 	}
 	void PlayerHitState::Exit()
 	{
-
+		m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
 	}
 
 
@@ -870,8 +872,8 @@ namespace basecross {
 		auto LandFlag = m_enemyZako->GetLand();
 		auto testVector = m_enemyZako->GetVelocity();
 
-		//攻撃っぽいアニメーションにしてみる
-		m_enemyZako->ChangeAnim(L"Down");
+		//攻撃アニメーションに変更
+		m_enemyZako->ChangeAnim(L"Melee_Jamp");
 		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 
 		//攻撃しているタグ追加
@@ -889,7 +891,6 @@ namespace basecross {
 		//攻撃しているときも少しだけ進んでいる
 		auto m_speed = 1.0f;//足の速さ
 		auto move = m_enemyZako->GetForward() * -(m_speed * 0.8);
-
 
 		//攻撃判定の生成
 		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
@@ -1045,7 +1046,7 @@ namespace basecross {
 		auto stage = m_enemyZako->GetStage();
 
 		//Playerの方向に回転する
-		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+		auto PushAngle = 0.0f;//回転のずれはない
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
 		//有効範囲まで接近する、プレイヤーにある程度近づかれたら距離を取る
@@ -1075,7 +1076,7 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = -7.0f;
+			m_speed = -3.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
 			auto LandFlag = m_enemyZako->GetLand();
@@ -1089,9 +1090,9 @@ namespace basecross {
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 
-		//一定時間たったら攻撃する
+		//攻撃が範囲内でかつ一定時間たったら攻撃する
 		m_timeOfShot += deltaTime;
-		if (m_timeOfShot >= m_timeMaxOfShot)
+		if (m_timeOfShot >= m_timeMaxOfShot && m_enemyZako->GetPlayerDist() <= Range)
 		{
 			m_timeOfShot = 0.0f;//リセット
 			m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
@@ -1110,7 +1111,7 @@ namespace basecross {
 		auto posEnemy = m_enemyZako->GetPosition();
 		//弾生成
 		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 30.0f,
-			dynamic_pointer_cast<Actor>(m_enemyZako),30.0f,ActorName_Enemy);
+			dynamic_pointer_cast<Actor>(m_enemyZako),40.0f,ActorName_Enemy);
 
 		m_enemyZako->ChangeAnim(L"Shot");//撃つアニメーションに変更
 	}
