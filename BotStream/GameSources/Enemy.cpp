@@ -284,7 +284,7 @@ namespace basecross {
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		UpdatePosition();
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
@@ -373,6 +373,8 @@ namespace basecross {
 		m_innerCollision = AddComponent<CollisionCapsule>();
 		m_innerCollision->SetAfterCollision(AfterCollision::None);
 		HitInfoInit();
+
+		GetAttackPtr()->GetCollisionPtr()->SetDrawActive(true);
 
 		m_doPhysics = false;
 	}
@@ -505,16 +507,16 @@ namespace basecross {
 
 		m_doPhysics = false;
 
-		//AddEffect(EnemyEffect_Sphere);
-		//仮
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-		ptrDraw->SetOwnShadowActive(false);//影は消す
-		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
-		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+		m_effect = AddEffect(EnemyEffect_Sphere);
 
+		//仮
+		//auto ptrDraw = AddComponent<PNTStaticDraw>();
+		//ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		//ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		//ptrDraw->SetOwnShadowActive(false);//影は消す
+		//ptrDraw->SetDrawActive(true);
+		//ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		//ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
@@ -527,7 +529,9 @@ namespace basecross {
 		tmp.HitTime_Air = .4f;
 
 		DefAttack(100.0f, tmp);
-		GetAttackPtr()->SetCollScale(4.0f);
+		GetAttackPtr()->GetComponent<Transform>()->SetScale(Vec3(.5f));
+		GetAttackPtr()->SetCollScale(8.0f);
+		GetAttackPtr()->SetCollHeight(0.1f);
 
 		SetVelocity(GetForward() * m_firstMoveSpeed);
 	}
@@ -536,10 +540,11 @@ namespace basecross {
 		Actor::OnUpdate();
 
 		//消滅する条件
-		bool doDisappear = m_AttackCol->GetMoveContact();
-		doDisappear = doDisappear || (m_disappear && m_disappearTime >= m_disappearTimeMax);
+		bool doDisappear = m_AttackCol->GetMoveContact() || m_disappear;
+		doDisappear = doDisappear && m_disappearTime >= m_disappearTimeMax;
 
 		if (doDisappear) {
+			EffectManager::Instance().StopEffect(m_effect);
 			RemoveSelf();
 		}
 
@@ -566,7 +571,20 @@ namespace basecross {
 			AddVelocity(m_secondMoveAngle * m_secondMoveSpeed * _delta);
 		}
 
+		//エフェクトを本体に追従させる
+		EffectManager::Instance().SetPosition(m_effect, GetPosition());
+
 		UpdatePosition();
+	}
+
+	void BossFirstSphere::CollidedWithTerrain() {
+		if (m_disappear) return;
+
+		//エフェクト再生
+		EffectManager::Instance().StopEffect(m_effect);
+		m_effect = AddEffect(EnemyEffect_SphereEnd);
+
+		m_disappear = true;
 	}
 
 	void BossFirstSphere::CreateChildObjects() {

@@ -105,8 +105,8 @@ namespace basecross {
 		}
 
 		// エフェクトの再生
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
-		void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
+		Effekseer::Handle EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
+		Effekseer::Handle EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
 		//void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
 		// 地面着地
 		void OnLanding();
@@ -142,7 +142,7 @@ namespace basecross {
 		void OnUpdate() override;
 
 		//エフェクトを出す処理
-		virtual void AddEffect(int addEffect);
+		virtual Effekseer::Handle AddEffect(int addEffect);
 
 		//ポーズのフラグをオンオフする関数
 		void SetPose(bool onOff);

@@ -179,44 +179,49 @@ namespace basecross {
 	}
 
 	//エフェクトを出す処理
-	void Actor::AddEffect(int addEffect)
+	Effekseer::Handle Actor::AddEffect(int addEffect)
 	{
+		Effekseer::Handle ret = -1;
 		Vec3 fwd = GetForward();
 		float angle = -atan2(fwd.z, fwd.x) + XM_PIDIV2;
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Attack2:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
 			break;
 		case PlayerEffect_Attack3:
-			EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
 			break;
 		case PlayerEffect_AttackEx:
-			EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f),Vec3(0.0f,2.0f,0.0f));
+			ret = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f),Vec3(0.0f,2.0f,0.0f));
 			//EfkPlaying(L"Attack", GetAngle(), Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Beam:
-			EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_ArmorBreak:
-			EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Beam:
-			EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Sphere:
-			EfkPlaying(L"EnergySphere", angle, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"EnergySphere", angle, Vec3(0, 1, 0));
+			break;
+		case EnemyEffect_SphereEnd:
+			ret = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0));
 			break;
 		default:
 			break;
 		}
+		return ret;
 	}
 
 	// エフェクトのプレイ(大きさを変えることが出来る)
-	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Vec3 scale,Vec3 pushPos)
+	Effekseer::Handle Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Vec3 scale,Vec3 pushPos)
 	{
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
@@ -225,10 +230,11 @@ namespace basecross {
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 		EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
+		return efkHandler;
 	}
 
 	// エフェクトのプレイ(色が変えることができる)
-	void Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Col4 changeColor, Vec3 pushPos)
+	Effekseer::Handle Actor::EfkPlaying(wstring EfkKey, float rad, Vec3 rotate, Col4 changeColor, Vec3 pushPos)
 	{
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
@@ -237,6 +243,7 @@ namespace basecross {
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
 		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		return efkHandler;
 	}
 
 	//// エフェクトのプレイ(大きさを変えることが出来る)

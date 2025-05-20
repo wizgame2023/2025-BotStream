@@ -36,7 +36,8 @@ namespace basecross{
 		PlayerEffect_Beam,
 		EnemyEffect_ArmorBreak,
 		EnemyEffect_Beam,
-		EnemyEffect_Sphere
+		EnemyEffect_Sphere,
+		EnemyEffect_SphereEnd
 	};
 
 	enum ActorName
