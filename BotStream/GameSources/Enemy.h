@@ -212,7 +212,7 @@ namespace basecross{
 		float m_disappearTime = 0;
 		const float m_disappearTimeMax = 1.0f;
 
-		shared_ptr<Player> m_player;
+		weak_ptr<Player> m_player;
 
 		//エフェクト
 		Effekseer::Handle m_effect;

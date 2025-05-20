@@ -562,7 +562,7 @@ namespace basecross {
 			SetVelocity(GetVelocity() - (GetVelocity() * m_speedDown * (1000.0f / 60.0f) * _delta));
 			if (m_time >= m_firstMoveTime) {
 				//プレイヤーの胸の高さ分。ここをどうするか少し考え
-				Vec3 v = m_player->GetPosition() + Vec3(0, 4, 0) - GetPosition();
+				Vec3 v = m_player.lock()->GetPosition() + Vec3(0, 4, 0) - GetPosition();
 				m_secondMoveAngle = v.normalize();
 				m_towardPlayer = true;
 			}
