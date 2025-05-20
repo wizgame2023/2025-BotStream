@@ -59,6 +59,8 @@ namespace basecross {
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
+        
+
         //wave1“G
         enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
         enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
@@ -71,6 +73,8 @@ namespace basecross {
         enemyMgr->InstEnemy(Vec3(-40.0f,2.0f, -275.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
         enemyMgr->InstEnemy(Vec3(50.0f, 2.0f, -285.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
         enemyMgr->InstEnemy(Vec3(-50.0f,2.0f, -215.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(4.0f, 4.0f, 4.0f));
+
+        //auto flyingEnemy = AddGameObject
 
         auto cameraManager = AddGameObject<CameraManager>();
         SetSharedGameObject(L"CameraManager", cameraManager);
