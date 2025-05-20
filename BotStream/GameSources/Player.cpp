@@ -691,7 +691,7 @@ namespace basecross {
 		Actor::OnCreate();
 
 		//いったん雑魚敵のHPは50とする
-		m_HPMax = 40.0f;
+		m_HPMax = 50.0f;
 		m_HPCurrent = m_HPMax;
 
 		//Transform設定
