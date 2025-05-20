@@ -45,7 +45,7 @@ namespace basecross {
 	class StateBase : enable_shared_from_this<StateBase> {
 	protected:
 		//オブジェクト
-		shared_ptr<GameObject> _obj;
+		weak_ptr<GameObject> _obj;
 
 	public:
 		StateBase(const shared_ptr<GameObject>& obj) {
