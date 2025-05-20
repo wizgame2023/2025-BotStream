@@ -112,22 +112,63 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//攻撃ステートの元となるクラス
+	class PlayerAttackBaseState :public PlayerStateBase
+	{
+	protected:
+		//攻撃時間
+		float m_timeMaxOfAttack = 0.8f;
+		float m_timeMaxOfAttackFirst = 0.3f;
+
+		//攻撃発生時間
+		float m_timeOfStartAttack = 0.2f;
+		//攻撃時間計測
+		float m_timeOfAttack = 0.0f;
+
+		//次の攻撃ボタン受付時間
+		float m_graceTimeOfNextAttack = 0.4f;
+		//次の攻撃をするかのフラグ
+		float m_nestAttackFlag = false;
+	public:
+		PlayerAttackBaseState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerAttackBaseState()
+		{
+		}
+
+		virtual void Enter() {};
+		virtual void Update(float deltaTime) {};
+		virtual void Exit() {};
+
+		//攻撃コリジョン発生
+		virtual void AttackCollisionOccurs() {};
+		//次の攻撃発生フラグ処理
+		virtual void NextAttackFlag();
+		//次のステート移動処理
+		virtual void NextState() {};
+	};
+
+
 	//攻撃ステート(一番最初に出てくる攻撃)
-	class PlayerAttack1State :public PlayerStateBase
+	class PlayerAttack1State :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.5f;
+		float m_timeMaxOfAttack = 0.8f;
+		float m_timeMaxOfAttackFirst = 0.3f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.1f;
+		float m_timeOfStartAttack = 0.2f;
 		//攻撃時間計測
 		float m_timeOfAttack = 0.0f;
 		//回避可能時間
 		float m_timeOfStartDodge = 0.35f;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
-		//次の攻撃の猶予時間
-		float m_graceTimeOfNextAttack = 0.3f;
+		//次の攻撃ボタン受付時間
+		float m_graceTimeOfNextAttack = 0.4f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -135,7 +176,7 @@ namespace basecross {
 
 	public:
 		PlayerAttack1State(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -146,23 +187,34 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次の攻撃発生フラグ処理
+		void NextAttackFlag()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(２番目に出る攻撃)
-	class PlayerAttack2State :public PlayerStateBase
+	class PlayerAttack2State :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.8f;
+		float m_timeMaxOfAttackTotal = 1.2f;
+
+		float m_timeMaxOfAttackFirst = 0.1f;
+		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f;
+		float m_timeOfStartAttackSecond = 0.6f;
 		//攻撃時間計測
-		float m_timeOfAttack;
+		float m_timeOfAttack = 0.0f;
 		//回避可能時間
 		float m_timeOfStartDodge = 0.4f;
-		//攻撃判定出現フラグ
-		bool AttackCollisionFlag = true;
-		//次の攻撃の猶予時間
+		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
+		int m_attackCollisionFlag = 0;
+		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 0.5f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
@@ -171,7 +223,7 @@ namespace basecross {
 
 	public:
 		PlayerAttack2State(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -182,30 +234,42 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次の攻撃発生フラグ処理
+		void NextAttackFlag()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(3番目に出る攻撃)
-	class PlayerAttack3State :public PlayerStateBase
+	class PlayerAttack3State :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 1.0f;
+		float m_timeMaxOfAttackTotal = 1.2f;
+
+		float m_timeMaxOfAttackFirst = 0.1f;
+		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f;
+		//攻撃発生時間
+		float m_timeOfStartAttackSecond = 0.6f;
 		//攻撃時間計測
 		float m_timeOfAttack;
-		//攻撃判定出現フラグ
-		bool AttackCollisionFlag = true;
-		//次の攻撃の猶予時間
+		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
+		int m_attackCollisionFlag = 0;
+		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 0.9f;
 		//次の攻撃をするかのフラグ
-		float m_nestAttackFlag = false;
+		//float m_nestAttackFlag = false;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
 		PlayerAttack3State(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -216,10 +280,15 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(最後に出る攻撃)
-	class PlayerAttackExState :public PlayerStateBase
+	class PlayerAttackExState :public PlayerAttackBaseState
 	{
 	private:
 		//攻撃時間
@@ -230,7 +299,7 @@ namespace basecross {
 		float m_timeOfAttack;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
-		////次の攻撃の猶予時間
+		//次の攻撃ボタン受付時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
 		//float m_nestAttackFlag = false;
@@ -239,7 +308,7 @@ namespace basecross {
 
 	public:
 		PlayerAttackExState(shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerAttackBaseState(obj)
 		{
 
 		}
@@ -250,6 +319,11 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
+
+		//攻撃コリジョン発生
+		void AttackCollisionOccurs()override;
+		//次のステート移動処理
+		void NextState()override;
 	};
 
 	//攻撃ステート(必殺技)
@@ -260,7 +334,7 @@ namespace basecross {
 		float m_timeMaxOfAttack = 2.0f;
 		//攻撃時間計測
 		float m_timeOfAttack;
-		////次の攻撃の猶予時間
+		//次の攻撃ボタン受付時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
 		//float m_nestAttackFlag = false;
@@ -414,6 +488,7 @@ namespace basecross {
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
 		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_speed = 1.0f;//足の速さ
 	public:
 		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -424,6 +499,8 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltatime);
 		virtual void Exit();
+
+		void SppedChange();//脚のスピードを変える処理
 	};
 
 	//攻撃をするときのステート(近距離)
@@ -433,7 +510,7 @@ namespace basecross {
 		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
 		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
 
-		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+		float m_timeOfAttackAdd = 0.7f;//攻撃判定の発生時間
 
 		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
@@ -454,7 +531,9 @@ namespace basecross {
 	{
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
-		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_timeMaxOfShot = 3.0f;//打つ時間の保存用変数
+
+		float m_speed = 1.0f;//足の速度
 	public:
 		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -515,6 +594,139 @@ namespace basecross {
 			AddState(L"Melee", shared_ptr<EnemyZakoMeleeState>(new EnemyZakoMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
 		
+			ChangeState(L"Stand");
+		}
+	};
+
+	// 飛ぶザコのステート----------------------------------------------------------
+
+	//何もないときのステート
+	class EnemyZakoFlyingStandState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingStandState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//接近戦をするときの準備ステート
+	class EnemyZakoFlyingPreparationforMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingPreparationforMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(近距離)
+	class EnemyZakoFlyingMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
+
+		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
+	public:
+		EnemyZakoFlyingMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//球を打つ直前の軸合わせのときのステート
+	class EnemyZakoFlyingAlignmentState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingAlignmentState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(遠距離)
+	class EnemyZakoFlyingShotState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoFlyingShotState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//ダメージを受けたとき
+	class EnemyZakoFlyingHitState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoFlyingHitState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+
+	// 飛ぶ敵のステートマシン
+	class EnemyZakoFlyingStateMachine :public StateMachineBase
+	{
+	public:
+		EnemyZakoFlyingStateMachine(shared_ptr<GameObject>& obj)
+		{
+			AddState(L"Stand", shared_ptr<EnemyZakoFlyingStandState>(new EnemyZakoFlyingStandState(obj)));
+			AddState(L"Shot", shared_ptr<EnemyZakoFlyingShotState>(new EnemyZakoFlyingShotState(obj)));
+			AddState(L"Alignment", shared_ptr<EnemyZakoFlyingAlignmentState>(new EnemyZakoFlyingAlignmentState(obj)));
+			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoFlyingPreparationforMeleeState>(new EnemyZakoFlyingPreparationforMeleeState(obj)));
+			AddState(L"Melee", shared_ptr<EnemyZakoFlyingMeleeState>(new EnemyZakoFlyingMeleeState(obj)));
+			AddState(L"Hit", shared_ptr<EnemyZakoFlyingHitState>(new EnemyZakoFlyingHitState(obj)));
+
 			ChangeState(L"Stand");
 		}
 	};
