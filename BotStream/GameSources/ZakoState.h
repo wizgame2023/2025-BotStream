@@ -7,9 +7,9 @@
 #include "stdafx.h"
 
 namespace basecross {
-	/*
-
-	//ŽG‹›“G‚ĚXe[g‚ĚŚł‚Ć‚Č‚éN‰X
+	//雑魚敵のステート関係
+	class EnemyZako;
+	//雑魚敵のステートの元となるクラス
 	class EnemyZakoStateBase :public StateBase
 	{
 	protected:
@@ -27,12 +27,12 @@ namespace basecross {
 		virtual void Exit() {}
 	};
 
-	//‰˝‚ŕ‚Č‚˘‚Ć‚«‚ĚXe[g
+	//何もないときのステート
 	class EnemyZakoStandState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
 	public:
 		EnemyZakoStandState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -45,13 +45,13 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//Ú‹ßí‚đ‚·‚é‚Ć‚«‚ĚŹ€”őXe[g
+	//接近戦をするときの準備ステート
 	class EnemyZakoPreparationforMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
-		float m_speed = 1.0f;//‘«‚Ě‘¬‚ł
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_speed = 1.0f;//足の速さ
 	public:
 		EnemyZakoPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -63,19 +63,19 @@ namespace basecross {
 		virtual void Update(float deltatime);
 		virtual void Exit();
 
-		void SppedChange();//‹r‚ĚXs[h‚đ•Ď‚¦‚éŹ—ť
+		void SppedChange();//脚のスピードを変える処理
 	};
 
-	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‹ß‹——Ł)
+	//攻撃をするときのステート(近距離)
 	class EnemyZakoMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//ŤUŚ‚ŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfAttack = 2.0f;//ŤUŚ‚ŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
 
-		float m_timeOfAttackAdd = 1.2f;//ŤUŚ‚”»’č‚Ě”­¶ŽžŠÔ
+		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
 
-		bool m_Attack = true;//ŤUŚ‚”»’č‚đŹo‚µ‚˝‚©‚Ět‰O
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
 		EnemyZakoMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -89,14 +89,14 @@ namespace basecross {
 
 	};
 
-	//‹…‚đ‘Ĺ‚Â’Ľ‘O‚ĚŽ˛Ť‡‚í‚ą‚Ě‚Ć‚«‚ĚXe[g
+	//球を打つ直前の軸合わせのときのステート
 	class EnemyZakoAlignmentState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfShot = 3.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 3.0f;//打つ時間の保存用変数
 
-		float m_speed = 1.0f;//‘«‚Ě‘¬“x
+		float m_speed = 1.0f;//足の速度
 	public:
 		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -109,12 +109,12 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‰“‹——Ł)
+	//攻撃をするときのステート(遠距離)
 	class EnemyZakoShotState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfAttack = 1.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
 	public:
 		EnemyZakoShotState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -128,7 +128,7 @@ namespace basecross {
 
 	};
 
-	//_[W‚đŽó‚Ż‚˝ŽG‹›“G
+	//ダメージを受けた雑魚敵
 	class EnemyZakoHitState :public EnemyZakoStateBase
 	{
 	private:
@@ -161,14 +161,14 @@ namespace basecross {
 		}
 	};
 
-	// ”ň‚ÔUR‚ĚXe[g----------------------------------------------------------
+	// 飛ぶザコのステート----------------------------------------------------------
 
-	//‰˝‚ŕ‚Č‚˘‚Ć‚«‚ĚXe[g
+	//何もないときのステート
 	class EnemyZakoFlyingStandState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
 	public:
 		EnemyZakoFlyingStandState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -181,12 +181,12 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//Ú‹ßí‚đ‚·‚é‚Ć‚«‚ĚŹ€”őXe[g
+	//接近戦をするときの準備ステート
 	class EnemyZakoFlyingPreparationforMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
 	public:
 		EnemyZakoFlyingPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -199,16 +199,16 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‹ß‹——Ł)
+	//攻撃をするときのステート(近距離)
 	class EnemyZakoFlyingMeleeState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//ŤUŚ‚ŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfAttack = 2.0f;//ŤUŚ‚ŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
 
-		float m_timeOfAttackAdd = 1.2f;//ŤUŚ‚”»’č‚Ě”­¶ŽžŠÔ
+		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
 
-		bool m_Attack = true;//ŤUŚ‚”»’č‚đŹo‚µ‚˝‚©‚Ět‰O
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
 		EnemyZakoFlyingMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -222,12 +222,12 @@ namespace basecross {
 
 	};
 
-	//‹…‚đ‘Ĺ‚Â’Ľ‘O‚ĚŽ˛Ť‡‚í‚ą‚Ě‚Ć‚«‚ĚXe[g
+	//球を打つ直前の軸合わせのときのステート
 	class EnemyZakoFlyingAlignmentState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfShot = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfShot = 4.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
 	public:
 		EnemyZakoFlyingAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -240,12 +240,12 @@ namespace basecross {
 		virtual void Exit();
 	};
 
-	//ŤUŚ‚‚đ‚·‚é‚Ć‚«‚ĚXe[g(‰“‹——Ł)
+	//攻撃をするときのステート(遠距離)
 	class EnemyZakoFlyingShotState :public EnemyZakoStateBase
 	{
 	private:
-		float m_timeOfAttack = 0.0f;//‘Ĺ‚ÂŽžŠÔŚo‰ß‚đ‘Ş‚é•Ď”
-		float m_timeMaxOfAttack = 1.0f;//‘Ĺ‚ÂŽžŠÔ‚Ě•Ű‘¶—p•Ď”
+		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
 	public:
 		EnemyZakoFlyingShotState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -259,7 +259,7 @@ namespace basecross {
 
 	};
 
-	//_[W‚đŽó‚Ż‚˝‚Ć‚«
+	//ダメージを受けたとき
 	class EnemyZakoFlyingHitState :public EnemyZakoStateBase
 	{
 	private:
@@ -277,7 +277,7 @@ namespace basecross {
 	};
 
 
-	// ”ň‚Ô“G‚ĚXe[g}V“
+	// 飛ぶ敵のステートマシン
 	class EnemyZakoFlyingStateMachine :public StateMachineBase
 	{
 	public:
@@ -293,5 +293,4 @@ namespace basecross {
 			ChangeState(L"Stand");
 		}
 	};
-	*/
 }
