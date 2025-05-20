@@ -221,12 +221,12 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		m_HPMax = 300;
+		m_HPMax = 450;
 		m_attack = 10;
 		m_defense = 1;
 		m_HPCurrent = m_HPMax;
 
-		m_armorMax = 100.0f;
+		m_armorMax = 150.0f;
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 6.0f;
 
