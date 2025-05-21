@@ -136,14 +136,16 @@ namespace basecross{
 	/// </summary>
 	class BossFirstShockwave : public ProjectileBase {
 	protected:
+		
+		//“Æ©“–‚½‚è”»’è
 		shared_ptr<CollisionCapsule> m_innerCollision;
 
 		//Œ»İ‚Ì”¼Œa
 		float m_radius = 0;
 		//L‚ª‚é‘¬“x
-		float m_radiateSpeed = 54.0f;
+		float m_radiateSpeed = 72.0f;
 		//”¼Œa‚ÌÅ‘å
-		float m_radiusMax = 108.0f;
+		float m_radiusMax = 180.0f;
 		//ŠO‰~‚Æ“à‰~‚Ì·
 		float m_widthCircle = .5f;
 
@@ -196,22 +198,24 @@ namespace basecross{
 	class BossFirstSphere : public Actor {
 	protected:
 		float m_time = 0;
-		bool m_disappear = false;
 		Quat m_face;
 
 		const float m_firstMoveSpeed = 120.0f;
 		float m_firstMoveTime = .8f;
 		const float m_speedDown = .65f;
 
-		float m_disappearTime = 0;
-		const float m_disappearTimeMax = .6f;
-
 		bool m_towardPlayer = false;
-
 		Vec3 m_secondMoveAngle;
-		const float m_secondMoveSpeed = 80.0f;
+		const float m_secondMoveSpeed = 150.0f;
 
-		shared_ptr<Player> m_player;
+		bool m_disappear = false;
+		float m_disappearTime = 0;
+		const float m_disappearTimeMax = 1.0f;
+
+		weak_ptr<Player> m_player;
+
+		//ƒGƒtƒFƒNƒg
+		Effekseer::Handle m_effect;
 
 		void CreateChildObjects() override;
 	public:
@@ -227,9 +231,7 @@ namespace basecross{
 		void OnCreate() override;
 		void OnUpdate() override;
 
-		void CollidedWithTerrain() {
-			m_disappear = true;
-		}
+		void CollidedWithTerrain();
 	};
 
 	/// <summary>
