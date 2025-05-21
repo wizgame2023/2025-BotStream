@@ -53,8 +53,14 @@ namespace basecross {
 		}
 
 		//物理的な処理
-		Gravity();
-		Friction();
+		if (m_doPhysics) {
+			if (m_isLand) {
+				Friction();
+			}
+			else {
+				Gravity();
+			}
+		}
 	}
 
 	//最高速度
@@ -83,9 +89,6 @@ namespace basecross {
 
 	//摩擦(地上のみ)
 	void Actor::Friction() {
-		if (!m_doPhysics || !m_isLand) {
-			return;
-		}
 
 		//静摩擦
 		if (m_accel == Vec3(0)) {
@@ -106,13 +109,6 @@ namespace basecross {
 
 	//重力
 	void Actor::Gravity() {
-		if (!m_doPhysics) {
-			return;
-		}
-		
-		if (m_isLand && m_velocity.y < m_gravity * _delta) {
-			m_velocity.y = m_gravity * _delta;
-		}
 		m_velocity.y += m_gravity * _delta;
 	}
 

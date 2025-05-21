@@ -12,12 +12,19 @@
 
 namespace basecross {
 	class MyGameObject;
+
+	enum EnemyVariation {
+		normal,
+		projectile,
+		aerial
+	};
+
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体 [0]はボス向け)
 		shared_ptr<EnemyBase> m_enemies[15];
 	public:
-		EnemyManager(const shared_ptr<Stage>& stagePtr) : 
+		EnemyManager(const shared_ptr<Stage>& stagePtr) :
 			MyGameObject(stagePtr)
 		{
 			bool isFirstofVector = true;
@@ -28,8 +35,38 @@ namespace basecross {
 					isFirstofVector = !isFirstofVector;
 					continue;
 				}
+
+				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+			}
+		}
+
+		//vectorを渡すことで生成する敵の種類を変えられたらいいねという話
+		EnemyManager(const shared_ptr<Stage>& stagePtr, vector<EnemyVariation>& enemyVariation) :
+			MyGameObject(stagePtr)
+		{
+			bool isFirstofVector = true;
+
+			int cnt = 0;
+			//あらかじめ生成
+			for (auto& e : m_enemies) {
+				if (isFirstofVector) {
+					isFirstofVector = !isFirstofVector;
+					continue;
+				}
 				auto test = 0.0f;
-				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));//ここを雑魚敵のクラスに変える
+				
+				switch (enemyVariation[cnt]) 
+				{
+				case normal:
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				default:
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+				}
+
+				cnt++;
 			}
 		}
 		~EnemyManager() {}
