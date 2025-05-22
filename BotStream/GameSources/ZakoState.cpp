@@ -32,15 +32,21 @@ namespace basecross {
 		{
 			if (m_enemyZako->GetAttackFlag())//攻撃フラグが立ってなかったら攻撃動作はできない
 			{
-				//近かったら通常攻撃
-				if (m_enemyZako->GetPlayerDist() <= 40)
+				//ランダムに攻撃する
+				auto par = rand() % 3;
+				switch (par)
 				{
+				case 0:
+					m_enemyZako->ChangeState(L"PreparationforCharge");//突進
+					break;
+				case 1:
 					m_enemyZako->ChangeState(L"PreparationforMelee");//接近して攻撃する
-				}
-				else
-				{
-					//遠くにいるなら突進
-					m_enemyZako->ChangeState(L"PreparationforCharge");//接近して攻撃する
+					break;
+				case 2:
+					m_enemyZako->ChangeState(L"PreparationforMelee");//接近して攻撃する
+					break;
+				default:
+					break;
 				}
 			}
 			if (!(m_enemyZako->GetAttackFlag()))//攻撃できる状態でないので逃げる
@@ -68,7 +74,7 @@ namespace basecross {
 		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		float distance = 50.0f;
+		float distance = 20.0f;
 		float m_speed = 10.0f;
 		if (m_enemyZako->GetPlayerDist() < distance)
 		{
@@ -338,7 +344,9 @@ namespace basecross {
 	//球を打つ直前の準備ステート
 	void EnemyZakoPreparationforLongState::Enter()
 	{
-
+		//弾を発射する時間を決める2~3秒の間で発射する
+		float minTime = 2.0f;
+		m_timeMaxOfShot = (rand() % 10) * 0.1f + minTime;
 	}
 	void EnemyZakoPreparationforLongState::Update(float deltaTime)
 	{
@@ -369,7 +377,7 @@ namespace basecross {
 			//アニメーション更新時間設定
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
-		if (m_enemyZako->GetPlayerDist() <= Range - 5.0f)//離れる
+		if (m_enemyZako->GetPlayerDist() <= Range - 10.0f)//離れる
 		{
 			//移動中なのでそれに合わせたアニメーション
 			m_enemyZako->ChangeAnim(L"Walk");
