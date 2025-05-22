@@ -9,11 +9,13 @@
 namespace basecross {
 	//雑魚敵のステート関係
 	class EnemyZako;
+
 	//雑魚敵のステートの元となるクラス
 	class EnemyZakoStateBase :public StateBase
 	{
 	protected:
 		shared_ptr<EnemyZako> m_enemyZako;
+
 	public:
 		EnemyZakoStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -187,12 +189,15 @@ namespace basecross {
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
 		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+
+		float m_speed = 1.0f;//足の速さ
 	public:
 		EnemyZakoFlyingPreparationforMeleeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
 		{
 
 		}
+		void SpeedChange();
 
 		virtual void Enter();
 		virtual void Update(float deltatime);
@@ -228,6 +233,8 @@ namespace basecross {
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
 		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+
+		float m_speed = 1.0f;//足の速さ
 	public:
 		EnemyZakoFlyingAlignmentState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
