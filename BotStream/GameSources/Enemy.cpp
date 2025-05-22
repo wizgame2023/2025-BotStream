@@ -537,6 +537,11 @@ namespace basecross {
 	}
 
 	void BossFirstSphere::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
 		Actor::OnUpdate();
 
 		//消滅する条件
