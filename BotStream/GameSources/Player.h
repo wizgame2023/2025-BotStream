@@ -270,9 +270,9 @@ namespace basecross{
 		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 
 		//攻撃のクールダウン関係
-		bool m_attackFlag = true;
+		bool m_attackFlag = false;
 		float m_timeOfAttackCool = 5.0f;
-		float m_timeCountOfAttackCool = 0.0f;
+		float m_timeCountOfAttackCool = 3.0f;
 
 	public:
 		// 雑魚敵の種類を追加するときはここに書く
