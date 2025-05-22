@@ -14,9 +14,9 @@ namespace basecross {
 	class MyGameObject;
 
 	enum EnemyVariation {
-		normal,
-		projectile,
-		aerial
+		EVar_Normal,
+		EVar_Projectile,
+		EVar_Aerial
 	};
 
 	class EnemyManager : public MyGameObject
@@ -37,6 +37,7 @@ namespace basecross {
 				}
 
 				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+
 			}
 		}
 
@@ -53,11 +54,25 @@ namespace basecross {
 					isFirstofVector = !isFirstofVector;
 					continue;
 				}
-				auto test = 0.0f;
 				
+				//バグ避け
+				if (cnt >= enemyVariation.max_size()) {
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					continue;
+				}
+
 				switch (enemyVariation[cnt]) 
 				{
-				case normal:
+					//必要に応じてクラスを変える
+				case EVar_Normal:
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				case EVar_Projectile:
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				case EVar_Aerial:
 					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
 					break;
 
@@ -100,6 +115,21 @@ namespace basecross {
 		
 		//敵の情報を入力して敵を1体出す
 		void InstEnemy(Vec3 pos, Vec3 rot, Vec3 scale);
+
+		template<typename T>
+		void InstEnemy(Vec3 pos, Vec3 rot, Vec3 scale) {
+			for (auto& e : m_enemies) {
+
+				shared_ptr<T> tmp = dynamic_pointer_cast<T>(e);
+
+				if (tmp == nullptr) continue;
+				if (e->GetUsed() == false) {
+					e->Initialize(pos, rot, scale);
+					return;
+				}
+			}
+			return;
+		}
 
 		//ボス敵のポインタを渡す用の変数
 		void InstBoss(shared_ptr<EnemyBase> boss) {
