@@ -45,6 +45,23 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//プレイヤーに距離を取る時のステート
+	class EnemyZakoEscapeState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoEscapeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	//接近戦をするときの準備ステート
 	class EnemyZakoPreparationforMeleeState :public EnemyZakoStateBase
 	{
@@ -197,6 +214,7 @@ namespace basecross {
 		EnemyZakoStateMachine(shared_ptr<GameObject>& obj)
 		{
 			AddState(L"Stand", shared_ptr<EnemyZakoStandState>(new EnemyZakoStandState(obj)));
+			AddState(L"Escape", shared_ptr<EnemyZakoEscapeState>(new EnemyZakoEscapeState(obj)));//逃げる
 			AddState(L"Shot", shared_ptr<EnemyZakoShotState>(new EnemyZakoShotState(obj)));
 			AddState(L"PreparationforLong", shared_ptr<EnemyZakoPreparationforLongState>(new EnemyZakoPreparationforLongState(obj)));
 			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoPreparationforMeleeState>(new EnemyZakoPreparationforMeleeState(obj)));
