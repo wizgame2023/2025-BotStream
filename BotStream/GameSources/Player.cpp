@@ -65,7 +65,7 @@ namespace basecross {
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
-		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetAfterCollision(AfterCollision::None);
 		ptrColl->SetDrawActive(true);
 
 
@@ -105,18 +105,18 @@ namespace basecross {
 		EffectManager::Instance().SetPosition(m_testEffect, m_EfkPos);
 
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
+		////着地判定(無効化時間中ならそれを減算する)
+		//OnLanding();
 
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				Friction();
-			}
-		}
+		////物理的な処理
+		//if (m_doPhysics) {
+		//	if (!m_isLand) {
+		//		Gravity();
+		//	}
+		//	else {
+		//		Friction();
+		//	}
+		//}
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
@@ -656,11 +656,14 @@ namespace basecross {
 	//当たり判定
 	void Bullet::OnCollisionEnter(shared_ptr<GameObject>& obj)
 	{
+		auto a = 0;
 		//敵や障害物に弾が当たったら消える
 		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
 		if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
 	}
 
@@ -748,7 +751,7 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
@@ -783,7 +786,7 @@ namespace basecross {
 				Gravity();
 			}
 			else {
-				//Friction();
+				Friction();
 			}
 		}
 
