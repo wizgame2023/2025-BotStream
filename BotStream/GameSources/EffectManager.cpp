@@ -172,4 +172,9 @@ namespace basecross
 	{
 		m_manager->SetSpeed(EfkHandle, Speed);
 	}
+
+	void EffectManager::SetRotate(const Handle EfkHandle, float x, float y, float z)
+	{
+		m_manager->SetRotation(EfkHandle, x, y, z);
+	}
 }

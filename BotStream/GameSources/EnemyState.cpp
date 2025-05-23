@@ -562,9 +562,10 @@ namespace basecross {
 		if (m_time >= m_attackTime && !m_attacked) {
 			m_attacked = !m_attacked;
 			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
-			
+			boss->AddEffect(EnemyEffect_Wave);
+
 			//10‚Í‚¸‚ç‚·’¼ü‹——£
-			Vec3 pos = boss->GetPosition() + boss->GetForward() * 10 + Vec3(0, 2, 0);
+			Vec3 pos = boss->GetPosition() + boss->GetForward() * m_waveDist + Vec3(0, -3.0f, 0);
 			boss->GetStage()->AddGameObject<BossFirstShockwave>(pos, Vec3(0.0f), Vec3(1.0f), boss);
 		}
 

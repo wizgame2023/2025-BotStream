@@ -108,6 +108,7 @@ namespace basecross {
 		Effekseer::Handle EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
 		Effekseer::Handle EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, Col4 changeColor, Vec3 pushPos = Vec3(0.0f));
 		//void EfkPlaying(const wstring efkKey, const float rad, const Vec3 rotate, const Vec3 scale = Vec3(1.0f), Vec3 pushPos = Vec3(0.0f));
+		
 		// 地面着地
 		void OnLanding();
 
@@ -219,6 +220,14 @@ namespace basecross {
 		//地面の上にいるか否かのゲッター
 		bool GetLand() {
 			return m_isLand;
+		}
+
+		//物理的処理のセッタ
+		void SetPhysics(bool doPhysics) {
+			m_doPhysics = doPhysics;
+		}
+		bool GetPhysics() {
+			return m_doPhysics;
 		}
 
 		//アニメーション変更(成功した場合trueを返す)
