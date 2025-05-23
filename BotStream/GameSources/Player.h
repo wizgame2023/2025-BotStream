@@ -41,7 +41,7 @@ namespace basecross{
 		EnemyEffect_Beam,
 		EnemyEffect_Sphere,
 		EnemyEffect_SphereEnd,
-		Effect_Landing
+		EnemyEffect_Wave
 	};
 
 	enum ActorName

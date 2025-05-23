@@ -224,6 +224,8 @@ namespace basecross {
 			break;
 		case Effect_Landing:
 			ret = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0));
+		case EnemyEffect_Wave:
+			ret = EfkPlaying(L"EnemyWave", angle, Vec3(0, 1, 0), Vec3(1), Vec3(0, -2, 0));
 			break;
 		default:
 			break;
