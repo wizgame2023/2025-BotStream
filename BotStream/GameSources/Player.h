@@ -34,10 +34,14 @@ namespace basecross{
 		PlayerEffect_Attack3,
 		PlayerEffect_AttackEx,
 		PlayerEffect_Beam,
+		PlayerEffect_Dodge,
+		PlayerEffect_Dash,
+		PlayerEffect_DashRipple,
 		EnemyEffect_ArmorBreak,
 		EnemyEffect_Beam,
 		EnemyEffect_Sphere,
-		EnemyEffect_SphereEnd
+		EnemyEffect_SphereEnd,
+		Effect_Landing
 	};
 
 	enum ActorName
