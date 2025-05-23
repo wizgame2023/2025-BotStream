@@ -158,6 +158,7 @@ namespace basecross {
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"WaveEfk", GetAngle(), Vec3(0, 1, 0));
 
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
@@ -916,6 +917,196 @@ namespace basecross {
 	}
 
 
+	void EnemyZakoFlying::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//いったん雑魚敵のHPは50とする
+		m_HPMax = 50.0f;
+		m_HPCurrent = m_HPMax;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		// 重力OFF
+		m_doPhysics = false;
+
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f / 5, 1.0f / 5, 1.0f / 5),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, -0.5f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		//攻撃タイプによって見た目が変わる
+		if (m_AttackType == Zako_Long)
+		{
+			ptrDraw->SetMeshResource(L"Enemy_A");
+		}
+		if (m_AttackType == Zako_Melee)
+		{
+			ptrDraw->SetMeshResource(L"Enemy_C");
+		}
+		ptrDraw->SetDiffuse(Col4(0.5f));
+		//ptrDraw->SetEmissive(Col4(1));
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		//ptrDraw->SetTextureResource(L"Tx_Boss1");
+
+		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
+		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+		if (m_AttackType == Zako_Melee)
+		{
+			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
+			ptrDraw->AddAnimation(L"Melee_Scratch", 700, 22, false, 24.0f);
+		}
+
+		//コリジョン作成
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);//デバック用
+
+		AddTag(L"Enemy");
+		AddTag(L"EnemyZako");
+
+		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
+		//接地判定の設定
+		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		//m_LandDetect->SetCollScale(3.0f);
+
+		//ステートマシン生成
+		m_state = shared_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
+
+		//頭上にHPバーを表示させる
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer->SetPercent(1.0f);
+
+		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
+
+		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+	}
+
+	void EnemyZakoFlying::OnUpdate()
+	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+
+		EnemyBase::OnUpdate();
+
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+
+		//物理的な処理
+		if (m_doPhysics) {
+			if (!m_isLand) {
+				Gravity();
+			}
+			else {
+				//Friction();
+			}
+		}
+
+
+		//HPバーの処理
+		UpdateHPBer();
+		//攻撃のクールタイム
+		TimeOfAttackCool();
+
+		//HPがゼロになったら消える
+		if (m_HPCurrent <= 0)
+		{
+			RemoveTag(L"LockOnCan");
+			RemoveTag(L"LockOnTarget");
+
+			m_used = false;
+
+			//GetStage()->RemoveGameObject<EnemyZako>(GetThis<EnemyZako>());
+			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			//GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		}
+
+		//アニメーション更新
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
+
+		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+	}
+
+	//HPバーの処理
+	void EnemyZakoFlying::UpdateHPBer()
+	{
+		//ビルボードの処理
+		if (!m_used)
+		{
+			m_HPFrame->SetScale(Vec3(0.0f));
+			m_HPBer->SetScale(Vec3(0.0f));
+		}
+		if (m_used)
+		{
+			m_HPFrame->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+			m_HPBer->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+
+			//HPの割合によってゲージが減る
+			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
+			m_HPBer->SetPercent(HPPercent);
+
+		}
+
+
+	}
+
+	//攻撃のクールタイム
+	void EnemyZakoFlying::TimeOfAttackCool()
+	{
+		//攻撃のクールタイム
+		if (!m_attackFlag)
+		{
+			m_timeCountOfAttackCool += _delta;
+			//クールタイム過ぎたら攻撃できるようになる
+			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
+			{
+				m_timeCountOfAttackCool = 0.0f;//リセット
+				m_attackFlag = true;
+			}
+		}
+	}
+
+	//コリジョン判定
+	void EnemyZakoFlying::OnCollisionEnter(shared_ptr<GameObject>& Other)
+	{
+		DetectBeingAttacked(Other);
+	}
+
+	//ダメージを受けた際の処理
+	void EnemyZakoFlying::OnDamaged()
+	{
+		////攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
+		//if (!FindTag(L"AttackNow"))
+		//{
+		//	m_state->ChangeState(L"Hit");
+		//}
+		//else if (FindTag(L"AttackNow"))
+		//{
+		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//}
+
+		m_state->ChangeState(L"Hit");
+	}
 
 }
 //end basecross

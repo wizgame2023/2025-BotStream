@@ -177,7 +177,8 @@ namespace basecross {
 	//エフェクトを出す処理
 	Effekseer::Handle Actor::AddEffect(int addEffect)
 	{
-		Effekseer::Handle ret = -1;
+		Handle ret = -1;
+
 		Vec3 fwd = GetForward();
 		float angle = -atan2(fwd.z, fwd.x) + XM_PIDIV2;
 		switch (addEffect)
@@ -237,9 +238,10 @@ namespace basecross {
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
 		auto plPos = trans->GetPosition()+ pushPos;
-
+		auto plRot = trans->GetRotation();
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
-		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		//EffectManager::Instance().SetRotate(efkHandler,XMConvertToRadians(45.0f),-plRot.y,0.0f);
+		EffectManager::Instance().SetRotation(efkHandler, rotate, rad);
 		EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 		return efkHandler;
 	}

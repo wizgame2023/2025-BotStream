@@ -222,6 +222,14 @@ namespace basecross {
 			return m_isLand;
 		}
 
+		//物理的処理のセッタ
+		void SetPhysics(bool doPhysics) {
+			m_doPhysics = doPhysics;
+		}
+		bool GetPhysics() {
+			return m_doPhysics;
+		}
+
 		//アニメーション変更(成功した場合trueを返す)
 		bool ChangeAnim(wstring anim, bool forceChange = false) {
 			auto drawPtr = GetBoneModelDraw();

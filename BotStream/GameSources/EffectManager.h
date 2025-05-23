@@ -159,5 +159,7 @@ namespace basecross
 		*/
 		//----------------------------------------------------------------------------------
 		void SetSpeed(const Handle& EfkHandle, const float Speed);
+
+		void SetRotate(const Handle EfkHandle, float x, float y, float z);
 	};
 }
