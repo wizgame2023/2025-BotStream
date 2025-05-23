@@ -179,6 +179,10 @@ namespace basecross{
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
 
+		// その他ゲーム中テクスチャ
+		strTexture = texPath + L"Shock_wave_ring001.png";
+		app->RegisterTexture(L"Tex_Shockwave", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ
@@ -225,6 +229,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
+		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
 		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
