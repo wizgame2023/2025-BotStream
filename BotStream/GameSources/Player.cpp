@@ -184,43 +184,45 @@ namespace basecross {
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetPosition());
+		//GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetPosition());//移動処理
 
-		////移動ですり抜けない処理
-		//auto objVec = stage->GetGameObjectVec();
+		//移動ですり抜けない処理
+		auto objVec = stage->GetGameObjectVec();
 
-		//Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
-		//TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
-		//size_t triangleNumber; // レイが交差したポリゴンの番号
-		//float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
+		Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
+		TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
+		size_t triangleNumber; // レイが交差したポリゴンの番号
+		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
 
-		//Vec3 beforPos;
-		////障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
-		//for (auto obj : objVec)
-		//{
-		//	auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
-		//	float hitLength = min;//Playerと障害物の距離の長さ
+		Vec3 beforPos = GetPosition();//移動前
+		Vec3 afterPos = (m_velocity * _delta) + GetPosition();//移動後
+		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
+		for (auto obj : objVec)
+		{
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
+			float hitLength = min;//Playerと障害物の距離の長さ
 
-		//	//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
-		//	if (obstacles)
-		//	{
-		//		//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
-		//		if (!obstacles->FindTag(L"CameraObstacles")) continue;
+			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
+			if (obstacles)
+			{
+				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-		//		auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
-		//		ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
-		//		Vec3 playerorObstaclesVec = hitPos - m_playerPos;
-		//		hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
-		//	}
+				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
+				Vec3 playerorObstaclesVec = hitPos - beforPos;
+				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
+			}
 
-		//	//minよりhitLengthが短かったら位置更新する
-		//	if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
-		//	{
-		//		min = hitLength;
-		//		hitPos.y = m_cameraPos.y;//Y座標は変えないようにする
-		//		m_cameraPos = hitPos;
-		//	}
-		//}
+			//minよりhitLengthが短かったら位置更新する
+			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
+			{
+				min = hitLength;
+				hitPos.y = afterPos.y;//Y座標は変えないようにする
+				afterPos = hitPos;
+			}
+		}
+		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
 
 	}
 
