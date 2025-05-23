@@ -45,6 +45,23 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//プレイヤーに距離を取る時のステート
+	class EnemyZakoEscapeState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoEscapeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	//接近戦をするときの準備ステート
 	class EnemyZakoPreparationforMeleeState :public EnemyZakoStateBase
 	{
@@ -89,8 +106,54 @@ namespace basecross {
 
 	};
 
-	//球を打つ直前の軸合わせのときのステート
-	class EnemyZakoAlignmentState :public EnemyZakoStateBase
+	//突進の準備ステート
+	class EnemyZakoPreparationforChargeState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoPreparationforChargeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//攻撃をするときのステート(突進)ステート
+	class EnemyZakoChargeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
+
+		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
+
+		float m_playerdistance = 0.0f;//Playerとの現在距離
+		float m_playerStartdistance = 0.0f;//Playerとの最初の距離
+		float m_moveAngle = 0.0f;
+
+	public:
+		EnemyZakoChargeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+
+	//球を打つ準備のステート
+	class EnemyZakoPreparationforLongState :public EnemyZakoStateBase
 	{
 	private:
 		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
@@ -98,7 +161,7 @@ namespace basecross {
 
 		float m_speed = 1.0f;//足の速度
 	public:
-		EnemyZakoAlignmentState(shared_ptr<GameObject>& obj) :
+		EnemyZakoPreparationforLongState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
 		{
 
@@ -151,9 +214,12 @@ namespace basecross {
 		EnemyZakoStateMachine(shared_ptr<GameObject>& obj)
 		{
 			AddState(L"Stand", shared_ptr<EnemyZakoStandState>(new EnemyZakoStandState(obj)));
+			AddState(L"Escape", shared_ptr<EnemyZakoEscapeState>(new EnemyZakoEscapeState(obj)));//逃げる
 			AddState(L"Shot", shared_ptr<EnemyZakoShotState>(new EnemyZakoShotState(obj)));
-			AddState(L"Alignment", shared_ptr<EnemyZakoAlignmentState>(new EnemyZakoAlignmentState(obj)));
+			AddState(L"PreparationforLong", shared_ptr<EnemyZakoPreparationforLongState>(new EnemyZakoPreparationforLongState(obj)));
 			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoPreparationforMeleeState>(new EnemyZakoPreparationforMeleeState(obj)));
+			AddState(L"PreparationforCharge", shared_ptr<EnemyZakoPreparationforChargeState>(new EnemyZakoPreparationforChargeState(obj)));//突進準備
+			AddState(L"Charge", shared_ptr<EnemyZakoChargeState>(new EnemyZakoChargeState(obj)));//突進
 			AddState(L"Melee", shared_ptr<EnemyZakoMeleeState>(new EnemyZakoMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
 
