@@ -59,16 +59,29 @@ namespace basecross {
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
-        
+        auto headParts = AddGameObject<HeadParts>();
+        SetSharedGameObject(L"HeadParts", headParts);
+        headParts->GetComponent<Transform>()->SetPosition(0.0f, -1.0f, -280.0f);
+
+        auto bodyParts = AddGameObject<BodyParts>();
+        SetSharedGameObject(L"BodyParts", bodyParts);
+        bodyParts->GetComponent<Transform>()->SetPosition(15.0f, -1.0f, -280.0f);
+
+        auto legParts = AddGameObject<LegParts>();
+        SetSharedGameObject(L"LegParts", legParts);
+        legParts->GetComponent<Transform>()->SetPosition(-15.0f, -1.0f, -280.0f);
+
+        auto partsMgr = AddGameObject<PartsManager>();
+        SetSharedGameObject(L"PartsManager", partsMgr);
 
         //wave1“G
         enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         //auto flyingEnemy = AddGameObject
 
         auto cameraManager = AddGameObject<CameraManager>();
@@ -93,10 +106,17 @@ namespace basecross {
         auto scene = app->GetScene<Scene>();
         auto KeyState = App::GetApp()->GetInputDevice().GetKeyState();
         auto pad = App::GetApp()->GetInputDevice().GetControlerVec()[0];
+
         auto player = GetSharedGameObject<Player>(L"Player");
         auto enemyMgr = GetSharedGameObject<EnemyManager>(L"EnemyManager");
         auto boss = GetSharedGameObject<BossFirst>(L"Boss");
+
         auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
+
+        auto headParts = GetSharedGameObject<HeadParts>(L"HeadParts");
+        auto bodyParts = GetSharedGameObject<BodyParts>(L"BodyParts");
+        auto legParts = GetSharedGameObject<LegParts>(L"LegParts");
+        auto partsMgr = GetSharedGameObject<PartsManager>(L"PartsManager");
 
         fadeout->GetBlackFlag();
         m_BlackFlag = fadeout->GetBlackFlag();
@@ -105,6 +125,20 @@ namespace basecross {
         fadeout->GetFadeInFlag();
         m_IsFadeInFlag = fadeout->GetFadeInFlag();
 
+        headParts->GetHeadParts();
+        partsMgr->GetAttachHeadParts();
+        m_GetHeadParts = headParts->GetHeadParts();
+        m_AttachHeadParts = partsMgr->GetAttachHeadParts();
+
+        bodyParts->GetBodyParts();
+        partsMgr->GetAttachBodyParts();
+        m_GetBodyParts = bodyParts->GetBodyParts();
+        m_AttachBodyParts = partsMgr->GetAttachBodyParts();
+
+        legParts->GetLegParts();
+        partsMgr->GetAttachLegParts();
+        m_GetLegParts = legParts->GetLegParts();
+        m_AttachLegParts = partsMgr->GetAttachLegParts();
 
         player->GetHP();
         auto plaHP = player->GetHP();
@@ -117,8 +151,7 @@ namespace basecross {
         EffectManager::Instance().InterfaceUpdate();
 
 
-
-        if (m_waveNow == 1 && EnemyNum == 0)
+        if (m_waveNow == 1 && EnemyNum == 0 && m_AttachHeadParts == true && m_AttachBodyParts == true && m_AttachLegParts == true)
         {
             m_IsFadeOutFlag = true;
         }
