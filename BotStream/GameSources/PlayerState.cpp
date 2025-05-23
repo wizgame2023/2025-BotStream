@@ -169,6 +169,8 @@ namespace basecross {
 		m_SEManager->Start(L"Dash", 0, 0.9f);
 		//回避アニメーション
 		m_player->ChangeAnim(L"Dodge");
+		//回避エフェクト
+		m_effect = m_player->AddEffect(PlayerEffect_Dodge);
 
 
 		//回避していいか確認する
@@ -211,6 +213,9 @@ namespace basecross {
 
 		}
 
+		//エフェクトを追従させる
+		EffectManager::Instance().SetPosition(m_effect, m_player->GetPosition());
+
 	}
 	void PlayerDodgeState::Exit()//終了処理
 	{
@@ -225,11 +230,23 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		//ダッシュ用SEを再生
 		m_SE = m_SEManager->Start(L"Landing", XAUDIO2_LOOP_INFINITE, 0.9f);
+		//ダッシュ用エフェクトを再生
+		m_effect = m_player->AddEffect(PlayerEffect_Dash);
 	}
 	void PlayerDashState::Update(float deltaTime)
 	{
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
+
+		//エフェクト追従処理
+		Vec3 playerPos = m_player->GetPosition();
+		Quat playerQt = m_player->GetComponent<Transform>()->GetQuaternion();
+		//playerQt = playerQt;
+		//playerQt.w = -playerQt.w;
+		EffectManager::Instance().SetPosition(m_effect, playerPos+Vec3(0.0f,1.9f,0.0f));
+		EffectManager::Instance().SetRotation(m_effect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+		//m_effect = m_player->AddEffect(PlayerEffect_);
+		m_player->AddEffect(PlayerEffect_DashRipple);//エフェクト追加
 
 
 		//移動処理
