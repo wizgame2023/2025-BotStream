@@ -158,6 +158,7 @@ namespace basecross {
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"WaveEfk", GetAngle(), Vec3(0, 1, 0));
 
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
@@ -888,6 +889,10 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
+		// 重力OFF
+		m_doPhysics = false;
+
+
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
 			Vec3(1.0f / 5, 1.0f / 5, 1.0f / 5),
@@ -935,7 +940,7 @@ namespace basecross {
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
 		//接地判定の設定
-		m_LandDetect->SetBindPos(Vec3(0, -10.0f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
