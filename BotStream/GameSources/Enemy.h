@@ -143,18 +143,36 @@ namespace basecross{
 		//åªç›ÇÃîºåa
 		float m_radius = 0;
 		//çLÇ™ÇÈë¨ìx
-		float m_radiateSpeed = 72.0f;
+		const float m_radiateSpeed = 72.0f;
+		//ìßâﬂÇ™énÇ‹ÇÈîºåa
+		const float m_radiusStartFade = 45.0f;
 		//îºåaÇÃç≈ëÂ
-		float m_radiusMax = 180.0f;
+		const float m_radiusMax = 180.0f;
 		//äOâ~Ç∆ì‡â~ÇÃç∑
-		float m_widthCircle = .5f;
+		const float m_widthCircle = .5f;
 
-		const float m_height = 2.0f;
+		const float m_height = 4.0f;
 
 		int m_isPlayerInsideCnt = 0;
 		const int m_isPlayerInsideCntMax = 1;
 
+		//å©ÇΩñ⁄ä÷åW
+		shared_ptr<BcPCTStaticDraw> m_ptrDraw;
+		vector<uint16_t> m_indices;
+		vector<VertexPositionColorTexture> m_vertices;
+
+		Vec2 m_loop = Vec2(1.0f, 1.0f);
+		int m_numOfVertices = 12;
+		float m_meshHeight = 1.5f;
+		float m_topRadiusPlus = 1.2f;
+		float m_btmRadiusPlus = 1.0f;
+		Col4 m_topColor = Col4(1, 1, 1, 1);
+		Col4 m_btmColor = Col4(1, 1, 1, 1);
+		wstring m_texKey = L"Tex_Shockwave";
+
 		void HitInfoInit() override;
+
+		void DrawInit();
 	public:
 		BossFirstShockwave(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
 			ProjectileBase(stagePtr, pos, rot, scale, originObj)
@@ -206,7 +224,7 @@ namespace basecross{
 
 		bool m_towardPlayer = false;
 		Vec3 m_secondMoveAngle;
-		const float m_secondMoveSpeed = 150.0f;
+		const float m_secondMoveSpeed = 300.0f;
 
 		bool m_disappear = false;
 		float m_disappearTime = 0;

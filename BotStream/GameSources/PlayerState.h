@@ -74,6 +74,9 @@ namespace basecross {
 	private:
 		//回避していいかのフラグ
 		bool m_playerDodgeFlag = false;
+
+		//エフェクトのハンドラー
+		Handle m_effect = NULL;
 	public:
 		PlayerDodgeState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
@@ -96,6 +99,8 @@ namespace basecross {
 	private:
 		shared_ptr<Player> m_player;
 		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
+	
+		Handle m_effect = NULL;
 	public:
 		PlayerDashState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj),
