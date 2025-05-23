@@ -31,6 +31,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)MyGameObject.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectMove.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ObjectNotMove.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Parts.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PartsManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PauseUI.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Player.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PlayerState.h" />
@@ -70,6 +72,8 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)MyGameObject.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ObjectMove.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ObjectNotMove.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Parts.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PartsManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PauseUI.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Player.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PlayerState.cpp" />

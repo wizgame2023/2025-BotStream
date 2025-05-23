@@ -136,23 +136,43 @@ namespace basecross{
 	/// </summary>
 	class BossFirstShockwave : public ProjectileBase {
 	protected:
+		
+		//ì∆é©ìñÇΩÇËîªíË
 		shared_ptr<CollisionCapsule> m_innerCollision;
 
 		//åªç›ÇÃîºåa
 		float m_radius = 0;
 		//çLÇ™ÇÈë¨ìx
-		float m_radiateSpeed = 54.0f;
+		const float m_radiateSpeed = 72.0f;
+		//ìßâﬂÇ™énÇ‹ÇÈîºåa
+		const float m_radiusStartFade = 45.0f;
 		//îºåaÇÃç≈ëÂ
-		float m_radiusMax = 108.0f;
+		const float m_radiusMax = 180.0f;
 		//äOâ~Ç∆ì‡â~ÇÃç∑
-		float m_widthCircle = .5f;
+		const float m_widthCircle = .5f;
 
-		const float m_height = 2.0f;
+		const float m_height = 4.0f;
 
 		int m_isPlayerInsideCnt = 0;
 		const int m_isPlayerInsideCntMax = 1;
 
+		//å©ÇΩñ⁄ä÷åW
+		shared_ptr<BcPCTStaticDraw> m_ptrDraw;
+		vector<uint16_t> m_indices;
+		vector<VertexPositionColorTexture> m_vertices;
+
+		Vec2 m_loop = Vec2(1.0f, 1.0f);
+		int m_numOfVertices = 12;
+		float m_meshHeight = 1.5f;
+		float m_topRadiusPlus = 1.2f;
+		float m_btmRadiusPlus = 1.0f;
+		Col4 m_topColor = Col4(1, 1, 1, 1);
+		Col4 m_btmColor = Col4(1, 1, 1, 1);
+		wstring m_texKey = L"Tex_Shockwave";
+
 		void HitInfoInit() override;
+
+		void DrawInit();
 	public:
 		BossFirstShockwave(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
 			ProjectileBase(stagePtr, pos, rot, scale, originObj)
@@ -196,22 +216,24 @@ namespace basecross{
 	class BossFirstSphere : public Actor {
 	protected:
 		float m_time = 0;
-		bool m_disappear = false;
 		Quat m_face;
 
 		const float m_firstMoveSpeed = 120.0f;
 		float m_firstMoveTime = .8f;
 		const float m_speedDown = .65f;
 
-		float m_disappearTime = 0;
-		const float m_disappearTimeMax = .6f;
-
 		bool m_towardPlayer = false;
-
 		Vec3 m_secondMoveAngle;
-		const float m_secondMoveSpeed = 80.0f;
+		const float m_secondMoveSpeed = 300.0f;
 
-		shared_ptr<Player> m_player;
+		bool m_disappear = false;
+		float m_disappearTime = 0;
+		const float m_disappearTimeMax = 1.0f;
+
+		weak_ptr<Player> m_player;
+
+		//ÉGÉtÉFÉNÉg
+		Effekseer::Handle m_effect;
 
 		void CreateChildObjects() override;
 	public:
@@ -227,9 +249,7 @@ namespace basecross{
 		void OnCreate() override;
 		void OnUpdate() override;
 
-		void CollidedWithTerrain() {
-			m_disappear = true;
-		}
+		void CollidedWithTerrain();
 	};
 
 	/// <summary>

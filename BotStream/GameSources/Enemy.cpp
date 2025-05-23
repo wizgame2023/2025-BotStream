@@ -143,11 +143,17 @@ namespace basecross {
 	}
 	
 	void EnemyBase::RotateToPlayer(const float multiply, const float threshold) {
-		float playerDir = GetPlayerSubDirection();
+		const float playerDir = GetPlayerSubDirection();
+		float rotate = m_rotateSpeed * multiply * _delta * (playerDir < 0 ? -1 : 1);
 
 		if (abs(playerDir) > threshold) {
 			Quat q = GetQuaternion();
-			q = RotateQuat(q, Vec3(0, 1, 0), m_rotateSpeed * multiply * _delta * (playerDir < 0 ? -1 : 1));
+
+			if (abs(playerDir) < abs(rotate)) {
+				rotate = playerDir;
+			}
+
+			q = RotateQuat(q, Vec3(0, 1, 0), rotate);
 			SetQuaternion(q);
 		}
 	}
@@ -221,12 +227,12 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		m_HPMax = 300;
+		m_HPMax = 450;
 		m_attack = 10;
 		m_defense = 1;
 		m_HPCurrent = m_HPMax;
 
-		m_armorMax = 100.0f;
+		m_armorMax = 150.0f;
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 6.0f;
 
@@ -284,7 +290,7 @@ namespace basecross {
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(_delta);
 
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		UpdatePosition();
 	}
 
 	void BossFirst::OnCollisionEnter(shared_ptr<GameObject>& Other) {
@@ -372,7 +378,11 @@ namespace basecross {
 
 		m_innerCollision = AddComponent<CollisionCapsule>();
 		m_innerCollision->SetAfterCollision(AfterCollision::None);
+		//m_innerCollision->SetDrawActive(true);
+		//GetAttackPtr()->GetCollisionPtr()->SetDrawActive(true);
+
 		HitInfoInit();
+		DrawInit();
 
 		m_doPhysics = false;
 	}
@@ -387,27 +397,86 @@ namespace basecross {
 		_delta = App::GetApp()->GetElapsedTime();
 
 		if (m_radius >= m_radiusMax || m_AttackCol->GetMoveContact()) {
-			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
-			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
-			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			RemoveSelf();
 			return;
 		}
 
+		//拡大
 		m_radius += m_radiateSpeed * _delta;
-
 		SetScale(Vec3(m_radius - m_widthCircle, m_height, m_radius - m_widthCircle));
-
 		m_AttackCol->SetScale(Vec3(m_radius, m_height, m_radius));
+		
+		if (m_radius >= m_radiusStartFade) {
+			Col4 tmp = Col4(1, 1, 1, 1 - (m_radius - m_radiusStartFade) / (m_radiusMax - m_radiusStartFade));
+			for (auto& e : m_vertices) {
+				e.color = tmp;
+			}
+		}
 
 		//プレイヤーが内側にいたら攻撃判定を消す
 		float playerInside = m_isPlayerInsideCnt <= 0 ? 1 : 0;
 		m_AttackCol->ActivateCollision(playerInside);
-
+		//プレイヤーが外側にいるときの判定用
 		if (m_isPlayerInsideCnt > 0) {
 			m_isPlayerInsideCnt--;
 		}
+
+		m_ptrDraw->UpdateVertices(m_vertices);
 	}
 
+	//描画コンポーネントの情報
+	void BossFirstShockwave::DrawInit() {
+		m_ptrDraw = AddComponent<BcPCTStaticDraw>();
+
+		m_vertices.clear();
+		m_vertices.reserve((m_numOfVertices + 1) * 2);
+
+		for (int i = 0; i <= m_numOfVertices; i++) {
+			Vec3 vtxPos;
+			VertexPositionColorTexture tmp;
+
+			float rad = XMConvertToRadians(360.0f / m_numOfVertices * i);
+			float u = m_loop.x * static_cast<float>(i) / static_cast<float>(m_numOfVertices);
+			float v = m_loop.y;
+			
+			//↑
+			const float scale = GetScale().x;
+			float plus = (m_topRadiusPlus / scale);
+			vtxPos = Vec3(cosf(rad) / 2 * plus, m_meshHeight, sinf(rad) / 2 * plus);
+			tmp = VertexPositionColorTexture(vtxPos, m_topColor, Vec2(u, 0));
+			m_vertices.push_back(tmp);
+
+			//↓
+			plus = (m_btmRadiusPlus / scale);
+			vtxPos = Vec3(cosf(rad) / 2 * plus, 0, sinf(rad) / 2 * plus);
+			tmp = VertexPositionColorTexture(vtxPos, m_btmColor, Vec2(u, v));
+			m_vertices.push_back(tmp);
+		}
+
+		const vector<uint16_t> baseIndex = {
+			2, 1, 0,
+			3, 1, 2
+		};
+
+		m_indices.clear();
+		m_indices.reserve(m_numOfVertices * baseIndex.size());
+		//各頂点の上下に対してループ
+		for (int i = 0; i < m_numOfVertices; i++) {
+			for (auto e : baseIndex) {
+				m_indices.push_back(e + (2 * i));
+			}
+		}
+
+		m_ptrDraw->SetOriginalMeshUse(true);
+		m_ptrDraw->CreateOriginalMesh(m_vertices, m_indices);
+		m_ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		m_ptrDraw->SetDepthStencilState(DepthStencilState::Read);
+		m_ptrDraw->SetBlendState(BlendState::Additive);
+		m_ptrDraw->SetTextureResource(m_texKey);
+		SetAlphaActive(true);
+	}
+
+	//当たり判定の情報
 	void BossFirstShockwave::HitInfoInit() {
 
 		//攻撃判定の定義
@@ -505,16 +574,16 @@ namespace basecross {
 
 		m_doPhysics = false;
 
-		//AddEffect(EnemyEffect_Sphere);
-		//仮
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-		ptrDraw->SetOwnShadowActive(false);//影は消す
-		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
-		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+		m_effect = AddEffect(EnemyEffect_Sphere);
 
+		//仮
+		//auto ptrDraw = AddComponent<PNTStaticDraw>();
+		//ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		//ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		//ptrDraw->SetOwnShadowActive(false);//影は消す
+		//ptrDraw->SetDrawActive(true);
+		//ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		//ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
@@ -527,21 +596,31 @@ namespace basecross {
 		tmp.HitTime_Air = .4f;
 
 		DefAttack(100.0f, tmp);
-		GetAttackPtr()->SetCollScale(4.0f);
+		GetAttackPtr()->GetComponent<Transform>()->SetScale(Vec3(.5f));
+		GetAttackPtr()->SetCollScale(8.0f);
+		GetAttackPtr()->SetCollHeight(0.1f);
 
 		SetVelocity(GetForward() * m_firstMoveSpeed);
 	}
 
 	void BossFirstSphere::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
 		Actor::OnUpdate();
 
-		bool doDisappear = m_AttackCol->GetMoveContact();
-		doDisappear = doDisappear || (m_disappear && m_disappearTime >= m_disappearTimeMax);
+		//消滅する条件
+		bool doDisappear = m_AttackCol->GetMoveContact() || m_disappear;
+		doDisappear = doDisappear && m_disappearTime >= m_disappearTimeMax;
 
 		if (doDisappear) {
+			EffectManager::Instance().StopEffect(m_effect);
 			RemoveSelf();
 		}
 
+		//消滅するまでに少し時間を設ける
 		if (m_disappear) {
 			m_disappearTime += _delta;
 			return;
@@ -555,7 +634,7 @@ namespace basecross {
 			SetVelocity(GetVelocity() - (GetVelocity() * m_speedDown * (1000.0f / 60.0f) * _delta));
 			if (m_time >= m_firstMoveTime) {
 				//プレイヤーの胸の高さ分。ここをどうするか少し考え
-				Vec3 v = m_player->GetPosition() + Vec3(0, 4, 0) - GetPosition();
+				Vec3 v = m_player.lock()->GetPosition() + Vec3(0, 4, 0) - GetPosition();
 				m_secondMoveAngle = v.normalize();
 				m_towardPlayer = true;
 			}
@@ -564,7 +643,20 @@ namespace basecross {
 			AddVelocity(m_secondMoveAngle * m_secondMoveSpeed * _delta);
 		}
 
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		//エフェクトを本体に追従させる
+		EffectManager::Instance().SetPosition(m_effect, GetPosition());
+
+		UpdatePosition();
+	}
+
+	void BossFirstSphere::CollidedWithTerrain() {
+		if (m_disappear) return;
+
+		//エフェクト再生
+		EffectManager::Instance().StopEffect(m_effect);
+		m_effect = AddEffect(EnemyEffect_SphereEnd);
+
+		m_disappear = true;
 	}
 
 	void BossFirstSphere::CreateChildObjects() {

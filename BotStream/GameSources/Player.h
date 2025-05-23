@@ -34,9 +34,14 @@ namespace basecross{
 		PlayerEffect_Attack3,
 		PlayerEffect_AttackEx,
 		PlayerEffect_Beam,
+		PlayerEffect_Dodge,
+		PlayerEffect_Dash,
+		PlayerEffect_DashRipple,
 		EnemyEffect_ArmorBreak,
 		EnemyEffect_Beam,
-		EnemyEffect_Sphere
+		EnemyEffect_Sphere,
+		EnemyEffect_SphereEnd,
+		EnemyEffect_Wave
 	};
 
 	enum ActorName
@@ -269,9 +274,9 @@ namespace basecross{
 		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 
 		//攻撃のクールダウン関係
-		bool m_attackFlag = true;
+		bool m_attackFlag = false;
 		float m_timeOfAttackCool = 5.0f;
-		float m_timeCountOfAttackCool = 0.0f;
+		float m_timeCountOfAttackCool = 3.0f;
 
 	public:
 		// 雑魚敵の種類を追加するときはここに書く

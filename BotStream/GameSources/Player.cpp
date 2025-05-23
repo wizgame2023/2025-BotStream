@@ -105,18 +105,18 @@ namespace basecross {
 		EffectManager::Instance().SetPosition(m_testEffect, m_EfkPos);
 
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
+		////着地判定(無効化時間中ならそれを減算する)
+		//OnLanding();
 
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				Friction();
-			}
-		}
+		////物理的な処理
+		//if (m_doPhysics) {
+		//	if (!m_isLand) {
+		//		Gravity();
+		//	}
+		//	else {
+		//		Friction();
+		//	}
+		//}
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
@@ -185,7 +185,44 @@ namespace basecross {
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetPosition());
+
+		////移動ですり抜けない処理
+		//auto objVec = stage->GetGameObjectVec();
+
+		//Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
+		//TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
+		//size_t triangleNumber; // レイが交差したポリゴンの番号
+		//float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
+
+		//Vec3 beforPos;
+		////障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
+		//for (auto obj : objVec)
+		//{
+		//	auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
+		//	float hitLength = min;//Playerと障害物の距離の長さ
+
+		//	//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
+		//	if (obstacles)
+		//	{
+		//		//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+		//		if (!obstacles->FindTag(L"CameraObstacles")) continue;
+
+		//		auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+		//		ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
+		//		Vec3 playerorObstaclesVec = hitPos - m_playerPos;
+		//		hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
+		//	}
+
+		//	//minよりhitLengthが短かったら位置更新する
+		//	if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
+		//	{
+		//		min = hitLength;
+		//		hitPos.y = m_cameraPos.y;//Y座標は変えないようにする
+		//		m_cameraPos = hitPos;
+		//	}
+		//}
+
 	}
 
 	//ジャンプ処理
@@ -306,10 +343,10 @@ namespace basecross {
 			switch (playerState)
 			{
 			case PlayerState_Walk:
-				totalVec *= moveSize * 3;
+				totalVec *= moveSize * 2.0f;
 				break;
 			case PlayerState_Dash:
-				totalVec *= moveSize * 5.5f;
+				totalVec *= moveSize * 2.75f;
 				break;
 			default:
 				break;
@@ -657,11 +694,14 @@ namespace basecross {
 	//当たり判定
 	void Bullet::OnCollisionEnter(shared_ptr<GameObject>& obj)
 	{
+		auto a = 0;
 		//敵や障害物に弾が当たったら消える
 		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
 		if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
 	}
 
@@ -749,7 +789,7 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
@@ -778,15 +818,15 @@ namespace basecross {
 		//着地判定(無効化時間中ならそれを減算する)
 		OnLanding();
 
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				//Friction();
-			}
-		}
+		////物理的な処理
+		//if (m_doPhysics) {
+		//	if (!m_isLand) {
+		//		Gravity();
+		//	}
+		//	else {
+		//		Friction();
+		//	}
+		//}
 
 
 		//HPバーの処理
