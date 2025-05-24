@@ -29,6 +29,7 @@ namespace basecross {
 		bool m_selectFlag = false;
 		// Audio用の選択切り替えフラグ
 		bool m_audioSelectFlag = false;
+		
 
 		bool m_pauseFlag = false;		// ポーズのフラグ
 		bool m_pauseAudioFlag = false;	// オーディオ設定のフラグ
@@ -36,7 +37,8 @@ namespace basecross {
 		float m_audioMax[2] = { 1.0f , 1.0f };	// 音量の実数値(0:BGM 1:SE)
 		int m_audioMaxSetCol[2] = { 10, 10 };	// 音量の色変えるためだけに存在するもの
 
-		int m_select2 = 0;	// 選択しているところの実数値
+		int m_mainSelect = 0;	// 選択しているところの実数値
+		bool m_audioFlag = false;
 
 		// メインの選択しているところのポジション
 		Vec3 m_selectPos;

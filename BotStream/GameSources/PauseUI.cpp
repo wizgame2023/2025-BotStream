@@ -53,7 +53,7 @@ namespace basecross {
 		{
 			m_pauseFlag = true;
 			m_pauseAudioFlag = false;
-			m_select2 = 0;     // メニューインデックス 0 からスタート
+			m_mainSelect = 0;     // メニューインデックス 0 からスタート
 			m_selectFlag = false; // デッドゾーンフラグクリア
 		}
 
@@ -98,27 +98,37 @@ namespace basecross {
 				AudioUIClear(false);
 			}
 
-			// --- スティック上下でメニュー移動 -----------
-			// デッドゾーンから復帰したら次の倒し判定をリセット
+			// --- スティック上下でメニュー移動 -----------  
 			if (fabs(ret.y) < dead)
 				m_selectFlag = false;
 
-			// 今のメニュー数に応じて最大インデックス決定
-			int maxIndex = m_pauseAudioFlag
-				? (AUDIO_MENU_COUNT - 1)
-				: (MAIN_MENU_COUNT - 1);
+			if (!m_pauseAudioFlag) {
+				// メインメニュー（再開/セレクト/Audio）の上下移動
+				int maxIndex = MAIN_MENU_COUNT - 2;
+				if (ret.y <= -dead && !m_selectFlag) {
+					m_mainSelect = clamp(m_mainSelect + 1, 0, maxIndex);
+					m_selectFlag = true;
 
-			// 下倒し：++m_select2
-			if (ret.y <= -dead && !m_selectFlag)
-			{
-				m_select2 = clamp(m_select2 + 1, 0, maxIndex - 1);
-				m_selectFlag = true;
+				}
+				else if (ret.y >= dead && !m_selectFlag) {
+					m_mainSelect = clamp(m_mainSelect - 1, 0, maxIndex);
+					m_selectFlag = true;
+
+				}
+
 			}
-			// 上倒し：--m_select2
-			else if (ret.y >= dead && !m_selectFlag)
-			{
-				m_select2 = clamp(m_select2 - 1, 0, maxIndex);
-				m_selectFlag = true;
+			else {
+				// オーディオ設定（BGM⇔SE）の切り替えには m_audioFlag を使う
+				if (ret.y <= -dead && !m_selectFlag) {
+					m_audioFlag = !m_audioFlag;
+					m_selectFlag = true;
+
+				}
+				else if (ret.y >= dead && !m_selectFlag) {
+					m_audioFlag = !m_audioFlag;
+					m_selectFlag = true;
+
+				}
 			}
 
 			// --- 選択描画位置更新 --------------------
@@ -126,9 +136,15 @@ namespace basecross {
 			if (m_pauseAudioFlag)
 				base.x += 600;  // Audioメニューだけ右寄せ
 
-			float offsetY = m_pauseAudioFlag
-				? (m_select2 * 200 + 50)
-				: (m_select2 * 150);
+			float offsetY;
+			if (!m_pauseAudioFlag) {
+				offsetY = m_mainSelect * 150;
+			}
+			else {
+				// オーディオ設定時は上下１メニュー分ずつ移動
+				offsetY = (m_audioFlag ? 250.0f : 50.0f);
+			}
+
 			m_selectSprite->SetPosition(
 				Vec3(base.x, base.y - offsetY, base.z)
 			);
@@ -144,51 +160,51 @@ namespace basecross {
 				if (fabs(ret.x) < dead)
 					m_audioSelectFlag = false;
 
-				// スティックを右に倒したら +0.1f
-				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[m_select2] < 1.0f)
+				// まず現在の調整対象を int idx に
+				int idx = m_audioFlag ? true : false;// false=BGM, true=SE
+
+				// 右に倒したら +0.1f
+				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
 				{
-					auto selectPos = m_audioSelect[m_select2]->GetPosition();
-					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x + change, selectPos.y, selectPos.z));
-					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] + 0.1f, 0.0f, 1.0f);
-					if (!m_select2)
-					{
-						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
-					}
+					auto selectPos = m_audioSelect[idx]->GetPosition();
+					m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
+					m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
+
+					// メーター色も idx に応じて更新
+					if (idx == 0)
+						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor({ 0.59f,0.98f,0.59f,1 });
 					else
-					{
-						m_SEMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
-					}
-					m_audioMaxSetCol[m_select2] += 1;
+						m_SEMater[m_audioMaxSetCol[idx]]->SetColor({ 0.59f,0.98f,0.59f,1 });
+					
+					m_audioMaxSetCol[idx]++;
+
 					m_audioSelectFlag = true;
 				}
 				// スティックを左に倒したら -0.1f
-				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[m_select2] > 0.1f)
+				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.1f) 
 				{
-					auto selectPos = m_audioSelect[m_select2]->GetPosition();
-					m_audioSelect[m_select2]->SetPosition(Vec3(selectPos.x - change, selectPos.y, selectPos.z));
-					m_audioMax[m_select2] = clamp(m_audioMax[m_select2] - 0.1f, 0.0f, 1.0f);
-					m_audioMaxSetCol[m_select2] -= 1;
-					if (!m_select2)
-					{
-						m_BGMMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-					}
+					auto selectPos = m_audioSelect[idx]->GetPosition();
+					m_audioSelect[idx]->SetPosition({ selectPos.x - change, selectPos.y, selectPos.z });
+					m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
+					m_audioMaxSetCol[idx]--;
+
+					if (idx == 0)
+						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor({ 1,1,1,1 });
 					else
-					{
-						m_SEMater[m_audioMaxSetCol[m_select2]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-					}
+						m_SEMater[m_audioMaxSetCol[idx]]->SetColor({ 1,1,1,1 });
 
 					m_audioSelectFlag = true;
 				}
 			}
 
 
-			// --- 決定（Bボタン or Enter） ----------------
-			if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B) ||
+			// --- 決定（Aボタン or Enter） ----------------
+			if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A) ||
 				keybord.m_bPressedKeyTbl[VK_RETURN])
 			{
 				if (!m_pauseAudioFlag)
 				{
-					switch (m_select2)
+					switch (m_mainSelect)
 					{
 					case 0: // 再開
 						m_pauseFlag = false;
@@ -203,10 +219,10 @@ namespace basecross {
 					case 2: // オーディオ設定へ
 						// メインを隠してAudio表示に移行
 						m_pauseAudioFlag = true;
-						m_select2 = 0;
+						m_mainSelect = 0;
 						m_selectFlag = false;
 						break;
-					case 3: // ゲーム終了（必要なら実装）
+					case 3:
 					default:
 						break;
 					}
@@ -214,10 +230,11 @@ namespace basecross {
 				else
 				{
 					// Audioメニュー中の決定処理
-					if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B) ||
+					if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A) ||
 						keybord.m_bPressedKeyTbl[VK_RETURN])
 					{
-						m_select2 = 0;
+						m_mainSelect = 0;
+						m_audioFlag = false;
 						m_pauseAudioFlag = false;
 					}
 				}
@@ -410,7 +427,7 @@ namespace basecross {
 			auto objVec = GetStage()->GetGameObjectVec();
 			for (auto obj : objVec)
 			{
-				auto actor = dynamic_pointer_cast<Actor>(obj);	
+				auto actor = dynamic_pointer_cast<Actor>(obj);
 				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
 
 				if (actor)
