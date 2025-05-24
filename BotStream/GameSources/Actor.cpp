@@ -183,23 +183,36 @@ namespace basecross {
 	//エフェクトを出す処理
 	Effekseer::Handle Actor::AddEffect(int addEffect)
 	{
-		Effekseer::Handle ret = -1;
+		Handle ret = -1;
+
 		Vec3 fwd = GetForward();
 		float angle = -atan2(fwd.z, fwd.x) + XM_PIDIV2;
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
 			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"Slash01Efk", GetAngle() + XM_PI, Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Attack2:
 			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			ret = EfkPlaying(L"Slash02Efk", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
 			break;
 		case PlayerEffect_Attack3:
 			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			ret = EfkPlaying(L"Slash03Efk", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
 			break;
 		case PlayerEffect_AttackEx:
-			ret = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f),Vec3(0.0f,2.0f,0.0f));
-			//EfkPlaying(L"Attack", GetAngle(), Vec3(0, 1, 0));
+			ret = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			ret = EfkPlaying(L"Slash04Efk", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			break;
+		case PlayerEffect_Dodge:
+			ret = EfkPlaying(L"Dodge", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			break;
+		case PlayerEffect_Dash:
+			ret = EfkPlaying(L"Dash", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 0.0f));
+			break;
+		case PlayerEffect_DashRipple:
+			ret = EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Beam:
 			ret = EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
@@ -231,9 +244,10 @@ namespace basecross {
 		rotate.normalize();
 		auto trans = GetComponent<Transform>();
 		auto plPos = trans->GetPosition()+ pushPos;
-
+		auto plRot = trans->GetRotation();
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
-		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		//EffectManager::Instance().SetRotate(efkHandler,XMConvertToRadians(45.0f),-plRot.y,0.0f);
+		EffectManager::Instance().SetRotation(efkHandler, rotate, rad);
 		EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 		return efkHandler;
 	}
