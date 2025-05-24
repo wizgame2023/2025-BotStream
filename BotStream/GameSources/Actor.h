@@ -226,6 +226,7 @@ namespace basecross {
 		void SetPhysics(bool doPhysics) {
 			m_doPhysics = doPhysics;
 		}
+		//•¨—“Iˆ—‚ÌƒQƒbƒ^
 		bool GetPhysics() {
 			return m_doPhysics;
 		}
