@@ -41,9 +41,7 @@ namespace basecross {
 
 		//エフェクト・音のキー
 		wstring HitEffect;
-		wstring GuardEffect;
 		wstring HitSound;
-		wstring GuardSound;
 		
 		//コンストラクタ
 		HitInfo::HitInfo(AttackType attacktype, int damage, float pausetime,
@@ -51,8 +49,7 @@ namespace basecross {
 			float hittime_air, Vec3 hitvel_air,
 			bool dofall, bool dofall_air,
 			bool forcerecover, bool hitonce,
-			wstring hiteffect, wstring guardeffect,
-			wstring hitsound, wstring guardsound
+			wstring hiteffect, wstring hitsound
 		)
 		{
 			this->Type = attacktype;
@@ -67,9 +64,7 @@ namespace basecross {
 			this->ForceRecover = forcerecover;
 			this->HitOnce = hitonce;
 			this->HitEffect = hiteffect;
-			this->GuardEffect = guardeffect;
 			this->HitSound = hitsound;
-			this->GuardSound = guardeffect;
 		}
 		HitInfo::HitInfo() {
 			this->Type = AttackType::Player;
@@ -83,10 +78,8 @@ namespace basecross {
 			this->DoFall_Air = false;
 			this->ForceRecover = false;
 			this->HitOnce = false;
-			this->HitEffect = L"";
-			this->GuardEffect = L"";
-			this->HitSound = L"";
-			this->GuardSound = L"";
+			this->HitEffect = L"Damage";
+			this->HitSound = L"Damage";
 		}
 	};
 

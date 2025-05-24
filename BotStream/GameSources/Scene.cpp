@@ -230,8 +230,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
-		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
-		EffectManager::Instance().RegisterEffect(L"WaveEfk", efkPath + L"wave.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
@@ -260,6 +259,7 @@ namespace basecross{
 		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
 		app->RegisterWav(L"Enemy_Defeat", SoundPath + L"Enemy_Defeat.wav");
 
+		app->RegisterWav(L"Damage", SoundPath + L"Damage.wav");
 		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
