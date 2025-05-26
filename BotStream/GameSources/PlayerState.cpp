@@ -66,9 +66,16 @@ namespace basecross {
 	void PlayerWalkState::Enter()
 	{
 		PlayerStateBase::Enter();
+
+		//何もなければ立ち止まるアニメーション
+		m_player->ChangeAnim(L"Idle");
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
+		//プレイヤーが地面に接触していなければ操作は効かない
+		auto playerLand = m_player->GetLand();
+		if (!playerLand) return;
+
 		PlayerStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 		
@@ -76,7 +83,7 @@ namespace basecross {
 		Vec3 move = m_player->GetMoveVector(PlayerState_Walk);
 		m_player->PlayerMove(PlayerState_Walk);
 
-		//歩きアニメーション再生
+		//歩きアニメーション再生(移動しているかによって変わる)
 		if (move.length() != 0)
 		{
 			m_player->ChangeAnim(L"Walk");
