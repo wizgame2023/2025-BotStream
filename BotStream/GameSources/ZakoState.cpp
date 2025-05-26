@@ -74,7 +74,7 @@ namespace basecross {
 		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
-		float distance = 20.0f;
+		float distance = 10.0f;
 		float m_speed = 10.0f;
 		//Playerから一定距離離れる
 		if (m_enemyZako->GetPlayerDist() < distance)
@@ -346,12 +346,6 @@ namespace basecross {
 				//進む距離を決める
 				auto move = m_enemyZako->GetForward() * m_speed;
 
-				auto LandFlag = m_enemyZako->GetLand();
-				if (LandFlag)
-				{
-					move.y = 0.0f;
-				}
-
 				m_enemyZako->SetVelocity(move);
 				//アニメーション更新時間設定
 				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
@@ -382,8 +376,8 @@ namespace basecross {
 	//球を打つ直前の準備ステート
 	void EnemyZakoPreparationforLongState::Enter()
 	{
-		//弾を発射する時間を決める2~3秒の間で発射する
-		float minTime = 2.0f;
+		//弾を発射する時間を決める4~5秒の間で発射する
+		float minTime = 5.0f;
 		m_timeMaxOfShot = (rand() % 10) * 0.1f + minTime;
 	}
 	void EnemyZakoPreparationforLongState::Update(float deltaTime)

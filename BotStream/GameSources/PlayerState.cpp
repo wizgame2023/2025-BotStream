@@ -708,7 +708,7 @@ namespace basecross {
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(10.0f, 5.0f, 10.0f);
 			AttackPtr->SetCollScale(1.0f);
-			AttackPtr->ActivateCollision(m_timeMaxOfAttack);
+			AttackPtr->ActivateCollision(m_timeOfStartAttackFirst);
 
 			//攻撃判定はもう出ない
 			AttackCollisionFlag = false;
