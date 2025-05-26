@@ -38,6 +38,7 @@ namespace basecross {
 		}
 	}
 
+
 	bool AttackCollision::GetMoveContact() {
 		return m_moveContact;
 	}

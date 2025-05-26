@@ -921,7 +921,7 @@ namespace basecross {
 		//}
 		//else if (FindTag(L"AttackNow"))
 		//{
-		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		//}
 
 		m_state->ChangeState(L"Hit");
@@ -1022,7 +1022,7 @@ namespace basecross {
 		}
 		if (m_AttackType == Zako_Melee)
 		{
-			ptrDraw->SetMeshResource(L"Enemy_C");
+			ptrDraw->SetMultiMeshResource(L"Enemy_B");
 		}
 		ptrDraw->SetDiffuse(Col4(0.5f));
 		//ptrDraw->SetEmissive(Col4(1));
@@ -1031,15 +1031,10 @@ namespace basecross {
 		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
-		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
-		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
-		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
-		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
-		if (m_AttackType == Zako_Melee)
-		{
-			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
-			ptrDraw->AddAnimation(L"Melee_Scratch", 700, 22, false, 24.0f);
-		}
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 60.0f);
+		ptrDraw->AddAnimation(L"Walk", 126, 49, 60.0f);
+		ptrDraw->AddAnimation(L"Charge", 0, 125, 60.0f);
+		ptrDraw->AddAnimation(L"Down", 637, 88, 60.0f);
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
@@ -1172,7 +1167,7 @@ namespace basecross {
 		//}
 		//else if (FindTag(L"AttackNow"))
 		//{
-		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		//}
 
 		m_state->ChangeState(L"Hit");

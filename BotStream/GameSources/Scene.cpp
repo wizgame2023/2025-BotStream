@@ -36,7 +36,7 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-
+			
 			ResetActiveStage<WaveStage>();
 
 		}
@@ -78,6 +78,13 @@ namespace basecross{
 			//最初のアクティブステージの設定
 
 			ResetActiveStage<GameClear>();
+
+		}
+
+		if (event->m_MsgStr == L"ToTitleStage") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<TitleStage>();
 
 		}
 
@@ -230,8 +237,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
-		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
-		EffectManager::Instance().RegisterEffect(L"WaveEfk", efkPath + L"wave.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
@@ -262,6 +268,7 @@ namespace basecross{
 		app->RegisterWav(L"EnemyZako_Shot", SoundPath + L"EnemyZako_Shot.wav");//雑魚敵の遠距離攻撃
 		app->RegisterWav(L"EnemyZako_Charge", SoundPath + L"EnemyZako_Charge.wav");//雑魚敵の遠距離攻撃
 
+		app->RegisterWav(L"Damage", SoundPath + L"Damage.wav");
 		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");
