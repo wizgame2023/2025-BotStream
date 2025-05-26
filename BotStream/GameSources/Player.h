@@ -337,6 +337,23 @@ namespace basecross{
 			m_addTimeAnimation = addTimeAnimation;
 		}
 	};
+
+	//遠距離の雑魚
+	class EnemyZakoLong :public EnemyZako
+	{
+	private:
+
+	public:
+		EnemyZakoLong(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+			EnemyZako(stagePtr, pos, rot, scale, used,Zako_Long)
+		{
+
+		}
+		~EnemyZakoLong() {};
+
+		void OnCreate()override;
+
+	};
 	
 	class EnemyZakoFlying : public EnemyZako
 	{
