@@ -40,7 +40,7 @@ namespace basecross {
 			Vec3(0.7f, 0.7f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, 0.0f, 0.0f)
+			Vec3(0.0f, -1.2f, 0.0f)
 		);
 
 		//ドローメッシュの設定
@@ -64,10 +64,13 @@ namespace basecross {
 		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionCapsule>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);
 
+		//接地判定
+		m_LandDetect->SetBindPos(Vec3(0, -1.5f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(3.0f, 3.0f, 3.0f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -181,7 +184,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		//DebugLog();
+		DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
@@ -531,6 +534,13 @@ namespace basecross {
 		{
 			DetectBeingAttacked(Other);
 		}
+
+		////コリジョンが地面を接触してしまったら少し弾ませる
+		//if (FindTag(L"Ground"))
+		//{
+		//	m_pos.y = 2.0f;
+		//	SetPosition(m_pos);
+		//}
 	}
 
 	//ダメージを受けたらヒットステートに移動する
@@ -552,8 +562,9 @@ namespace basecross {
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
+		auto pos = GetPosition();
 		wss /* << L"デバッグ用文字列 "*/
-			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
+			<< L"\n Pos.x " << m_pos.x << " Pos.y " << pos.y <<" Pos.z " << m_pos.z
 			<< L"\n 回避フラグ：  " << m_dodgeFlag
 			<< L"\n Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
@@ -734,7 +745,7 @@ namespace basecross {
 		Actor::OnCreate();
 
 		//いったん雑魚敵のHPは50とする
-		m_HPMax = 50.0f;
+		m_HPMax = 40.0f;
 		m_HPCurrent = m_HPMax;
 
 		//Transform設定
@@ -791,7 +802,7 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
@@ -914,6 +925,65 @@ namespace basecross {
 		//}
 
 		m_state->ChangeState(L"Hit");
+	}
+
+	//遠距離の雑魚敵
+	void EnemyZakoLong::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//いったん雑魚敵のHPは50とする
+		m_HPMax = 50.0f;
+		m_HPCurrent = m_HPMax;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f / 5, 1.0f / 5, 1.0f / 5),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, -0.5f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		ptrDraw->SetMeshResource(L"Enemy_A");
+		ptrDraw->SetDiffuse(Col4(0.5f));
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+
+		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
+		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+
+		//コリジョン作成
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);//デバック用
+
+		AddTag(L"Enemy");
+		AddTag(L"EnemyZako");
+
+		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
+		//接地判定の設定
+		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
+
+		//ステートマシン生成
+		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+
+		//頭上にHPバーを表示させる
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer->SetPercent(1.0f);
 	}
 
 
