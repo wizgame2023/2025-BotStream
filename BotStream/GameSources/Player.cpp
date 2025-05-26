@@ -634,19 +634,23 @@ namespace basecross {
 		switch (m_actorType)
 		{
 		case ActorName_Player:
-			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー
+			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
+			tmp.Damage = 10;//ダメージ
+
 			break;
 		case ActorName_Enemy:
 			tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+			tmp.Damage = 5;//ダメージ
 			break;
 		default:
 			break;
 		}
 
 		tmp.HitOnce = true;//一回しかヒットしないか
-		tmp.Damage = 10;//ダメージ
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 1.0f;//のけぞり時間
+		tmp.InvincibleOnHit = true;
+		
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;
 		GetAttackPtr()->SetPos(Vec3(0, 0, 0));
