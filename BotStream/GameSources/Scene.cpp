@@ -259,6 +259,8 @@ namespace basecross{
 		app->RegisterWav(L"Enemy_Slam", SoundPath + L"Enemy_Slam.wav");
 		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
 		app->RegisterWav(L"Enemy_Defeat", SoundPath + L"Enemy_Defeat.wav");
+		app->RegisterWav(L"EnemyZako_Shot", SoundPath + L"EnemyZako_Shot.wav");//雑魚敵の遠距離攻撃
+		app->RegisterWav(L"EnemyZako_Charge", SoundPath + L"EnemyZako_Charge.wav");//雑魚敵の遠距離攻撃
 
 		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
