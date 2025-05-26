@@ -61,7 +61,7 @@ namespace basecross {
 
         // É{ÉXÉQÅ[ÉW
         m_bossGauge = AddGameObject<BossGaugeUI>();
-
+        SetSharedGameObject(L"BossUI", m_bossGauge);
 
         //wave1ìG
         enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));

@@ -34,6 +34,8 @@ namespace basecross {
 		shared_ptr<Sprite> m_armorPointSp;
 		shared_ptr<Stage> m_stage;
 
+		weak_ptr<EnemyBase> m_boss;
+
 		float m_hitPointMax = 1000;			// HP‚ÌÅ‘å’l
 		float m_hitPoint = m_hitPointMax;	// HP‚Ì‰Šú’l
 
