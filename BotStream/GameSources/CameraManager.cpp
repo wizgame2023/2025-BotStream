@@ -50,7 +50,7 @@ namespace basecross {
 		m_lockStageCamera->SetAt(playerPos);
 
 		//スプライト追加
-		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(80.0f, 80.0f), Vec3(400.0f, -350.0f, 0.0f));
+		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(100.0f, 100.0f), Vec3(300, -350, 0));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
@@ -114,14 +114,14 @@ namespace basecross {
 		MeleeFlagUpdate();
 
 		//近接戦闘していいかによってスプライトが変わる
-		if (!m_meleeFlag)
-		{
-			m_spriteAttack->SetTexture(L"KatanaTex");
-		}
-		if (m_meleeFlag)
-		{
-			m_spriteAttack->SetTexture(L"GunTex");
-		}
+		//if (!m_meleeFlag)
+		//{
+		//	m_spriteAttack->SetTexture(L"KatanaTex");
+		//}
+		//if (m_meleeFlag)
+		//{
+		//	m_spriteAttack->SetTexture(L"GunTex");
+		//}
 
 		//ロックオンを解除する条件処理
 		//ConditionsLockOff(enemyVec);
@@ -169,6 +169,8 @@ namespace basecross {
 			//その後に射撃用のUIも出したい
 			m_spriteAiming->OnClear(false);
 
+			m_spriteAttack->SetTexture(L"GunTex");
+
 			//注視点の変更(普段よりも先に見たい)
 			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
 				cos(m_cameraAngleX) * -15.0f,
@@ -185,6 +187,8 @@ namespace basecross {
 
 			//ここはUIを出さない
 			m_spriteAiming->OnClear(true);
+
+			m_spriteAttack->SetTexture(L"KatanaTex");
 
 			//注視点の変更
 			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
