@@ -279,7 +279,8 @@ namespace basecross {
 			Vec3(0, 0, 0)
 		);
 		m_pauseBack->OnClear(true);
-		m_pauseBack->SetDrawLayer(0);
+		// なぜかここを2以上にするとどうあがいても最前面になる
+		m_pauseBack->SetDrawLayer(2);
 
 		// ポーズ中のテキスト(UV座標はここでは設定していないので下に書く)
 		for (int i = 0; i < 4; i++)
@@ -289,7 +290,7 @@ namespace basecross {
 				Vec2(250, 250 / 2),
 				Vec3(textPosX, textPosY - (i * 150), 0)
 			);
-			m_pauseTextSprite[i]->SetDrawLayer(1);
+			m_pauseTextSprite[i]->SetDrawLayer(3);
 			m_pauseTextSprite[i]->OnClear(true);
 
 		}
