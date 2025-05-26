@@ -22,7 +22,7 @@ namespace basecross {
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体 [0]はボス向け)
-		shared_ptr<EnemyBase> m_enemies[15];
+		shared_ptr<EnemyBase> m_enemies[30];
 	public:
 		EnemyManager(const shared_ptr<Stage>& stagePtr) :
 			MyGameObject(stagePtr)
@@ -69,11 +69,11 @@ namespace basecross {
 					break;
 
 				case EVar_Projectile:
-					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					e = GetStage()->AddGameObject<EnemyZakoLong>(Vec3(0), Vec3(0), Vec3(0));
 					break;
 
 				case EVar_Aerial:
-					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					e = GetStage()->AddGameObject<EnemyZakoFlying>(Vec3(0), Vec3(0), Vec3(0));
 					break;
 
 				default:
