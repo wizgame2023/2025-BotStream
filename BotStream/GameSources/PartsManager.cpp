@@ -12,8 +12,6 @@ namespace basecross {
 	void PartsManager::OnCreate()
 	{
 		m_stage = GetStage();
-		//auto headParts = m_stage->AddGameObject<HeadParts>();
-		//m_stage->SetSharedGameObject(L"HeadParts", headParts);
 
 	}
 
@@ -30,6 +28,9 @@ namespace basecross {
 		legParts->GetLegParts();
 		m_GetLegParts = legParts->GetLegParts();
 
+		//パーツをゲットしたら装備する
+		//装備したら取得フラグをfalseにする
+		//m_Attach○○Partsがtrueの時に同じ部位の別のパーツを取得したら選択させるようにする
 		if (m_GetHeadParts == true)
 		{
 			m_AttachHeadParts = true;
@@ -50,7 +51,7 @@ namespace basecross {
 
 	}
 
-
+	//パーツを付けているときはtrueになる
 	void PartsManager::SetAttachHeadParts(int setAttachHeadParts)
 	{
 		m_AttachHeadParts = setAttachHeadParts;

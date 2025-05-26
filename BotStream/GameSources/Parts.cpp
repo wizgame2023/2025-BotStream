@@ -32,7 +32,6 @@ namespace basecross {
 		//OBB衝突判定を付ける
 		auto ptrColl = AddComponent<CollisionSphere>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		//ptrColl->SetDrawActive(true);
 
 		//タグをつける
 		AddTag(L"HeadParts");
@@ -47,15 +46,16 @@ namespace basecross {
 
 	void HeadParts::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
+		//プレイヤーが触れたらパーツをゲットした判定になってオブジェクトが消える
 		if (Other->FindTag(L"Player"))
 		{
 			m_GetHeadParts = true;
-			//GetStage()->RemoveGameObject<HeadParts>(GetThis<HeadParts>());
 			SetDrawActive(false);
 		}
 		
 	}
 
+	//パーツをゲットしたらtrueになる
 	void HeadParts::SetHeadParts(int setHeadParts)
 	{
 		m_GetHeadParts = setHeadParts;
@@ -66,15 +66,6 @@ namespace basecross {
 		return m_GetHeadParts;
 	}
 
-	//void HeadParts::SetAttachHeadParts(int setAttachHeadParts)
-	//{
-	//	m_AttachHeadParts = setAttachHeadParts;
-	//}
-
-	//bool HeadParts::GetAttachHeadParts()
-	//{
-	//	return m_AttachHeadParts;
-	//}
 
 
 	//体パーツ用
@@ -100,7 +91,6 @@ namespace basecross {
 		//OBB衝突判定を付ける
 		auto ptrColl = AddComponent<CollisionObb>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		//ptrColl->SetDrawActive(true);
 
 		//タグをつける
 		AddTag(L"BodyParts");
@@ -115,15 +105,16 @@ namespace basecross {
 
 	void BodyParts::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
+		//プレイヤーが触れたらパーツをゲットした判定になってオブジェクトが消える
 		if (Other->FindTag(L"Player"))
 		{
 			m_GetBodyParts = true;
-			//GetStage()->RemoveGameObject<HeadParts>(GetThis<HeadParts>());
 			SetDrawActive(false);
 		}
 
 	}
 
+	//パーツをゲットしたらtrueになる
 	void BodyParts::SetBodyParts(int setBodyParts)
 	{
 		m_GetBodyParts = setBodyParts;
@@ -133,16 +124,6 @@ namespace basecross {
 	{
 		return m_GetBodyParts;
 	}
-
-	//void BodyParts::SetAttachBodyParts(int setAttachBodyParts)
-	//{
-	//	m_AttachBodyParts = setAttachBodyParts;
-	//}
-
-	//bool BodyParts::GetAttachBodyParts()
-	//{
-	//	return m_AttachBodyParts;
-	//}
 
 
 
@@ -169,7 +150,6 @@ namespace basecross {
 		//OBB衝突判定を付ける
 		auto ptrColl = AddComponent<CollisionObb>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		//ptrColl->SetDrawActive(true);
 
 		//タグをつける
 		AddTag(L"LegParts");
@@ -184,15 +164,16 @@ namespace basecross {
 
 	void LegParts::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
+		//プレイヤーが触れたらパーツをゲットした判定になってオブジェクトが消える
 		if (Other->FindTag(L"Player"))
 		{
 			m_GetLegParts = true;
-			//GetStage()->RemoveGameObject<HeadParts>(GetThis<HeadParts>());
 			SetDrawActive(false);
 		}
 
 	}
 
+	//パーツをゲットしたらtrueになる
 	void LegParts::SetLegParts(int setLegParts)
 	{
 		m_GetLegParts = setLegParts;
@@ -203,14 +184,5 @@ namespace basecross {
 		return m_GetLegParts;
 	}
 
-	//void LegParts::SetAttachLegParts(int setAttachLegParts)
-	//{
-	//	m_AttachLegParts = setAttachLegParts;
-	//}
-
-	//bool LegParts::GetAttachLegParts()
-	//{
-	//	return m_AttachLegParts;
-	//}
 
 }

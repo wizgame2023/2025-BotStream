@@ -151,7 +151,7 @@ namespace basecross {
         EffectManager::Instance().InterfaceUpdate();
 
 
-        if (m_waveNow == 1 && EnemyNum == 0 && m_AttachHeadParts == true && m_AttachBodyParts == true && m_AttachLegParts == true)
+        if (m_waveNow == 1 && EnemyNum == 0)
         {
             m_IsFadeOutFlag = true;
         }

@@ -25,8 +25,6 @@ namespace basecross {
 		bool GetHeadParts();
 		void SetHeadParts(int setHeadParts);
 
-		//bool GetAttachHeadParts();
-		//void SetAttachHeadParts(int setAttachHeadParts);
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
@@ -47,8 +45,6 @@ namespace basecross {
 		bool GetBodyParts();
 		void SetBodyParts(int setBodyParts);
 
-		//bool GetAttachBodyParts();
-		//void SetAttachBodyParts(int setAttachBodyParts);
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
@@ -69,8 +65,6 @@ namespace basecross {
 		bool GetLegParts();
 		void SetLegParts(int setLegParts);
 
-		//bool GetAttachLegParts();
-		//void SetAttachLegParts(int setAttachLegParts);
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
@@ -85,6 +79,5 @@ namespace basecross {
 		int Good;
 	};
 
-	//PlusStatus plusSta = null;
 
 }
