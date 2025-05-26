@@ -134,7 +134,6 @@ namespace basecross {
 		m_drawComp->SetDiffuse(m_color);
 
 		SetAlphaActive(true);
-		SetDrawLayer(m_layer);
 
 	};
 
