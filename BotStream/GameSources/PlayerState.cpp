@@ -708,7 +708,7 @@ namespace basecross {
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(10.0f, 5.0f, 10.0f);
 			AttackPtr->SetCollScale(1.0f);
-			AttackPtr->ActivateCollision(m_timeMaxOfAttack);
+			AttackPtr->ActivateCollision(m_timeOfStartAttackFirst);
 
 			//攻撃判定はもう出ない
 			AttackCollisionFlag = false;
@@ -829,7 +829,9 @@ namespace basecross {
 		m_player->HitBack();
 		m_player->SetHP(HPNow - hitInfo.Damage);
 
-		m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
+		if (m_player->GetHitInfo().InvincibleOnHit) {
+			m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
+		}
 	}
 	void PlayerHitState::Update(float deltaTime)
 	{
@@ -846,7 +848,10 @@ namespace basecross {
 	}
 	void PlayerHitState::Exit()
 	{
-		m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
+		if (m_player->FindTag(L"invincible")) {
+			m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
+
+		}
 	}
 
 }

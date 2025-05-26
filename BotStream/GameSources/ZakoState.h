@@ -16,6 +16,8 @@ namespace basecross {
 	protected:
 		shared_ptr<EnemyZako> m_enemyZako;
 
+		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 	public:
 		EnemyZakoStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -24,7 +26,11 @@ namespace basecross {
 
 		}
 
-		virtual void Enter() {}
+		virtual void Enter() 
+		{
+			//SEマネージャー取得
+			m_SEManager = App::GetApp()->GetXAudio2Manager();
+		}
 		virtual void Update(float deltatime) {}
 		virtual void Exit() {}
 	};
@@ -112,7 +118,8 @@ namespace basecross {
 	class EnemyZakoPreparationforChargeState :public EnemyZakoStateBase
 	{
 	private:
-
+		float m_backDistance = 0.0f;//後ろに進む距離
+		float m_speed = 0.0f;//速度
 	public:
 		EnemyZakoPreparationforChargeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -129,6 +136,8 @@ namespace basecross {
 	class EnemyZakoChargeState :public EnemyZakoStateBase
 	{
 	private:
+		float m_speed = 0.0f;//速度
+
 		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
 		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
 

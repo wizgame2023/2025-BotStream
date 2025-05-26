@@ -132,8 +132,8 @@ namespace basecross {
 		//ロックオン対象の敵を決める処理
 		//SelectTargetObj(enemyVec, playerAngle);
 		
-		
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+		//右スティック押し込みでプレイヤーの向いている方向に回転する
+		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_THUMB)
 		{
 			//if (!m_lockOnFlag && !m_movePlayerAngleFlag)
 			//{
@@ -150,16 +150,9 @@ namespace basecross {
 			MovePlayerAngle(m_targetAngleY);
 		}
 
-		////角度リセット(デバック用)
-		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
-		//{
-		//	m_cameraAngleY = XMConvertToRadians(270.0f);
-		//}
-
-
 		//LBを押している最中は射撃モードに移行する
 		if (m_controler.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
-		{
+		{//射撃状態
 			//Playerとの距離を縮めて狙いを定めているっぽくする
 			m_range = 10.0f;
 
@@ -178,7 +171,7 @@ namespace basecross {
 
 		}
 		else
-		{
+		{//通常状態
 			//Playerとの距離を縮めて狙いを定めているっぽくする
 			m_range = 15.0f;
 
@@ -197,7 +190,7 @@ namespace basecross {
 		}
 
 
-		//現在の注視点を見れるようにする
+		//現在の注視点を見れるようにする(デバック用)
 		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
 		{
 			player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
@@ -216,39 +209,39 @@ namespace basecross {
 		CameraPosUpdate();
 
 
-		//デバック用
-		wstringstream wss(L"");
-		auto scene = App::GetApp()->GetScene<Scene>();
+		////デバック用
+		//wstringstream wss(L"");
+		//auto scene = App::GetApp()->GetScene<Scene>();
 
-		//ロックオン対象との距離を計算
-		if (m_targetObj)
-		{
-			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
-		}
-		
-		
-		wss /* << L"デバッグ用文字列 "*/
-			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-			<< L"\nターゲット対象の距離: " << m_targetDis
-			<< L"\nFPS: " << 1.0f/m_delta
-			//<< L"\n当たった場所x: " << hitPos.x
-			//<< L"\n当たった場所y: " << hitPos.y
-			//<< L"\n当たった場所z: " << hitPos.z
-			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-			//<<L"\nFPS:"<< 1.0f/delta
-			<< endl;
+		////ロックオン対象との距離を計算
+		//if (m_targetObj)
+		//{
+		//	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+		//	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
+		//}
 
-			//if (m_lockOnNum >= 0)
-			//{		
-			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-			//	float a = targetAngle;
-			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-			//}
+		//
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+		//	<< L"\nターゲット対象の距離: " << m_targetDis
+		//	<< L"\nFPS: " << 1.0f/m_delta
+		//	//<< L"\n当たった場所x: " << hitPos.x
+		//	//<< L"\n当たった場所y: " << hitPos.y
+		//	//<< L"\n当たった場所z: " << hitPos.z
+		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+		//	//<<L"\nFPS:"<< 1.0f/delta
+		//	<< endl;
 
-		scene->SetDebugString(wss.str());
+		//	//if (m_lockOnNum >= 0)
+		//	//{		
+		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+		//	//	float a = targetAngle;
+		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+		//	//}
+
+		//scene->SetDebugString(wss.str());
 
 	}
 
@@ -344,16 +337,21 @@ namespace basecross {
 
 		//まず、障害物がなかった時の位置を入れる(この数値は接近戦をするか射撃をするかによって変わる)
 		if (m_meleeFlag)
-		{
+		{//近接
 			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
 				(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
 				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
 		}
 		else if (!m_meleeFlag)
-		{
+		{//遠距離
 			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
-				(m_playerPos.y + 5.0f) + cos(m_cameraAngleX) * m_range,
+				(m_playerPos.y + 3.0f) + cos(m_cameraAngleX) * m_range,
 				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+
+			//射撃モードは少し通常の状態から位置をずらす
+			m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * 5.0f,
+				0.0f,
+				sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * 5.0f);
 		}
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る

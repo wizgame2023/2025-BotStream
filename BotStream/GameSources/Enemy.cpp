@@ -262,8 +262,8 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(false);//debug
 
-		m_LandDetect->SetBindPos(Vec3(0, -2.7f, 0));
-		m_LandDetect->SetCollScale(1.0f);
+		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
+		m_LandDetect->SetCollScale(1.5f);
 
 		AddTag(L"Enemy");
 
@@ -302,7 +302,7 @@ namespace basecross {
 	}
 
 	void BossFirst::OnDamaged() {
-		int armorDamage = m_GetHitInfo.Damage;
+		int armorDamage = m_getHitInfo.Damage;
 		bool isArmorBreak = m_armor > 0;
 
 		//アーマーへのダメージ2倍
@@ -324,11 +324,11 @@ namespace basecross {
 				m_state->ChangeState(L"Hit");
 			}
 
-			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		}
 		//アーマー
 		else {
-			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
+			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
 		}
 

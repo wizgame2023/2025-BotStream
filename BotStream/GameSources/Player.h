@@ -185,7 +185,7 @@ namespace basecross{
 		//受けた攻撃の情報を渡すゲッター
 		HitInfo Player::GetHitInfo()
 		{
-			return m_GetHitInfo;
+			return m_getHitInfo;
 		}
 		//スティックの傾きを受け取るセッター
 		void Player::SetStickL(Vec3 SetStickL)
@@ -298,7 +298,7 @@ namespace basecross{
 		//受けた攻撃の情報を渡すゲッター
 		HitInfo EnemyZako::GetHitInfo()
 		{
-			return m_GetHitInfo;
+			return m_getHitInfo;
 		}
 
 		void OnCreate() override;
@@ -337,6 +337,23 @@ namespace basecross{
 			m_addTimeAnimation = addTimeAnimation;
 		}
 	};
+
+	//遠距離の雑魚
+	class EnemyZakoLong :public EnemyZako
+	{
+	private:
+
+	public:
+		EnemyZakoLong(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+			EnemyZako(stagePtr, pos, rot, scale, used,Zako_Long)
+		{
+
+		}
+		~EnemyZakoLong() {};
+
+		void OnCreate()override;
+
+	};
 	
 	class EnemyZakoFlying : public EnemyZako
 	{
@@ -360,7 +377,7 @@ namespace basecross{
 		//受けた攻撃の情報を渡すゲッター
 		HitInfo EnemyZakoFlying::GetHitInfo()
 		{
-			return m_GetHitInfo;
+			return m_getHitInfo;
 		}
 
 		void OnCreate() override;
