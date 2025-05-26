@@ -8,8 +8,15 @@
 
 namespace basecross {
 
-	BillBoard::BillBoard(const shared_ptr<Stage>& StagePtr,
-		shared_ptr<GameObject>& actorPtr, wstring spriteName, int layer, float pushY, Vec3 scale, Col4 color, float pushX) :
+	BillBoard::BillBoard(
+		const shared_ptr<Stage>& StagePtr,
+		shared_ptr<GameObject>& actorPtr, 
+		wstring spriteName, 
+		int layer, 
+		float pushY, 
+		Vec3 scale, 
+		Col4 color, 
+		float pushX) :
 		MyGameObject(StagePtr),
 		m_actor(actorPtr),
 		m_textureName(spriteName),
@@ -83,6 +90,7 @@ namespace basecross {
 			auto PtrTransform = GetComponent<Transform>();
 			auto Pos = SeekTransPtr->GetPosition();
 			Pos.y += m_pushY;
+			Pos.x += m_pushX;
 			PtrTransform->SetPosition(Pos);
 			PtrTransform->SetScale(m_scale);
 
@@ -152,5 +160,21 @@ namespace basecross {
 
 	}
 
+	//DamageBillBoard::DamageBillBoard(
+	//	const shared_ptr<Stage>& StagePtr,
+	//	shared_ptr<GameObject>& actorPtr,
+	//	wstring spriteName,
+	//	int layer,
+	//	float pushY,
+	//	Vec3 scale,
+	//	Col4 color,
+	//	float pushX)
+	//	: BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
+	//{
+	//}
+
+	//DamageBillBoard::~DamageBillBoard() {}
+
+	
 }
 //end basecross

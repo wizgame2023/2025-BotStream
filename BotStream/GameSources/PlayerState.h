@@ -304,6 +304,9 @@ namespace basecross {
 		float m_timeOfAttack;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
+		//攻撃判定持続時間
+		float m_timeOfStartAttackFirst = 0.9f;
+
 		//次の攻撃ボタン受付時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
