@@ -302,7 +302,7 @@ namespace basecross {
 	}
 
 	void BossFirst::OnDamaged() {
-		int armorDamage = m_GetHitInfo.Damage;
+		int armorDamage = m_getHitInfo.Damage;
 		bool isArmorBreak = m_armor > 0;
 
 		//アーマーへのダメージ2倍
@@ -324,11 +324,11 @@ namespace basecross {
 				m_state->ChangeState(L"Hit");
 			}
 
-			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		}
 		//アーマー
 		else {
-			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
+			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
 		}
 

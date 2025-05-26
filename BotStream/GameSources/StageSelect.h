@@ -19,6 +19,11 @@ namespace basecross {
 
 		Vec3 m_selectPos;
 
+		// 切り替えの時に一気に切り替わらないようにするためのフラグ
+		bool m_selectOnceFlag = false;
+
+		// 選んでいるステージ数
+		short int m_selectStageNum = 1;
 	public:
 		//構築と破棄
 		StageSelect() :Stage() {}

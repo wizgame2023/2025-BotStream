@@ -125,11 +125,17 @@ namespace basecross {
 
 		isAttacked = isAttacked || (FindTag(L"Enemy") && info.Type == AttackType::Player);
 		isAttacked = isAttacked || (FindTag(L"Player") && info.Type == AttackType::Enemy);
+
 		//攻撃を受けたら
 		if (isAttacked) {
 			atk->SetMoveContact(true);
+			Vec3 v = GetForward();
+			float fwd = atan2(v.z, v.x);
+			EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0),Vec3(1), Vec3(0));
+			PlaySnd(info.HitSound, 1.0f, 0);
+
 			//攻撃判定から攻撃のデータを取得
-			m_GetHitInfo = info;
+			m_getHitInfo = info;
 
 			if (info.HitOnce == true) {
 				//攻撃判定を消す
