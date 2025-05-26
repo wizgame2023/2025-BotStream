@@ -133,6 +133,7 @@ namespace basecross {
 		{
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
+			tmp.InvincibleOnHit = true;
 			tmp.Damage = 5;
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .8f;
@@ -238,6 +239,7 @@ namespace basecross {
 		{
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
+			tmp.InvincibleOnHit = true;
 			tmp.Damage = 5;
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .8f;
@@ -616,7 +618,7 @@ namespace basecross {
 		toPlayer.normalize();
 		m_chargeDir = toPlayer;
 		// アニメーション切り替え（例）
-		m_enemyZako->ChangeAnim(L"Down");
+		m_enemyZako->ChangeAnim(L"Charge");
 		//攻撃しているタグ追加
 		m_enemyZako->AddTag(L"AttackNow");
 	}
@@ -649,7 +651,10 @@ namespace basecross {
 			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
 			m_Attack = false;//攻撃判定が複数発生させないようにする
 
+
 		}
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		
 
 		// 2) 突進終了判定

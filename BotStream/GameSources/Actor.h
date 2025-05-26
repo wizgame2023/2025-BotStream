@@ -73,7 +73,7 @@ namespace basecross {
 		//着地判定
 		shared_ptr<LandDetect> m_LandDetect;
 		//受けた攻撃の情報
-		HitInfo m_GetHitInfo;
+		HitInfo m_getHitInfo;
 
 		//摩擦
 		void Friction();
@@ -161,13 +161,13 @@ namespace basecross {
 
 		//喰らった攻撃の吹き飛ばし距離を代入(現状地上のもののみ)
 		void HitBack() {
-			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
+			m_hitbacktime = m_getHitInfo.HitTime_Stand;
 
 			//どちらから攻撃されたかを計算
 			Vec3 nrm = m_hitDirection.normalize();
 			float dir = atan2f(nrm.z, nrm.x);
 
-			Vec3 vel = (m_isLand) ? m_GetHitInfo.HitVel_Stand : m_GetHitInfo.HitVel_Air;
+			Vec3 vel = (m_isLand) ? m_getHitInfo.HitVel_Stand : m_getHitInfo.HitVel_Air;
 
 			Vec3 accel;
 			accel.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
@@ -175,6 +175,11 @@ namespace basecross {
 			accel.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
 			
 			SetVelocity(accel);
+		}
+
+		//受けた攻撃の情報を取得
+		HitInfo GetHitInfo() {
+			return m_getHitInfo;
 		}
 
 		//攻撃判定のポインタを取得
@@ -226,6 +231,7 @@ namespace basecross {
 		void SetPhysics(bool doPhysics) {
 			m_doPhysics = doPhysics;
 		}
+		//物理的処理のゲッタ
 		bool GetPhysics() {
 			return m_doPhysics;
 		}
