@@ -829,7 +829,9 @@ namespace basecross {
 		m_player->HitBack();
 		m_player->SetHP(HPNow - hitInfo.Damage);
 
-		m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
+		if (m_player->GetHitInfo().InvincibleOnHit) {
+			m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
+		}
 	}
 	void PlayerHitState::Update(float deltaTime)
 	{
@@ -846,7 +848,10 @@ namespace basecross {
 	}
 	void PlayerHitState::Exit()
 	{
-		m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
+		if (m_player->FindTag(L"invincible")) {
+			m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
+
+		}
 	}
 
 }

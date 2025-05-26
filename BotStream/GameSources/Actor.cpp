@@ -135,7 +135,7 @@ namespace basecross {
 			PlaySnd(info.HitSound, 1.0f, 0);
 
 			//攻撃判定から攻撃のデータを取得
-			m_GetHitInfo = info;
+			m_getHitInfo = info;
 
 			if (info.HitOnce == true) {
 				//攻撃判定を消す

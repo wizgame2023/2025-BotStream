@@ -185,7 +185,7 @@ namespace basecross{
 		//受けた攻撃の情報を渡すゲッター
 		HitInfo Player::GetHitInfo()
 		{
-			return m_GetHitInfo;
+			return m_getHitInfo;
 		}
 		//スティックの傾きを受け取るセッター
 		void Player::SetStickL(Vec3 SetStickL)
@@ -298,7 +298,7 @@ namespace basecross{
 		//受けた攻撃の情報を渡すゲッター
 		HitInfo EnemyZako::GetHitInfo()
 		{
-			return m_GetHitInfo;
+			return m_getHitInfo;
 		}
 
 		void OnCreate() override;
@@ -360,7 +360,7 @@ namespace basecross{
 		//受けた攻撃の情報を渡すゲッター
 		HitInfo EnemyZakoFlying::GetHitInfo()
 		{
-			return m_GetHitInfo;
+			return m_getHitInfo;
 		}
 
 		void OnCreate() override;

@@ -910,7 +910,7 @@ namespace basecross {
 		//}
 		//else if (FindTag(L"AttackNow"))
 		//{
-		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		//}
 
 		m_state->ChangeState(L"Hit");
@@ -1102,7 +1102,7 @@ namespace basecross {
 		//}
 		//else if (FindTag(L"AttackNow"))
 		//{
-		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		//}
 
 		m_state->ChangeState(L"Hit");
