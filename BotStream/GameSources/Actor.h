@@ -73,7 +73,7 @@ namespace basecross {
 		//’…’n”»’è
 		shared_ptr<LandDetect> m_LandDetect;
 		//ó‚¯‚½UŒ‚‚Ìî•ñ
-		HitInfo m_GetHitInfo;
+		HitInfo m_getHitInfo;
 
 		//–€C
 		void Friction();
@@ -161,13 +161,13 @@ namespace basecross {
 
 		//‹ò‚ç‚Á‚½UŒ‚‚Ì‚«”ò‚Î‚µ‹——£‚ğ‘ã“ü(Œ»ó’nã‚Ì‚à‚Ì‚Ì‚İ)
 		void HitBack() {
-			m_hitbacktime = m_GetHitInfo.HitTime_Stand;
+			m_hitbacktime = m_getHitInfo.HitTime_Stand;
 
 			//‚Ç‚¿‚ç‚©‚çUŒ‚‚³‚ê‚½‚©‚ğŒvZ
 			Vec3 nrm = m_hitDirection.normalize();
 			float dir = atan2f(nrm.z, nrm.x);
 
-			Vec3 vel = (m_isLand) ? m_GetHitInfo.HitVel_Stand : m_GetHitInfo.HitVel_Air;
+			Vec3 vel = (m_isLand) ? m_getHitInfo.HitVel_Stand : m_getHitInfo.HitVel_Air;
 
 			Vec3 accel;
 			accel.x = (cosf(dir) * vel.x) - (sinf(dir) * vel.z);
@@ -175,6 +175,11 @@ namespace basecross {
 			accel.z = (cosf(dir) * vel.z) + (sinf(dir) * vel.x);
 			
 			SetVelocity(accel);
+		}
+
+		//ó‚¯‚½UŒ‚‚Ìî•ñ‚ğæ“¾
+		HitInfo GetHitInfo() {
+			return m_getHitInfo;
 		}
 
 		//UŒ‚”»’è‚Ìƒ|ƒCƒ“ƒ^‚ğæ“¾
