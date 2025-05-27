@@ -163,8 +163,8 @@ namespace basecross {
 		float m_time = 0;
 		float m_totalTime = 0;
 		const float m_attackTime = .15f;
-		const float m_allFrame = 3.0f;
-		const float m_allFramePlus = 2.0f;
+		const float m_allFrame = 2.5f;
+		const float m_allFramePlus = 1.5f;
 		float m_end = 0;
 
 		float m_spinSpeed = 0;
@@ -172,8 +172,8 @@ namespace basecross {
 		const float m_spinSpeedMax = XM_2PI * 2;
 
 		float m_speed = 0;
-		const float m_accel = 15.0f;
-		const float m_speedMax = 45.0f;
+		const float m_accel = 14.0f;
+		const float m_speedMax = 42.0f;
 	public:
 		BossFirstSpinState(shared_ptr<GameObject>& obj) :
 			StateBase(obj) {

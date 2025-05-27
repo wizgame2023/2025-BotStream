@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 			
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<TitleStage>();
 
 		}
 
@@ -109,8 +109,8 @@ namespace basecross{
 		// title
 		strTexture = texPath + L"TitleBack.png";
 		app->RegisterTexture(L"TitleBack", strTexture);
-		strTexture = texPath + L"TitleString.png";
-		app->RegisterTexture(L"TitleString", strTexture);
+		strTexture = texPath + L"TitleLogo2.png";
+		app->RegisterTexture(L"TitleLogo", strTexture);
 		strTexture = texPath + L"TitleText.png";
 		app->RegisterTexture(L"TitleText", strTexture);
 
@@ -173,9 +173,9 @@ namespace basecross{
 		app->RegisterTexture(L"ClearOverText", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
-		strTexture = texPath + L"Katana.png";
+		strTexture = texPath + L"Attack_UI.png";
 		app->RegisterTexture(L"KatanaTex", strTexture);
-		strTexture = texPath + L"Gun.png";
+		strTexture = texPath + L"Gun_UI.png";
 		app->RegisterTexture(L"GunTex", strTexture);
 
 		//ターゲット範囲用テクスチャ
