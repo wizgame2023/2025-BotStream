@@ -273,13 +273,9 @@ namespace basecross {
 		//ダッシュステートのアニメーション再生
 		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 
-		//Aボタン離したらorスティックを離したら歩くステートに変更する
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A)
-		{
-			m_player->ChangeState(L"PlayerWalk");
-		}
+		//Aボタン離したらorスティックを離したら歩くステートに変更する	
 		Vec3 stickVec = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
-		if (stickVec == Vec3(0.0f))
+		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A || stickVec == Vec3(0.0f))
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
@@ -336,6 +332,8 @@ namespace basecross {
 	{
 		//ダッシュSEを止める
 		m_SEManager->Stop(m_SE);
+
+		EffectManager::Instance().StopEffect(m_effect);
 	}
 
 
