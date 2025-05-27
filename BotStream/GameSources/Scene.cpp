@@ -121,6 +121,8 @@ namespace basecross{
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);
+		strTexture = texPath + L"SelectBack2.png";
+		app->RegisterTexture(L"SelectBack", strTexture);
 		
 		// UISprite
 		// Gauge

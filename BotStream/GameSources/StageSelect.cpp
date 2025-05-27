@@ -100,7 +100,7 @@ namespace basecross {
 		float titleX = 1450;
 		Vec2 titleSize(titleX, titleX * 0.5625);
 		m_selectBackSprite = AddGameObject<Sprite>(
-			L"TitleBack",
+			L"SelectBack",
 			titleSize,
 			Vec3(0, 0, 0)
 		);
