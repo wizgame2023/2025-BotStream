@@ -842,8 +842,6 @@ namespace basecross {
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
 
-		auto test = m_HPCurrent;
-
 		EnemyBase::OnUpdate();
 
 		//着地判定(無効化時間中ならそれを減算する)
