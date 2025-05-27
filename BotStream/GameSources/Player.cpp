@@ -88,7 +88,7 @@ namespace basecross {
 		auto trans = GetComponent<Transform>();
 		m_EfkPos = trans->GetPosition();
 
-		m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
+		//m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
 	}
 
 	void Player::OnUpdate()
