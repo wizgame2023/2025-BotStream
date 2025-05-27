@@ -272,6 +272,7 @@ namespace basecross {
 	{
 		m_stage = GetStage();
 		constexpr float XY1 = 1450, textPosX = -400, textPosY = 300;
+		constexpr int layerTop = 20;
 		// pause背景
 		m_pauseBack = m_stage->AddGameObject<Sprite>(
 			L"PauseBack",
@@ -279,8 +280,7 @@ namespace basecross {
 			Vec3(0, 0, 0)
 		);
 		m_pauseBack->OnClear(true);
-		// なぜかここを2以上にするとどうあがいても最前面になる
-		m_pauseBack->SetDrawLayer(0);
+		m_pauseBack->SetDrawLayer(layerTop);
 
 		// ポーズ中のテキスト(UV座標はここでは設定していないので下に書く)
 		for (int i = 0; i < 4; i++)
@@ -290,7 +290,7 @@ namespace basecross {
 				Vec2(250, 250 / 2),
 				Vec3(textPosX, textPosY - (i * 150), 0)
 			);
-			m_pauseTextSprite[i]->SetDrawLayer(1);
+			m_pauseTextSprite[i]->SetDrawLayer(layerTop + 1);
 			m_pauseTextSprite[i]->OnClear(true);
 
 		}
@@ -303,7 +303,7 @@ namespace basecross {
 				Vec2(200, 200 / 2),
 				Vec3(200, 900 - (i * 200), 0)
 			);
-			m_pauseTextSprite[i]->SetDrawLayer(1);
+			m_pauseTextSprite[i]->SetDrawLayer(layerTop + 1);
 			m_pauseTextSprite[i]->OnClear(true);
 		}
 
@@ -335,7 +335,7 @@ namespace basecross {
 				Vec2(50, 100),
 				Vec3(audioPos.x + (50.0f * i), audioPos.y - 100, audioPos.z)
 			);
-			m_BGMMater[i]->SetDrawLayer(3);
+			m_BGMMater[i]->SetDrawLayer(layerTop + 2);
 			m_BGMMater[i]->OnClear(true);
 			m_BGMMater[i]->SetUVRect(Vec2(0.5f, 0.0f), Vec2(0.75f, 1.0f));
 			m_BGMMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
@@ -351,7 +351,7 @@ namespace basecross {
 				Vec2(50, 100),
 				Vec3(sePos.x + (50.0f * i), sePos.y - 100, sePos.z)
 			);
-			m_SEMater[i]->SetDrawLayer(3);
+			m_SEMater[i]->SetDrawLayer(layerTop + 2);
 			m_SEMater[i]->OnClear(true);
 			m_SEMater[i]->SetUVRect(Vec2(0.5f, 0.0f), Vec2(0.75f, 1.0f));
 			m_SEMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
@@ -366,7 +366,7 @@ namespace basecross {
 				Vec2(80, 80),
 				Vec3(audioPos.x - 300, audioPos.y - 100, audioPos.z)
 			);
-			m_speaker[i]->SetDrawLayer(3);
+			m_speaker[i]->SetDrawLayer(layerTop + 2);
 			m_speaker[i]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 1.0f));
 			m_speaker[i]->OnClear(true);
 		}
@@ -382,7 +382,7 @@ namespace basecross {
 				Vec2(50, 100),
 				Vec3(audioPos)
 			);
-			m_audioSelect[i]->SetDrawLayer(3);
+			m_audioSelect[i]->SetDrawLayer(layerTop + 2);
 			m_audioSelect[i]->SetUVRect(Vec2(0.75f, 0.0f), Vec2(1.0f, 1.0f));
 			m_audioSelect[i]->OnClear(true);
 			m_audioSelect[i]->SetColor(Col4(0.52f, 0.8f, 0.92f, 1.0f));
@@ -396,7 +396,7 @@ namespace basecross {
 			selectSize,      // サイズ
 			m_selectPos);        // 表示位置
 		m_selectSprite->OnClear(true);
-		m_selectSprite->SetDrawLayer(2);
+		m_selectSprite->SetDrawLayer(layerTop + 3);
 
 	}
 
