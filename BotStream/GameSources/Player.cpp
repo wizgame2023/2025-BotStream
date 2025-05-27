@@ -37,7 +37,7 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(0.7f, 0.7f, 0.7f),
+			Vec3(0.7f, 0.35f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
 			Vec3(0.0f, -1.2f, 0.0f)
@@ -69,7 +69,7 @@ namespace basecross {
 		ptrColl->SetDrawActive(true);
 
 		//接地判定
-		m_LandDetect->SetBindPos(Vec3(0, -1.5f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(3.0f, 3.0f, 3.0f));
 
 		AddTag(L"Player");//Player用のタグ
@@ -829,51 +829,49 @@ namespace basecross {
 		{
 			return;
 		}
+		//もし、使わない状態から使う状態に変更された時メンバ変数の初期化をする	
+		if (!m_beforUsed)
+		{
+			if (m_used)
+			{
+				m_HPCurrent = m_HPMax;
+				m_attackFlag = false;
+				m_timeCountOfAttackCool = 3.0f;//初期クールダウンのカウント
+			}
+		}	
+		//現在の使用状況と見比べて変わっていないか見る
+		m_beforUsed = m_used;
+
+		auto test = m_HPCurrent;
 
 		EnemyBase::OnUpdate();
 
 		//着地判定(無効化時間中ならそれを減算する)
 		OnLanding();
-
-		////物理的な処理
-		//if (m_doPhysics) {
-		//	if (!m_isLand) {
-		//		Gravity();
-		//	}
-		//	else {
-		//		Friction();
-		//	}
-		//}
-
-
 		//HPバーの処理
 		UpdateHPBer();
 		//攻撃のクールタイム
 		TimeOfAttackCool();
 
-		//HPがゼロになったら消える
+		//HPがゼロになったら消えるための準備をする
 		if (m_HPCurrent <= 0)
 		{
 			RemoveTag(L"LockOnCan");
 			RemoveTag(L"LockOnTarget");
 
-			m_used = false;
-
-			//GetStage()->RemoveGameObject<EnemyZako>(GetThis<EnemyZako>());
-			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
-			//GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			//m_used = false;
 		}
 
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-
+		//位置更新
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
 
 	//HPバーの処理
 	void EnemyZako::UpdateHPBer()
 	{
-		//ビルボードの処理
+		//ビルボードの処理 自分が使用されているかどうかでビルボードが出るかでないか決める
 		if (!m_used)
 		{
 			m_HPFrame->SetScale(Vec3(0.0f));
@@ -918,17 +916,11 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::OnDamaged()
 	{
-		////攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
-		//if (!FindTag(L"AttackNow"))
-		//{
-		//	m_state->ChangeState(L"Hit");
-		//}
-		//else if (FindTag(L"AttackNow"))
-		//{
-		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
-		//}
-
-		m_state->ChangeState(L"Hit");
+		//hpがあるならダメージ処理する
+		if (m_HPCurrent > 0)
+		{
+			m_state->ChangeState(L"Hit");
+		}
 	}
 
 	//遠距離の雑魚敵
