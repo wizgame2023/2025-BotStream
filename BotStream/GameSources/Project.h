@@ -19,6 +19,7 @@
 #include "ObjectMove.h" //動くオブジェクト
 #include "ObjectNotMove.h"//動かないオブジェクト
 #include "Ground.h";//地面
+#include "Parts.h"//パーツ
 //#include "Actor.h"
 
 
@@ -63,5 +64,6 @@
 #include "EffectManager.h"
 #include "EnemyManager.h"
 #include "StageCollisionController.h"
+#include "PartsManager.h"
 
 
