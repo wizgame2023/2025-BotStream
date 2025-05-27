@@ -40,6 +40,8 @@ namespace basecross {
 
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
+		//m_titleSprite->SetColor(Col4(1.0f,1.0f,1.0f,sinf()))
+
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 		{
@@ -60,7 +62,7 @@ namespace basecross {
 		);
 
 		m_titleSprite = AddGameObject<Sprite>(
-			L"TitleString",
+			L"TitleLogo",
 			titleSize,
 			Vec3(0, 0, 0)
 		);

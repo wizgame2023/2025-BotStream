@@ -89,9 +89,12 @@ namespace basecross {
         //SetSharedGameObject(L"PartsManager", partsMgr);
 
         // ボスゲージ
-        m_bossGauge = AddGameObject<BossGaugeUI>();
+        m_bossGauge = AddGameObject<BossGaugeUI>(
+            boss,
+            boss->GetHPMax()
+            );
         SetSharedGameObject(L"BossUI", m_bossGauge);
-
+        
         //wave1敵
         enemyMgr->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         enemyMgr->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));

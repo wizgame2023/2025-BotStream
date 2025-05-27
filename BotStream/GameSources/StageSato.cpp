@@ -71,7 +71,7 @@ namespace basecross {
 			AddGameObject<PauseSprite>();
 
 			// ボスゲージ
-			AddGameObject<BossGaugeUI>();
+			//AddGameObject<BossGaugeUI>();
 
 		}
 		catch (...) {

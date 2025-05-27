@@ -146,7 +146,13 @@ namespace basecross {
 	void BossGaugeUI::OnCreate()
 	{
 		m_stage = GetStage();
-		//m_hitPointMax = m
+		m_hitPointMax = m_boss.lock()->GetHPMax();
+
+		if (auto bossShared = m_boss.lock())
+		{
+			m_hitPointMax = bossShared->GetHPMax();
+			m_hitPoint = m_hitPointMax;
+		}
 		CreateSprite();
 		ClearBossGaugeUI(true);
 	}
@@ -156,6 +162,9 @@ namespace basecross {
 		Vec3 framePos = m_gaugeFrameSp->GetComponent<Transform>()->GetPosition();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+
+		if (auto bossShared = m_boss.lock()) 
+			m_hitPoint = m_boss.lock()->GetHPCurrent();
 
 		// 比率でスケーリング(HP)
 		float hpRatio = m_hitPoint / m_hitPointMax;

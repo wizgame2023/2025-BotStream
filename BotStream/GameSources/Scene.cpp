@@ -109,8 +109,8 @@ namespace basecross{
 		// title
 		strTexture = texPath + L"TitleBack.png";
 		app->RegisterTexture(L"TitleBack", strTexture);
-		strTexture = texPath + L"TitleString.png";
-		app->RegisterTexture(L"TitleString", strTexture);
+		strTexture = texPath + L"TitleLogo2.png";
+		app->RegisterTexture(L"TitleLogo", strTexture);
 		strTexture = texPath + L"TitleText.png";
 		app->RegisterTexture(L"TitleText", strTexture);
 
