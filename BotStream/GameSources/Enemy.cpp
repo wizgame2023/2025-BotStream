@@ -262,8 +262,8 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(false);//debug
 
-		m_LandDetect->SetBindPos(Vec3(0, -2.7f, 0));
-		m_LandDetect->SetCollScale(1.0f);
+		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
+		m_LandDetect->SetCollScale(1.5f);
 
 		AddTag(L"Enemy");
 

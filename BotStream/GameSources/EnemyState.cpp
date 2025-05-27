@@ -256,10 +256,10 @@ namespace basecross {
 			m_speed = m_speedMax;
 		}
 		//ƒvƒŒƒCƒ„[–ÚŠ|‚¯‚ÄˆÚ“®
-		Vec3 vel = boss->GetPlayerDistInVec3().normalize();
-		vel.y = 0;
+		Vec3 vel = boss->GetPlayerDistInVec3().normalize() * m_speed;
+		vel.y = boss->GetVelocity().y;
 
-		boss->SetVelocity(vel * m_speed);
+		boss->SetVelocity(vel);
 
 		//UŒ‚”»’è‚Ì’è‹`
 		if (m_spinSpeed >= m_spinSpeedMax / 2 && !m_attacked) {
