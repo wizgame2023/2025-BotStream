@@ -230,7 +230,7 @@ namespace basecross {
 			ret = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Wave:
-			ret = EfkPlaying(L"EnemyWave", angle, Vec3(0, 1, 0), Vec3(1), Vec3(0, -2, 0));
+			ret = EfkPlaying(L"EnemyWave", angle, Vec3(0, 1, 0), Vec3(1), Vec3(10.0f * fwd.x, -2.7f, 10.0f * fwd.z));
 			break;
 		default:
 			break;
