@@ -265,6 +265,7 @@ namespace basecross {
 		if (m_spinSpeed >= m_spinSpeedMax / 2 && !m_attacked) {
 			m_attacked = !m_attacked;
 			m_time = 0;
+			boss->AddEffect(EnemyEffect_Spin);
 
 			auto tmp = boss->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
@@ -563,7 +564,6 @@ namespace basecross {
 		if (m_time >= m_attackTime && !m_attacked) {
 			m_attacked = !m_attacked;
 			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
-			boss->AddEffect(EnemyEffect_Wave);
 
 			Vec3 pos = boss->GetPosition() + boss->GetForward() * m_waveDist + Vec3(0, -3.0f, 0);
 			boss->GetStage()->AddGameObject<BossFirstShockwave>(pos, Vec3(0.0f), Vec3(1.0f), boss);
