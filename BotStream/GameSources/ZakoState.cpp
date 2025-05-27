@@ -482,7 +482,15 @@ namespace basecross {
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 
-		m_enemyZako->ChangeAnim(L"Stand");//ダメージを受けたアニメーションに変更
+		//ダメージを受けた後のHPによってステートの遷移を変える
+		if (m_enemyZako->GetHPCurrent() <= 0)
+		{
+			m_enemyZako->ChangeState(L"Die");
+		}
+		else
+		{
+			m_enemyZako->ChangeAnim(L"Stand");
+		}
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
@@ -496,6 +504,44 @@ namespace basecross {
 	{
 
 	}
+
+	//やられたときのステート
+	void EnemyZakoDieState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+		//やられたときのSE再生
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f);
+		//やられたとき用のアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Down");	
+
+	}
+	void EnemyZakoDieState::Update(float deltaTime)
+	{
+		//アニメーション更新時間
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
+
+		//時間計測
+		m_timeOfState += deltaTime;
+
+		//一定時間過ぎたら(やられる演出)消えた風に見せるためのフラグをオンにする
+		if (m_timeOfState >= m_timeMaxOfState)
+		{
+			//m_enemyZako->SetDrawActive(false);
+			m_enemyZako->SetUsed(false);
+			m_enemyZako->ChangeState(L"Stand");
+
+		}
+		//if (m_timeOfState - 1.0f >= m_timeMaxOfState)
+		//{
+		//}
+
+	}
+	void EnemyZakoDieState::Exit()
+	{
+		//リセット
+		//m_timeOfState = 0.0f;
+	}
+
 
 
 	//--------------------------------------------
