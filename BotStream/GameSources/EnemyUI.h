@@ -43,8 +43,13 @@ namespace basecross {
 		float m_armorPoint = m_armorPointMax;// アーマー
 
 	public:
-		BossGaugeUI(const shared_ptr<Stage>& stagePtr, float hitMax = 300.0f, float armMax = 100.0f) :
+		BossGaugeUI(
+			const shared_ptr<Stage>& stagePtr, 
+			const shared_ptr<EnemyBase>& bossPtr,
+			float hitMax = 300.0f, 
+			float armMax = 100.0f) :
 			MyGameObject(stagePtr),
+			m_boss(bossPtr),
 			m_hitPointMax(hitMax),
 			m_armorPointMax(armMax)
 		{

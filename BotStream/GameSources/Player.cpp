@@ -45,7 +45,7 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"PlayerModelTest");//仮のメッシュ
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
 		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
 		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
@@ -58,6 +58,11 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
 		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
 		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
+		ptrDraw->AddAnimation(L"Walk_Gun", 570, 50, true, 24.0f);//歩き状態(銃所持)
+		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);//銃を撃つ
+		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);//銃を戻す
+		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);//やられ
+
 
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
@@ -66,7 +71,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionCapsule>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
@@ -88,7 +93,7 @@ namespace basecross {
 		auto trans = GetComponent<Transform>();
 		m_EfkPos = trans->GetPosition();
 
-		m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
+		//m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
 	}
 
 	void Player::OnUpdate()
@@ -184,7 +189,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		DebugLog();
+		//DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
@@ -212,7 +217,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にしない
 				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - beforPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
@@ -797,7 +802,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);//デバック用
+		ptrColl->SetDrawActive(false);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");
@@ -960,7 +965,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);//デバック用
+		ptrColl->SetDrawActive(false);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");

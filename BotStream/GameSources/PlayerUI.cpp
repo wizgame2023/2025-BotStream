@@ -99,7 +99,7 @@ namespace basecross {
 				Vec2(m_digitSize, m_digitSize),
 				Vec3(m_digitPos.x + i * m_digitSize, m_digitPos.y, 0.0f)
 			);
-			digit->SetDrawLayer(3); // UIの最前面に表示
+			digit->SetDrawLayer(2); // UIの最前面に表示
 			m_bulletDigits.push_back(digit);
 		}
 		//--------------------------------------------------------------------
