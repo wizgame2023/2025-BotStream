@@ -50,20 +50,20 @@ namespace basecross {
         SetSharedGameObject(L"Player", player);
 
         //Enemyマネージャのテスト
-        vector<EnemyVariation> enemyVarriation;   
+        vector<EnemyVariation> enemyVariation;   
         for (int i = 0; i <= 10; i++)
         {
-            enemyVarriation.push_back(EVar_Normal);
+            enemyVariation.push_back(EVar_Normal);
         }
         for (int i = 0; i <= 10; i++)
         {
-            enemyVarriation.push_back(EVar_Projectile);
+            enemyVariation.push_back(EVar_Projectile);
         }  
 
-        enemyVarriation.push_back(EVar_Aerial);
+        enemyVariation.push_back(EVar_Aerial);
 
 
-        auto enemyMgr = AddGameObject<EnemyManager>(enemyVarriation);
+        auto enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
         SetSharedGameObject(L"EnemyManager", enemyMgr);
 
         auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
