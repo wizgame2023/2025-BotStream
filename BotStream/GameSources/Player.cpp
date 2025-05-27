@@ -786,8 +786,8 @@ namespace basecross {
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
-		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
-		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, false, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, false, 24.0f);
 		if (m_AttackType == Zako_Melee)
 		{
 			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
