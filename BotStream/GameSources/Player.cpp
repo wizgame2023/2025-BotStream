@@ -635,7 +635,7 @@ namespace basecross {
 		{
 		case ActorName_Player:
 			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
-			tmp.Damage = 10;//ダメージ
+			tmp.Damage = 8;//ダメージ
 
 			break;
 		case ActorName_Enemy:
@@ -646,6 +646,7 @@ namespace basecross {
 			break;
 		}
 
+		tmp.StunDamage = 1;
 		tmp.HitOnce = true;//一回しかヒットしないか
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 1.0f;//のけぞり時間

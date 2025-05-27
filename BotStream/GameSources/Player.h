@@ -37,6 +37,7 @@ namespace basecross{
 		PlayerEffect_Dodge,
 		PlayerEffect_Dash,
 		PlayerEffect_DashRipple,
+		EnemyEffect_Stun,
 		EnemyEffect_ArmorBreak,
 		EnemyEffect_Beam,
 		EnemyEffect_Sphere,
@@ -219,7 +220,7 @@ namespace basecross{
 	class Bullet :public Actor
 	{
 	private:
-		float m_speed = 1.0f;
+		float m_speed = 1.5f;
 		float m_AngleYAxis = 0.0f;//y軸の角度
 		float m_angleXAxis = 0.0f;//x軸の角度
 		float m_canMoveDistance = 0.0f;//移動できる長さ

@@ -20,6 +20,8 @@ namespace basecross {
 		AttackType Type;
 		//ダメージ
 		int Damage;
+		//銃怯み
+		int StunDamage;
 		//ヒットストップ時間
 		float PauseTime;
 		//地上相手ののけぞり時間
@@ -40,7 +42,8 @@ namespace basecross {
 		wstring HitSound;
 		
 		//コンストラクタ
-		HitInfo::HitInfo(AttackType attacktype, int damage, float pausetime,
+		HitInfo::HitInfo(AttackType attacktype, 
+			int damage, int stundamage, float pausetime,
 			float hittime_stand, Vec3 hitvel_stand,
 			float hittime_air, Vec3 hitvel_air,
 			bool invincibleonhit, bool hitonce,
@@ -49,6 +52,7 @@ namespace basecross {
 		{
 			this->Type = attacktype;
 			this->Damage = damage;
+			this->StunDamage = stundamage;
 			this->PauseTime = pausetime;
 			this->HitTime_Stand = hittime_stand;
 			this->HitVel_Stand = hitvel_stand;
@@ -62,6 +66,7 @@ namespace basecross {
 		HitInfo::HitInfo() {
 			this->Type = AttackType::Player;
 			this->Damage = 0;
+			this->StunDamage = 0;
 			this->PauseTime = 0;
 			this->HitTime_Stand = 0;
 			this->HitVel_Stand = Vec3(0);
