@@ -41,6 +41,7 @@ namespace basecross{
 		EnemyEffect_Beam,
 		EnemyEffect_Sphere,
 		EnemyEffect_SphereEnd,
+		EnemyEffect_Spin,
 		EnemyEffect_Wave
 	};
 
