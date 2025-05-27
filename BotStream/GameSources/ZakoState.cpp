@@ -75,7 +75,7 @@ namespace basecross {
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
 		float distance = 10.0f;
-		float m_speed = 2.0f;
+		float m_speed = 1.0f;
 		//Playerから一定距離離れる
 		if (m_enemyZako->GetPlayerDist() < distance)
 		{
@@ -236,7 +236,7 @@ namespace basecross {
 		EnemyZakoStateBase::Enter();
 		
 		//スピードを決める
-		m_speed = 6.0f;
+		m_speed = 5.0f;
 
 		//まず、プレイヤーとの距離を計算して、どれくらい突進するか決める
 		m_playerdistance = (m_enemyZako->GetPlayerDist() * 1.1f);
@@ -396,7 +396,7 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = 2.0f;
+			m_speed = 3.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
 			m_enemyZako->SetVelocity(move);
@@ -417,12 +417,16 @@ namespace basecross {
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 
-		//一定時間たったら攻撃する
+		//時間計測
 		m_timeOfShot += deltaTime;
-		if (m_timeOfShot >= m_timeMaxOfShot)
+		//射程内なら打つ
+		if (m_enemyZako->GetPlayerDist() <= Range)
 		{
-			m_timeOfShot = 0.0f;//リセット
-			m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+			if (m_timeOfShot >= m_timeMaxOfShot)
+			{
+				m_timeOfShot = 0.0f;//リセット
+				m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+			}
 		}
 	}
 	void EnemyZakoPreparationforLongState::Exit()
