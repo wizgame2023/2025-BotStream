@@ -114,11 +114,11 @@ namespace basecross {
 		);
 
 
-		m_textSprite = AddGameObject<Sprite>(
-			L"TitleText",
-			titleSize2,
-			Vec3(0, -250, 0)
-		);
+		//m_textSprite = AddGameObject<Sprite>(
+		//	L"TitleText",
+		//	titleSize2,
+		//	Vec3(0, -250, 0)
+		//);
 
 		Vec2 titleSize3(titleX * 0.125f, titleX * 0.25f);
 
