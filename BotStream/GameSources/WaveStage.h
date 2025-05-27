@@ -40,6 +40,7 @@ namespace basecross {
         virtual void OnCreate()override;
         virtual void OnUpdate()override;
         virtual void OnDraw()override;
+        virtual void OnDestroy()override;
 
         bool GetNextWaveFlag();
         void SetNextWaveFlag(int setNextWaveFlag);
