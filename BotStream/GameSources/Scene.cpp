@@ -121,7 +121,15 @@ namespace basecross{
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);
-		
+		strTexture = texPath + L"SelectBack2.png";
+		app->RegisterTexture(L"SelectBack", strTexture);
+
+		// GameClear / GameOver
+		strTexture = texPath + L"GameOverBack.png";
+		app->RegisterTexture(L"GameOverBack", strTexture);
+		strTexture = texPath + L"GameClearBack.png";
+		app->RegisterTexture(L"GameClearBack", strTexture);
+
 		// UISprite
 		// Gauge
 		strTexture = texPath + L"PlayerGauge.png";
