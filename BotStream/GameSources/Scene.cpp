@@ -247,6 +247,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Stun", efkPath + L"stun.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
