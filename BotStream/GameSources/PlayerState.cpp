@@ -865,7 +865,7 @@ namespace basecross {
 	void PlayerHitState::Update(float deltaTime)
 	{
 		//アニメーション更新
-		m_player->SetAddTimeAnimation(deltaTime);
+		m_player->SetAddTimeAnimation(deltaTime/2.0f);
 
 		m_timeOfHitBack += deltaTime;
 		//ノックバックの時間を越えたら別のステートに移動する
