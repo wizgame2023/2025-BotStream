@@ -192,7 +192,7 @@ namespace basecross {
 
             m_waveNow = 2;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 2.0f, -40.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, -40.0f));
             player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
 
             m_IsFadeInFlag = true;
@@ -225,7 +225,7 @@ namespace basecross {
 
             m_bossGauge->ClearBossGaugeUI(false);
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 2.0f, 195.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, 195.0f));
 
             player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
 
