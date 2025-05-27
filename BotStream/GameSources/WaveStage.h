@@ -42,6 +42,8 @@ namespace basecross {
         bool m_GetLegParts = false;
         bool m_AttachLegParts = false;
 
+        shared_ptr<BossGaugeUI> m_bossGauge;
+
     public:
         //\’z‚Æ”jŠü
         WaveStage() :Stage() {}
