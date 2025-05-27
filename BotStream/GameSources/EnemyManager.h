@@ -48,6 +48,7 @@ namespace basecross {
 			bool isFirstofVector = true;
 
 			int cnt = 0;
+			const int size = enemyVariation.size();
 			//あらかじめ生成
 			for (auto& e : m_enemies) {
 				if (isFirstofVector) {
@@ -56,11 +57,11 @@ namespace basecross {
 				}
 				
 				//バグ避け
-				if (cnt >= enemyVariation.max_size()) {
+				if (cnt >= size) {
 					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
 					continue;
 				}
-
+				
 				switch (enemyVariation[cnt]) 
 				{
 					//必要に応じてクラスを変える

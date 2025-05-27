@@ -42,28 +42,28 @@ namespace basecross {
         shared_ptr<FadeoutSprite> fadeout;
         fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
         SetSharedGameObject(L"Fadeout", fadeout);
-        fadeout->SetDrawLayer(3);
+        fadeout->SetDrawLayer(4);
 
         CreateSharedObjectGroup(L"Actor");
 
-        auto player = AddGameObject<Player>(Vec3(0.0f, 2.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+        auto player = AddGameObject<Player>(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
         SetSharedGameObject(L"Player", player);
 
         //Enemyマネージャのテスト
-        vector<EnemyVariation> enemyVarriation;   
+        vector<EnemyVariation> enemyVariation;   
         for (int i = 0; i <= 10; i++)
         {
-            enemyVarriation.push_back(EVar_Normal);
+            enemyVariation.push_back(EVar_Normal);
         }
         for (int i = 0; i <= 10; i++)
         {
-            enemyVarriation.push_back(EVar_Projectile);
+            enemyVariation.push_back(EVar_Projectile);
         }  
 
-        enemyVarriation.push_back(EVar_Aerial);
+        enemyVariation.push_back(EVar_Aerial);
 
 
-        auto enemyMgr = AddGameObject<EnemyManager>(enemyVarriation);
+        auto enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
         SetSharedGameObject(L"EnemyManager", enemyMgr);
 
         auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
@@ -72,6 +72,21 @@ namespace basecross {
 
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
+
+        //auto headParts = AddGameObject<HeadParts>();
+        //SetSharedGameObject(L"HeadParts", headParts);
+        //headParts->GetComponent<Transform>()->SetPosition(0.0f, -1.0f, -280.0f);
+
+        //auto bodyParts = AddGameObject<BodyParts>();
+        //SetSharedGameObject(L"BodyParts", bodyParts);
+        //bodyParts->GetComponent<Transform>()->SetPosition(15.0f, -1.0f, -280.0f);
+
+        //auto legParts = AddGameObject<LegParts>();
+        //SetSharedGameObject(L"LegParts", legParts);
+        //legParts->GetComponent<Transform>()->SetPosition(-15.0f, -1.0f, -280.0f);
+
+        //auto partsMgr = AddGameObject<PartsManager>();
+        //SetSharedGameObject(L"PartsManager", partsMgr);
 
         // ボスゲージ
         m_bossGauge = AddGameObject<BossGaugeUI>(
@@ -112,10 +127,17 @@ namespace basecross {
         auto scene = app->GetScene<Scene>();
         auto KeyState = App::GetApp()->GetInputDevice().GetKeyState();
         auto pad = App::GetApp()->GetInputDevice().GetControlerVec()[0];
+
         auto player = GetSharedGameObject<Player>(L"Player");
         auto enemyMgr = GetSharedGameObject<EnemyManager>(L"EnemyManager");
         auto boss = GetSharedGameObject<BossFirst>(L"Boss");
+
         auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
+
+        //auto headParts = GetSharedGameObject<HeadParts>(L"HeadParts");
+        //auto bodyParts = GetSharedGameObject<BodyParts>(L"BodyParts");
+        //auto legParts = GetSharedGameObject<LegParts>(L"LegParts");
+        //auto partsMgr = GetSharedGameObject<PartsManager>(L"PartsManager");
 
         fadeout->GetBlackFlag();
         m_BlackFlag = fadeout->GetBlackFlag();
@@ -124,6 +146,20 @@ namespace basecross {
         fadeout->GetFadeInFlag();
         m_IsFadeInFlag = fadeout->GetFadeInFlag();
 
+        //headParts->GetHeadParts();
+        //partsMgr->GetAttachHeadParts();
+        //m_GetHeadParts = headParts->GetHeadParts();
+        //m_AttachHeadParts = partsMgr->GetAttachHeadParts();
+
+        //bodyParts->GetBodyParts();
+        //partsMgr->GetAttachBodyParts();
+        //m_GetBodyParts = bodyParts->GetBodyParts();
+        //m_AttachBodyParts = partsMgr->GetAttachBodyParts();
+
+        //legParts->GetLegParts();
+        //partsMgr->GetAttachLegParts();
+        //m_GetLegParts = legParts->GetLegParts();
+        //m_AttachLegParts = partsMgr->GetAttachLegParts();
 
         player->GetHP();
         auto plaHP = player->GetHP();
@@ -134,7 +170,6 @@ namespace basecross {
         int EnemyNum = EnemyVec.size();
 
         EffectManager::Instance().InterfaceUpdate();
-
 
 
         if (m_waveNow == 1 && EnemyNum == 0)
@@ -234,6 +269,14 @@ namespace basecross {
     void WaveStage::OnDraw()
     {
         EffectManager::Instance().InterfaceDraw();
+    }
+
+    void WaveStage::OnDestroy()
+    {
+        //BGMとSEを止める
+        auto soundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+        soundManager->StopBGM();
+        soundManager->StopSE();
     }
 
     void WaveStage::SetNextWaveFlag(int setNextWaveFlag)
