@@ -69,13 +69,13 @@ namespace basecross {
 		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionCapsule>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(3.0f, 3.0f, 3.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -125,6 +125,17 @@ namespace basecross {
 		//		Friction();
 		//	}
 		//}
+
+		//地面に立っているときは地面にめり込まないようにする
+		if (m_isLand)
+		{
+			m_pos = GetPosition();
+			if (m_pos.y < 1.0f)
+			{
+				m_pos.y = 1.0f;
+				SetPosition(m_pos);
+			}
+		}
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
