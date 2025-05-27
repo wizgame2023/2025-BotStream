@@ -121,7 +121,15 @@ namespace basecross{
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);
-		
+		strTexture = texPath + L"SelectBack2.png";
+		app->RegisterTexture(L"SelectBack", strTexture);
+
+		// GameClear / GameOver
+		strTexture = texPath + L"GameOverBack.png";
+		app->RegisterTexture(L"GameOverBack", strTexture);
+		strTexture = texPath + L"GameClearBack.png";
+		app->RegisterTexture(L"GameClearBack", strTexture);
+
 		// UISprite
 		// Gauge
 		strTexture = texPath + L"PlayerGauge.png";
@@ -239,6 +247,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Stun", efkPath + L"stun.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");

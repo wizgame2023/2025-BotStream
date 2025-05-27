@@ -236,6 +236,8 @@ namespace basecross {
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 6.0f;
 
+		m_stunMax = 5;
+
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
 			Vec3(1.0f, 1.0f, 1.0f),
@@ -305,6 +307,10 @@ namespace basecross {
 		int armorDamage = m_getHitInfo.Damage;
 		bool isArmorBreak = m_armor > 0;
 
+		//スタン値へのダメージ
+		m_stun += m_getHitInfo.StunDamage;
+		bool isStun = m_stun >= m_stunMax;
+
 		//アーマーへのダメージ2倍
 		if (GetBoneModelDraw()->GetCurrentAnimation() == L"Bonus") {
 			armorDamage *= 2;
@@ -313,6 +319,7 @@ namespace basecross {
 
 		//非アーマー
 		if (m_armor <= 0) {
+			
 			//ブレイク時の演出
 			if (isArmorBreak) {
 				AddEffect(EnemyEffect_ArmorBreak);
@@ -330,6 +337,15 @@ namespace basecross {
 		else {
 			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
+		}
+
+		//スタン時の演出
+		if (isStun) {
+			AddEffect(EnemyEffect_Stun);
+			App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+			m_stun = 0;
+
+			m_state->ChangeState(L"Stun");
 		}
 
 		//死亡
