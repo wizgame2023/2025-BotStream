@@ -190,6 +190,10 @@ namespace basecross{
 		strTexture = texPath + L"Shock_wave_ring001.png";
 		app->RegisterTexture(L"Tex_Shockwave", strTexture);
 
+		//壁用のテクスチャ
+		strTexture = texPath + L"WallTexture.png";
+		app->RegisterTexture(L"WallTex", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ
