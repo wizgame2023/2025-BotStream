@@ -236,7 +236,7 @@ namespace basecross {
 		EnemyZakoStateBase::Enter();
 		
 		//スピードを決める
-		m_speed = 8.0f;
+		m_speed = 6.0f;
 
 		//まず、プレイヤーとの距離を計算して、どれくらい突進するか決める
 		m_playerdistance = (m_enemyZako->GetPlayerDist() * 1.1f);
