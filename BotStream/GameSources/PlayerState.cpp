@@ -375,7 +375,8 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
+		auto mag = 1.42f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.5f) * mag);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack1);
     
@@ -479,7 +480,8 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 1.9f);
+		auto mag = 1.42f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.9f) * mag);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack2);
 
@@ -592,7 +594,8 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 1.8f);
+		auto mag = 1.25f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.8f)*mag);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack3);
 
@@ -694,7 +697,8 @@ namespace basecross {
 		m_timeOfAttack += deltaTime;
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 2.2f);
+		auto mag = 1.25f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 2.2f) * mag);
 
 		AttackCollisionOccurs();
 		//次のステートに行く処理
@@ -876,7 +880,6 @@ namespace basecross {
 
 			m_player->ChangeState(L"PlayerWalk");
 		}
-
 	}
 	void PlayerHitState::Exit()
 	{
