@@ -66,9 +66,16 @@ namespace basecross {
 	void PlayerWalkState::Enter()
 	{
 		PlayerStateBase::Enter();
+
+		//何もなければ立ち止まるアニメーション
+		m_player->ChangeAnim(L"Idle");
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
+		////プレイヤーが地面に接触していなければ操作は効かない(問題が発生したのでコメントアウト)
+		//auto playerLand = m_player->GetLand();
+		//if (!playerLand) return;
+
 		PlayerStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 		
@@ -76,7 +83,7 @@ namespace basecross {
 		Vec3 move = m_player->GetMoveVector(PlayerState_Walk);
 		m_player->PlayerMove(PlayerState_Walk);
 
-		//歩きアニメーション再生
+		//歩きアニメーション再生(移動しているかによって変わる)
 		if (move.length() != 0)
 		{
 			m_player->ChangeAnim(L"Walk");
@@ -246,7 +253,7 @@ namespace basecross {
 		EffectManager::Instance().SetPosition(m_effect, playerPos+Vec3(0.0f,1.9f,0.0f));
 		EffectManager::Instance().SetRotation(m_effect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
 		//m_effect = m_player->AddEffect(PlayerEffect_);
-		m_player->AddEffect(PlayerEffect_DashRipple);//エフェクト追加
+		//m_player->AddEffect(PlayerEffect_DashRipple);//エフェクト追加
 
 
 		//移動処理

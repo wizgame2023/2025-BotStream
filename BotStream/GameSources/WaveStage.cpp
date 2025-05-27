@@ -46,7 +46,7 @@ namespace basecross {
 
         CreateSharedObjectGroup(L"Actor");
 
-        auto player = AddGameObject<Player>(Vec3(0.0f, 2.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+        auto player = AddGameObject<Player>(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
         SetSharedGameObject(L"Player", player);
 
         //Enemyマネージャのテスト
@@ -266,6 +266,14 @@ namespace basecross {
     void WaveStage::OnDraw()
     {
         EffectManager::Instance().InterfaceDraw();
+    }
+
+    void WaveStage::OnDestroy()
+    {
+        //BGMとSEを止める
+        auto soundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+        soundManager->StopBGM();
+        soundManager->StopSE();
     }
 
     void WaveStage::SetNextWaveFlag(int setNextWaveFlag)
