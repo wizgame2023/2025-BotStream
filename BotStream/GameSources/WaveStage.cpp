@@ -89,9 +89,12 @@ namespace basecross {
         //SetSharedGameObject(L"PartsManager", partsMgr);
 
         // ボスゲージ
-        m_bossGauge = AddGameObject<BossGaugeUI>();
+        m_bossGauge = AddGameObject<BossGaugeUI>(
+            boss,
+            boss->GetHPMax()
+            );
         SetSharedGameObject(L"BossUI", m_bossGauge);
-
+        
         //wave1敵
         enemyMgr->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         enemyMgr->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -319,6 +322,7 @@ namespace basecross {
         }
     }
 
+    //天井,床
     Floor::Floor(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -342,8 +346,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
         AddTag(L"Floor");
         AddTag(L"CameraObstacles");
@@ -443,6 +448,7 @@ namespace basecross {
         }
     }
 
+    //壁
     Wall::Wall(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -466,8 +472,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -511,6 +518,7 @@ namespace basecross {
         }
     }
 
+    //天井
     Ceiling::Ceiling(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -534,8 +542,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
@@ -569,7 +578,7 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");

@@ -123,6 +123,15 @@ namespace basecross {
 
 	void GameOver::CreateSprite()
 	{
+		float titleX = 1450;
+		Vec2 titleSize(titleX, titleX * 0.5625);
+		auto m_selectBackSprite = AddGameObject<Sprite>(
+			L"GameOverBack",
+			titleSize,
+			Vec3(0, 0, 0)
+		);
+		//m_selectBackSprite->SetColor(Col4(0.49f, 0.49f, 0.49f, 1));
+
 		float overSizeX = 1000, overSizeY = overSizeX * 0.175f;
 		auto sprite = AddGameObject<Sprite>(
 			L"ClearOverText",
