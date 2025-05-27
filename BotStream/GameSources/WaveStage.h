@@ -32,6 +32,8 @@ namespace basecross {
         bool m_BlackFlag = false;
         bool m_NextWaveFlag = false;
 
+        shared_ptr<BossGaugeUI> m_bossGauge;
+
     public:
         //\’z‚Æ”jŠü
         WaveStage() :Stage() {}

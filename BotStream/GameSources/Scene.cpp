@@ -173,9 +173,9 @@ namespace basecross{
 		app->RegisterTexture(L"ClearOverText", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
-		strTexture = texPath + L"Katana.png";
+		strTexture = texPath + L"Attack_UI.png";
 		app->RegisterTexture(L"KatanaTex", strTexture);
-		strTexture = texPath + L"Gun.png";
+		strTexture = texPath + L"Gun_UI.png";
 		app->RegisterTexture(L"GunTex", strTexture);
 
 		//ターゲット範囲用テクスチャ

@@ -146,6 +146,7 @@ namespace basecross {
 	void BossGaugeUI::OnCreate()
 	{
 		m_stage = GetStage();
+		//m_hitPointMax = m
 		CreateSprite();
 		ClearBossGaugeUI(true);
 	}
