@@ -75,7 +75,7 @@ namespace basecross {
 		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
 
 		float distance = 10.0f;
-		float m_speed = 10.0f;
+		float m_speed = 1.0f;
 		//Playerから一定距離離れる
 		if (m_enemyZako->GetPlayerDist() < distance)
 		{
@@ -83,9 +83,9 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			auto move = m_enemyZako->GetForward() * -(m_speed * 0.8f);
+			auto move = m_enemyZako->GetForward() * -m_speed;
 
-			m_enemyZako->SetVelocity(move);
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
@@ -177,7 +177,7 @@ namespace basecross {
 	{
 		//後ろに進む距離とスピードを決める(初期化)
 		m_backDistance = 10.0f;//後ろに進む距離
-		m_speed = 5.0f;
+		m_speed = 2.0f;
 	}
 	void EnemyZakoPreparationforChargeState::Update(float deltaTime)
 	{
@@ -193,11 +193,13 @@ namespace basecross {
 
 			//進む距離を決める
 			auto move = m_enemyZako->GetForward() * -m_speed;
-			m_backDistance -= move.length() * deltaTime;//バックした距離分引く
 
-			m_enemyZako->SetVelocity(move);
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+
+			//バックした距離分引く
+			m_backDistance -= m_enemyZako->GetVelocity().length() * deltaTime;
 		}
 
 		//後ろに進み終わったら突進する
@@ -234,7 +236,7 @@ namespace basecross {
 		EnemyZakoStateBase::Enter();
 		
 		//スピードを決める
-		m_speed = 30.0f;
+		m_speed = 5.0f;
 
 		//まず、プレイヤーとの距離を計算して、どれくらい突進するか決める
 		m_playerdistance = (m_enemyZako->GetPlayerDist() * 1.1f);
@@ -257,12 +259,13 @@ namespace basecross {
 
 			//進む距離を決める
 			auto move = m_enemyZako->GetForward() * m_speed;
-			m_playerdistance -= move.length() * deltaTime;//進んでいる距離分引く
 
 			auto LandFlag = m_enemyZako->GetLand();
-			m_enemyZako->SetVelocity(move);
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定(突進なので早めにする)
-			m_enemyZako->SetAddTimeAnimation(deltaTime * 5.5f);
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 5.5f);	
+			
+			m_playerdistance -= m_enemyZako->GetVelocity().length() * deltaTime;//進んでいる距離分引く
 		}
 		else
 		{//ステート変更処理
@@ -302,14 +305,11 @@ namespace basecross {
 	void EnemyZakoPreparationforMeleeState::Enter()
 	{
 		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+		m_speed;
 
 		//初期のプレイヤーとの距離によって足の速さを変える
 		auto playerdist = m_enemyZako->GetPlayerDist();
 		SppedChange();
-
-		//デバック用
-		auto test = m_speed;
-		auto a = 0;
 	}
 	void EnemyZakoPreparationforMeleeState::Update(float deltaTime)
 	{
@@ -344,9 +344,9 @@ namespace basecross {
 				m_enemyZako->ChangeAnim(L"Walk");
 
 				//進む距離を決める
-				auto move = m_enemyZako->GetForward() * m_speed;
+				auto move = m_enemyZako->GetForward().normalize() * m_speed;
 
-				m_enemyZako->SetVelocity(move);
+				m_enemyZako->AddVelocity(move);
 				//アニメーション更新時間設定
 				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 			}
@@ -364,11 +364,11 @@ namespace basecross {
 		auto playerdist = m_enemyZako->GetPlayerDist();
 		if (playerdist > 30.0f)//中
 		{
-			m_speed = 15.0f;
+			m_speed = 3.0f;
 		}
 		else//近い
 		{
-			m_speed = 10.0f;
+			m_speed = 2.0f;
 		}
 	}
 
@@ -396,14 +396,8 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = 10.0f;
+			m_speed = 3.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
-
-			auto LandFlag = m_enemyZako->GetLand();
-			if (LandFlag)
-			{
-				move.y = 0.0f;
-			}
 
 			m_enemyZako->SetVelocity(move);
 			//アニメーション更新時間設定
@@ -415,26 +409,24 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = -7.0f;
+			m_speed = -1.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
-			auto LandFlag = m_enemyZako->GetLand();
-			if (LandFlag)
-			{
-				move.y = 0.0f;
-			}
-
-			m_enemyZako->SetVelocity(move);
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定(後ろに進むので逆再生にしたい)
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 
-		//一定時間たったら攻撃する
+		//時間計測
 		m_timeOfShot += deltaTime;
-		if (m_timeOfShot >= m_timeMaxOfShot)
+		//射程内なら打つ
+		if (m_enemyZako->GetPlayerDist() <= Range)
 		{
-			m_timeOfShot = 0.0f;//リセット
-			m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+			if (m_timeOfShot >= m_timeMaxOfShot)
+			{
+				m_timeOfShot = 0.0f;//リセット
+				m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+			}
 		}
 	}
 	void EnemyZakoPreparationforLongState::Exit()
@@ -494,7 +486,15 @@ namespace basecross {
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 
-		m_enemyZako->ChangeAnim(L"Stand");//ダメージを受けたアニメーションに変更
+		//ダメージを受けた後のHPによってステートの遷移を変える
+		if (m_enemyZako->GetHPCurrent() <= 0)
+		{
+			m_enemyZako->ChangeState(L"Die");
+		}
+		else
+		{
+			m_enemyZako->ChangeAnim(L"Stand");
+		}
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
@@ -508,6 +508,44 @@ namespace basecross {
 	{
 
 	}
+
+	//やられたときのステート
+	void EnemyZakoDieState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+		//やられたときのSE再生
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f);
+		//やられたとき用のアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Down");	
+
+	}
+	void EnemyZakoDieState::Update(float deltaTime)
+	{
+		//アニメーション更新時間
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
+
+		//時間計測
+		m_timeOfState += deltaTime;
+
+		//一定時間過ぎたら(やられる演出)消えた風に見せるためのフラグをオンにする
+		if (m_timeOfState >= m_timeMaxOfState)
+		{
+			//m_enemyZako->SetDrawActive(false);
+			m_enemyZako->SetUsed(false);
+			m_enemyZako->ChangeState(L"Stand");
+
+		}
+		//if (m_timeOfState - 1.0f >= m_timeMaxOfState)
+		//{
+		//}
+
+	}
+	void EnemyZakoDieState::Exit()
+	{
+		//リセット
+		//m_timeOfState = 0.0f;
+	}
+
 
 
 	//--------------------------------------------

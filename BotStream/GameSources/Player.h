@@ -280,6 +280,8 @@ namespace basecross{
 		float m_timeOfAttackCool = 5.0f;
 		float m_timeCountOfAttackCool = 3.0f;
 
+		bool m_beforUsed = false;
+
 	public:
 		// 雑魚敵の種類を追加するときはここに書く
 		enum EnemyZakoAttackType

@@ -5,6 +5,7 @@
 
 #pragma once
 #include "stdafx.h"
+#include "Project.h"
 
 namespace basecross {
 
@@ -32,6 +33,15 @@ namespace basecross {
         bool m_BlackFlag = false;
         bool m_NextWaveFlag = false;
 
+        bool m_GetHeadParts = false;
+        bool m_AttachHeadParts = false;
+
+        bool m_GetBodyParts = false;
+        bool m_AttachBodyParts = false;
+
+        bool m_GetLegParts = false;
+        bool m_AttachLegParts = false;
+
         shared_ptr<BossGaugeUI> m_bossGauge;
 
     public:
@@ -42,6 +52,7 @@ namespace basecross {
         virtual void OnCreate()override;
         virtual void OnUpdate()override;
         virtual void OnDraw()override;
+        virtual void OnDestroy()override;
 
         bool GetNextWaveFlag();
         void SetNextWaveFlag(int setNextWaveFlag);

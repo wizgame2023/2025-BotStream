@@ -122,7 +122,16 @@ namespace basecross {
 
 	void GameClear::CreateSprite()
 	{
+		float titleX = 1450;
+		Vec2 titleSize(titleX, titleX * 0.5625);
+
 		float overSizeX = 1000, overSizeY = overSizeX * 0.175f;
+		auto m_selectBackSprite = AddGameObject<Sprite>(
+			L"GameClearBack",
+			titleSize,
+			Vec3(0, 0, 0)
+		);
+
 		auto sprite = AddGameObject<Sprite>(
 			L"ClearOverText",
 			Vec2(overSizeX, overSizeY),

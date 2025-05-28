@@ -76,6 +76,9 @@ namespace basecross{
 		bool GetUsed() {
 			return m_used;
 		}
+		void SetUsed(bool used) {
+			m_used = used;
+		}
 
 		//アーマーの状況を0.0f～1.0fで返す
 		float GetArmorePercentage() {

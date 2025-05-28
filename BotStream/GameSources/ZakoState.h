@@ -219,6 +219,26 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//やられたときの雑魚敵
+	class EnemyZakoDieState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfState = 0.0f;//ステートが始まってからの時間経過を測る変数
+		float m_timeMaxOfState = 1.8f;//ステートでいられる上限時間の保存用変数
+
+	public:
+		EnemyZakoDieState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
 	class EnemyZakoStateMachine :public StateMachineBase
 	{
 	public:
@@ -233,6 +253,7 @@ namespace basecross {
 			AddState(L"Charge", shared_ptr<EnemyZakoChargeState>(new EnemyZakoChargeState(obj)));//突進
 			AddState(L"Melee", shared_ptr<EnemyZakoMeleeState>(new EnemyZakoMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
+			AddState(L"Die", shared_ptr<EnemyZakoDieState>(new EnemyZakoDieState(obj)));
 
 			ChangeState(L"Stand");
 		}
