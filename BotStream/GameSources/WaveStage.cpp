@@ -91,6 +91,7 @@ namespace basecross {
         enemyMgr->InstEnemy<EnemyZako>(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
         
+        //カメラマネージャー
         auto cameraManager = AddGameObject<CameraManager>();
         SetSharedGameObject(L"CameraManager", cameraManager);
 
@@ -160,8 +161,9 @@ namespace basecross {
 
             m_waveNow = 2;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 2.0f, -40.0f));
-            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, -40.0f));
+            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+            GetSharedGameObject<CameraManager>(L"CameraManager")->SetAngle(L"Y", XMConvertToRadians(270.0f));
 
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
@@ -175,13 +177,13 @@ namespace basecross {
             enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
-            enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-20.0f,2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-20.0f,2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-30.0f,2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
         }
 
@@ -193,9 +195,10 @@ namespace basecross {
 
             m_bossGauge->ClearBossGaugeUI(false);
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 2.0f, 195.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, 195.0f));
 
-            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+            GetSharedGameObject<CameraManager>(L"CameraManager")->SetAngle(L"Y", XMConvertToRadians(270.0f));
 
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
