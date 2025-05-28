@@ -190,11 +190,11 @@ namespace basecross {
 		}
 
 
-		//現在の注視点を見れるようにする(デバック用)
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
-		}
+		////現在の注視点を見れるようにする(デバック用)
+		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		//}
 
 
 		//ロックオンするときの処理
