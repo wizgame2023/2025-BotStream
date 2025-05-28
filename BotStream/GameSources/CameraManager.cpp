@@ -55,7 +55,7 @@ namespace basecross {
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
 		//ロックオンの有効範囲を可視化
-		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
+		//m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
 		//SE用のマネージャー取得
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
