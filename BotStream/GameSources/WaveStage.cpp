@@ -73,20 +73,6 @@ namespace basecross {
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
-        //auto headParts = AddGameObject<HeadParts>();
-        //SetSharedGameObject(L"HeadParts", headParts);
-        //headParts->GetComponent<Transform>()->SetPosition(0.0f, -1.0f, -280.0f);
-
-        //auto bodyParts = AddGameObject<BodyParts>();
-        //SetSharedGameObject(L"BodyParts", bodyParts);
-        //bodyParts->GetComponent<Transform>()->SetPosition(15.0f, -1.0f, -280.0f);
-
-        //auto legParts = AddGameObject<LegParts>();
-        //SetSharedGameObject(L"LegParts", legParts);
-        //legParts->GetComponent<Transform>()->SetPosition(-15.0f, -1.0f, -280.0f);
-
-        //auto partsMgr = AddGameObject<PartsManager>();
-        //SetSharedGameObject(L"PartsManager", partsMgr);
 
         // ボスゲージ
         m_bossGauge = AddGameObject<BossGaugeUI>(
@@ -135,10 +121,6 @@ namespace basecross {
 
         auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
 
-        //auto headParts = GetSharedGameObject<HeadParts>(L"HeadParts");
-        //auto bodyParts = GetSharedGameObject<BodyParts>(L"BodyParts");
-        //auto legParts = GetSharedGameObject<LegParts>(L"LegParts");
-        //auto partsMgr = GetSharedGameObject<PartsManager>(L"PartsManager");
 
         fadeout->GetBlackFlag();
         m_BlackFlag = fadeout->GetBlackFlag();
@@ -147,20 +129,6 @@ namespace basecross {
         fadeout->GetFadeInFlag();
         m_IsFadeInFlag = fadeout->GetFadeInFlag();
 
-        //headParts->GetHeadParts();
-        //partsMgr->GetAttachHeadParts();
-        //m_GetHeadParts = headParts->GetHeadParts();
-        //m_AttachHeadParts = partsMgr->GetAttachHeadParts();
-
-        //bodyParts->GetBodyParts();
-        //partsMgr->GetAttachBodyParts();
-        //m_GetBodyParts = bodyParts->GetBodyParts();
-        //m_AttachBodyParts = partsMgr->GetAttachBodyParts();
-
-        //legParts->GetLegParts();
-        //partsMgr->GetAttachLegParts();
-        //m_GetLegParts = legParts->GetLegParts();
-        //m_AttachLegParts = partsMgr->GetAttachLegParts();
 
         player->GetHP();
         auto plaHP = player->GetHP();

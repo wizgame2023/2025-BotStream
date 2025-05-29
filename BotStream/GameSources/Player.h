@@ -315,6 +315,9 @@ namespace basecross{
 		//攻撃のクールタイム
 		virtual void TimeOfAttackCool();
 
+		//ダメージを受けたときにStandステートに戻る処理
+		virtual void HitBackStandBehavior()override;
+
 		//攻撃のタイプのゲッタ
 		virtual int GetAttackType()
 		{
