@@ -105,16 +105,16 @@ namespace basecross {
 				break;
 			// セレクトステージ
 			case 1:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToSelectStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
 				break;
 			// タイトル
 			case 2:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToGameStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
 				break;
 
 			//例外が起きたらタイトル
 			default:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToGameStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
 				break;
 			}
 		}
@@ -123,6 +123,15 @@ namespace basecross {
 
 	void GameOver::CreateSprite()
 	{
+		float titleX = 1450;
+		Vec2 titleSize(titleX, titleX * 0.5625);
+		auto m_selectBackSprite = AddGameObject<Sprite>(
+			L"GameOverBack",
+			titleSize,
+			Vec3(0, 0, 0)
+		);
+		//m_selectBackSprite->SetColor(Col4(0.49f, 0.49f, 0.49f, 1));
+
 		float overSizeX = 1000, overSizeY = overSizeX * 0.175f;
 		auto sprite = AddGameObject<Sprite>(
 			L"ClearOverText",

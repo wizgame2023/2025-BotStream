@@ -74,6 +74,9 @@ namespace basecross {
 	private:
 		//回避していいかのフラグ
 		bool m_playerDodgeFlag = false;
+
+		//エフェクトのハンドラー
+		Handle m_effect = NULL;
 	public:
 		PlayerDodgeState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
@@ -96,6 +99,8 @@ namespace basecross {
 	private:
 		shared_ptr<Player> m_player;
 		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
+	
+		Handle m_effect = NULL;
 	public:
 		PlayerDashState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj),
@@ -158,17 +163,17 @@ namespace basecross {
 	private:
 		//攻撃時間
 		float m_timeMaxOfAttack = 0.8f;
-		float m_timeMaxOfAttackFirst = 0.3f;
+		float m_timeMaxOfAttackFirst = 0.3f*0.7f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.2f;
+		float m_timeOfStartAttack = 0.2f*0.7f;
 		//攻撃時間計測
 		float m_timeOfAttack = 0.0f;
 		//回避可能時間
-		float m_timeOfStartDodge = 0.35f;
+		float m_timeOfStartDodge = 0.35f*0.7f;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
 		//次の攻撃ボタン受付時間
-		float m_graceTimeOfNextAttack = 0.4f;
+		float m_graceTimeOfNextAttack = 0.4f*0.7f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -206,16 +211,16 @@ namespace basecross {
 		float m_timeMaxOfAttackFirst = 0.1f;
 		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
-		float m_timeOfStartAttackFirst = 0.3f;
-		float m_timeOfStartAttackSecond = 0.6f;
+		float m_timeOfStartAttackFirst = 0.3f*0.7f;
+		float m_timeOfStartAttackSecond = 0.6f*0.7f;
 		//攻撃時間計測
 		float m_timeOfAttack = 0.0f;
 		//回避可能時間
-		float m_timeOfStartDodge = 0.4f;
+		float m_timeOfStartDodge = 0.4f*0.7f;
 		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
 		int m_attackCollisionFlag = 0;
 		//次の攻撃ボタン受付時間
-		float m_graceTimeOfNextAttack = 0.5f;
+		float m_graceTimeOfNextAttack = 0.5f*0.7f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
@@ -253,15 +258,15 @@ namespace basecross {
 		float m_timeMaxOfAttackFirst = 0.1f;
 		float m_timeMaxOfAttackSecond = 0.1f;
 		//攻撃発生時間
-		float m_timeOfStartAttackFirst = 0.3f;
+		float m_timeOfStartAttackFirst = 0.3f*0.8f;
 		//攻撃発生時間
-		float m_timeOfStartAttackSecond = 0.6f;
+		float m_timeOfStartAttackSecond = 0.6f*0.8f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
 		int m_attackCollisionFlag = 0;
 		//次の攻撃ボタン受付時間
-		float m_graceTimeOfNextAttack = 0.9f;
+		float m_graceTimeOfNextAttack = 0.9f*0.8f;
 		//次の攻撃をするかのフラグ
 		//float m_nestAttackFlag = false;
 
@@ -292,13 +297,16 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 1.2f;
+		float m_timeMaxOfAttack = 1.2f*0.8f;
 		//攻撃発生時間
-		float m_timeOfStartAttack = 0.3f;
+		float m_timeOfStartAttack = 0.3f*0.8f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		//攻撃判定出現フラグ
 		bool AttackCollisionFlag = true;
+		//攻撃判定持続時間
+		float m_timeOfStartAttackFirst = 0.9f*0.8f;
+
 		//次の攻撃ボタン受付時間
 		//float m_graceTimeOfNextAttack = 0.9f;
 		////次の攻撃をするかのフラグ
@@ -362,7 +370,7 @@ namespace basecross {
 	{
 	private:
 		//攻撃時間
-		float m_timeMaxOfAttack = 0.5f;
+		float m_timeMaxOfAttack = 0.3f;
 		//攻撃時間計測
 		float m_timeOfAttack;
 		////次の攻撃の猶予時間

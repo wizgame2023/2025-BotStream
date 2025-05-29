@@ -66,9 +66,16 @@ namespace basecross {
 	void PlayerWalkState::Enter()
 	{
 		PlayerStateBase::Enter();
+
+		//何もなければ立ち止まるアニメーション
+		m_player->ChangeAnim(L"Idle");
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
+		////プレイヤーが地面に接触していなければ操作は効かない(問題が発生したのでコメントアウト)
+		//auto playerLand = m_player->GetLand();
+		//if (!playerLand) return;
+
 		PlayerStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 		
@@ -76,12 +83,16 @@ namespace basecross {
 		Vec3 move = m_player->GetMoveVector(PlayerState_Walk);
 		m_player->PlayerMove(PlayerState_Walk);
 
-		//歩きアニメーション再生
-		if (move.length() != 0)
+		//歩きアニメーション再生(移動しているかによって変わる)
+		if (move.length() != 0 && m_meleeFlag)
 		{
 			m_player->ChangeAnim(L"Walk");
 		}
-		else 
+		else if (move.length() != 0 && !m_meleeFlag)
+		{
+			m_player->ChangeAnim(L"Walk_Gun");
+		}
+		else
 		{
 			m_player->ChangeAnim(L"Idle");
 		}
@@ -169,6 +180,8 @@ namespace basecross {
 		m_SEManager->Start(L"Dash", 0, 0.9f);
 		//回避アニメーション
 		m_player->ChangeAnim(L"Dodge");
+		//回避エフェクト
+		m_effect = m_player->AddEffect(PlayerEffect_Dodge);
 
 
 		//回避していいか確認する
@@ -211,6 +224,9 @@ namespace basecross {
 
 		}
 
+		//エフェクトを追従させる
+		EffectManager::Instance().SetPosition(m_effect, m_player->GetPosition());
+
 	}
 	void PlayerDodgeState::Exit()//終了処理
 	{
@@ -225,37 +241,51 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		//ダッシュ用SEを再生
 		m_SE = m_SEManager->Start(L"Landing", XAUDIO2_LOOP_INFINITE, 0.9f);
+		//ダッシュ用エフェクトを再生
+		m_effect = m_player->AddEffect(PlayerEffect_Dash);
 	}
 	void PlayerDashState::Update(float deltaTime)
 	{
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
 
+		//エフェクト追従処理
+		Vec3 playerPos = m_player->GetPosition();
+		Quat playerQt = m_player->GetComponent<Transform>()->GetQuaternion();
+		//playerQt = playerQt;
+		//playerQt.w = -playerQt.w;
+		EffectManager::Instance().SetPosition(m_effect, playerPos+Vec3(0.0f,1.9f,0.0f));
+		EffectManager::Instance().SetRotation(m_effect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+		//m_effect = m_player->AddEffect(PlayerEffect_);
+		//m_player->AddEffect(PlayerEffect_DashRipple);//エフェクト追加
+
 
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dash);
 		m_player->PlayerMove(PlayerState_Dash);
 
-		//歩きアニメーション再生
-		if (move.length() != 0)
+		//ダッシュステートのアニメーション再生
+		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
+
+		//歩きアニメーション変更処理
+		if (move.length() != 0 && m_meleeFlag)
 		{
 			m_player->ChangeAnim(L"Dash");
+		}
+		else if (move.length() != 0 && !m_meleeFlag)
+		{
+			m_player->ChangeAnim(L"Walk_Gun");
+			m_player->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
 		else
 		{
 			m_player->ChangeAnim(L"Idle");
 		}
 
-		//ダッシュステートのアニメーション再生
-		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 
-		//Aボタン離したらorスティックを離したら歩くステートに変更する
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A)
-		{
-			m_player->ChangeState(L"PlayerWalk");
-		}
+		//Aボタン離したらorスティックを離したら歩くステートに変更する	
 		Vec3 stickVec = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
-		if (stickVec == Vec3(0.0f))
+		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A || stickVec == Vec3(0.0f))
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
@@ -312,6 +342,8 @@ namespace basecross {
 	{
 		//ダッシュSEを止める
 		m_SEManager->Stop(m_SE);
+
+		EffectManager::Instance().StopEffect(m_effect);
 	}
 
 
@@ -343,7 +375,8 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
+		auto mag = 1.42f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.5f) * mag);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack1);
     
@@ -447,7 +480,8 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 1.9f);
+		auto mag = 1.42f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.9f) * mag);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack2);
 
@@ -560,7 +594,8 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 1.8f);
+		auto mag = 1.25f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.8f)*mag);
 		//移動処理
 		m_player->PlayerMove(PlayerState_Attack3);
 
@@ -662,7 +697,8 @@ namespace basecross {
 		m_timeOfAttack += deltaTime;
 
 		//アニメーションの更新
-		m_player->SetAddTimeAnimation(deltaTime * 2.2f);
+		auto mag = 1.25f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 2.2f) * mag);
 
 		AttackCollisionOccurs();
 		//次のステートに行く処理
@@ -691,7 +727,7 @@ namespace basecross {
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(10.0f, 5.0f, 10.0f);
 			AttackPtr->SetCollScale(1.0f);
-			AttackPtr->ActivateCollision(m_timeMaxOfAttack);
+			AttackPtr->ActivateCollision(m_timeOfStartAttackFirst);
 
 			//攻撃判定はもう出ない
 			AttackCollisionFlag = false;
@@ -773,13 +809,25 @@ namespace basecross {
 		auto stage = m_player->GetStage();
 		auto playerPos = m_player->GetPosition();
 		m_SEManager->Start(L"HandGun", 0, 0.9f);//銃SE再生
-		auto bullet = stage->AddGameObject<Bullet>(playerPos+Vec3(0.0f,2.0f,0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 30.0f, m_player, 30.0f);
+		auto bullet = stage->AddGameObject<Bullet>(playerPos+Vec3(0.0f,2.0f,0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 60.0f, m_player, 100.0f);
 		//m_player->AddEffect(PlayerEffect_Beam);//攻撃エフェクトを出す
+
+		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
+		float m_angleYAxis = -(cameraManager->GetAngle(L"Y")) - XMConvertToRadians(180.0f);
+		auto PlayerQt = m_player->GetQuaternion();
+		auto playerRot = m_player->GetComponent<Transform>()->GetRotation();
+		playerRot.y = m_angleYAxis;
+		m_player->GetComponent<Transform>()->SetRotation(Vec3(0.0f,m_angleYAxis,0.0f));
+
+
+		m_player->ChangeAnim(L"Shot_Gun");//撃つアニメーション変更
 	}
 	void PlayerAttackLongState::Update(float deltaTime)
 	{
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
+
+		
 
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
@@ -802,7 +850,6 @@ namespace basecross {
 	//ダメージを受けた際のステート
 	void PlayerHitState::Enter()
 	{
-
 		PlayerStateBase::Enter();
 
 		m_SEManager->Start(L"DamageVoiceSE");
@@ -812,10 +859,18 @@ namespace basecross {
 		m_player->HitBack();
 		m_player->SetHP(HPNow - hitInfo.Damage);
 
-		m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
+		//ダメージを受けたときのアニメーション
+		m_player->ChangeAnim(L"Hit");
+
+		if (m_player->GetHitInfo().InvincibleOnHit) {
+			m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
+		}
 	}
 	void PlayerHitState::Update(float deltaTime)
 	{
+		//アニメーション更新
+		m_player->SetAddTimeAnimation(deltaTime/2.0f);
+
 		m_timeOfHitBack += deltaTime;
 		//ノックバックの時間を越えたら別のステートに移動する
 		if (m_timeOfHitBack >= m_timeMaxOfHitBack)
@@ -825,11 +880,13 @@ namespace basecross {
 
 			m_player->ChangeState(L"PlayerWalk");
 		}
-
 	}
 	void PlayerHitState::Exit()
 	{
-		m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
+		if (m_player->FindTag(L"invincible")) {
+			m_player->RemoveTag(L"invincible");//タメージを受けているときは無敵にする
+
+		}
 	}
 
 }

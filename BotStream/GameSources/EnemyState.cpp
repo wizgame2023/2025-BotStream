@@ -256,15 +256,16 @@ namespace basecross {
 			m_speed = m_speedMax;
 		}
 		//ƒvƒŒƒCƒ„[–ÚŠ|‚¯‚ÄˆÚ“®
-		Vec3 vel = boss->GetPlayerDistInVec3().normalize();
-		vel.y = 0;
+		Vec3 vel = boss->GetPlayerDistInVec3().normalize() * m_speed;
+		vel.y = boss->GetVelocity().y;
 
-		boss->SetVelocity(vel * m_speed);
+		boss->SetVelocity(vel);
 
 		//UŒ‚”»’è‚Ì’è‹`
 		if (m_spinSpeed >= m_spinSpeedMax / 2 && !m_attacked) {
 			m_attacked = !m_attacked;
 			m_time = 0;
+			boss->AddEffect(EnemyEffect_Spin);
 
 			auto tmp = boss->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
@@ -527,6 +528,7 @@ namespace basecross {
 		if (m_time >= m_attackTime && !m_attacked) {
 			m_attacked = !m_attacked;
 			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
+			boss->AddEffect(EnemyEffect_Wave);
 
 			auto tmp = boss->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
@@ -562,9 +564,8 @@ namespace basecross {
 		if (m_time >= m_attackTime && !m_attacked) {
 			m_attacked = !m_attacked;
 			boss->PlaySnd(L"Enemy_Slam", 1.0f, 0);
-			
-			//10‚Í‚¸‚ç‚·’¼ü‹——£
-			Vec3 pos = boss->GetPosition() + boss->GetForward() * 10 + Vec3(0, 2, 0);
+
+			Vec3 pos = boss->GetPosition() + boss->GetForward() * m_waveDist + Vec3(0, -3.0f, 0);
 			boss->GetStage()->AddGameObject<BossFirstShockwave>(pos, Vec3(0.0f), Vec3(1.0f), boss);
 		}
 

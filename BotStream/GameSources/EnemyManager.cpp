@@ -9,9 +9,11 @@
 #include "Enemy.h"
 
 namespace basecross {
-
+	
+	//Œ^–¼‚ðŽw’è‚·‚é•û
 	void EnemyManager::InstEnemy(Vec3 pos, Vec3 rot, Vec3 scale) {
 		for (auto& e : m_enemies) {
+
 			if (e == nullptr) continue;
 			if (e->GetUsed() == false) {
 				e->Initialize(pos, rot, scale);

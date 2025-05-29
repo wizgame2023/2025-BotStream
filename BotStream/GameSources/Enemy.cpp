@@ -143,11 +143,17 @@ namespace basecross {
 	}
 	
 	void EnemyBase::RotateToPlayer(const float multiply, const float threshold) {
-		float playerDir = GetPlayerSubDirection();
+		const float playerDir = GetPlayerSubDirection();
+		float rotate = m_rotateSpeed * multiply * _delta * (playerDir < 0 ? -1 : 1);
 
 		if (abs(playerDir) > threshold) {
 			Quat q = GetQuaternion();
-			q = RotateQuat(q, Vec3(0, 1, 0), m_rotateSpeed * multiply * _delta * (playerDir < 0 ? -1 : 1));
+
+			if (abs(playerDir) < abs(rotate)) {
+				rotate = playerDir;
+			}
+
+			q = RotateQuat(q, Vec3(0, 1, 0), rotate);
 			SetQuaternion(q);
 		}
 	}
@@ -221,14 +227,16 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		m_HPMax = 300;
+		m_HPMax = 450;
 		m_attack = 10;
 		m_defense = 1;
 		m_HPCurrent = m_HPMax;
 
-		m_armorMax = 100.0f;
+		m_armorMax = 150.0f;
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 6.0f;
+
+		m_stunMax = 5;
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
@@ -256,8 +264,8 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(false);//debug
 
-		m_LandDetect->SetBindPos(Vec3(0, -2.7f, 0));
-		m_LandDetect->SetCollScale(1.0f);
+		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
+		m_LandDetect->SetCollScale(1.5f);
 
 		AddTag(L"Enemy");
 
@@ -296,8 +304,12 @@ namespace basecross {
 	}
 
 	void BossFirst::OnDamaged() {
-		int armorDamage = m_GetHitInfo.Damage;
+		int armorDamage = m_getHitInfo.Damage;
 		bool isArmorBreak = m_armor > 0;
+
+		//スタン値へのダメージ
+		m_stun += m_getHitInfo.StunDamage;
+		bool isStun = m_stun >= m_stunMax;
 
 		//アーマーへのダメージ2倍
 		if (GetBoneModelDraw()->GetCurrentAnimation() == L"Bonus") {
@@ -307,6 +319,7 @@ namespace basecross {
 
 		//非アーマー
 		if (m_armor <= 0) {
+			
 			//ブレイク時の演出
 			if (isArmorBreak) {
 				AddEffect(EnemyEffect_ArmorBreak);
@@ -318,12 +331,21 @@ namespace basecross {
 				m_state->ChangeState(L"Hit");
 			}
 
-			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		}
 		//アーマー
 		else {
-			m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage) / 5.0f;
+			m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
 			m_armorFlash = m_armorFlashMax;
+		}
+
+		//スタン時の演出
+		if (isStun) {
+			AddEffect(EnemyEffect_Stun);
+			App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+			m_stun = 0;
+
+			m_state->ChangeState(L"Stun");
 		}
 
 		//死亡
@@ -372,9 +394,11 @@ namespace basecross {
 
 		m_innerCollision = AddComponent<CollisionCapsule>();
 		m_innerCollision->SetAfterCollision(AfterCollision::None);
-		HitInfoInit();
+		//m_innerCollision->SetDrawActive(true);
+		//GetAttackPtr()->GetCollisionPtr()->SetDrawActive(true);
 
-		GetAttackPtr()->GetCollisionPtr()->SetDrawActive(true);
+		HitInfoInit();
+		DrawInit();
 
 		m_doPhysics = false;
 	}
@@ -389,27 +413,86 @@ namespace basecross {
 		_delta = App::GetApp()->GetElapsedTime();
 
 		if (m_radius >= m_radiusMax || m_AttackCol->GetMoveContact()) {
-			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
-			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
-			GetStage()->RemoveGameObject<ProjectileBase>(GetThis<ProjectileBase>());
+			RemoveSelf();
 			return;
 		}
 
+		//拡大
 		m_radius += m_radiateSpeed * _delta;
-
 		SetScale(Vec3(m_radius - m_widthCircle, m_height, m_radius - m_widthCircle));
-
 		m_AttackCol->SetScale(Vec3(m_radius, m_height, m_radius));
+		
+		if (m_radius >= m_radiusStartFade) {
+			Col4 tmp = Col4(1, 1, 1, 1 - (m_radius - m_radiusStartFade) / (m_radiusMax - m_radiusStartFade));
+			for (auto& e : m_vertices) {
+				e.color = tmp;
+			}
+		}
 
 		//プレイヤーが内側にいたら攻撃判定を消す
 		float playerInside = m_isPlayerInsideCnt <= 0 ? 1 : 0;
 		m_AttackCol->ActivateCollision(playerInside);
-
+		//プレイヤーが外側にいるときの判定用
 		if (m_isPlayerInsideCnt > 0) {
 			m_isPlayerInsideCnt--;
 		}
+
+		m_ptrDraw->UpdateVertices(m_vertices);
 	}
 
+	//描画コンポーネントの情報
+	void BossFirstShockwave::DrawInit() {
+		m_ptrDraw = AddComponent<BcPCTStaticDraw>();
+
+		m_vertices.clear();
+		m_vertices.reserve((m_numOfVertices + 1) * 2);
+
+		for (int i = 0; i <= m_numOfVertices; i++) {
+			Vec3 vtxPos;
+			VertexPositionColorTexture tmp;
+
+			float rad = XMConvertToRadians(360.0f / m_numOfVertices * i);
+			float u = m_loop.x * static_cast<float>(i) / static_cast<float>(m_numOfVertices);
+			float v = m_loop.y;
+			
+			//↑
+			const float scale = GetScale().x;
+			float plus = (m_topRadiusPlus / scale);
+			vtxPos = Vec3(cosf(rad) / 2 * plus, m_meshHeight, sinf(rad) / 2 * plus);
+			tmp = VertexPositionColorTexture(vtxPos, m_topColor, Vec2(u, 0));
+			m_vertices.push_back(tmp);
+
+			//↓
+			plus = (m_btmRadiusPlus / scale);
+			vtxPos = Vec3(cosf(rad) / 2 * plus, 0, sinf(rad) / 2 * plus);
+			tmp = VertexPositionColorTexture(vtxPos, m_btmColor, Vec2(u, v));
+			m_vertices.push_back(tmp);
+		}
+
+		const vector<uint16_t> baseIndex = {
+			2, 1, 0,
+			3, 1, 2
+		};
+
+		m_indices.clear();
+		m_indices.reserve(m_numOfVertices * baseIndex.size());
+		//各頂点の上下に対してループ
+		for (int i = 0; i < m_numOfVertices; i++) {
+			for (auto e : baseIndex) {
+				m_indices.push_back(e + (2 * i));
+			}
+		}
+
+		m_ptrDraw->SetOriginalMeshUse(true);
+		m_ptrDraw->CreateOriginalMesh(m_vertices, m_indices);
+		m_ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		m_ptrDraw->SetDepthStencilState(DepthStencilState::Read);
+		m_ptrDraw->SetBlendState(BlendState::Additive);
+		m_ptrDraw->SetTextureResource(m_texKey);
+		SetAlphaActive(true);
+	}
+
+	//当たり判定の情報
 	void BossFirstShockwave::HitInfoInit() {
 
 		//攻撃判定の定義
@@ -537,6 +620,11 @@ namespace basecross {
 	}
 
 	void BossFirstSphere::OnUpdate() {
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
 		Actor::OnUpdate();
 
 		//消滅する条件

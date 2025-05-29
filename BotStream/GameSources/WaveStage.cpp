@@ -1,6 +1,6 @@
 /*!
 @file WaveStage.cpp
-@brief ƒQ[ƒ€ƒXƒe[ƒWÀ‘Ì
+@brief ã‚²ãƒ¼ãƒ ã‚¹ãƒ†ãƒ¼ã‚¸å®Ÿä½“
 */
 
 #include "stdafx.h"
@@ -9,47 +9,61 @@
 namespace basecross {
 
     //--------------------------------------------------------------------------------------
-    //	ƒQ[ƒ€ƒXƒe[ƒWƒNƒ‰ƒXÀ‘Ì
+    //	ã‚²ãƒ¼ãƒ ã‚¹ãƒ†ãƒ¼ã‚¸ã‚¯ãƒ©ã‚¹å®Ÿä½“
     //--------------------------------------------------------------------------------------
     void WaveStage::CreateViewLight() {
-        //ƒJƒƒ‰
+        //ã‚«ãƒ¡ãƒ©
         const Vec3 eye(0.0f, 350.0f, -20.0f);
 
         const Vec3 at(0.0f, 0.0f, 0.0f);
         auto PtrView = CreateView<SingleView>();
-        //ƒrƒ…[‚ÌƒJƒƒ‰‚Ìİ’è
+        //ãƒ“ãƒ¥ãƒ¼ã®ã‚«ãƒ¡ãƒ©ã®è¨­å®š
         auto PtrCamera = ObjectFactory::Create<Camera>();
         PtrView->SetCamera(PtrCamera);
         PtrCamera->SetEye(eye);
         PtrCamera->SetAt(at);
-        //ƒ}ƒ‹ƒ`ƒ‰ƒCƒg‚Ìì¬
+        //ãƒãƒ«ãƒãƒ©ã‚¤ãƒˆã®ä½œæˆ
         auto PtrMultiLight = CreateLight<MultiLight>();
-        //ƒfƒtƒHƒ‹ƒg‚Ìƒ‰ƒCƒeƒBƒ“ƒO‚ğw’è
+        //ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã‚’æŒ‡å®š
         PtrMultiLight->SetDefaultLighting();
     }
 
     void WaveStage::OnCreate()
     {
-        //ƒrƒ…[‚Æƒ‰ƒCƒg‚Ìì¬
+        //ãƒ“ãƒ¥ãƒ¼ã¨ãƒ©ã‚¤ãƒˆã®ä½œæˆ
         CreateViewLight();
 
         CreateFloor();
         CreateWall();
         CreateCeiling();
 
-        m_waveNow = 1;//wave‚PŠJn‚µ‚Ä‚é
+        m_waveNow = 1;//waveï¼‘é–‹å§‹ã—ã¦ã‚‹
 
         shared_ptr<FadeoutSprite> fadeout;
         fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
         SetSharedGameObject(L"Fadeout", fadeout);
-        fadeout->SetDrawLayer(3);
+        fadeout->SetDrawLayer(4);
 
         CreateSharedObjectGroup(L"Actor");
 
-        auto player = AddGameObject<Player>(Vec3(0.0f, 0.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+        auto player = AddGameObject<Player>(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
         SetSharedGameObject(L"Player", player);
 
-        auto enemyMgr = AddGameObject<EnemyManager>();
+        //Enemyãƒãƒãƒ¼ã‚¸ãƒ£ã®ãƒ†ã‚¹ãƒˆ
+        vector<EnemyVariation> enemyVariation;   
+        for (int i = 0; i <= 10; i++)
+        {
+            enemyVariation.push_back(EVar_Normal);
+        }
+        for (int i = 0; i <= 10; i++)
+        {
+            enemyVariation.push_back(EVar_Projectile);
+        }  
+
+        enemyVariation.push_back(EVar_Aerial);
+
+
+        auto enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
         SetSharedGameObject(L"EnemyManager", enemyMgr);
 
         auto boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
@@ -59,18 +73,25 @@ namespace basecross {
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
+
+        // ãƒœã‚¹ã‚²ãƒ¼ã‚¸
+        m_bossGauge = AddGameObject<BossGaugeUI>(
+            boss,
+            boss->GetHPMax()
+            );
+        SetSharedGameObject(L"BossUI", m_bossGauge);
         
-
-        //wave1“G
-        enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        //auto flyingEnemy = AddGameObject
-
+        //wave1æ•µ
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(-10.0f,2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(-20.0f,2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        enemyMgr->InstEnemy<EnemyZako>(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+        
+        //ã‚«ãƒ¡ãƒ©ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼
         auto cameraManager = AddGameObject<CameraManager>();
         SetSharedGameObject(L"CameraManager", cameraManager);
 
@@ -82,7 +103,7 @@ namespace basecross {
         auto colController = AddGameObject<StageCollisionController>();
         colController->SetCollisionSwhich(true);
 
-        //ƒ|[ƒYˆ—¶¬
+        //ãƒãƒ¼ã‚ºå‡¦ç†ç”Ÿæˆ
         AddGameObject<PauseSprite>();
     }
 
@@ -93,10 +114,13 @@ namespace basecross {
         auto scene = app->GetScene<Scene>();
         auto KeyState = App::GetApp()->GetInputDevice().GetKeyState();
         auto pad = App::GetApp()->GetInputDevice().GetControlerVec()[0];
+
         auto player = GetSharedGameObject<Player>(L"Player");
         auto enemyMgr = GetSharedGameObject<EnemyManager>(L"EnemyManager");
         auto boss = GetSharedGameObject<BossFirst>(L"Boss");
+
         auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
+
 
         fadeout->GetBlackFlag();
         m_BlackFlag = fadeout->GetBlackFlag();
@@ -115,7 +139,6 @@ namespace basecross {
         int EnemyNum = EnemyVec.size();
 
         EffectManager::Instance().InterfaceUpdate();
-
 
 
         if (m_waveNow == 1 && EnemyNum == 0)
@@ -138,13 +161,14 @@ namespace basecross {
 
             m_waveNow = 2;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 0.0f, -40.0f));
-            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, -40.0f));
+            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+            GetSharedGameObject<CameraManager>(L"CameraManager")->SetAngle(L"Y", XMConvertToRadians(270.0f));
 
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
 
-            //ƒEƒF[ƒu‚Q“G
+            //ã‚¦ã‚§ãƒ¼ãƒ–ï¼’æ•µ
             enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -153,24 +177,28 @@ namespace basecross {
             enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
-            enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(-20.0f,2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-20.0f,2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-30.0f,2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
         }
 
 
         if (m_NextWaveFlag == true && m_waveNow == 2)
         {
-            //ƒ{ƒXíŠJn
+            //ãƒœã‚¹æˆ¦é–‹å§‹
             m_waveNow = 3;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 0.0f, 195.0f));
-            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            m_bossGauge->ClearBossGaugeUI(false);
+
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, 195.0f));
+
+            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+            GetSharedGameObject<CameraManager>(L"CameraManager")->SetAngle(L"Y", XMConvertToRadians(270.0f));
 
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
@@ -187,14 +215,14 @@ namespace basecross {
         if (m_waveNow == 3)
         {
             auto boss = enemyMgr->GetBoss();
-            m_bossCurrentHP = boss->GetHPCurrent();//Boss‚ÌHPæ“¾
+            m_bossCurrentHP = boss->GetHPCurrent();//Bossã®HPå–å¾—
         }
 
         if (m_waveNow == 3 && m_bossCurrentHP <= 0)
         {
             GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
             scene->PostEvent(3.0f, GetThis<ObjectInterface>(),app->GetScene<Scene>(), L"ToGameClear");
-            m_waveNow = 4;//ƒEƒF[ƒuI—¹
+            m_waveNow = 4;//ã‚¦ã‚§ãƒ¼ãƒ–çµ‚äº†
         }
 
         if (plaHP <= 0)
@@ -214,6 +242,14 @@ namespace basecross {
         EffectManager::Instance().InterfaceDraw();
     }
 
+    void WaveStage::OnDestroy()
+    {
+        //BGMã¨SEã‚’æ­¢ã‚ã‚‹
+        auto soundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+        soundManager->StopBGM();
+        soundManager->StopSE();
+    }
+
     void WaveStage::SetNextWaveFlag(int setNextWaveFlag)
     {
         m_NextWaveFlag = setNextWaveFlag;
@@ -225,7 +261,7 @@ namespace basecross {
     }
 
 
-    //°ì¬
+    //åºŠä½œæˆ
     void WaveStage::CreateFloor()
     {
         vector < vector<Vec3> > vec =
@@ -257,6 +293,7 @@ namespace basecross {
         }
     }
 
+    //å¤©äº•,åºŠ
     Floor::Floor(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -280,8 +317,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
         AddTag(L"Floor");
         AddTag(L"CameraObstacles");
@@ -294,81 +332,81 @@ namespace basecross {
     }
 
 
-    //•Çì¬
+    //å£ä½œæˆ
     void WaveStage::CreateWall()
     {
         vector < vector<Vec3> > vec =
         {
             //Boss
-            //‰E
+            //å³
             {
                 Vec3(41.0f, 4.0f, 160.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(77.5f, 19.0f, 260.0f)
             },
-            //¶
+            //å·¦
             {
                 Vec3(41.0f, 4.0f, 160.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(-77.5f, 19.0f, 260.0f)
             },
-            //‘O
+            //å‰
             {
                 Vec3(41.0f, 4.0f, 160.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, 336.0f)
             },
-            //Œã
+            //å¾Œ
             {
                 Vec3(41.0f, 4.0f, 160.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, 183.0f)
             },
             //Wave2
-            //‰E
+            //å³
             {
                 Vec3(41.0f, 4.0f, 110.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(57.5f, 19.0f, 0.0f)
             },
-            //¶
+            //å·¦
             {
                 Vec3(41.0f, 4.0f, 110.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(-57.5f, 19.0f, 0.0f)
             },
-            //‘O
+            //å‰
             {
                 Vec3(41.0f, 4.0f, 115.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, 56.0f)
             },
-            //Œã
+            //å¾Œ
             {
                 Vec3(41.0f, 4.0f, 115.0f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, -56.0f)
             },
             //Wave1
-            //‰E
+            //å³
             {
                 Vec3(41.0f, 4.0f, 110.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(57.0f, 19.0f, -260.0f)
             },
-            //¶
+            //å·¦
             {
                 Vec3(41.0f, 4.0f, 110.5f),
                 Vec3(0.0f, 0.0f, 1.57f),
                 Vec3(-57.0f, 19.0f, -260.0f)
             },
-            //‘O
+            //å‰
             {
                 Vec3(41.0f, 4.0f, 110.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
                 Vec3(0.0f, 19.0f, -203.0f)
             },
-             //Œã
+             //å¾Œ
             {
                 Vec3(41.0f, 4.0f, 110.5f),
                 Vec3(0.0f, 1.57f, 1.57f),
@@ -381,6 +419,7 @@ namespace basecross {
         }
     }
 
+    //å£
     Wall::Wall(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -404,8 +443,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -418,7 +458,7 @@ namespace basecross {
     }
 
 
-    //“Vˆäì¬
+    //å¤©äº•ä½œæˆ
     void WaveStage::CreateCeiling()
     {
         vector < vector<Vec3> > vec =
@@ -449,6 +489,7 @@ namespace basecross {
         }
     }
 
+    //å¤©äº•
     Ceiling::Ceiling(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -472,8 +513,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
@@ -483,7 +525,7 @@ namespace basecross {
     }
 
 
-    //o“üŒûì¬
+    //å‡ºå…¥å£ä½œæˆ
     Door::Door(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -507,7 +549,7 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");

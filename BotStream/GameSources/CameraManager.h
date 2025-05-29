@@ -158,6 +158,18 @@ namespace basecross{
 
 			return 0;
 		}
+		//第一引数　X軸かY軸どちらの軸の角度を取るか 第二引数 どの角度に向くか
+		void SetAngle(wstring XorY,float angle)
+		{
+			if (XorY == L"X")
+			{
+				m_cameraAngleX = angle;
+			}
+			if (XorY == L"Y")
+			{
+				m_cameraAngleY = angle;
+			}
+		}
 
 		//カメラのAtゲッタ
 		Vec3 GetCameraAt()

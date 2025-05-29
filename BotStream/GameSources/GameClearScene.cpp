@@ -101,20 +101,20 @@ namespace basecross {
 			{
 			// 次のステージ
 			case 0:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage2");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
 				break;
 			// セレクトステージ
 			case 1:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToSelectStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToStageSelect");
 				break;
 			// タイトル
 			case 2:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToGameStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
 				break;
 
 			//例外が起きたらタイトル
 			default:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToGameStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
 				break;
 			}
 		}
@@ -122,7 +122,16 @@ namespace basecross {
 
 	void GameClear::CreateSprite()
 	{
+		float titleX = 1450;
+		Vec2 titleSize(titleX, titleX * 0.5625);
+
 		float overSizeX = 1000, overSizeY = overSizeX * 0.175f;
+		auto m_selectBackSprite = AddGameObject<Sprite>(
+			L"GameClearBack",
+			titleSize,
+			Vec3(0, 0, 0)
+		);
+
 		auto sprite = AddGameObject<Sprite>(
 			L"ClearOverText",
 			Vec2(overSizeX, overSizeY),
@@ -131,7 +140,7 @@ namespace basecross {
 		sprite->SetUVRect(Vec2(0, 0), Vec2(1, 0.25f));
 
 		//ステージセレクト
-		float selectSizeX = 300, selectSizeY = selectSizeX * 0.8f;
+		float selectSizeX = 300, selectSizeY = selectSizeX * 0.5f;
 		float selectPosX = 0, selectPosY = -200;
 		sprite = AddGameObject<Sprite>(
 			L"ClearOverText",
@@ -140,13 +149,16 @@ namespace basecross {
 		);
 		sprite->SetUVRect(Vec2(0, 0.5f), Vec2(0.5f, 0.75f));
 
-		// リスタート
+		// 次のステージ
 		sprite = AddGameObject<Sprite>(
 			L"ClearOverText",
 			Vec2(selectSizeX, selectSizeY),
 			Vec3(selectPosX - 350, selectPosY, 0)
 		);
-		sprite->SetUVRect(Vec2(0.5f, 0.75f), Vec2(1, 1));
+		//sprite->SetUVRect(Vec2(0.5f, 0.75f), Vec2(1, 1));
+		
+		// 応急処置としてリスタートと表示する
+		sprite->SetUVRect(Vec2(0.5f, 0.5f), Vec2(1, 0.75f));
 
 		// タイトル
 		sprite = AddGameObject<Sprite>(

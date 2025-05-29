@@ -70,8 +70,8 @@ namespace basecross {
 			//ポーズ生成
 			AddGameObject<PauseSprite>();
 
-			// テスト用ボスゲージ
-			AddGameObject<BossGaugeUI>();
+			// ボスゲージ
+			//AddGameObject<BossGaugeUI>();
 
 		}
 		catch (...) {
@@ -470,8 +470,10 @@ namespace basecross {
 
 	void StageSato::OnUpdate()
 	{
+		//if()
 		//エフェクト関係
 		EffectManager::Instance().InterfaceUpdate();
+		auto actorPtr = static_pointer_cast<GameObject>(m_player);
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
@@ -496,6 +498,11 @@ namespace basecross {
 			if (keybord.m_bPushKeyTbl[VK_RIGHT])
 				ret.x = 1;
 
+		}
+
+		if (keybord.m_bPushKeyTbl[VK_RIGHT])
+		{
+			DamageBill(actorPtr,30);
 		}
 
 		//// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
@@ -626,7 +633,7 @@ namespace basecross {
 				5.0f,                       // 対象からの高さ
 				Vec3(1.5f, 1.5f, 1.0f),     // 大きさ
 				Col4(1, 1, 1, 1),
-				i * 50.0f                   // 左右オフセット
+				i * 1.0f                   // 左右オフセット
 			);
 
 			// 2) その桁の数字に対応するUVを設定
@@ -634,8 +641,9 @@ namespace basecross {
 			Vec2 uv1((digit + 1) * uvWidth, 1.0f);
 			damageBB[i]->SetBillUV(uv0, uv1);
 		}
-		//――――――――――――――――――――――
+
 		// 3) 1秒後に自分で消えるようにタイマーをセット
+		
 	}
 
 	//// ----------------------------------------------------------

@@ -36,7 +36,7 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-
+			
 			ResetActiveStage<TitleStage>();
 
 		}
@@ -81,6 +81,13 @@ namespace basecross{
 
 		}
 
+		if (event->m_MsgStr == L"ToTitleStage") {
+			//最初のアクティブステージの設定
+
+			ResetActiveStage<TitleStage>();
+
+		}
+
 	}
 
 	void Scene::GameResourses()
@@ -102,8 +109,8 @@ namespace basecross{
 		// title
 		strTexture = texPath + L"TitleBack.png";
 		app->RegisterTexture(L"TitleBack", strTexture);
-		strTexture = texPath + L"TitleString.png";
-		app->RegisterTexture(L"TitleString", strTexture);
+		strTexture = texPath + L"TitleLogo2.png";
+		app->RegisterTexture(L"TitleLogo", strTexture);
 		strTexture = texPath + L"TitleText.png";
 		app->RegisterTexture(L"TitleText", strTexture);
 
@@ -114,7 +121,15 @@ namespace basecross{
 		// StageSelect
 		strTexture = texPath + L"StageSelectString.png";
 		app->RegisterTexture(L"StageSelectString", strTexture);
-		
+		strTexture = texPath + L"SelectBack2.png";
+		app->RegisterTexture(L"SelectBack", strTexture);
+
+		// GameClear / GameOver
+		strTexture = texPath + L"GameOverBack.png";
+		app->RegisterTexture(L"GameOverBack", strTexture);
+		strTexture = texPath + L"GameClearBack.png";
+		app->RegisterTexture(L"GameClearBack", strTexture);
+
 		// UISprite
 		// Gauge
 		strTexture = texPath + L"PlayerGauge.png";
@@ -166,9 +181,9 @@ namespace basecross{
 		app->RegisterTexture(L"ClearOverText", strTexture);
 
 		//使っている武器を表示するUIテクスチャ
-		strTexture = texPath + L"Katana.png";
+		strTexture = texPath + L"Attack_UI.png";
 		app->RegisterTexture(L"KatanaTex", strTexture);
-		strTexture = texPath + L"Gun.png";
+		strTexture = texPath + L"Gun_UI.png";
 		app->RegisterTexture(L"GunTex", strTexture);
 
 		//ターゲット範囲用テクスチャ
@@ -179,6 +194,14 @@ namespace basecross{
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
 
+		// その他ゲーム中テクスチャ
+		strTexture = texPath + L"Shock_wave_ring001.png";
+		app->RegisterTexture(L"Tex_Shockwave", strTexture);
+
+		//壁用のテクスチャ
+		strTexture = texPath + L"WallTexture.png";
+		app->RegisterTexture(L"WallTex", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ
@@ -187,6 +210,10 @@ namespace basecross{
 
 		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Player_test.bmf");//仮のプレイヤーメッシュ
 		app->RegisterResource(L"PlayerModelTest", boneMultiModelMesh);
+		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Player.bmf");//仮のプレイヤーメッシュ
+		app->RegisterResource(L"PlayerModelTestVer2.0", boneMultiModelMesh);
+		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Enemy_B.bmf");//雑魚敵のメッシュ(空中)
+		app->RegisterResource(L"Enemy_B", boneMultiModelMesh);
 
 		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ(遠距離)
 		app->RegisterResource(L"Enemy_A", boneModelMesh);
@@ -220,10 +247,12 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Stun", efkPath + L"stun.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
-		EffectManager::Instance().RegisterEffect(L"DamageEfk", efkPath + L"damage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
@@ -251,7 +280,10 @@ namespace basecross{
 		app->RegisterWav(L"Enemy_Slam", SoundPath + L"Enemy_Slam.wav");
 		app->RegisterWav(L"Beam", SoundPath + L"Beam.wav");
 		app->RegisterWav(L"Enemy_Defeat", SoundPath + L"Enemy_Defeat.wav");
+		app->RegisterWav(L"EnemyZako_Shot", SoundPath + L"EnemyZako_Shot.wav");//雑魚敵の遠距離攻撃
+		app->RegisterWav(L"EnemyZako_Charge", SoundPath + L"EnemyZako_Charge.wav");//雑魚敵の遠距離攻撃
 
+		app->RegisterWav(L"Damage", SoundPath + L"Damage.wav");
 		app->RegisterWav(L"Landing", SoundPath + L"Landing2.wav");
 		app->RegisterWav(L"Dash", SoundPath + L"Dash.wav");
 		app->RegisterWav(L"Attack1", SoundPath + L"Attack1.wav");

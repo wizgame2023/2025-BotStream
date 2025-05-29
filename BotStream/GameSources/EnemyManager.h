@@ -12,12 +12,19 @@
 
 namespace basecross {
 	class MyGameObject;
+
+	enum EnemyVariation {
+		EVar_Normal,
+		EVar_Projectile,
+		EVar_Aerial
+	};
+
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体 [0]はボス向け)
-		shared_ptr<EnemyBase> m_enemies[15];
+		shared_ptr<EnemyBase> m_enemies[30];
 	public:
-		EnemyManager(const shared_ptr<Stage>& stagePtr) : 
+		EnemyManager(const shared_ptr<Stage>& stagePtr) :
 			MyGameObject(stagePtr)
 		{
 			bool isFirstofVector = true;
@@ -28,8 +35,54 @@ namespace basecross {
 					isFirstofVector = !isFirstofVector;
 					continue;
 				}
-				auto test = 0.0f;
-				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));//ここを雑魚敵のクラスに変える
+
+				e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+
+			}
+		}
+
+		//vectorを渡すことで生成する敵の種類を変えられたらいいねという話
+		EnemyManager(const shared_ptr<Stage>& stagePtr, vector<EnemyVariation>& enemyVariation) :
+			MyGameObject(stagePtr)
+		{
+			bool isFirstofVector = true;
+
+			int cnt = 0;
+			const int size = enemyVariation.size();
+			//あらかじめ生成
+			for (auto& e : m_enemies) {
+				if (isFirstofVector) {
+					isFirstofVector = !isFirstofVector;
+					continue;
+				}
+				
+				//バグ避け
+				if (cnt >= size) {
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					continue;
+				}
+				
+				switch (enemyVariation[cnt]) 
+				{
+					//必要に応じてクラスを変える
+				case EVar_Normal:
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				case EVar_Projectile:
+					e = GetStage()->AddGameObject<EnemyZakoLong>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				case EVar_Aerial:
+					e = GetStage()->AddGameObject<EnemyZakoFlying>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				default:
+					e = GetStage()->AddGameObject<EnemyZako>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+				}
+
+				cnt++;
 			}
 		}
 		~EnemyManager() {}
@@ -63,6 +116,21 @@ namespace basecross {
 		
 		//敵の情報を入力して敵を1体出す
 		void InstEnemy(Vec3 pos, Vec3 rot, Vec3 scale);
+
+		template<typename T>
+		void InstEnemy(Vec3 pos, Vec3 rot, Vec3 scale) {
+			for (auto& e : m_enemies) {
+
+				shared_ptr<T> tmp = dynamic_pointer_cast<T>(e);
+
+				if (tmp == nullptr) continue;
+				if (e->GetUsed() == false) {
+					e->Initialize(pos, rot, scale);
+					return;
+				}
+			}
+			return;
+		}
 
 		//ボス敵のポインタを渡す用の変数
 		void InstBoss(shared_ptr<EnemyBase> boss) {

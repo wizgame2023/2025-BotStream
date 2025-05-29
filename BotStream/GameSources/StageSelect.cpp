@@ -36,11 +36,53 @@ namespace basecross {
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
+		// デッドゾーン
+		constexpr float dead = 0.3f;
+		// ステージの最大数
+		constexpr int stageMaxNum = 3;
+		constexpr int stageMinNum = 1;
+		// コントローラーの左スティックの判定
+		Vec2 ret;
+		if (cntl[0].bConnected)
+		{
+			ret.x = cntl[0].fThumbLX;
+			ret.y = cntl[0].fThumbLY;
+		}
+
+		// 左右いずれかのデッドゾーン復帰でフラグクリア
+		if (fabs(ret.x) < dead)
+			m_selectOnceFlag = false;
+
+		// 右に倒すとステージが切り替わる(+側)
+		if (ret.x >= dead && !m_selectOnceFlag && m_selectStageNum < stageMaxNum)
+		{
+			m_selectStageNum += 1;
+			m_stageNum->SetUVRect(Vec2(m_selectStageNum * 0.1f,0.0f), Vec2((m_selectStageNum * 0.1f) + 0.1f, 1.0f));
+			m_selectOnceFlag = true;
+		}
+		// 左に倒すとステージが切り替わる(-側)
+		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum)
+		{
+			m_selectStageNum -= 1;
+			m_stageNum->SetUVRect(Vec2(m_selectStageNum * 0.1f,0.0f), Vec2((m_selectStageNum * 0.1f) + 0.1f, 1.0f));
+			m_selectOnceFlag = true;
+		}
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 		{
 			ptrMana->Stop(m_BGM);
-			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
+			switch (m_selectStageNum)
+			{
+			case 1:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
+				break;
+			case 2:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage2");
+				break;
+			case 3:
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage3");
+				break;	
+			}
 		}
 
 	}
@@ -58,7 +100,7 @@ namespace basecross {
 		float titleX = 1450;
 		Vec2 titleSize(titleX, titleX * 0.5625);
 		m_selectBackSprite = AddGameObject<Sprite>(
-			L"TitleBack",
+			L"SelectBack",
 			titleSize,
 			Vec3(0, 0, 0)
 		);
@@ -72,11 +114,11 @@ namespace basecross {
 		);
 
 
-		m_textSprite = AddGameObject<Sprite>(
-			L"TitleText",
-			titleSize2,
-			Vec3(0, -250, 0)
-		);
+		//m_textSprite = AddGameObject<Sprite>(
+		//	L"TitleText",
+		//	titleSize2,
+		//	Vec3(0, -250, 0)
+		//);
 
 		Vec2 titleSize3(titleX * 0.125f, titleX * 0.25f);
 

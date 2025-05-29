@@ -9,4 +9,36 @@
 
 namespace basecross {
 
+	class PartsManager : public MyGameObject
+	{
+
+	public:
+		PartsManager(const shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
+		{
+		}
+		~PartsManager(){}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+
+	};
+
+	class PartsPoach : public MyGameObject
+	{
+
+		//vector<HeadParts> Partspoach;
+
+	public:
+		PartsPoach(const shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
+		{
+		}
+		~PartsPoach() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+	};
 }

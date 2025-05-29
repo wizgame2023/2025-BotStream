@@ -37,15 +37,15 @@ namespace basecross {
 
 		Mat4x4 spanMat;
 		spanMat.affineTransformation(
-			Vec3(0.7f, 0.7f, 0.7f),
+			Vec3(0.7f, 0.35f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, 0.0f, 0.0f)
+			Vec3(0.0f, -1.2f, 0.0f)
 		);
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"PlayerModelTest");//仮のメッシュ
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
 		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
 		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
@@ -58,6 +58,11 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
 		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
 		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
+		ptrDraw->AddAnimation(L"Walk_Gun", 570, 50, true, 24.0f);//歩き状態(銃所持)
+		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);//銃を撃つ
+		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);//銃を戻す
+		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);//やられ
+
 
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
@@ -66,8 +71,11 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 
+		//接地判定
+		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -85,7 +93,7 @@ namespace basecross {
 		auto trans = GetComponent<Transform>();
 		m_EfkPos = trans->GetPosition();
 
-		m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
+		//m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
 	}
 
 	void Player::OnUpdate()
@@ -105,16 +113,27 @@ namespace basecross {
 		EffectManager::Instance().SetPosition(m_testEffect, m_EfkPos);
 
 
-		//着地判定(無効化時間中ならそれを減算する)
-		OnLanding();
+		////着地判定(無効化時間中ならそれを減算する)
+		//OnLanding();
 
-		//物理的な処理
-		if (m_doPhysics) {
-			if (!m_isLand) {
-				Gravity();
-			}
-			else {
-				Friction();
+		////物理的な処理
+		//if (m_doPhysics) {
+		//	if (!m_isLand) {
+		//		Gravity();
+		//	}
+		//	else {
+		//		Friction();
+		//	}
+		//}
+
+		//地面に立っているときは地面にめり込まないようにする
+		if (m_isLand)
+		{
+			m_pos = GetPosition();
+			if (m_pos.y < 1.0f)
+			{
+				m_pos.y = 1.0f;
+				SetPosition(m_pos);
 			}
 		}
 
@@ -158,6 +177,7 @@ namespace basecross {
 			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"WaveEfk", GetAngle(), Vec3(0, 1, 0));
 
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
 			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
@@ -184,7 +204,46 @@ namespace basecross {
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		//GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetPosition());//移動処理
+
+		//移動ですり抜けない処理
+		auto objVec = stage->GetGameObjectVec();
+
+		Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
+		TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
+		size_t triangleNumber; // レイが交差したポリゴンの番号
+		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
+
+		Vec3 beforPos = GetPosition();//移動前
+		Vec3 afterPos = (m_velocity * _delta) + GetPosition();//移動後
+		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
+		for (auto obj : objVec)
+		{
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
+			float hitLength = min;//Playerと障害物の距離の長さ
+
+			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
+			if (obstacles)
+			{
+				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+				if (!obstacles->FindTag(L"CameraObstacles")) continue;
+
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にしない
+				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
+				Vec3 playerorObstaclesVec = hitPos - beforPos;
+				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
+			}
+
+			//minよりhitLengthが短かったら位置更新する
+			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
+			{
+				min = hitLength;
+				hitPos.y = afterPos.y;//Y座標は変えないようにする
+				afterPos = hitPos;
+			}
+		}
+		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
+
 	}
 
 	//ジャンプ処理
@@ -305,10 +364,10 @@ namespace basecross {
 			switch (playerState)
 			{
 			case PlayerState_Walk:
-				totalVec *= moveSize * 3;
+				totalVec *= moveSize * 2.0f;
 				break;
 			case PlayerState_Dash:
-				totalVec *= moveSize * 5.5f;
+				totalVec *= moveSize * 2.75f;
 				break;
 			default:
 				break;
@@ -491,6 +550,13 @@ namespace basecross {
 		{
 			DetectBeingAttacked(Other);
 		}
+
+		////コリジョンが地面を接触してしまったら少し弾ませる
+		//if (FindTag(L"Ground"))
+		//{
+		//	m_pos.y = 2.0f;
+		//	SetPosition(m_pos);
+		//}
 	}
 
 	//ダメージを受けたらヒットステートに移動する
@@ -512,8 +578,9 @@ namespace basecross {
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
+		auto pos = GetPosition();
 		wss /* << L"デバッグ用文字列 "*/
-			<< L"\n Pos.x " << m_pos.x << " Pos.z " << m_pos.z
+			<< L"\n Pos.x " << m_pos.x << " Pos.y " << pos.y <<" Pos.z " << m_pos.z
 			<< L"\n 回避フラグ：  " << m_dodgeFlag
 			<< L"\n Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
@@ -583,19 +650,24 @@ namespace basecross {
 		switch (m_actorType)
 		{
 		case ActorName_Player:
-			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー
+			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
+			tmp.Damage = 8;//ダメージ
+
 			break;
 		case ActorName_Enemy:
 			tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
+			tmp.Damage = 5;//ダメージ
 			break;
 		default:
 			break;
 		}
 
+		tmp.StunDamage = 1;
 		tmp.HitOnce = true;//一回しかヒットしないか
-		tmp.Damage = 10;//ダメージ
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 1.0f;//のけぞり時間
+		tmp.InvincibleOnHit = true;
+		
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;
 		GetAttackPtr()->SetPos(Vec3(0, 0, 0));
@@ -656,11 +728,14 @@ namespace basecross {
 	//当たり判定
 	void Bullet::OnCollisionEnter(shared_ptr<GameObject>& obj)
 	{
+		auto a = 0;
 		//敵や障害物に弾が当たったら消える
 		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
 		if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
 		{
 			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
 		}
 	}
 
@@ -691,7 +766,7 @@ namespace basecross {
 		Actor::OnCreate();
 
 		//いったん雑魚敵のHPは50とする
-		m_HPMax = 50.0f;
+		m_HPMax = 40.0f;
 		m_HPCurrent = m_HPMax;
 
 		//Transform設定
@@ -728,8 +803,8 @@ namespace basecross {
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
-		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
-		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, false, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, false, 24.0f);
 		if (m_AttackType == Zako_Melee)
 		{
 			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
@@ -739,7 +814,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);//デバック用
+		ptrColl->SetDrawActive(false);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");
@@ -748,7 +823,7 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
@@ -765,6 +840,242 @@ namespace basecross {
 	}
 
 	void EnemyZako::OnUpdate()
+	{
+		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		if (m_poseFlag)
+		{
+			return;
+		}
+		//もし、使わない状態から使う状態に変更された時メンバ変数の初期化をする	
+		if (!m_beforUsed)
+		{
+			if (m_used)
+			{
+				m_HPCurrent = m_HPMax;
+				m_attackFlag = false;
+				m_timeCountOfAttackCool = 3.0f;//初期クールダウンのカウント
+			}
+		}	
+		//現在の使用状況と見比べて変わっていないか見る
+		m_beforUsed = m_used;
+
+		EnemyBase::OnUpdate();
+
+		//着地判定(無効化時間中ならそれを減算する)
+		OnLanding();
+		//HPバーの処理
+		UpdateHPBer();
+		//攻撃のクールタイム
+		TimeOfAttackCool();
+
+		//HPがゼロになったら消えるための準備をする
+		if (m_HPCurrent <= 0)
+		{
+			RemoveTag(L"LockOnCan");
+			RemoveTag(L"LockOnTarget");
+
+			//m_used = false;
+		}
+
+		//アニメーション更新
+		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
+		//位置更新
+		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+	}
+
+	//HPバーの処理
+	void EnemyZako::UpdateHPBer()
+	{
+		//ビルボードの処理 自分が使用されているかどうかでビルボードが出るかでないか決める
+		if (!m_used)
+		{
+			m_HPFrame->SetScale(Vec3(0.0f));
+			m_HPBer->SetScale(Vec3(0.0f));
+		}
+		if (m_used)
+		{
+			m_HPFrame->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+			m_HPBer->SetScale(Vec3(2.0f, 0.5f, 5.0f));
+
+			//HPの割合によってゲージが減る
+			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
+			m_HPBer->SetPercent(HPPercent);
+
+		}
+
+
+	}
+
+	//攻撃のクールタイム
+	void EnemyZako::TimeOfAttackCool()
+	{
+		//攻撃のクールタイム
+		if (!m_attackFlag)
+		{
+			m_timeCountOfAttackCool += _delta;
+			//クールタイム過ぎたら攻撃できるようになる
+			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
+			{
+				m_timeCountOfAttackCool = 0.0f;//リセット
+				m_attackFlag = true;
+			}
+		}
+	}
+
+	//コリジョン判定
+	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
+	{
+		DetectBeingAttacked(Other);
+	}
+
+	//ダメージを受けた際の処理
+	void EnemyZako::OnDamaged()
+	{
+		//hpがあるならダメージ処理する
+		if (m_HPCurrent > 0)
+		{
+			m_state->ChangeState(L"Hit");
+		}
+	}
+
+	//遠距離の雑魚敵
+	void EnemyZakoLong::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//いったん雑魚敵のHPは50とする
+		m_HPMax = 25.0f;
+		m_HPCurrent = m_HPMax;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f / 5, 1.0f / 5, 1.0f / 5),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, -0.5f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		ptrDraw->SetMeshResource(L"Enemy_A");
+		ptrDraw->SetDiffuse(Col4(0.5f));
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+
+		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
+		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
+		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+
+		//コリジョン作成
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(false);//デバック用
+
+		AddTag(L"Enemy");
+		AddTag(L"EnemyZako");
+
+		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
+		//接地判定の設定
+		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
+
+		//ステートマシン生成
+		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+
+		//頭上にHPバーを表示させる
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer->SetPercent(1.0f);
+	}
+
+
+	void EnemyZakoFlying::OnCreate()
+	{
+		Actor::OnCreate();
+
+		//いったん雑魚敵のHPは50とする
+		m_HPMax = 50.0f;
+		m_HPCurrent = m_HPMax;
+
+		//Transform設定
+		m_trans = GetComponent<Transform>();
+		SetPosition(m_pos);
+		m_trans->SetRotation(m_rot);
+		m_trans->SetScale(m_scale);
+
+		// 重力OFF
+		m_doPhysics = false;
+
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(1.0f / 5, 1.0f / 5, 1.0f / 5),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
+			Vec3(0.0f, -0.5f, 0.0f)
+		);
+
+		//ドローメッシュの設定
+		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+		//攻撃タイプによって見た目が変わる
+		if (m_AttackType == Zako_Long)
+		{
+			ptrDraw->SetMeshResource(L"Enemy_A");
+		}
+		if (m_AttackType == Zako_Melee)
+		{
+			ptrDraw->SetMultiMeshResource(L"Enemy_B");
+		}
+		ptrDraw->SetDiffuse(Col4(0.5f));
+		//ptrDraw->SetEmissive(Col4(1));
+		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		//ptrDraw->SetTextureResource(L"Tx_Boss1");
+
+		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
+		ptrDraw->AddAnimation(L"Stand", 0, 1, 60.0f);
+		ptrDraw->AddAnimation(L"Walk", 126, 49, 60.0f);
+		ptrDraw->AddAnimation(L"Charge", 0, 125, 60.0f);
+		ptrDraw->AddAnimation(L"Down", 637, 88, 60.0f);
+
+		//コリジョン作成
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::Auto);
+		ptrColl->SetDrawActive(true);//デバック用
+
+		AddTag(L"Enemy");
+		AddTag(L"EnemyZako");
+
+		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
+		//接地判定の設定
+		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		//m_LandDetect->SetCollScale(3.0f);
+
+		//ステートマシン生成
+		m_state = shared_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
+
+		//頭上にHPバーを表示させる
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPBer->SetPercent(1.0f);
+
+		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
+
+		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+	}
+
+	void EnemyZakoFlying::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
 		if (m_poseFlag)
@@ -813,7 +1124,7 @@ namespace basecross {
 	}
 
 	//HPバーの処理
-	void EnemyZako::UpdateHPBer()
+	void EnemyZakoFlying::UpdateHPBer()
 	{
 		//ビルボードの処理
 		if (!m_used)
@@ -836,7 +1147,7 @@ namespace basecross {
 	}
 
 	//攻撃のクールタイム
-	void EnemyZako::TimeOfAttackCool()
+	void EnemyZakoFlying::TimeOfAttackCool()
 	{
 		//攻撃のクールタイム
 		if (!m_attackFlag)
@@ -852,13 +1163,13 @@ namespace basecross {
 	}
 
 	//コリジョン判定
-	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
+	void EnemyZakoFlying::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
 		DetectBeingAttacked(Other);
 	}
 
 	//ダメージを受けた際の処理
-	void EnemyZako::OnDamaged()
+	void EnemyZakoFlying::OnDamaged()
 	{
 		////攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
 		//if (!FindTag(L"AttackNow"))
@@ -867,13 +1178,11 @@ namespace basecross {
 		//}
 		//else if (FindTag(L"AttackNow"))
 		//{
-		//	m_HPCurrent -= CalculateDamage(m_GetHitInfo.Damage);
+		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
 		//}
 
 		m_state->ChangeState(L"Hit");
 	}
-
-
 
 }
 //end basecross
