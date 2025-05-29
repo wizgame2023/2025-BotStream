@@ -498,24 +498,14 @@ namespace basecross {
 		m_enemyZako->HitBack();
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
-
-		//ダメージを受けた後のHPによってステートの遷移を変える
-		if (m_enemyZako->GetHPCurrent() <= 0)
-		{
-			m_enemyZako->ChangeState(L"Die");
-		}
-		else
-		{
-			m_enemyZako->ChangeAnim(L"Stand");
-		}
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
-		//一定時間たったらStandステートに戻る(ここビジュアル化してオーバライドできるようにお願いする)
+		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
 
 		//アニメーション更新時間設定
-		m_enemyZako->SetAddTimeAnimation(deltaTime);
+		m_enemyZako->SetAddTimeAnimation(deltaTime*2.5f);
 	}
 	void EnemyZakoHitState::Exit()
 	{

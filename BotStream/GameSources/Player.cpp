@@ -920,6 +920,23 @@ namespace basecross {
 		}
 	}
 
+	//ダメージを受けた際の処理
+	void EnemyZako::HitBackStandBehavior()
+	{
+		//ダメージを受けた後のHPによってステートの遷移を変える
+		m_hitbacktime -= _delta;
+		if (m_hitbacktime <= 0) {
+			if (m_HPCurrent <= 0)
+			{
+				ChangeState(L"Die");
+			}
+			else
+			{
+				ChangeState(L"Stand");
+			}
+		}
+	}
+
 	//コリジョン判定
 	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
