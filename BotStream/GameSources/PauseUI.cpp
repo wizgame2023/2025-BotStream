@@ -60,7 +60,7 @@ namespace basecross {
 		// --- 定数定義 ------------------------------------
 		constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
 		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE → 0～1
-		const float dead = 0.3f;            // デッドゾーン
+		const float dead = 0.6f;            // デッドゾーン
 
 		// --- Pause OFF → 完全非表示 ------------------
 		if (!m_pauseFlag)
@@ -92,8 +92,8 @@ namespace basecross {
 			else
 			{
 				// メイン項目を隠して
-				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
-					m_pauseTextSprite[i]->OnClear(true);
+				//for (int i = 0; i < MAIN_MENU_COUNT; ++i)
+				//	m_pauseTextSprite[i]->OnClear(true);
 				// Audio項目だけ表示
 				AudioUIClear(false);
 			}
@@ -153,7 +153,7 @@ namespace basecross {
 			if (m_pauseAudioFlag)
 			{
 				// デッドゾーン定義
-				constexpr float dead = 0.3f;
+				constexpr float dead = 0.65f;
 				constexpr float change = 50.0f;
 
 				// 左右いずれかのデッドゾーン復帰でフラグクリア
@@ -209,6 +209,7 @@ namespace basecross {
 					case 0: // 再開
 						m_pauseFlag = false;
 						break;
+
 					case 1: // ステージセレクトへ遷移
 						PostEvent(0.0f,
 							GetThis<ObjectInterface>(),
@@ -216,12 +217,14 @@ namespace basecross {
 							L"ToStageSelect");
 						m_pauseFlag = false;
 						break;
+
 					case 2: // オーディオ設定へ
 						// メインを隠してAudio表示に移行
 						m_pauseAudioFlag = true;
 						m_mainSelect = 0;
 						m_selectFlag = false;
 						break;
+
 					case 3:
 					default:
 						break;
@@ -301,7 +304,7 @@ namespace basecross {
 			m_pauseTextSprite[i] = m_stage->AddGameObject<Sprite>(
 				L"PauseText",
 				Vec2(200, 200 / 2),
-				Vec3(200, 900 - (i * 200), 0)
+				Vec3(200, 1000 - (i * 200), 0)
 			);
 			m_pauseTextSprite[i]->SetDrawLayer(layerTop + 1);
 			m_pauseTextSprite[i]->OnClear(true);

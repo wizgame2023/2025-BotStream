@@ -10,60 +10,48 @@
 
 namespace basecross {
 
-	//頭パーツ用
-	class HeadParts : public ObjectMove
+	//パーツクラス
+	class Parts : public ObjectMove
 	{
-		bool m_GetHeadParts = false;
-		bool m_AttachHeadParts = false;
+		shared_ptr<Transform> m_trans;
+		Vec3 m_pos;//位置
+		Vec3 m_rot;//回転
+		Vec3 m_scale;//大きさ
+
+		int AddAttack = 0.0f;
+		int AddHp = 0.0f;
+		float AddSpeed = 0.0f;
+
+		int AddGood = 0.0f;
+		int AddBad = 0.0f;
 
 	public:
-		HeadParts(const shared_ptr<Stage>& stagePtr);
+		Parts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
+		~Parts();
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+	};
+
+	//頭パーツ用
+	class HeadParts : public Parts
+	{
+
+		int AddAttack = 3.0f;
+		int AddGood = 2.0f;
+
+
+		shared_ptr<Stage> m_stage;
+
+		vector<HeadParts> Partspoach;
+
+	public:
+		HeadParts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		~HeadParts();
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 
-		bool GetHeadParts();
-		void SetHeadParts(int setHeadParts);
-
-
-		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
-
-	};
-
-	// 体パーツ用
-	class BodyParts : public ObjectMove
-	{
-		bool m_GetBodyParts = false;
-		bool m_AttachBodyParts = false;
-
-	public:
-		BodyParts(const shared_ptr<Stage>& stagePtr);
-		~BodyParts();
-		virtual void OnCreate() override;
-		virtual void OnUpdate() override;
-
-		bool GetBodyParts();
-		void SetBodyParts(int setBodyParts);
-
-
-		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
-
-	};
-
-	//足パーツ用
-	class LegParts : public ObjectMove
-	{
-		bool m_GetLegParts = false;
-		bool m_AttachLegParts = false;
-
-	public:
-		LegParts(const shared_ptr<Stage>& stagePtr);
-		~LegParts();
-		virtual void OnCreate() override;
-		virtual void OnUpdate() override;
-
-		bool GetLegParts();
-		void SetLegParts(int setLegParts);
 
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
@@ -71,13 +59,7 @@ namespace basecross {
 	};
 
 
-	struct PlusStatus
-	{
-		float Speed;
-		int Attack;
-		int Bad;
-		int Good;
-	};
+
 
 
 }
