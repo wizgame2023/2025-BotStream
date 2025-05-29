@@ -665,7 +665,7 @@ namespace basecross {
 		tmp.StunDamage = 1;
 		tmp.HitOnce = true;//一回しかヒットしないか
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
-		tmp.HitTime_Stand = 1.0f;//のけぞり時間
+		tmp.HitTime_Stand = 0.1f;//のけぞり時間
 		tmp.InvincibleOnHit = true;
 		
 		//tmp.PauseTime = 5.0f;
@@ -765,7 +765,6 @@ namespace basecross {
 	{
 		Actor::OnCreate();
 
-		//いったん雑魚敵のHPは50とする
 		m_HPMax = 40.0f;
 		m_HPCurrent = m_HPMax;
 
@@ -785,6 +784,7 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+
 		//攻撃タイプによって見た目が変わる
 		if (m_AttackType == Zako_Long)
 		{
@@ -795,16 +795,16 @@ namespace basecross {
 			ptrDraw->SetMeshResource(L"Enemy_C");
 		}
 		ptrDraw->SetDiffuse(Col4(0.5f));
-		//ptrDraw->SetEmissive(Col4(1));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
 		ptrDraw->AddAnimation(L"Shot", 225, 136, false, 24.0f);
-		ptrDraw->AddAnimation(L"Down", 362, 424, false, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 62, false, 24.0f);
+		ptrDraw->AddAnimation(L"Hit", 350, 11, false, 24.0f);
+		ptrDraw->AddAnimation(L"Stan", 320, 19, false, 24.0f);
 		if (m_AttackType == Zako_Melee)
 		{
 			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
@@ -833,10 +833,6 @@ namespace basecross {
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
-
-		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
-
-		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
 
 	void EnemyZako::OnUpdate()
@@ -853,7 +849,9 @@ namespace basecross {
 			{
 				m_HPCurrent = m_HPMax;
 				m_attackFlag = false;
-				m_timeCountOfAttackCool = 3.0f;//初期クールダウンのカウント
+				m_timeCountOfAttackCool = 3.0f;
+				//初期ステートに戻す
+				ChangeState(L"Stand");
 			}
 		}	
 		//現在の使用状況と見比べて変わっていないか見る
