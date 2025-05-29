@@ -140,7 +140,7 @@ namespace basecross {
 			tmp.InvincibleOnHit = true;
 			tmp.Damage = 5;
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
-			tmp.HitTime_Stand = .8f;
+			tmp.HitTime_Stand = .3f;
 			tmp.Type = AttackType::Enemy;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
@@ -281,7 +281,7 @@ namespace basecross {
 			tmp.InvincibleOnHit = true;
 			tmp.Damage = 5;
 			tmp.HitVel_Stand = Vec3(-8, 15, 0);
-			tmp.HitTime_Stand = .8f;
+			tmp.HitTime_Stand = .5f;
 			tmp.Type = AttackType::Enemy;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
@@ -440,27 +440,35 @@ namespace basecross {
 	{
 		EnemyZakoStateBase::Enter();
 
-		auto stage = m_enemyZako->GetStage();
-		auto posEnemy = m_enemyZako->GetPosition();
-		//弾生成
-		auto bullet = stage->AddGameObject<Bullet>(posEnemy, Vec3(0.0f), Vec3(0.4f), 30.0f,
-			dynamic_pointer_cast<Actor>(m_enemyZako), 30.0f, ActorName_Enemy);
-
 		//撃つアニメーションに変更
 		m_enemyZako->ChangeAnim(L"Shot");
 		//SE再生
 		m_SE = m_SEManager->Start(L"EnemyZako_Shot", 0, 0.4f);
-
 	}
 	void EnemyZakoShotState::Update(float deltaTime)
 	{
 		auto stage = m_enemyZako->GetStage();
 
-		////目標となる角度取得
+		//目標となる角度取得
 		auto angleTarget = m_enemyZako->GetPlayerSubDirection();
 
 		//アニメーション更新時間設定
-		m_enemyZako->SetAddTimeAnimation(deltaTime);
+		m_enemyZako->SetAddTimeAnimation(deltaTime*2.5f);
+
+		//一定時間たったら弾が発射される
+		if (m_timeOfAttack >= m_timeOfStartAttack && m_attackFlag)
+		{
+			//弾の生成位置がちょうどいい位置に出現できるように調整する
+			auto posEnemy = m_enemyZako->GetPosition();
+			auto pushPos = Vec3(0.0f, 0.8f, 0.0f);
+
+			//弾生成
+			auto bullet = stage->AddGameObject<Bullet>(posEnemy+pushPos, Vec3(0.0f), Vec3(0.4f), 30.0f,
+				dynamic_pointer_cast<Actor>(m_enemyZako), 30.0f, ActorName_Enemy);
+
+			//アップデートで何発も弾が出ないようにfalseにする
+			m_attackFlag = false;
+		}
 
 		//一定時間たったらStandステートに戻る
 		m_timeOfAttack += deltaTime;
@@ -471,8 +479,9 @@ namespace basecross {
 	}
 	void EnemyZakoShotState::Exit()
 	{
-		//打つカウントダウンリセット
+		//リセット
 		m_timeOfAttack = 0.0f;
+		m_attackFlag = true;
 	}
 
 
@@ -481,6 +490,10 @@ namespace basecross {
 	{
 		auto hitInfo = m_enemyZako->GetHitInfo();
 		auto HPNow = m_enemyZako->GetHPCurrent();
+
+		//アニメーションをダメージを受けたものにする
+		m_enemyZako->ChangeAnim(L"Hit");
+
 		//攻撃を受けたのでヒットバックする
 		m_enemyZako->HitBack();
 		//ダメージ処理
@@ -498,7 +511,7 @@ namespace basecross {
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
-		//一定時間たったらStandステートに戻る
+		//一定時間たったらStandステートに戻る(ここビジュアル化してオーバライドできるようにお願いする)
 		m_enemyZako->HitBackStandBehavior();
 
 		//アニメーション更新時間設定
@@ -523,27 +536,19 @@ namespace basecross {
 	{
 		//アニメーション更新時間
 		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
-
 		//時間計測
 		m_timeOfState += deltaTime;
 
-		//一定時間過ぎたら(やられる演出)消えた風に見せるためのフラグをオンにする
+		//一定時間過ぎたら(やられる演出)消える
 		if (m_timeOfState >= m_timeMaxOfState)
-		{
-			//m_enemyZako->SetDrawActive(false);
+		{		
 			m_enemyZako->SetUsed(false);
-			m_enemyZako->ChangeState(L"Stand");
-
 		}
-		//if (m_timeOfState - 1.0f >= m_timeMaxOfState)
-		//{
-		//}
-
 	}
 	void EnemyZakoDieState::Exit()
 	{
 		//リセット
-		//m_timeOfState = 0.0f;
+		m_timeOfState = 0.0f;
 	}
 
 

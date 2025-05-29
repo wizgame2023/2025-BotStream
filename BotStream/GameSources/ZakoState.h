@@ -188,7 +188,10 @@ namespace basecross {
 	{
 	private:
 		float m_timeOfAttack = 0.0f;//打つ時間経過を測る変数
+		float m_timeOfStartAttack = 0.5f;//弾が発射される時間
 		float m_timeMaxOfAttack = 1.0f;//打つ時間の保存用変数
+
+		bool m_attackFlag = true;//攻撃していいフラグ
 	public:
 		EnemyZakoShotState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
@@ -206,7 +209,10 @@ namespace basecross {
 	class EnemyZakoHitState :public EnemyZakoStateBase
 	{
 	private:
-
+		//ステート活動時間
+		float timeOfStateCount;
+		//このステートでいられる上限の時間
+		float timeOfStateCountMax;
 	public:
 		EnemyZakoHitState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)
