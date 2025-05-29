@@ -10,7 +10,6 @@
 #include "EnemyState.h"
 
 namespace basecross{
-	class EnemyStateMachine;
 
 	/// <summary>
 	/// êeÉNÉâÉX
@@ -23,6 +22,9 @@ namespace basecross{
 		const float m_rotateSpeed = 1.2f;
 		const float m_rotateThreshold = .3f;
 
+		int m_stun = 0;
+		int m_stunMax = 3;
+
 		float m_armorMax = 0;
 		float m_armor = 0;
 		float m_armorRecover = 0;
@@ -30,7 +32,7 @@ namespace basecross{
 
 		float m_armorFlash = 0;
 		const float m_armorFlashMax = .1f;
-		Col4 m_armorFlashFX = Col4(2.0f, .5f, .5f, 0);
+		Col4 m_armorFlashFX = Col4(5.0f, .5f, .5f, 0);
 
 		weak_ptr<Player> m_player;
 
@@ -40,7 +42,7 @@ namespace basecross{
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
 		~EnemyBase() {}
 
-		void HitBackStandBehavior();
+		virtual void HitBackStandBehavior();
 
 		void ChangeState(wstring stateName) {
 			m_state->ChangeState(stateName);

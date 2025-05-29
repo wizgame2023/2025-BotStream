@@ -45,7 +45,7 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"PlayerModelTest");//仮のメッシュ
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
 		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
 		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
@@ -58,19 +58,24 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
 		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
 		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
+		ptrDraw->AddAnimation(L"Walk_Gun", 570, 50, true, 24.0f);//歩き状態(銃所持)
+		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);//銃を撃つ
+		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);//銃を戻す
+		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);//やられ
+
 
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionCapsule>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(false);
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(3.0f, 3.0f, 3.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -120,6 +125,17 @@ namespace basecross {
 		//		Friction();
 		//	}
 		//}
+
+		//地面に立っているときは地面にめり込まないようにする
+		if (m_isLand)
+		{
+			m_pos = GetPosition();
+			if (m_pos.y < 1.0f)
+			{
+				m_pos.y = 1.0f;
+				SetPosition(m_pos);
+			}
+		}
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
@@ -212,7 +228,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にしない
 				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - beforPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
@@ -635,7 +651,7 @@ namespace basecross {
 		{
 		case ActorName_Player:
 			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
-			tmp.Damage = 10;//ダメージ
+			tmp.Damage = 8;//ダメージ
 
 			break;
 		case ActorName_Enemy:
@@ -646,9 +662,10 @@ namespace basecross {
 			break;
 		}
 
+		tmp.StunDamage = 1;
 		tmp.HitOnce = true;//一回しかヒットしないか
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
-		tmp.HitTime_Stand = 1.0f;//のけぞり時間
+		tmp.HitTime_Stand = 0.1f;//のけぞり時間
 		tmp.InvincibleOnHit = true;
 		
 		//tmp.PauseTime = 5.0f;
@@ -748,7 +765,6 @@ namespace basecross {
 	{
 		Actor::OnCreate();
 
-		//いったん雑魚敵のHPは50とする
 		m_HPMax = 40.0f;
 		m_HPCurrent = m_HPMax;
 
@@ -768,6 +784,7 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
+
 		//攻撃タイプによって見た目が変わる
 		if (m_AttackType == Zako_Long)
 		{
@@ -778,16 +795,16 @@ namespace basecross {
 			ptrDraw->SetMeshResource(L"Enemy_C");
 		}
 		ptrDraw->SetDiffuse(Col4(0.5f));
-		//ptrDraw->SetEmissive(Col4(1));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
-		//ptrDraw->SetTextureResource(L"Tx_Boss1");
 
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
 		ptrDraw->AddAnimation(L"Shot", 225, 136, false, 24.0f);
-		ptrDraw->AddAnimation(L"Down", 362, 424, false, 24.0f);
+		ptrDraw->AddAnimation(L"Down", 362, 62, false, 24.0f);
+		ptrDraw->AddAnimation(L"Hit", 350, 11, false, 24.0f);
+		ptrDraw->AddAnimation(L"Stan", 320, 19, false, 24.0f);
 		if (m_AttackType == Zako_Melee)
 		{
 			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
@@ -816,10 +833,6 @@ namespace basecross {
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
-
-		//m_damageBill = GetStage()->AddGameObject<EnemyDamageBill>(GetThis<GameObject>(), L"Numbers", 2, 7.0f, Vec3(0.5f, 2.0f, 1.0f));
-
-		//auto m_billBoard2 = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 	}
 
 	void EnemyZako::OnUpdate()
@@ -836,7 +849,9 @@ namespace basecross {
 			{
 				m_HPCurrent = m_HPMax;
 				m_attackFlag = false;
-				m_timeCountOfAttackCool = 3.0f;//初期クールダウンのカウント
+				m_timeCountOfAttackCool = 3.0f;
+				//初期ステートに戻す
+				ChangeState(L"Stand");
 			}
 		}	
 		//現在の使用状況と見比べて変わっていないか見る

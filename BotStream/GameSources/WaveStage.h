@@ -33,15 +33,6 @@ namespace basecross {
         bool m_BlackFlag = false;
         bool m_NextWaveFlag = false;
 
-        bool m_GetHeadParts = false;
-        bool m_AttachHeadParts = false;
-
-        bool m_GetBodyParts = false;
-        bool m_AttachBodyParts = false;
-
-        bool m_GetLegParts = false;
-        bool m_AttachLegParts = false;
-
         shared_ptr<BossGaugeUI> m_bossGauge;
 
     public:

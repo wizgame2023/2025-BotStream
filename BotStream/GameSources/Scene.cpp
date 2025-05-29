@@ -198,6 +198,10 @@ namespace basecross{
 		strTexture = texPath + L"Shock_wave_ring001.png";
 		app->RegisterTexture(L"Tex_Shockwave", strTexture);
 
+		//壁用のテクスチャ
+		strTexture = texPath + L"WallTexture.png";
+		app->RegisterTexture(L"WallTex", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ
@@ -206,6 +210,8 @@ namespace basecross{
 
 		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Player_test.bmf");//仮のプレイヤーメッシュ
 		app->RegisterResource(L"PlayerModelTest", boneMultiModelMesh);
+		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Player.bmf");//仮のプレイヤーメッシュ
+		app->RegisterResource(L"PlayerModelTestVer2.0", boneMultiModelMesh);
 		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Enemy_B.bmf");//雑魚敵のメッシュ(空中)
 		app->RegisterResource(L"Enemy_B", boneMultiModelMesh);
 
@@ -241,6 +247,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Slap", efkPath + L"slap.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SpinAttack", efkPath + L"spinningsword.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Charge", efkPath + L"charge.efkefc");
+		EffectManager::Instance().RegisterEffect(L"Stun", efkPath + L"stun.efkefc");
 		EffectManager::Instance().RegisterEffect(L"ArmorBreak", efkPath + L"shieldbreak.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnergySphere", efkPath + L"EnergySphere.efk");
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");

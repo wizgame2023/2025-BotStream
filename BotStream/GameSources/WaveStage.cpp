@@ -73,20 +73,6 @@ namespace basecross {
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
-        //auto headParts = AddGameObject<HeadParts>();
-        //SetSharedGameObject(L"HeadParts", headParts);
-        //headParts->GetComponent<Transform>()->SetPosition(0.0f, -1.0f, -280.0f);
-
-        //auto bodyParts = AddGameObject<BodyParts>();
-        //SetSharedGameObject(L"BodyParts", bodyParts);
-        //bodyParts->GetComponent<Transform>()->SetPosition(15.0f, -1.0f, -280.0f);
-
-        //auto legParts = AddGameObject<LegParts>();
-        //SetSharedGameObject(L"LegParts", legParts);
-        //legParts->GetComponent<Transform>()->SetPosition(-15.0f, -1.0f, -280.0f);
-
-        //auto partsMgr = AddGameObject<PartsManager>();
-        //SetSharedGameObject(L"PartsManager", partsMgr);
 
         // ボスゲージ
         m_bossGauge = AddGameObject<BossGaugeUI>(
@@ -105,6 +91,7 @@ namespace basecross {
         enemyMgr->InstEnemy<EnemyZako>(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
         
+        //カメラマネージャー
         auto cameraManager = AddGameObject<CameraManager>();
         SetSharedGameObject(L"CameraManager", cameraManager);
 
@@ -134,10 +121,6 @@ namespace basecross {
 
         auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
 
-        //auto headParts = GetSharedGameObject<HeadParts>(L"HeadParts");
-        //auto bodyParts = GetSharedGameObject<BodyParts>(L"BodyParts");
-        //auto legParts = GetSharedGameObject<LegParts>(L"LegParts");
-        //auto partsMgr = GetSharedGameObject<PartsManager>(L"PartsManager");
 
         fadeout->GetBlackFlag();
         m_BlackFlag = fadeout->GetBlackFlag();
@@ -146,20 +129,6 @@ namespace basecross {
         fadeout->GetFadeInFlag();
         m_IsFadeInFlag = fadeout->GetFadeInFlag();
 
-        //headParts->GetHeadParts();
-        //partsMgr->GetAttachHeadParts();
-        //m_GetHeadParts = headParts->GetHeadParts();
-        //m_AttachHeadParts = partsMgr->GetAttachHeadParts();
-
-        //bodyParts->GetBodyParts();
-        //partsMgr->GetAttachBodyParts();
-        //m_GetBodyParts = bodyParts->GetBodyParts();
-        //m_AttachBodyParts = partsMgr->GetAttachBodyParts();
-
-        //legParts->GetLegParts();
-        //partsMgr->GetAttachLegParts();
-        //m_GetLegParts = legParts->GetLegParts();
-        //m_AttachLegParts = partsMgr->GetAttachLegParts();
 
         player->GetHP();
         auto plaHP = player->GetHP();
@@ -192,8 +161,9 @@ namespace basecross {
 
             m_waveNow = 2;
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 2.0f, -40.0f));
-            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, -40.0f));
+            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+            GetSharedGameObject<CameraManager>(L"CameraManager")->SetAngle(L"Y", XMConvertToRadians(270.0f));
 
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
@@ -207,13 +177,13 @@ namespace basecross {
             enemyMgr->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             enemyMgr->InstEnemy(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
-            enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-20.0f,2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-30.0f,2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            //enemyMgr->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-20.0f,2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            enemyMgr->InstEnemy<EnemyZakoLong>(Vec3(-30.0f,2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
         }
 
@@ -225,9 +195,10 @@ namespace basecross {
 
             m_bossGauge->ClearBossGaugeUI(false);
 
-            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 2.0f, 195.0f));
+            player->GetComponent<Transform>()->SetPosition(Vec3(0.0f, 3.0f, 195.0f));
 
-            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, 5.0f, 0.0f));
+            player->GetComponent<Transform>()->SetRotation(Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+            GetSharedGameObject<CameraManager>(L"CameraManager")->SetAngle(L"Y", XMConvertToRadians(270.0f));
 
             m_IsFadeInFlag = true;
             m_NextWaveFlag = false;
@@ -322,6 +293,7 @@ namespace basecross {
         }
     }
 
+    //天井,床
     Floor::Floor(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -345,8 +317,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
         AddTag(L"Floor");
         AddTag(L"CameraObstacles");
@@ -446,6 +419,7 @@ namespace basecross {
         }
     }
 
+    //壁
     Wall::Wall(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -469,8 +443,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -514,6 +489,7 @@ namespace basecross {
         }
     }
 
+    //天井
     Ceiling::Ceiling(const shared_ptr<Stage>& StagePtr,
         const Vec3& Scale,
         const Vec3& Rotation,
@@ -537,8 +513,9 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallTex");
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
@@ -572,7 +549,7 @@ namespace basecross {
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
-        auto ptrDraw = AddComponent<BcPNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");

@@ -55,7 +55,7 @@ namespace basecross {
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
 		//ロックオンの有効範囲を可視化
-		m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
+		//m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
 
 		//SE用のマネージャー取得
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
@@ -190,11 +190,11 @@ namespace basecross {
 		}
 
 
-		//現在の注視点を見れるようにする(デバック用)
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
-		{
-			player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
-		}
+		////現在の注視点を見れるようにする(デバック用)
+		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		//{
+		//	player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		//}
 
 
 		//ロックオンするときの処理
@@ -366,7 +366,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<BcPNTStaticDraw>();//Bc対応にする
+				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にしない
 				ptrDraw->HitTestStaticMeshSegmentTriangles(m_playerPos, m_cameraPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - m_playerPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
