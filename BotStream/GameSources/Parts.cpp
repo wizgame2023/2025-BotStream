@@ -48,7 +48,7 @@ namespace basecross {
 		auto ptrColl = AddComponent<CollisionSphere>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
-
+		
     }
 
     void HeadParts::OnUpdate()
@@ -61,13 +61,11 @@ namespace basecross {
 		if (Other->FindTag(L"Player"))
 		{
 			SetDrawActive(false);
-			//PartsPoach->Partspoach.push_back(GetThis<HeadParts>());
+			m_partspoach.push_back(GetThis<HeadParts>());
+
 		}
 		
 	}
-
-
-
 
 
 

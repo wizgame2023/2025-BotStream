@@ -25,6 +25,7 @@ namespace basecross {
 		int AddGood = 0.0f;
 		int AddBad = 0.0f;
 
+
 	public:
 		Parts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
 		~Parts();
@@ -44,7 +45,7 @@ namespace basecross {
 
 		shared_ptr<Stage> m_stage;
 
-		vector<HeadParts> Partspoach;
+		vector<shared_ptr<HeadParts>> m_partspoach;
 
 	public:
 		HeadParts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
