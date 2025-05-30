@@ -81,7 +81,7 @@ namespace basecross {
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 
 		//UI追加
-		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(165.0f, -250.0f), m_bulletNum);//現在の球数を出すUI
+		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(550.0f, -270.0f), m_bulletNum);//現在の球数を出すUI
 
 		//auto stage = GetStage();
 		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
