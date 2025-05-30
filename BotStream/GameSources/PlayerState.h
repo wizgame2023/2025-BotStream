@@ -307,11 +307,6 @@ namespace basecross {
 		//攻撃判定持続時間
 		float m_timeOfStartAttackFirst = 0.9f*0.8f;
 
-		//次の攻撃ボタン受付時間
-		//float m_graceTimeOfNextAttack = 0.9f;
-		////次の攻撃をするかのフラグ
-		//float m_nestAttackFlag = false;
-
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:

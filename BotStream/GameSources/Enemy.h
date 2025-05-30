@@ -42,7 +42,7 @@ namespace basecross{
 		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
 		~EnemyBase() {}
 
-		void HitBackStandBehavior();
+		virtual void HitBackStandBehavior();
 
 		void ChangeState(wstring stateName) {
 			m_state->ChangeState(stateName);

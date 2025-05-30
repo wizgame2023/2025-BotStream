@@ -150,6 +150,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PartsManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)CameraState.h">
+      <Filter>State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -259,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)Parts.cpp">
       <Filter>ObjectMove</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)CameraState.cpp">
+      <Filter>State</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
