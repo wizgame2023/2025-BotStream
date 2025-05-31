@@ -32,24 +32,33 @@ namespace basecross{
 	class CameraManager : public MyGameObject
 	{
 	private:
-		weak_ptr<Camera> m_stageCamera;//ステージ上のカメラ
-		shared_ptr<Camera> m_lockStageCamera;//ロックできたステージ上のカメラ
+		weak_ptr<Camera> m_stageCamera;		  //ステージ上のカメラ
+		shared_ptr<Camera> m_lockStageCamera; //ロックできたステージ上のカメラ
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
 		shared_ptr<Stage> m_stage;
 		shared_ptr<Sprite> m_spriteAttack = nullptr;
 		float m_delta;
 
-		CONTROLER_STATE m_controler;//コントローラー
-		Vec2 m_contrloerVec;//コントローラーの右スティック入力
+		//ステートマシン用メンバ変数
+		shared_ptr<StateMachineBase> m_stateMashine = nullptr;
 
-		float m_cameraAngleY;  //Playerから見てカメラのいる角度Y軸
-		float m_cameraAngleX;  //Playerから見てカメラのいる角度X軸
-		float m_range;//Playerからどのくらい離れるか
-		float m_targetRange;//ロックオンの範囲
-		float m_speedXAxis;//x軸の回転スピード
-		float m_speedYAxis;//y軸の回転スピード
-		float m_addAngleXAxis;//X軸の追加回転度
-		float m_addAngleYAxis;//Y軸の追加回転度
+		CONTROLER_STATE m_controler;//コントローラー
+		Vec2 m_contrloerVec;		//コントローラーの右スティック入力
+
+		float m_cameraAngleY;		//Playerから見てカメラのいる角度Y軸
+		float m_cameraAngleX;		//Playerから見てカメラのいる角度X軸
+		float m_range;				//Playerからどのくらい離れるか
+		float m_targetRange;		//ロックオンの範囲
+		float m_speedXAxis;			//x軸の回転スピード
+		float m_speedYAxis;			//y軸の回転スピード
+		float m_addAngleXAxis;		//X軸の追加回転度
+		float m_addAngleYAxis;		//Y軸の追加回転度
+		float m_gunShiftLength;		//遠距離ステート用のプレイヤーからずれた長さ
+
+		Vec3 m_pushPos = Vec3(5.0f, 10.0f, 5.0f);	//カメラがプレイヤーから離れる位置
+		Vec3 m_pushAtPos = Vec3(5.0f, 10.0f, 5.0f);	//カメラの注視点のずらす位置
+
+
 
 		//スプライト
 		shared_ptr<Sprite> m_spriteAiming = nullptr;//射撃用のクロスヘアのスプライト
@@ -59,35 +68,34 @@ namespace basecross{
 		Vec3 m_playerPos;//プレイヤーポジション
 		Vec3 m_cameraPos;//カメラポジション
 
-		bool m_movePlayerAngleFlag;//プレイヤーの向いている方向に回転するかのフラグ
-		float m_targetAngleY;//ターゲットを見るために向く角度(Y軸)
-		float m_targetDis;//LockOnTargetの距離デバック用
+		bool m_movePlayerAngleFlag; //プレイヤーの向いている方向に回転するかのフラグ
+		float m_targetAngleY;	    //ターゲットを見るために向く角度(Y軸)
+		float m_targetDis;			//LockOnTargetの距離デバック用
 
 		//SE用
-		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
-		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+		shared_ptr<SoundItem> m_SE = nullptr;			  //再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr; //SEなどを再生するためのマネージャ
 
 		//ロックオンの処理////////////////////////////////////////////////////////////
 		vector<shared_ptr<EnemyBase>> m_targets;//ターゲット候補
-		vector<Vec3> m_targetsPos;//LockOnCanのPosを保存する配列
-		shared_ptr<EnemyBase> m_targetObj;//ターゲット対象
-		bool m_lockOnFlag;//ロックオンできるかできないかの変数
-		bool m_lockOnUse;//ロックオンするかしないかの変数
-		bool m_lockOnChangeFlag;//ロックオンを変えたかのフラグ
-		int m_lockOnNum;//LockOnTargetを決めるための変数
+		vector<Vec3> m_targetsPos;				//LockOnCanのPosを保存する配列
+		shared_ptr<EnemyBase> m_targetObj;		//ターゲット対象
+		bool m_lockOnFlag;						//ロックオンできるかできないかの変数
+		bool m_lockOnUse;						//ロックオンするかしないかの変数
+		bool m_lockOnChangeFlag;				//ロックオンを変えたかのフラグ
+		int m_lockOnNum;						//LockOnTargetを決めるための変数
 
-		bool m_stickFlag;//スティックを傾ける入力を受け取るかのフラグ
+		bool m_stickFlag;						//スティックを傾ける入力を受け取るかのフラグ
 
-		vector<targetsDeta> m_targesDeta;//LockOnTargetのデータが入った配列
-		vector<float> m_lockOnAngle;//LockOnCanがPlayerにとってどの方向にいるのかの変数
+		vector<targetsDeta> m_targesDeta;		//LockOnTargetのデータが入った配列
+		vector<float> m_lockOnAngle;			//LockOnCanがPlayerにとってどの方向にいるのかの変数
 		/////////////////////////////////////////////////////////////////////////////
 
-		float m_meleeRange;//近接戦闘の範囲
-		bool m_meleeFlag;//近接戦闘していいかのフラグ	
+		float m_meleeRange;	//近接戦闘の範囲
+		bool m_meleeFlag;	//近接戦闘していいかのフラグ	
 
-		bool m_poseFlag;//ポーズのフラグ
+		bool m_poseFlag;	//ポーズのフラグ
 
-		//テストの
 		
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
@@ -106,26 +114,36 @@ namespace basecross{
 		void OnUpdate()override;//更新
 
 		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
-		void MovePlayerAngle(float playerAngle);//Playerの背中を見える角度にする
-		void MoveLockAt(Vec3 targetPos);//注視点の移動処理//ここを作業する
-		bool MoveAngle(float targetAngle,int XorY);//回転度の移動処理
-		void AdjustmentAngle();//角度の調整
+		void MovePlayerAngle(float playerAngle);									//Playerの背中を見える角度にする
+		void MoveLockAt(Vec3 targetPos);											//注視点の移動処理//ここを作業する
+		bool MoveAngle(float targetAngle,int XorY);									//回転度の移動処理
+		void AdjustmentAngle();														//角度の調整
 		
-		void UpdateTargesDeta(Vec3 playerPos);//LockOnCanのデータを更新する関数
-		void ChangeLockOn(int leftOrRight,float targetAngle);//LockOnTargetを変更する処理
+		void UpdateTargesDeta(Vec3 playerPos);					//LockOnCanのデータを更新する関数
+		void ChangeLockOn(int leftOrRight,float targetAngle);	//LockOnTargetを変更する処理
 
 		//LockOnCanを決める関数
 		void LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec, Vec3 playerPos);
 		//ロックオンの解除
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
-
-		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));//カメラのX軸回転の制限
-		void CameraPosUpdate();//カメラのポジションの更新
+		//カメラのX軸回転の制限
+		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
+		void CameraPosUpdate(float maxPushPosY = 10.0f, float maxLength = 0.0f);//カメラのポジションの更新
 		void InertialRotation();//慣性付きの回転処理
+
+		//カメラの操作をする処理
+		void CameraControlNomalMode();
+		void CameraControlShotMode();
+		void CameraControlTransitionMode();
+
+		//現在地から目的地までの移動処理
+		float MoveToDestination(float nowOnePos,float destination, float speed = 20.0f);
+
+		//ステート変更処理 引数に入れたステートに変更する
+		void ChangeState(wstring stateName);
 		
 		//近距離攻撃をするかの処理のゲッター
 		bool GetMeleeFlag();
-		//void SetMeleeFlag(bool onOff);
 
 		//ターゲット対象との距離を渡す
 		float GetTargetDis();
