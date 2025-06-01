@@ -259,19 +259,20 @@ namespace basecross {
 	}
 
 	//カメラの慣性回転の処理
-	void CameraManager::InertialRotation()
+	void CameraManager::InertialRotation(float decelerationSpeed,float magnificationSpeed)
 	{
 		//Y軸回転
 		if (m_contrloerVec.x != 0.0f)
 		{
 			//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
-			m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x;//追加する角度を決めて
+			m_addAngleYAxis = (m_speedYAxis * m_contrloerVec.x) * decelerationSpeed;
 		}
+		//コントローラーを傾けていなければだんだん移動スピードがなくなる
 		else if(m_contrloerVec.x == 0.0f)
 		{
 			if (m_addAngleYAxis > 0)
 			{
-				m_addAngleYAxis -= 6.8f * m_delta;
+				m_addAngleYAxis -= magnificationSpeed * m_delta;
 				if (m_addAngleYAxis <= 0)
 				{
 					m_addAngleYAxis = 0.0f;
@@ -279,7 +280,7 @@ namespace basecross {
 			}
 			else if (m_addAngleYAxis < 0)
 			{
-				m_addAngleYAxis += 6.8f * m_delta;
+				m_addAngleYAxis += magnificationSpeed * m_delta;
 				if (m_addAngleYAxis >= 0)
 				{
 					m_addAngleYAxis = 0.0f;
@@ -291,13 +292,14 @@ namespace basecross {
 		if (m_contrloerVec.y != 0.0f)
 		{
 			//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-			m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y;//追加する角度を決めて
+			m_addAngleXAxis = (m_speedXAxis * m_contrloerVec.y) * decelerationSpeed;
 		}
+		//コントローラーを傾けていなければだんだん移動スピードがなくなる
 		else if (m_contrloerVec.y == 0.0f)
 		{
 			if (m_addAngleXAxis > 0)
 			{
-				m_addAngleXAxis -= 3.0f * m_delta;
+				m_addAngleXAxis -= magnificationSpeed / 2 * m_delta;
 				if (m_addAngleXAxis <= 0)
 				{
 					m_addAngleXAxis = 0.0f;
@@ -305,7 +307,7 @@ namespace basecross {
 			}
 			else if (m_addAngleXAxis < 0)
 			{
-				m_addAngleXAxis += 8.0f * m_delta;
+				m_addAngleXAxis += magnificationSpeed / 2 * m_delta;
 				if (m_addAngleXAxis >= 0)
 				{
 					m_addAngleXAxis = 0.0f;
@@ -338,11 +340,16 @@ namespace basecross {
 
 		//銃を使わないフラグ
 		m_meleeFlag = true;
+		//ここはUIを出さない
+		m_spriteAiming->OnClear(true);
 
 		//注視点の変更
-		m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.x,
+		m_lockStageCamera->SetAt
+		(
+			m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.x,
 			cos(m_cameraAngleX) * m_pushAtPos.y,
-			sinf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.z));
+			sinf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.z)
+		);
 	}
 
 	//射撃モード時のカメラ操作処理
@@ -363,6 +370,8 @@ namespace basecross {
 
 		//銃使うフラグにした
 		m_meleeFlag = false;
+		//ここはUIを出す
+		m_spriteAiming->OnClear(false);
 
 		//注視点の変更(普段よりも先に見たい)
 		m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.x,
