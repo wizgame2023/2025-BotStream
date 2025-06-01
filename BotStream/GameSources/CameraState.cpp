@@ -26,8 +26,8 @@ namespace basecross {
 		m_controller = inputDevice.GetControlerVec()[0];
 		m_controllerVec = Vec2(m_controller.fThumbRX, m_controller.fThumbRY);
 
-		//慣性付きの回転処理
-		m_cameraManager->InertialRotation();
+		////慣性付きの回転処理
+		//m_cameraManager->InertialRotation();
 		//X軸回転の制限処理
 		m_cameraManager->CameraAngleXLimit();
 
@@ -59,6 +59,8 @@ namespace basecross {
 
 		//通常モード時のカメラ操作処理
 		m_cameraManager->CameraControlNomalMode();
+		//慣性付きの回転処理
+		m_cameraManager->InertialRotation();
 
 		//もし,LBボタンを押していたら銃ステートに移行する
 		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
@@ -99,6 +101,8 @@ namespace basecross {
 
 		//カメラの位置更新
 		m_cameraManager->CameraPosUpdate(3.0f, 5.0f);
+		//慣性付きの回転処理
+		m_cameraManager->InertialRotation(0.7f, 60.0f);
 
 		//銃モード時のカメラ操作処理
 		m_cameraManager->CameraControlShotMode();
