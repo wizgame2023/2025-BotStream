@@ -15,6 +15,7 @@ namespace basecross {
 		//ビューの作成
 		void CreateViewLight();
 		void CreateSprite();
+		void CreateBlock();
 
 		//--------写すときはここをコピペすればいいと思われる--------
 
@@ -194,7 +195,24 @@ namespace basecross {
 
 	};
 
+	class Block : public MyGameObject
+	{
+	public:
+		Block(const shared_ptr<Stage>& StagePtr,
+			const Vec3& Position);
+		virtual ~Block() {}
 
+		virtual void OnCreate() override;
+
+		float GetXZScale()
+		{
+			return m_scaleXZ;
+		}
+
+	private:
+		Vec3 m_pos;
+		const float m_scaleXZ = 10.0f;
+	};
 }
 //end basecross
 

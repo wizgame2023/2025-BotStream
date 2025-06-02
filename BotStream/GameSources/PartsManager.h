@@ -28,7 +28,7 @@ namespace basecross {
 	class PartsPoach : public MyGameObject
 	{
 
-		//vector<HeadParts> Partspoach;
+		vector<shared_ptr<HeadParts>> m_partspoach;
 
 	public:
 		PartsPoach(const shared_ptr<Stage>& stagePtr) :

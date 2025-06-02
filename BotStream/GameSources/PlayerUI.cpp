@@ -17,7 +17,7 @@ namespace basecross {
 		const Vec2 gaugeSize(300, 75);
 		const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
 		const Vec2 spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
-		const float gaugePosX = 0.0f, gaugePosY = -250;
+		const float gaugePosX = 0.0f, gaugePosY = -350;
 
 		//Playerに関するバーUI生成
 		m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
@@ -121,21 +121,15 @@ namespace basecross {
 		//プレイヤーの現在の球数によって数値が変わる
 		m_bulletNum =  m_player.lock()->GetBulletNum();
 
-		// 仮：AボタンでUIの数字が下がる
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
-		//{
-		//	m_bulletNum = max(0, m_bulletNum - 1);
-		//}
-		//else if (m_bulletNum <= 0)
-		//{
-		//	m_bulletNum = 90;
-		//}
-
 		// 弾数を文字列に変換
 		std::string bulletStr = std::to_string(m_bulletNum);
 		size_t digitCount = bulletStr.size();
-		Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
-		float uvWidth = 1.0f / 10.0f;          // UVの幅
+
+		// 表示位置(CreateSpriteの値と同じ)
+		Vec2 bulletPos(-100, 0);               		
+
+		// UVの幅
+		float uvWidth = 1.0f / 10.0f;
 
 		// 桁数に応じてスプライトを更新(UVだけ更新)
 		for (size_t i = 0; i < m_bulletDigits.size(); ++i)
