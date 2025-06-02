@@ -35,6 +35,7 @@
 #include "EnemyState.h"
 #include "ZakoState.h"
 #include "PlayerState.h"
+#include "CameraState.h"
 
 //Actor
 #include "Player.h"
