@@ -504,12 +504,25 @@ namespace basecross {
 		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
 
-		//アニメーション更新時間設定
-		m_enemyZako->SetAddTimeAnimation(deltaTime*2.5f);
+		//遠距離タイプの雑魚敵か確認する
+		auto enemyShotType = dynamic_pointer_cast<EnemyZakoLong>(_obj.lock());
+
+		//雑魚敵のタイプによってくらうアニメーションの長さが違うので調整する
+		if (enemyShotType)
+		{
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 3.5f);
+		}
+		else
+		{
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime*2.5f);
+		}
 	}
 	void EnemyZakoHitState::Exit()
 	{
-
+		//アニメーションをリセットして次のステートがまたHitでもアニメーションが流れるようにする
+		m_enemyZako->ChangeAnim(L"Stand");
 	}
 
 	//やられたときのステート

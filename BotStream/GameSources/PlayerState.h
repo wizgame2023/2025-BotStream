@@ -11,6 +11,7 @@ namespace basecross {
 	class Actor;
 	class Cube;
 	class EnemyZako;
+
 	//プレイヤーステートの元となるクラス
 	class PlayerStateBase :public StateBase
 	{
@@ -177,6 +178,9 @@ namespace basecross {
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 
+		//アニメーションの経過時間
+		float m_timeOfAnimation = 0.0f;
+
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
@@ -223,6 +227,8 @@ namespace basecross {
 		float m_graceTimeOfNextAttack = 0.5f*0.7f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
+		//アニメーションの経過時間
+		float m_timeOfAnimation = 0.0f;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
@@ -269,6 +275,8 @@ namespace basecross {
 		float m_graceTimeOfNextAttack = 0.9f*0.8f;
 		//次の攻撃をするかのフラグ
 		//float m_nestAttackFlag = false;
+		//アニメーションの経過時間
+		float m_timeOfAnimation = 0.0f;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
@@ -306,6 +314,8 @@ namespace basecross {
 		bool AttackCollisionFlag = true;
 		//攻撃判定持続時間
 		float m_timeOfStartAttackFirst = 0.9f*0.8f;
+		//アニメーションの経過時間
+		float m_timeOfAnimation = 0.0f;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 

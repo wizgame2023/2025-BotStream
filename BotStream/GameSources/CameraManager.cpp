@@ -61,7 +61,10 @@ namespace basecross {
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
 		//射撃用のクロスヘア用のテクスチャ追加
 		m_spriteAiming = m_stage->AddGameObject<Sprite>(L"AimingTex", Vec2(50.0f, 50.0f));
-		//m_spriteAiming->OnClear(true);//生成したときは見えないようにする
+
+
+		//カメラ用ステートマシンの作成まだステートは作成途中
+		m_stateMashine = shared_ptr<CameraStateMachine>(new CameraStateMachine(GetThis<GameObject>()));
 
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
@@ -100,28 +103,21 @@ namespace basecross {
 		m_controler = inputDevice.GetControlerVec()[0];
 		m_contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
 
-		//慣性付きの回転処理
-		InertialRotation();
-		//X軸回転の制限処理
-		CameraAngleXLimit();
+		////慣性付きの回転処理
+		//InertialRotation();
+		////X軸回転の制限処理
+		//CameraAngleXLimit();
 
-		//ロックオン処理
-		auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
-		//ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
-		vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
+		//ステートマシン更新(ステート更新)
+		m_stateMashine->Update();
+
+		////ロックオン処理
+		//auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
+		////ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
+		//vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
 
 		//近遠どちらの攻撃をするかの処理
-		MeleeFlagUpdate();
-
-		//近接戦闘していいかによってスプライトが変わる
-		//if (!m_meleeFlag)
-		//{
-		//	m_spriteAttack->SetTexture(L"KatanaTex");
-		//}
-		//if (m_meleeFlag)
-		//{
-		//	m_spriteAttack->SetTexture(L"GunTex");
-		//}
+		//MeleeFlagUpdate();
 
 		//ロックオンを解除する条件処理
 		//ConditionsLockOff(enemyVec);
@@ -132,81 +128,83 @@ namespace basecross {
 		//ロックオン対象の敵を決める処理
 		//SelectTargetObj(enemyVec, playerAngle);
 		
-		//右スティック押し込みでプレイヤーの向いている方向に回転する
-		if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_THUMB)
-		{
-			//if (!m_lockOnFlag && !m_movePlayerAngleFlag)
-			//{
-				//Playerの向いている方向に移動するフラグをオンにする
-				m_movePlayerAngleFlag = true;	
-				//向く座標を決める
-				m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
-			//}
-		}
-		//フラグがオンになったらPlayerの向きに移動する
-		if (m_movePlayerAngleFlag)
-		{
-			//Playerの向いている方向の鏡合わせになるように角度を変更する
-			MovePlayerAngle(m_targetAngleY);
-		}
-
-		//LBを押している最中は射撃モードに移行する
-		if (m_controler.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
-		{//射撃状態
-			//Playerとの距離を縮めて狙いを定めているっぽくする
-			m_range = 10.0f;
-
-			//銃使うフラグにした
-			m_meleeFlag = false;
-
-			//その後に射撃用のUIも出したい
-			m_spriteAiming->OnClear(false);
-
-			m_spriteAttack->SetTexture(L"GunTex");
-
-			//注視点の変更(普段よりも先に見たい)
-			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
-				cos(m_cameraAngleX) * -15.0f,
-				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f));
-
-		}
-		else
-		{//通常状態
-			//Playerとの距離を縮めて狙いを定めているっぽくする
-			m_range = 15.0f;
-
-			//銃を使わないフラグ
-			m_meleeFlag = true;
-
-			//ここはUIを出さない
-			m_spriteAiming->OnClear(true);
-
-			m_spriteAttack->SetTexture(L"KatanaTex");
-
-			//注視点の変更
-			m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
-				cos(m_cameraAngleX) * -5.0f,
-				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f));
-		}
-
-
-		////現在の注視点を見れるようにする(デバック用)
-		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		////右スティック押し込みでプレイヤーの向いている方向に回転する
+		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_THUMB)
 		//{
-		//	player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		//	//if (!m_lockOnFlag && !m_movePlayerAngleFlag)
+		//	//{
+		//		//Playerの向いている方向に移動するフラグをオンにする
+		//		m_movePlayerAngleFlag = true;	
+		//		//向く座標を決める
+		//		m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+		//	//}
+		//}
+		////フラグがオンになったらPlayerの向きに移動する
+		//if (m_movePlayerAngleFlag)
+		//{
+		//	//Playerの向いている方向の鏡合わせになるように角度を変更する
+		//	MovePlayerAngle(m_targetAngleY);
+		//}
+
+		////LBを押している最中は射撃モードに移行する
+		//if (m_controler.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		//{
+		//	//射撃状態
+		//	//Playerとの距離を縮めて狙いを定めているっぽくする
+		//	m_range = 10.0f;
+
+		//	//銃使うフラグにした
+		//	m_meleeFlag = false;
+
+		//	//その後に射撃用のUIも出したい
+		//	m_spriteAiming->OnClear(false);
+
+		//	m_spriteAttack->SetTexture(L"GunTex");
+
+		//	//注視点の変更(普段よりも先に見たい)
+		//	m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
+		//		cos(m_cameraAngleX) * -15.0f,
+		//		sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f));
+
+		//}
+		//else
+		//{
+		//	//通常状態
+		//	//Playerとの距離を縮めて狙いを定めているっぽくする
+		//	m_range = 15.0f;
+
+		//	//銃を使わないフラグ
+		//	m_meleeFlag = true;
+
+		//	//ここはUIを出さない
+		//	m_spriteAiming->OnClear(true);
+
+		//	m_spriteAttack->SetTexture(L"KatanaTex");
+
+		//	//注視点の変更
+		//	m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
+		//		cos(m_cameraAngleX) * -5.0f,
+		//		sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f));
 		//}
 
 
-		//ロックオンするときの処理
-		//LockOn(player);
+		//////現在の注視点を見れるようにする(デバック用)
+		////if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		////{
+		////	player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		////}
 
 
-		//LockOnCanはどのオブジェクト達になるのか処理
-		//LockOnCandidate(enemyVec, m_playerPos);
-		//角度の調整0~360度までしか出ないようにする
-		AdjustmentAngle();
-		//カメラの位置更新
-		CameraPosUpdate();
+		////ロックオンするときの処理
+		////LockOn(player);
+
+
+		////LockOnCanはどのオブジェクト達になるのか処理
+		////LockOnCandidate(enemyVec, m_playerPos);
+		////角度の調整0~360度までしか出ないようにする
+		//AdjustmentAngle();
+		////カメラの位置更新
+		//CameraPosUpdate();
 
 
 		////デバック用
@@ -261,19 +259,20 @@ namespace basecross {
 	}
 
 	//カメラの慣性回転の処理
-	void CameraManager::InertialRotation()
+	void CameraManager::InertialRotation(float decelerationSpeed,float magnificationSpeed)
 	{
 		//Y軸回転
 		if (m_contrloerVec.x != 0.0f)
 		{
 			//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
-			m_addAngleYAxis = m_speedYAxis * m_contrloerVec.x;//追加する角度を決めて
+			m_addAngleYAxis = (m_speedYAxis * m_contrloerVec.x) * decelerationSpeed;
 		}
+		//コントローラーを傾けていなければだんだん移動スピードがなくなる
 		else if(m_contrloerVec.x == 0.0f)
 		{
 			if (m_addAngleYAxis > 0)
 			{
-				m_addAngleYAxis -= 6.8f * m_delta;
+				m_addAngleYAxis -= magnificationSpeed * m_delta;
 				if (m_addAngleYAxis <= 0)
 				{
 					m_addAngleYAxis = 0.0f;
@@ -281,7 +280,7 @@ namespace basecross {
 			}
 			else if (m_addAngleYAxis < 0)
 			{
-				m_addAngleYAxis += 6.8f * m_delta;
+				m_addAngleYAxis += magnificationSpeed * m_delta;
 				if (m_addAngleYAxis >= 0)
 				{
 					m_addAngleYAxis = 0.0f;
@@ -293,13 +292,14 @@ namespace basecross {
 		if (m_contrloerVec.y != 0.0f)
 		{
 			//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-			m_addAngleXAxis = m_speedXAxis * m_contrloerVec.y;//追加する角度を決めて
+			m_addAngleXAxis = (m_speedXAxis * m_contrloerVec.y) * decelerationSpeed;
 		}
+		//コントローラーを傾けていなければだんだん移動スピードがなくなる
 		else if (m_contrloerVec.y == 0.0f)
 		{
 			if (m_addAngleXAxis > 0)
 			{
-				m_addAngleXAxis -= 3.0f * m_delta;
+				m_addAngleXAxis -= magnificationSpeed / 2 * m_delta;
 				if (m_addAngleXAxis <= 0)
 				{
 					m_addAngleXAxis = 0.0f;
@@ -307,7 +307,7 @@ namespace basecross {
 			}
 			else if (m_addAngleXAxis < 0)
 			{
-				m_addAngleXAxis += 8.0f * m_delta;
+				m_addAngleXAxis += magnificationSpeed / 2 * m_delta;
 				if (m_addAngleXAxis >= 0)
 				{
 					m_addAngleXAxis = 0.0f;
@@ -324,8 +324,128 @@ namespace basecross {
 
 	}
 
+	//通常モード時のカメラ操作処理
+	void CameraManager::CameraControlNomalMode()
+	{
+		//通常状態
+		m_range = 15.0f;
+
+		m_spriteAttack->SetTexture(L"KatanaTex");
+
+		auto pushMaxAtPos = -5.0f;
+		//移動処理
+		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 8.0f);
+		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, 8.0f);
+		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 8.0f);
+
+		//銃を使わないフラグ
+		m_meleeFlag = true;
+		//ここはUIを出さない
+		m_spriteAiming->OnClear(true);
+
+		//注視点の変更
+		m_lockStageCamera->SetAt
+		(
+			m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.x,
+			cos(m_cameraAngleX) * m_pushAtPos.y,
+			sinf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.z)
+		);
+	}
+
+	//射撃モード時のカメラ操作処理
+	void CameraManager::CameraControlShotMode()
+	{
+		//射撃状態
+		//Playerとの距離を縮めて狙いを定めているっぽくする
+		m_range = 10.0f;
+
+		m_spriteAttack->SetTexture(L"GunTex");
+
+
+		auto pushMaxAtPos = -15.0f;
+		//移動処理
+		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 8.0f);
+		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, 8.0f);
+		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 8.0f);
+
+		//銃使うフラグにした
+		m_meleeFlag = false;
+		//ここはUIを出す
+		m_spriteAiming->OnClear(false);
+
+		//注視点の変更(普段よりも先に見たい)
+		m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.x,
+			cos(m_cameraAngleX) * m_pushAtPos.y,
+			sinf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.z));
+	}
+
+	//プレイヤーの方向に回転するカメラ操作処理
+	void CameraManager::CameraControlTransitionMode()
+	{
+		CameraControlNomalMode();
+
+		//プレイヤーを取得
+		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
+		float playerAngle = player->GetAngle();
+
+		//Playerの向いている方向に移動するフラグをオンにする
+		m_movePlayerAngleFlag = true;
+		//向く座標を決める
+		m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
+
+
+		//フラグがオンになったらPlayerの向きに移動する
+		if (m_movePlayerAngleFlag)
+		{
+			//Playerの向いている方向の鏡合わせになるように角度を変更する
+			MovePlayerAngle(m_targetAngleY);
+
+			//カメラ移動処理が終わったら通常ステートに戻る
+			if (!m_movePlayerAngleFlag)
+			{
+				ChangeState(L"Normal");
+			}
+		}
+	}
+
+	//現在地から目的地までの移動処理
+	float CameraManager::MoveToDestination(float nowPos, float destinationPos,float speed)
+	{
+		//移動する距離の差
+		float difference = destinationPos - nowPos;
+
+		//プラスする位置になるまで縮ませる
+		if (nowPos > destinationPos && difference < 0)
+		{
+			nowPos-= m_delta * speed;
+		}
+		//プラスする位置になるまで縮ませる
+		if (nowPos < destinationPos && difference > 0)
+		{
+			nowPos += m_delta * speed;
+		}
+		//プラスする位置が既定から越えないようにする
+		if (nowPos < destinationPos && difference < 0)
+		{
+			nowPos = destinationPos;
+		}
+		//プラスする位置が既定から越えないようにする
+		if (nowPos > destinationPos && difference > 0)
+		{
+			nowPos = destinationPos;
+		}
+
+		return nowPos;
+	}
+
+	//ステート変更処理 引数に入れたステートに変更する
+	void CameraManager::ChangeState(wstring stateName)
+	{
+		m_stateMashine->ChangeState(stateName);
+	}
+
 	//カメラのポジションを決める関数
-	void CameraManager::CameraPosUpdate()
+	void CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength)
 	{
 		auto objVec = m_stage->GetGameObjectVec();
 		m_cameraPos = m_lockStageCamera->GetEye();
@@ -335,24 +455,63 @@ namespace basecross {
 		size_t triangleNumber; // レイが交差したポリゴンの番号
 		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
 
-		//まず、障害物がなかった時の位置を入れる(この数値は接近戦をするか射撃をするかによって変わる)
-		if (m_meleeFlag)
-		{//近接
-			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY)*sin(m_cameraAngleX) * m_range),
-				(m_playerPos.y + 10.0f) + cos(m_cameraAngleX) * m_range,
-				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
-		}
-		else if (!m_meleeFlag)
-		{//遠距離
-			m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
-				(m_playerPos.y + 3.0f) + cos(m_cameraAngleX) * m_range,
-				m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		//移動する距離の差
+		float difference = maxPushPosY - m_pushPos.y;
 
-			//射撃モードは少し通常の状態から位置をずらす
-			m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * 5.0f,
-				0.0f,
-				sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * 5.0f);
+		//プラスする位置になるまで縮ませる
+		if (m_pushPos.y > maxPushPosY && difference < 0)
+		{
+			m_pushPos.y -= m_delta * 20.0f;
 		}
+		//プラスする位置になるまで縮ませる
+		if (m_pushPos.y < maxPushPosY && difference > 0)
+		{
+			m_pushPos.y += m_delta * 20.0f;
+		}
+		//プラスする位置が既定から越えないようにする
+		if (m_pushPos.y < maxPushPosY && difference < 0)
+		{
+			m_pushPos.y = maxPushPosY;
+		}
+		//プラスする位置が既定から越えないようにする
+		if (m_pushPos.y > maxPushPosY && difference > 0)
+		{
+			m_pushPos.y = maxPushPosY;
+		}
+
+		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
+			(m_playerPos.y + m_pushPos.y) + cos(m_cameraAngleX) * m_range,
+			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+
+		//移動する距離の差
+		difference = maxLength - m_gunShiftLength;
+			
+		//ずらす位置を既定の長さになるまで伸ばす
+		if (m_gunShiftLength < maxLength && difference > 0)
+		{
+			m_gunShiftLength += m_delta * 20.0f;
+		}
+		//ずらす位置を既定の長さになるまで伸ばす
+		if (m_gunShiftLength > maxLength && difference < 0)
+		{
+			m_gunShiftLength -= m_delta * 20.0f;
+		}
+		//ずらす長さを既定から越えないようにする
+		if (m_gunShiftLength > maxLength && difference > 0)
+		{
+			m_gunShiftLength = maxLength;
+		}
+		//ずらす長さを既定から越えないようにする
+		if (m_gunShiftLength < maxLength && difference < 0)
+		{
+			m_gunShiftLength = maxLength;
+		}
+
+		//射撃モードは少し通常の状態から位置をずらす
+		m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength,
+			0.0f,
+			sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength);
+
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
