@@ -48,7 +48,6 @@ namespace basecross {
 		auto ptrColl = AddComponent<CollisionSphere>();
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 
-		
     }
 
     void HeadParts::OnUpdate()
@@ -62,7 +61,7 @@ namespace basecross {
 		{
 			SetDrawActive(false);
 			m_partspoach.push_back(GetThis<HeadParts>());
-
+			
 		}
 		
 	}

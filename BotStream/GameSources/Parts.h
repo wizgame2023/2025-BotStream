@@ -22,9 +22,6 @@ namespace basecross {
 		int AddHp = 0.0f;
 		float AddSpeed = 0.0f;
 
-		int AddGood = 0.0f;
-		int AddBad = 0.0f;
-
 
 	public:
 		Parts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
@@ -40,7 +37,6 @@ namespace basecross {
 	{
 
 		int AddAttack = 3.0f;
-		int AddGood = 2.0f;
 
 
 		shared_ptr<Stage> m_stage;
@@ -58,7 +54,6 @@ namespace basecross {
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
 	};
-
 
 
 
