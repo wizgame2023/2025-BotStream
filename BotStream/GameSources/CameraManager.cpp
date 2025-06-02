@@ -50,7 +50,7 @@ namespace basecross {
 		m_lockStageCamera->SetAt(playerPos);
 
 		//スプライト追加
-		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(100.0f, 100.0f), Vec3(300, -350, 0));
+		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(100.0f, 100.0f), Vec3(570.0f, -350.0f, 0));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				

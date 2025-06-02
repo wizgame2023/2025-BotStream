@@ -148,6 +148,9 @@ namespace basecross{
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
 
+		// Floor
+		strTexture = texPath + L"FloorTex2.png";
+		app->RegisterTexture(L"FloorTex", strTexture);
 
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
