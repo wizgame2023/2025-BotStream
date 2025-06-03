@@ -52,6 +52,19 @@ namespace basecross{
 		ActorName_Enemy
 	};
 
+	////装備しているパーツのステータス合計一覧
+	//struct EquippedParts
+	//{
+	//	//攻撃力
+	//	int addAttack;
+	//	//速度
+	//	int addSpeed;
+	//	//善か悪
+	//	int addAttribute;
+	//	//追加HP
+	//	int addHP;
+	//};
+
 	class Player : public Actor
 	{
 	private:
@@ -82,6 +95,8 @@ namespace basecross{
 		//int m_defense;
 		////現在HP
 		//int m_HPCurrent;
+		//元々の最大HP
+		int m_originallyHPMax = 100;
 		//最大SP
 		int m_SPMax = 100;
 		//現在SP 
@@ -90,6 +105,9 @@ namespace basecross{
 		int m_bulletNumMax = 10;
 		//現在の球数
 		int m_bulletNum = 10;
+
+		//現在の装備しているパーツのステータス
+		PartsStatus m_equippedParts;
 
 		//リロードしている時間計測
 		float m_reloadTimeCount = 0.0f;
@@ -168,6 +186,10 @@ namespace basecross{
 		//endDodgeFlagのゲッター
 		bool GetEndDodgeFlag();
 
+		//m_equippedPartsのセッタ
+		void SetEquippedParts(PartsStatus parts);
+		//m_equippedPartsのゲッタ
+		PartsStatus GetEquippedParts();
 
 		//現在の球数を受け取る
 		int Player::GetBulletNum()
@@ -240,7 +262,7 @@ namespace basecross{
 			m_canMoveDistance(canMoveDistance),
 			m_actorType(actorType)
 		{
-
+			
 		}
 		~Bullet()
 		{
