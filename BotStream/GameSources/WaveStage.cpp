@@ -105,6 +105,9 @@ namespace basecross {
 
         //ポーズ処理生成
         AddGameObject<PauseSprite>();
+
+        // 戦闘用UI
+        AddGameObject<PlayerWeaponUI>();
     }
 
 
@@ -266,11 +269,14 @@ namespace basecross {
     {
         vector < vector<Vec3> > vec =
         {
-            //Boss
+            // 最初はBossが一番初めに生成されていたけど、床に模様を貼る時の処理と相性が悪いので
+            // 勝手にWave1とBossの生成順を変えさせてもらいました。なにかほかの所に影響があるならお伝えください
+
+            //Wave1
             {
-                Vec3(170.0f, 3.0f, 170.0f),
+                Vec3(120.0f, 3.0f, 120.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, -3.0f, 260.0f)
+                Vec3(0.0f, -3.0f, -260.0f)
             },
             //Wave2
             {
@@ -278,11 +284,11 @@ namespace basecross {
                 Vec3(0.0f, 0.0f, 0.0f),
                 Vec3(0.0f, -3.0f, 0.0f)
             },
-            //Wave1
+            //Boss
             {
-                Vec3(120.0f, 3.0f, 120.0f),
+                Vec3(170.0f, 3.0f, 170.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
-                Vec3(0.0f, -3.0f, -260.0f)
+                Vec3(0.0f, -3.0f, 260.0f)
             },
 
 
@@ -290,7 +296,38 @@ namespace basecross {
         for (auto v : vec)
         {
             AddGameObject<Floor>(v[0], v[1], v[2]);
+
+            // ブロックの横と奥行きの静的定数
+            constexpr float scaleXZ = Block::BLOCK_XZ_SCALE;
+            // ブロック生成時のポジションのずれの修正
+            constexpr float shiftPos = scaleXZ / 2;
+
+            // 大きさと位置の代入(マジックナンバーになってしまうため追加)
+            auto scl = v[0];
+            auto pos = v[2];
+
+            // 生成するブロックの数
+            int blockNum = (int)scl.x / 10;
+
+            for (int i = 0; i < blockNum; i++)
+            {
+                for (int j = 0; j < blockNum; j++)
+                {
+                    AddGameObject<Block>(
+                        Vec3(
+                            // ブロック1個の大きさ - ステージの位置 + (ステージの大きさ / 2) + (ブロックの大きさ / 2)
+                            //                              ↑こうしないとステージの中央から生成されてしまう
+                            j * scaleXZ - (pos.x + (scl.x / 2) - shiftPos),
+                            pos.y + 0.05f,
+                            // 基本は変わらないけど、Wave1とBossの床が逆になっていたのでこうすると直りました
+                            i * scaleXZ + (pos.z - (scl.z / 2) + shiftPos)
+                        )
+                    );
+                }
+            }
         }
+
+
     }
 
     //天井,床
@@ -331,6 +368,35 @@ namespace basecross {
 
     }
 
+    // 床の見た目変更用のブロックのクラス ---------------------------------------------------------
+    // Floorクラスを参考に作りました
+    Block::Block(const shared_ptr<Stage>& StagePtr,
+        const Vec3& Position
+    ) :
+        MyGameObject(StagePtr),
+        m_pos(Position)
+    {
+    }
+
+    void Block::OnCreate()
+    {
+        auto ptrTransform = GetComponent<Transform>();
+        // 大きさと回転は固定  必要に応じてメンバ変数増やします / 今のところはm_scaleXZが10で固定です
+        ptrTransform->SetScale(Vec3(BLOCK_XZ_SCALE, 3.0f, BLOCK_XZ_SCALE));
+        ptrTransform->SetRotation(Vec3(0.0f));
+        ptrTransform->SetPosition(m_pos);
+
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
+        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+
+        // 色変え
+        ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
+
+        // テクスチャ
+        ptrDraw->SetTextureResource(L"FloorTex");
+
+    }
+    // END -----------------------------------------------------------------------------------------
 
     //壁作成
     void WaveStage::CreateWall()

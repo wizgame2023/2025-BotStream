@@ -71,6 +71,9 @@ namespace basecross {
 			//ポーズ生成
 			AddGameObject<PauseSprite>();
 
+			// 戦闘UI
+			AddGameObject<PlayerWeaponUI>();
+
 			// ボスゲージ
 			//AddGameObject<BossGaugeUI>();
 
@@ -579,43 +582,43 @@ namespace basecross {
 
 	void StageSato::CreateBlock()
 	{
-		auto scaleXZ = shared_ptr<Block>()->GetXZScale();
-		for (int i = 0; i < 10; i++)
-		{
-			for (int j = 0; j < 10; j++)
-			{
-				AddGameObject<Block>(Vec3(j * scaleXZ, 0.0f, i * scaleXZ));
-			}
-		}
+		//float scaleXZ = Block::BLOCK_XZ_SCALE;
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	for (int j = 0; j < 10; j++)
+		//	{
+		//		AddGameObject<Block>(Vec3(j * scaleXZ, 0.0f, i * scaleXZ));
+		//	}
+		//}
 	}
 
-	// 床の見た目変更用のブロックのクラス / Floorクラスを参考に作りました
-	Block::Block(const shared_ptr<Stage>& StagePtr,
-		const Vec3& Position
-	) :
-		MyGameObject(StagePtr),
-		m_pos(Position)
-	{
-	}
+	//// 床の見た目変更用のブロックのクラス / Floorクラスを参考に作りました
+	//Block::Block(const shared_ptr<Stage>& StagePtr,
+	//	const Vec3& Position
+	//) :
+	//	MyGameObject(StagePtr),
+	//	m_pos(Position)
+	//{
+	//}
 
-	void Block::OnCreate()
-	{
-		auto ptrTransform = GetComponent<Transform>();
-		// 大きさと回転は固定  必要に応じてメンバ変数増やします / 今のところはm_scaleXZが10で固定です
-		ptrTransform->SetScale(Vec3(m_scaleXZ, 3.0f, m_scaleXZ));
-		ptrTransform->SetRotation(Vec3(0.0f));
-		ptrTransform->SetPosition(m_pos);
+	//void Block::OnCreate()
+	//{
+	//	auto ptrTransform = GetComponent<Transform>();
+	//	// 大きさと回転は固定  必要に応じてメンバ変数増やします / 今のところはm_scaleXZが10で固定です
+	//	ptrTransform->SetScale(Vec3(BLOCK_XZ_SCALE, 3.0f, BLOCK_XZ_SCALE));
+	//	ptrTransform->SetRotation(Vec3(0.0f));
+	//	ptrTransform->SetPosition(m_pos);
 
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+	//	auto ptrDraw = AddComponent<PNTStaticDraw>();
+	//	ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 
-		// 色変え
-		ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
-		 
-		// テクスチャ
-		ptrDraw->SetTextureResource(L"FloorTex");
+	//	// 色変え
+	//	ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
+	//	 
+	//	// テクスチャ
+	//	ptrDraw->SetTextureResource(L"FloorTex");
 
-	}
+	//}
 
 	// END-------------------------------------------------------
 

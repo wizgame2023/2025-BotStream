@@ -195,24 +195,20 @@ namespace basecross {
 
 	};
 
-	class Block : public MyGameObject
-	{
-	public:
-		Block(const shared_ptr<Stage>& StagePtr,
-			const Vec3& Position);
-		virtual ~Block() {}
+	//class Block : public MyGameObject
+	//{
+	//public:
+	//	Block(const shared_ptr<Stage>& StagePtr,
+	//		const Vec3& Position);
+	//	virtual ~Block() {}
 
-		virtual void OnCreate() override;
+	//	virtual void OnCreate() override;
 
-		float GetXZScale()
-		{
-			return m_scaleXZ;
-		}
+	//	static constexpr float BLOCK_XZ_SCALE = 10.0f;
 
-	private:
-		Vec3 m_pos;
-		const float m_scaleXZ = 10.0f;
-	};
+	//private:
+	//	Vec3 m_pos;
+	//};
 }
 //end basecross
 

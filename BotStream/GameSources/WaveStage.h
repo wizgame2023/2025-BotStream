@@ -65,6 +65,23 @@ namespace basecross {
         virtual void OnCreate() override;
     };
 
+    // 床のテクスチャ用--------------------------------
+    class Block : public MyGameObject
+    {
+    public:
+        Block(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Position);
+        virtual ~Block() {}
+
+        virtual void OnCreate() override;
+
+        static constexpr float BLOCK_XZ_SCALE = 10.0f;
+
+    private:
+        Vec3 m_pos;
+    };
+    // END --------------------------------------------
+
     class Wall : public GameObject {
         Vec3 m_Scale;
         Vec3 m_Rotation;

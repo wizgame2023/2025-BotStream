@@ -50,7 +50,7 @@ namespace basecross {
 		m_lockStageCamera->SetAt(playerPos);
 
 		//スプライト追加
-		m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(100.0f, 100.0f), Vec3(570.0f, -350.0f, 0));
+		//m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(100.0f, 100.0f), Vec3(570.0f, -350.0f, 0));
 
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
@@ -330,7 +330,7 @@ namespace basecross {
 		//通常状態
 		m_range = 15.0f;
 
-		m_spriteAttack->SetTexture(L"KatanaTex");
+		//m_spriteAttack->SetTexture(L"KatanaTex");
 
 		auto pushMaxAtPos = -5.0f;
 		//移動処理
@@ -341,7 +341,7 @@ namespace basecross {
 		//銃を使わないフラグ
 		m_meleeFlag = true;
 		//ここはUIを出さない
-		m_spriteAiming->OnClear(true);
+		//m_spriteAiming->OnClear(true);
 
 		//注視点の変更
 		m_lockStageCamera->SetAt
@@ -359,7 +359,7 @@ namespace basecross {
 		//Playerとの距離を縮めて狙いを定めているっぽくする
 		m_range = 10.0f;
 
-		m_spriteAttack->SetTexture(L"GunTex");
+		//m_spriteAttack->SetTexture(L"GunTex");
 
 
 		auto pushMaxAtPos = -15.0f;

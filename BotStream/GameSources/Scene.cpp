@@ -183,11 +183,21 @@ namespace basecross{
 		strTexture = texPath + L"ClearOverText.png";
 		app->RegisterTexture(L"ClearOverText", strTexture);
 
-		//使っている武器を表示するUIテクスチャ
+		// 戦闘UI
 		strTexture = texPath + L"Attack_UI.png";
 		app->RegisterTexture(L"KatanaTex", strTexture);
 		strTexture = texPath + L"Gun_UI.png";
 		app->RegisterTexture(L"GunTex", strTexture);
+		strTexture = texPath + L"Avoidance_UI.png";
+		app->RegisterTexture(L"AvoidTex", strTexture);
+
+		// パーツのステータス
+		strTexture = texPath + L"PartsUI1.png";
+		app->RegisterTexture(L"Parts1TEX", strTexture);
+		strTexture = texPath + L"PartsUI2.png";
+		app->RegisterTexture(L"Parts2TEX", strTexture);
+		strTexture = texPath + L"PartsUI3.png";
+		app->RegisterTexture(L"Parts3TEX", strTexture);
 
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";

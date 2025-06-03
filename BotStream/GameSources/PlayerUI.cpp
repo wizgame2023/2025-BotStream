@@ -340,37 +340,122 @@ namespace basecross {
 	//-----------------------------------------------
 	void PlayerWeaponUI::OnCreate()
 	{
-		//現在の攻撃方法関係--------------------------------------------------
-		// 近接
-		m_weaponSprite[0] = m_stage->AddGameObject<Sprite>(
-			L"KatanaTex",  			//テクスチャ名
-			m_weaponSize,       // サイズ
-			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//表示位置
+		m_stage = GetStage();
+		Vec2 iconScl(80.0f, 80.0f);
+		Vec3 pos(430.0f, -320.0f, 0.0f);
+		float offsetX = 120.0f;
+		int layer = 3;
 
-		m_weaponSprite[1] = m_stage->AddGameObject<Sprite>(
-			L"GunTex",  			//テクスチャ名
-			m_weaponSize,       // サイズ
-			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//表示位置
-		m_weaponSprite[1]->OnClear(true);
-		//--------------------------------------------------------------------
+		// アイコン -------------------------------------
+		// 剣
+		m_fightSprite[0] = m_stage->AddGameObject<Sprite>(
+			L"KatanaTex",
+			iconScl,
+			pos,
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
 
+		// 銃
+		m_fightSprite[1] = m_stage->AddGameObject<Sprite>(
+			L"GunTex",
+			iconScl,
+			Vec3(pos.x - offsetX, pos.y, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+
+		// 回避
+		m_fightSprite[2] = m_stage->AddGameObject<Sprite>(
+			L"AvoidTex",
+			iconScl,
+			Vec3(pos.x + offsetX, pos.y, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		// ----------------------------------------------
+
+		Vec2 buttonScl(35.0f, 35.0f);
+		float buttonOffsetY = 60.0f;
+		float gunOffsetX = 35.0f;
+		// ボタン関係 -----------------------------------
+		// RB / 剣----------------------
+		m_fightSprite[3] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+		// 剣 --------------------------
+
+		// LB / 銃----------------------
+		m_fightSprite[4] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x - offsetX - gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
+
+		// プラスの部分
+		m_fightSprite[5] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			Vec2(buttonScl.x - 5.0f, buttonScl.y - 5.0f),
+			Vec3(pos.x - offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[5]->SetUVRect(Vec2(0.666f, 0.75f), Vec2(1.0f, 1.0f));
+
+		// RB 
+		m_fightSprite[6] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x - offsetX + gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+		// 銃 --------------------------
+
+		// A / 回避
+		m_fightSprite[7] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x + offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+		// ----------------------------------------------
 	}
 
 	void PlayerWeaponUI::OnUpdate()
 	{
-		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
-
-		// 仮：Xボタンで武器UI切り替え
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		{
-			m_weaponSprite[0]->OnClear(!m_weaponSwitchFlag);
-			m_weaponSprite[1]->OnClear(m_weaponSwitchFlag);
-			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
-		}
-
-
+		// ムービー中などはUIを非表示にするとかになったら多分使うと思うので書いておく
+		//AllFightSpriteClear(m_movieFlag);
 	}
 
+	// 戦闘用UIすべての表示非表示を設定する
+	void PlayerWeaponUI::AllFightSpriteClear(bool clear)
+	{
+		constexpr int spriteNum = 6;
+		for (int i = 0; i < spriteNum; i++)
+		{
+			m_fightSprite[i]->OnClear(clear);
+		}
+	}
 
 }
 //end basecross
