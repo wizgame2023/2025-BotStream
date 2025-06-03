@@ -22,6 +22,7 @@ namespace basecross {
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 
+		void PartsDrop(Vec3 dropPos);
 
 	};
 
@@ -74,6 +75,7 @@ namespace basecross {
 			//装備している合計のステータスを計算する
 			for (auto parts : m_EquippedParts)
 			{
+				allParts.id = 0;
 				allParts.addAttack += m_EquippedParts[roop].addAttack;
 				allParts.addAttribute += m_EquippedParts[roop].addAttribute;
 				allParts.addHP += m_EquippedParts[roop].addHP;
