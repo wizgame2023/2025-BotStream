@@ -450,12 +450,62 @@ namespace basecross {
 	// 戦闘用UIすべての表示非表示を設定する
 	void PlayerWeaponUI::AllFightSpriteClear(bool clear)
 	{
-		constexpr int spriteNum = 6;
+		constexpr int spriteNum = 8;
 		for (int i = 0; i < spriteNum; i++)
 		{
 			m_fightSprite[i]->OnClear(clear);
 		}
 	}
+	// --------------------------------------------------------------------------------------
 
+
+	//================================================================
+	// パーツ交換の処理
+	//================================================================
+
+	void PartsTextChange::OnCreate()
+	{
+		m_stage = GetStage();
+		Vec2 scl(200.0f, 100.0f),numScl(30.0f,60.0f);
+		int layer = 5;
+		float offsetY = 50.0f;
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_partsTextSprite[i] = m_stage->AddGameObject<Sprite>(
+				L"PartsText",
+				scl,
+				Vec3(-500,-250 - (i * offsetY),0.0f),
+				Vec3(0.0f),
+				Col4(1.0f),
+				layer
+			);
+			m_partsTextSprite[i]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 0.25f));
+			m_partsTextSprite[i]->OnClear(false);
+
+			m_num[i] = m_stage->AddGameObject<Sprite>(
+				L"Numbers",
+				numScl,
+				Vec3(-600,-250 - (i * offsetY),0.0f),
+				Vec3(0.0f),
+				Col4(1.0f),
+				layer
+			);
+			m_num[i]->SetColor(Col4(0.0f, 0.0f, 0.0f, 1.0f));
+		}
+		m_num[0]->SetUVRect(Vec2(0.1f, 0.0f), Vec2(0.2f, 1.0f));
+		m_num[1]->SetUVRect(Vec2(0.2f, 0.0f), Vec2(0.3f, 1.0f));
+		m_num[2]->SetUVRect(Vec2(0.3f, 0.0f), Vec2(0.4f, 1.0f));
+	}
+
+	void PartsTextChange::OnUpdate()
+	{
+
+	}
+
+	void PartsTextChange::AllClear(bool clear)
+	{
+
+	}
 }
 //end basecross

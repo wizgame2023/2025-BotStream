@@ -198,6 +198,8 @@ namespace basecross{
 		app->RegisterTexture(L"Parts2TEX", strTexture);
 		strTexture = texPath + L"PartsUI3.png";
 		app->RegisterTexture(L"Parts3TEX", strTexture);
+		strTexture = texPath + L"PartsTexts.png";
+		app->RegisterTexture(L"PartsText", strTexture);
 
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";
@@ -266,6 +268,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"dslashHit.efkefc");
+
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
