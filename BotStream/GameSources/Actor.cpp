@@ -190,20 +190,20 @@ namespace basecross {
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
-			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
-			ret = EfkPlaying(L"Slash01Efk", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			//ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"Slash01Efk", GetAngle() + XM_PI + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Attack2:
-			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-			ret = EfkPlaying(L"Slash02Efk", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			//ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			ret = EfkPlaying(L"Slash02Efk", GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
 			break;
 		case PlayerEffect_Attack3:
-			ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
-			ret = EfkPlaying(L"Slash03Efk", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			//ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			ret = EfkPlaying(L"Slash03Efk", GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
 			break;
 		case PlayerEffect_AttackEx:
-			ret = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
-			ret = EfkPlaying(L"Slash04Efk", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			//ret = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			ret = EfkPlaying(L"Slash04Efk", GetAngle(), Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
 			break;
 		case PlayerEffect_Dodge:
 			ret = EfkPlaying(L"Dodge", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
