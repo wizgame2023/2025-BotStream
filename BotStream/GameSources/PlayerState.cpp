@@ -29,7 +29,7 @@ namespace basecross {
 		
 		//回避してよいかフラグを受け取る
 		m_dodgeFlag = m_player->GetDodgeFlag();
-		//接近戦指定以下のフラグ受け取る
+		//接近戦していいかのフラグ受け取る
 		m_meleeFlag = cameraManager->GetMeleeFlag();
 	};
 	//ターゲット対象との距離を取得する
@@ -323,7 +323,14 @@ namespace basecross {
 	}
 
 
-	//攻撃ステートの元となるクラス
+	//攻撃ステートの元となるクラス	
+	void PlayerAttackBaseState::Enter()
+	{
+		PlayerStateBase::Enter();
+		//プラスする攻撃力を入れる
+		m_plusAttack = m_player->GetEquippedParts().addAttack;
+	}
+
 	//次の攻撃発生フラグ処理
 	void PlayerAttackBaseState::NextAttackFlag()
 	{
@@ -338,7 +345,7 @@ namespace basecross {
 	//攻撃ステート(一番最初に出てくる攻撃)
 	void PlayerAttack1State::Enter()
 	{
-		PlayerStateBase::Enter();
+		PlayerAttackBaseState::Enter();
 
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
@@ -353,8 +360,15 @@ namespace basecross {
 		//アニメーションの更新
 		auto mag = 1.42f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.5f) * mag);
-		//移動処理
-		m_player->PlayerMove(PlayerState_Attack1);
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+
+		//アニメーションが終わったら移動はしない(違和感が出てくるため)
+		if (m_timeOfAnimation <= 0.78f)
+		{
+			//移動処理
+			m_player->PlayerMove(PlayerState_Attack1);
+		}
     
 		//攻撃判定の定義
 		AttackCollisionOccurs();
@@ -374,6 +388,7 @@ namespace basecross {
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		AttackCollisionFlag = true;//リセット
+		m_timeOfAnimation = 0.0f;
 	}
 	//攻撃コリジョンの発生処理
 	void PlayerAttack1State::AttackCollisionOccurs()
@@ -385,7 +400,7 @@ namespace basecross {
 			//一回しかヒットしないか
 			tmp.HitOnce = true;
 			//ダメージ
-			tmp.Damage = 10;
+			tmp.Damage = 10 + m_plusAttack;
 			//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitVel_Stand = Vec3(-2, 1, 0);
 			tmp.HitTime_Stand = .5f;
@@ -441,7 +456,7 @@ namespace basecross {
 	//攻撃ステート(２番目に出る攻撃)
 	void PlayerAttack2State::Enter()
 	{
-		PlayerStateBase::Enter();
+		PlayerAttackBaseState::Enter();
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
 		//Attack2アニメーションに変更
@@ -458,8 +473,18 @@ namespace basecross {
 		//アニメーションの更新
 		auto mag = 1.42f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.9f) * mag);
-		//移動処理
-		m_player->PlayerMove(PlayerState_Attack2);
+		////移動処理
+		//m_player->PlayerMove(PlayerState_Attack2);
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+
+		//アニメーションが終わったら移動はしない(違和感が出てくるため)
+		if (m_timeOfAnimation <= 1.49f)
+		{
+			//移動処理
+			m_player->PlayerMove(PlayerState_Attack2);
+		}
+
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -477,6 +502,7 @@ namespace basecross {
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		m_attackCollisionFlag = 0;//リセット
+		m_timeOfAnimation = 0.0f;
 	}
 	//攻撃コリジョン発生
 	void PlayerAttack2State::AttackCollisionOccurs()
@@ -486,7 +512,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 12;
+			tmp.Damage = 12 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
@@ -504,7 +530,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 12;
+			tmp.Damage = 12 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
@@ -555,7 +581,7 @@ namespace basecross {
 	//攻撃ステート(3番目に出る攻撃)
 	void PlayerAttack3State::Enter()
 	{
-		PlayerStateBase::Enter();
+		PlayerAttackBaseState::Enter();
 		m_SE = m_SEManager->Start(L"Attack2", 0, 0.9f);//SE再生
 
 		//Attack3アニメーションに変更
@@ -573,7 +599,18 @@ namespace basecross {
 		auto mag = 1.25f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.8f)*mag);
 		//移動処理
-		m_player->PlayerMove(PlayerState_Attack3);
+		//m_player->PlayerMove(PlayerState_Attack3);
+
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+
+		//アニメーションが終わったら移動はしない(違和感が出てくるため)
+		if (m_timeOfAnimation <= 1.68f)
+		{
+			//移動処理
+			m_player->PlayerMove(PlayerState_Attack3);
+		}
+
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -591,6 +628,7 @@ namespace basecross {
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		m_attackCollisionFlag = 0;//リセット
+		m_timeOfAnimation = 0.0f;
 	}
 	//攻撃コリジョン発生
 	void PlayerAttack3State::AttackCollisionOccurs()
@@ -600,7 +638,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 18;
+			tmp.Damage = 18 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
@@ -618,7 +656,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 18;
+			tmp.Damage = 18 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
@@ -658,7 +696,7 @@ namespace basecross {
 	//攻撃ステート(4番目に出る攻撃)
 	void PlayerAttackExState::Enter()
 	{
-		PlayerStateBase::Enter();
+		PlayerAttackBaseState::Enter();
 		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
 
 		//AttackExアニメーションに変更
@@ -693,7 +731,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 25;
+			tmp.Damage = 25 + m_plusAttack;
 			tmp.HitVel_Stand = Vec3(-20, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
