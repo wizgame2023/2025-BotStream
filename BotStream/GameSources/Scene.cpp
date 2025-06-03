@@ -193,14 +193,20 @@ namespace basecross{
 
 		// パーツのステータス
 		strTexture = texPath + L"PartsUI1.png";
-		app->RegisterTexture(L"Parts1TEX", strTexture);
+		app->RegisterTexture(L"PartsTestTEX", strTexture);
 		strTexture = texPath + L"PartsUI2.png";
-		app->RegisterTexture(L"Parts2TEX", strTexture);
+		app->RegisterTexture(L"PartsHiMoterTEX", strTexture);
 		strTexture = texPath + L"PartsUI3.png";
+		app->RegisterTexture(L"PartsBattlePatchTEX", strTexture);
 		app->RegisterTexture(L"Parts3TEX", strTexture);
 		strTexture = texPath + L"PartsTexts.png";
 		app->RegisterTexture(L"PartsText", strTexture);
 
+		//パーツ用のテクスチャ
+		strTexture = texPath + L"gear.png";
+		app->RegisterTexture(L"PartsTEX", strTexture);
+
+		
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";
 		app->RegisterTexture(L"BarTex", strTexture);
@@ -312,7 +318,9 @@ namespace basecross{
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
 		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
-		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav"); 
+		//パーツ入手
+		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
 
 	}
 
