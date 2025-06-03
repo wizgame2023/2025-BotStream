@@ -9,7 +9,7 @@
 #include "Actor.h"
 #include "Enemy.h"
 
-namespace basecross{
+namespace basecross {
 	class EfkEffect;
 	class StageSato;
 	class PlayerBulletUI;
@@ -142,7 +142,7 @@ namespace basecross{
 		Handle m_testEffect;
 
 	public:
-		Player(const shared_ptr<Stage>& stagePtr,Vec3 pos,Vec3 rot,Vec3 scale,int HP = 100,int attack = 10,int defense = 1);
+		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
 		~Player();
 
 		void OnCreate()override;//作成
@@ -174,8 +174,8 @@ namespace basecross{
 		//SPのセッター
 		void SetSP(int setSP);
 		//SPMaxのゲッター
-		int GetMaxSP();		
-		
+		int GetMaxSP();
+
 		//DodgeFlagのセッター
 		void SetDodgeFlag(bool setDodgeFlag);
 		//DodgeFlagのゲッター
@@ -255,14 +255,14 @@ namespace basecross{
 		shared_ptr<Transform> m_trans;
 
 	public:
-		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale,float speed,shared_ptr<Actor> originObj,float canMoveDistance = 30.0f,int actorType = ActorName_Player):
-			Actor(stagePtr,pos,rot,scale),
+		Bullet(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, float speed, shared_ptr<Actor> originObj, float canMoveDistance = 30.0f, int actorType = ActorName_Player) :
+			Actor(stagePtr, pos, rot, scale),
 			m_speed(speed),
 			m_originObj(originObj),
 			m_canMoveDistance(canMoveDistance),
 			m_actorType(actorType)
 		{
-			
+
 		}
 		~Bullet()
 		{
@@ -313,8 +313,8 @@ namespace basecross{
 			Zako_Flying,//滞空型
 		};
 
-		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee):
-			EnemyBase(stagePtr,pos,rot,scale,used),
+		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee) :
+			EnemyBase(stagePtr, pos, rot, scale, used),
 			m_AttackType(attackType)
 		{
 
@@ -330,6 +330,7 @@ namespace basecross{
 		void OnCreate() override;
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
+		void OnDestroy()override;
 
 		//ビルボードの処理
 		virtual void UpdateHPBer();
@@ -374,7 +375,7 @@ namespace basecross{
 
 	public:
 		EnemyZakoLong(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
-			EnemyZako(stagePtr, pos, rot, scale, used,Zako_Long)
+			EnemyZako(stagePtr, pos, rot, scale, used, Zako_Long)
 		{
 
 		}
@@ -383,7 +384,7 @@ namespace basecross{
 		void OnCreate()override;
 
 	};
-	
+
 	class EnemyZakoFlying : public EnemyZako
 	{
 	private:
@@ -396,8 +397,8 @@ namespace basecross{
 			Zako_Long//遠距離型
 		};
 
-		EnemyZakoFlying(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false):
-			EnemyZako(stagePtr,pos,rot,scale,used)
+		EnemyZakoFlying(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+			EnemyZako(stagePtr, pos, rot, scale, used)
 		{
 
 		}

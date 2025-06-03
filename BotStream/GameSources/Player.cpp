@@ -888,7 +888,16 @@ namespace basecross {
 				//初期ステートに戻す
 				ChangeState(L"Stand");
 			}
-		}	
+		}
+		if (m_beforUsed)
+		{
+			if (!m_used)
+			{
+				auto stage = GetStage();
+				auto pos = GetComponent<Transform>()->GetPosition();
+				stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(pos);
+			}
+		}
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
 
@@ -976,6 +985,13 @@ namespace basecross {
 	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
 		DetectBeingAttacked(Other);
+	}
+
+	//削除時処理
+	void EnemyZako::OnDestroy()
+	{
+		auto stage = GetStage();
+		stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(m_pos);
 	}
 
 	//ダメージを受けた際の処理
