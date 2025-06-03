@@ -208,7 +208,7 @@ namespace basecross {
 
 		shared_ptr<Stage> m_stage;
 
-		shared_ptr<Sprite> m_fightSprite[6];
+		shared_ptr<Sprite> m_fightSprite[8];
 
 	public:
 		// stagePtr: ステージ
