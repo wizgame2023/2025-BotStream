@@ -15,6 +15,8 @@ namespace basecross {
 	//パーツのステータス一覧
 	struct PartsStatus
 	{
+		//ID
+		int id;
 		//攻撃力
 		int addAttack;
 		//速度
@@ -68,6 +70,7 @@ namespace basecross {
 			Parts(stagePtr,pos,rot,scale)
 		{
 			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 1;
 			m_partsStatus.addHP = 10;
 			m_partsStatus.addSpeed = 0.05f;
 			m_partsStatus.addAttack = 0;
@@ -76,7 +79,7 @@ namespace basecross {
 			//名前
 			m_partsStatus.partsName = L"テスト用パーツ";
 			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"KatanaTex";
+			m_partsStatus.partsImagePass = L"PartsTestTEX";
 		}
 		~HeadParts()
 		{
@@ -96,6 +99,7 @@ namespace basecross {
 			Parts(stagePtr, pos, rot, scale)
 		{
 			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 2;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.3f;
 			m_partsStatus.addAttack = 0;
@@ -104,7 +108,7 @@ namespace basecross {
 			//名前
 			m_partsStatus.partsName = L"高性能モーター";
 			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"GunTex";
+			m_partsStatus.partsImagePass = L"PartsHiMoterTEX";
 		}
 		~PartsHiMoter()
 		{
@@ -122,6 +126,7 @@ namespace basecross {
 			Parts(stagePtr, pos, rot, scale)
 		{
 			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 3;
 			m_partsStatus.addHP = 20;
 			m_partsStatus.addSpeed = 0.0f;
 			m_partsStatus.addAttack = 3;
@@ -130,7 +135,7 @@ namespace basecross {
 			//名前
 			m_partsStatus.partsName = L"戦闘用パッチ";
 			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"GunTex";
+			m_partsStatus.partsImagePass = L"PartsBattlePatchTEX";
 		}
 		~PartsBattlePatch()
 		{
