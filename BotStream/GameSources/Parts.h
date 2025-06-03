@@ -9,18 +9,42 @@
 #include "ObjectMove.h"
 
 namespace basecross {
+	class EquippedParts;
+	class BillBoard;
+
+	//パーツのステータス一覧
+	struct PartsStatus
+	{
+		//攻撃力
+		int addAttack;
+		//速度
+		float addSpeed;
+		//善か悪
+		int addAttribute;
+		//追加HP
+		int addHP;
+		//パーツの名前
+		wstring partsName;
+		//パーツの写真のパス名
+		wstring partsImagePass;
+	};
 
 	//パーツクラス
 	class Parts : public ObjectMove
 	{
+	protected:
 		shared_ptr<Transform> m_trans;
 		Vec3 m_pos;//位置
 		Vec3 m_rot;//回転
 		Vec3 m_scale;//大きさ
 
-		int AddAttack = 0.0f;
-		int AddHp = 0.0f;
-		float AddSpeed = 0.0f;
+		//パーツのステータス
+		PartsStatus m_partsStatus;
+		//パーツを入れるポーチ
+		shared_ptr<EquippedParts> m_partspoach;
+
+		//ビルボード
+		shared_ptr<BillBoard> m_billBoard;
 
 
 	public:
@@ -30,32 +54,87 @@ namespace basecross {
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 
+		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 	};
 
 	//頭パーツ用
 	class HeadParts : public Parts
 	{
+		//shared_ptr<Stage> m_stage;
 
-		int AddAttack = 3.0f;
-
-
-		shared_ptr<Stage> m_stage;
-
-		vector<shared_ptr<HeadParts>> m_partspoach;
 
 	public:
-		HeadParts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
-		~HeadParts();
+		HeadParts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr,pos,rot,scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.addHP = 10;
+			m_partsStatus.addSpeed = 0.05f;
+			m_partsStatus.addAttack = 0;
+			m_partsStatus.addAttribute = 10;
+
+			//名前
+			m_partsStatus.partsName = L"テスト用パーツ";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"KatanaTex";
+		}
+		~HeadParts()
+		{
+		}
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
-
-
-
-		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
-
 	};
 
 
+	//パーツ(高性能モーター)
+	class PartsHiMoter :public Parts
+	{
+	private:
+
+	public:
+		PartsHiMoter(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.addHP = 0;
+			m_partsStatus.addSpeed = 0.3f;
+			m_partsStatus.addAttack = 0;
+			m_partsStatus.addAttribute = 10;
+
+			//名前
+			m_partsStatus.partsName = L"高性能モーター";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"GunTex";
+		}
+		~PartsHiMoter()
+		{
+		}
+	};
 
 
+	//パーツ(戦闘用パッチ)
+	class PartsBattlePatch :public Parts
+	{
+	private:
+
+	public:
+		PartsBattlePatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.addHP = 20;
+			m_partsStatus.addSpeed = 0.0f;
+			m_partsStatus.addAttack = 3;
+			m_partsStatus.addAttribute = -20;
+
+			//名前
+			m_partsStatus.partsName = L"戦闘用パッチ";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"GunTex";
+		}
+		~PartsBattlePatch()
+		{
+		}
+
+	};
 }
