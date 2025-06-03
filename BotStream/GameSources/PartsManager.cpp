@@ -21,13 +21,14 @@ namespace basecross {
 
 
 
-	void PartsPoach::OnCreate()
+	void EquippedParts::OnCreate()
 	{
-
+		
 	}
 
-	void PartsPoach::OnUpdate()
+	void EquippedParts::OnUpdate()
 	{
-
+		auto test = m_EquippedParts;
+		auto a = 0;
 	}
 }
