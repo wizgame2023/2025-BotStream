@@ -101,7 +101,7 @@ namespace basecross {
 			{
 			// リスタート
 			case 0:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
+				PostEvent(1.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
 				break;
 			// セレクトステージ
 			case 1:
