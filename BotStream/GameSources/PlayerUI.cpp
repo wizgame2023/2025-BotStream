@@ -470,17 +470,26 @@ namespace basecross {
 		int layer = 5;
 		float offsetY = 50.0f;
 
+		// SetUVRectの早見表的なもの
+		// SetUVRectに適用するなら1を先に入れてください
+		// 戦闘用パッチ
+		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
+		// 高性能モーター
+		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
+		// 試作パーツ
+		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
+
 		for (int i = 0; i < 3; i++)
 		{
 			m_partsTextSprite[i] = m_stage->AddGameObject<Sprite>(
 				L"PartsText",
 				scl,
-				Vec3(-500,-250 - (i * offsetY),0.0f),
+				Vec3(-480,-250 - (i * offsetY),0.0f),
 				Vec3(0.0f),
 				Col4(1.0f),
 				layer
 			);
-			m_partsTextSprite[i]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 0.25f));
+			m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
 			m_partsTextSprite[i]->OnClear(false);
 
 			m_num[i] = m_stage->AddGameObject<Sprite>(
