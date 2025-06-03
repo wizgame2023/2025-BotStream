@@ -10,7 +10,8 @@ namespace basecross {
 	Player::Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int hp, int attack, int defense) :
 		Actor(stagePtr, pos, rot, scale),
 		m_dodgeCoolTime(0.0f),
-		m_dodgeTime(0.0f)
+		m_dodgeTime(0.0f),
+		m_originallyHPMax(hp)
 	{
 
 	}
@@ -101,6 +102,9 @@ namespace basecross {
 	{
 		//auto num = EffectManager::Instance().PlayEffect(L"ArmorBreak", m_pos);
 		//num;
+
+		//装備しているパーツは何があるのか確認する
+		auto testParts = m_equippedParts;
 
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
 		if (m_poseFlag)
@@ -323,8 +327,10 @@ namespace basecross {
 	void Player::PlayerMove(int playerState)
 	{
 		Vec3 move = GetMoveVector(playerState);
-		m_accel = move * m_baseAccel;
-		m_velocity += move;
+		//パーツのステータスによって元のスピードに追加される
+		Vec3 addmove = move * m_equippedParts.addSpeed;
+		m_accel = (move + addmove) * m_baseAccel;
+		m_velocity += (move + addmove);
 
 		//プレイヤーの向き
 		if (move.length() != 0)
@@ -543,6 +549,30 @@ namespace basecross {
 		return m_endDodgeFlag;
 	}
 
+	//装備しているパーツのセッタ
+	void Player::SetEquippedParts(PartsStatus parts)
+	{
+		m_equippedParts = parts;
+
+		//パーツ更新前の追加HPを確認
+		auto beforAddHP = m_HPMax - m_originallyHPMax;
+
+		//最大HP更新
+		m_HPMax = m_originallyHPMax + m_equippedParts.addHP;
+		
+		//追加HPが前よりも多かったらそれに合わせて現在HPを増やす
+		if (beforAddHP < m_equippedParts.addHP)
+		{
+			auto plusHP = m_equippedParts.addHP - beforAddHP;	
+			m_HPCurrent += plusHP;
+		}
+	}
+	//装備しているパーツのゲッタ
+	PartsStatus Player::GetEquippedParts()
+	{
+		return m_equippedParts;
+	}
+
 	//衝突判定
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
@@ -645,14 +675,18 @@ namespace basecross {
 			m_AngleYAxis = atan2f(playerAngleVec.z, -playerAngleVec.x);
 			m_AngleYAxis -= XMConvertToRadians(90.0f);
 		}
+
 		auto test = XMConvertToDegrees(m_AngleYAxis);
+
 		//攻撃判定の定義
 		auto tmp = GetAttackPtr()->GetHitInfo();
+		auto player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
 		switch (m_actorType)
 		{
 		case ActorName_Player:
 			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
-			tmp.Damage = 8;//ダメージ
+			tmp.Damage = 5 + player->GetEquippedParts().addAttack;//ダメージ
 
 			break;
 		case ActorName_Enemy:
@@ -854,7 +888,16 @@ namespace basecross {
 				//初期ステートに戻す
 				ChangeState(L"Stand");
 			}
-		}	
+		}
+		if (m_beforUsed)
+		{
+			if (!m_used)
+			{
+				auto stage = GetStage();
+				auto pos = GetComponent<Transform>()->GetPosition();
+				stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(pos);
+			}
+		}
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
 
@@ -942,6 +985,13 @@ namespace basecross {
 	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
 		DetectBeingAttacked(Other);
+	}
+
+	//削除時処理
+	void EnemyZako::OnDestroy()
+	{
+		auto stage = GetStage();
+		stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(m_pos);
 	}
 
 	//ダメージを受けた際の処理
