@@ -490,7 +490,7 @@ namespace basecross {
 				layer
 			);
 			m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
-			m_partsTextSprite[i]->OnClear(false);
+			m_partsTextSprite[i]->OnClear(true);
 
 			m_num[i] = m_stage->AddGameObject<Sprite>(
 				L"Numbers",
@@ -505,11 +505,56 @@ namespace basecross {
 		m_num[0]->SetUVRect(Vec2(0.1f, 0.0f), Vec2(0.2f, 1.0f));
 		m_num[1]->SetUVRect(Vec2(0.2f, 0.0f), Vec2(0.3f, 1.0f));
 		m_num[2]->SetUVRect(Vec2(0.3f, 0.0f), Vec2(0.4f, 1.0f));
+		//最初は透明状態にする
+		//m_partsTextSprite[0]->OnClear(true);
+		//m_partsTextSprite[1]->OnClear(true);
+		//m_partsTextSprite[2]->OnClear(true);
 	}
 
 	void PartsTextChange::OnUpdate()
 	{
+		// SetUVRectの早見表的なもの
+		// SetUVRectに適用するなら1を先に入れてください
+		// 戦闘用パッチ
+		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
+		// 高性能モーター
+		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
+		// 試作パーツ
+		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
 
+
+		auto stage = GetStage();
+		auto equippedParts = stage->GetSharedGameObject<EquippedParts>(L"PartsPoach")->GetEquippedParts();
+		int equippedPartsSize = 0;
+		equippedPartsSize = equippedParts.size();
+		auto a = 0;
+
+		for (int i = 0; i < equippedPartsSize; i++)
+		{
+			int partsId = equippedParts[i].id;
+			switch (partsId)
+			{
+			case 1:
+				//試作パーツ
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
+				break;
+			case 2:
+				//高性能モーター
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(motor1, motor2);
+				break;
+			case 3:
+				//戦闘用パッチ
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(patch1, patch2);
+				break;
+			default:
+				//装備していないもしくはその他の場合は透明にする
+				m_partsTextSprite[i]->OnClear(true);
+				break;
+			}
+		}
 	}
 
 	void PartsTextChange::AllClear(bool clear)
