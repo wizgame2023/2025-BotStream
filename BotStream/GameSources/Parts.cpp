@@ -55,6 +55,9 @@ namespace basecross {
 
 	void Parts::OnUpdate()
 	{
+		//ポーズ状態がオンならアップデートしない
+		if (m_pose) return;
+
 		auto stage = GetStage();
 		auto player = stage->GetSharedGameObject<Player>(L"Player");
 		auto playerPos = player->GetPosition();
