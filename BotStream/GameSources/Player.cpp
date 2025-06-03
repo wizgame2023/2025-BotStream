@@ -80,8 +80,9 @@ namespace basecross {
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 
-		//UI追加
-		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(165.0f, -250.0f), m_bulletNum);//現在の球数を出すUI
+		// UI追加
+		// 現在の球数を出すUI
+		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(295.0f, -260.0f), m_bulletNum,32.0f);		
 
 		//auto stage = GetStage();
 		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
@@ -409,7 +410,7 @@ namespace basecross {
 		if (playerState == PlayerState_Attack1)
 		{
 			//移動スピード
-			float speed = 0.5f;
+			float speed = 0.7f;
 
 			//前に進む
 			totalVec.z = sin(m_angle) * speed;
@@ -419,7 +420,7 @@ namespace basecross {
 		if (playerState == PlayerState_Attack2)
 		{
 			//移動スピード
-			float speed = 0.25f;
+			float speed = 0.7f;
 
 			//前に進む
 			totalVec.z = sin(m_angle) * speed;
@@ -609,10 +610,10 @@ namespace basecross {
 		//ドローメッシュの設定
 		auto ptrDraw = AddComponent<PNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		ptrDraw->SetDiffuse(Col4(0.24f, 0.7f, 0.43f, 1.0f));
 		ptrDraw->SetOwnShadowActive(false);//影は消す
 		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
 		//原点オブジェクトが消えていたら自分も消える
@@ -988,6 +989,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
 		ptrDraw->AddAnimation(L"Shot", 225, 136, 24.0f);
 		ptrDraw->AddAnimation(L"Down", 362, 424, 24.0f);
+		ptrDraw->AddAnimation(L"Hit", 543, 29, false, 24.0f);
+		ptrDraw->AddAnimation(L"Stan", 463, 78, false, 24.0f);
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない

@@ -206,21 +206,14 @@ namespace basecross {
 	//==============================================================================
 	class PlayerWeaponUI : public MyGameObject {
 
-		Vec2 m_weaponPos;
-		Vec2 m_weaponSize;
-		bool m_weaponSwitchFlag = false;
-		std::array<std::shared_ptr<Sprite>, 2> m_weaponSprite;
-
 		shared_ptr<Stage> m_stage;
 
+		shared_ptr<Sprite> m_fightSprite[6];
+
 	public:
-		// stagePtr: ステージ, weaponPos: 武器アイコン位置, weaponSize: サイズ
-		PlayerWeaponUI(const std::shared_ptr<Stage>& stagePtr,
-			const Vec2& weaponPos,
-			const Vec2& weaponSize) :
-			MyGameObject(stagePtr),
-			m_weaponPos(weaponPos),
-			m_weaponSize(weaponSize)
+		// stagePtr: ステージ
+		PlayerWeaponUI(const std::shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
 		{
 		}
 
@@ -229,6 +222,7 @@ namespace basecross {
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 
+		void AllFightSpriteClear(bool clear);
 	};
 }
 // namespace basecross

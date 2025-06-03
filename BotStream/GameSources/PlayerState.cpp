@@ -29,7 +29,7 @@ namespace basecross {
 		
 		//回避してよいかフラグを受け取る
 		m_dodgeFlag = m_player->GetDodgeFlag();
-		//接近戦指定以下のフラグ受け取る
+		//接近戦していいかのフラグ受け取る
 		m_meleeFlag = cameraManager->GetMeleeFlag();
 	};
 	//ターゲット対象との距離を取得する
@@ -353,8 +353,15 @@ namespace basecross {
 		//アニメーションの更新
 		auto mag = 1.42f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.5f) * mag);
-		//移動処理
-		m_player->PlayerMove(PlayerState_Attack1);
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+
+		//アニメーションが終わったら移動はしない(違和感が出てくるため)
+		if (m_timeOfAnimation <= 0.78f)
+		{
+			//移動処理
+			m_player->PlayerMove(PlayerState_Attack1);
+		}
     
 		//攻撃判定の定義
 		AttackCollisionOccurs();
@@ -374,6 +381,7 @@ namespace basecross {
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		AttackCollisionFlag = true;//リセット
+		m_timeOfAnimation = 0.0f;
 	}
 	//攻撃コリジョンの発生処理
 	void PlayerAttack1State::AttackCollisionOccurs()
@@ -458,8 +466,18 @@ namespace basecross {
 		//アニメーションの更新
 		auto mag = 1.42f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.9f) * mag);
-		//移動処理
-		m_player->PlayerMove(PlayerState_Attack2);
+		////移動処理
+		//m_player->PlayerMove(PlayerState_Attack2);
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+
+		//アニメーションが終わったら移動はしない(違和感が出てくるため)
+		if (m_timeOfAnimation <= 1.49f)
+		{
+			//移動処理
+			m_player->PlayerMove(PlayerState_Attack2);
+		}
+
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -477,6 +495,7 @@ namespace basecross {
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		m_attackCollisionFlag = 0;//リセット
+		m_timeOfAnimation = 0.0f;
 	}
 	//攻撃コリジョン発生
 	void PlayerAttack2State::AttackCollisionOccurs()
@@ -573,7 +592,18 @@ namespace basecross {
 		auto mag = 1.25f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.8f)*mag);
 		//移動処理
-		m_player->PlayerMove(PlayerState_Attack3);
+		//m_player->PlayerMove(PlayerState_Attack3);
+
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+
+		//アニメーションが終わったら移動はしない(違和感が出てくるため)
+		if (m_timeOfAnimation <= 1.68f)
+		{
+			//移動処理
+			m_player->PlayerMove(PlayerState_Attack3);
+		}
+
 
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
@@ -591,6 +621,7 @@ namespace basecross {
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		m_attackCollisionFlag = 0;//リセット
+		m_timeOfAnimation = 0.0f;
 	}
 	//攻撃コリジョン発生
 	void PlayerAttack3State::AttackCollisionOccurs()
