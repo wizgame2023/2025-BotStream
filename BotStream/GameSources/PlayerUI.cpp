@@ -380,8 +380,9 @@ namespace basecross {
 
 		Vec2 buttonScl(35.0f, 35.0f);
 		float buttonOffsetY = 60.0f;
+		float gunOffsetX = 35.0f;
 		// ボタン関係 -----------------------------------
-		// RB / 剣
+		// RB / 剣----------------------
 		m_fightSprite[3] = m_stage->AddGameObject<Sprite>(
 			L"Buttons",
 			buttonScl,
@@ -391,20 +392,44 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+		// 剣 --------------------------
 
-		// LB / 銃
+		// LB / 銃----------------------
 		m_fightSprite[4] = m_stage->AddGameObject<Sprite>(
 			L"Buttons",
 			buttonScl,
-			Vec3(pos.x - offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(pos.x - offsetX - gunOffsetX, pos.y - buttonOffsetY, pos.z),
 			Vec3(0.0f),
 			Col4(1.0f),
 			layer
 		);
 		m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
 
-		// A / 回避
+		// プラスの部分
 		m_fightSprite[5] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			Vec2(buttonScl.x - 5.0f, buttonScl.y - 5.0f),
+			Vec3(pos.x - offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[5]->SetUVRect(Vec2(0.666f, 0.75f), Vec2(1.0f, 1.0f));
+
+		// RB 
+		m_fightSprite[6] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x - offsetX + gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+		// 銃 --------------------------
+
+		// A / 回避
+		m_fightSprite[7] = m_stage->AddGameObject<Sprite>(
 			L"Buttons",
 			buttonScl,
 			Vec3(pos.x + offsetX, pos.y - buttonOffsetY, pos.z),
@@ -412,7 +437,7 @@ namespace basecross {
 			Col4(1.0f),
 			layer
 		);
-		m_fightSprite[5]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
 		// ----------------------------------------------
 	}
 

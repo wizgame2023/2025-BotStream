@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 			
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<TitleStage>();
 
 		}
 
@@ -190,6 +190,14 @@ namespace basecross{
 		app->RegisterTexture(L"GunTex", strTexture);
 		strTexture = texPath + L"Avoidance_UI.png";
 		app->RegisterTexture(L"AvoidTex", strTexture);
+
+		// パーツのステータス
+		strTexture = texPath + L"PartsUI1.png";
+		app->RegisterTexture(L"Parts1TEX", strTexture);
+		strTexture = texPath + L"PartsUI2.png";
+		app->RegisterTexture(L"Parts2TEX", strTexture);
+		strTexture = texPath + L"PartsUI3.png";
+		app->RegisterTexture(L"Parts3TEX", strTexture);
 
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";

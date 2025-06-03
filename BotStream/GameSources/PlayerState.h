@@ -5,7 +5,6 @@
 
 #pragma once
 #include "stdafx.h"
-
 namespace basecross {
 	class Player;	
 	class Actor;
@@ -135,17 +134,20 @@ namespace basecross {
 		float m_graceTimeOfNextAttack = 0.4f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
+
+		//プラスする攻撃力
+		int m_plusAttack = 0;
+
 	public:
 		PlayerAttackBaseState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
-
 		}
 		~PlayerAttackBaseState()
 		{
 		}
 
-		virtual void Enter() {};
+		virtual void Enter();
 		virtual void Update(float deltaTime) {};
 		virtual void Exit() {};
 
