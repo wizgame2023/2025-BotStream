@@ -105,6 +105,9 @@ namespace basecross {
 
         //ポーズ処理生成
         AddGameObject<PauseSprite>();
+
+        // 戦闘用UI
+        AddGameObject<PlayerWeaponUI>();
     }
 
 

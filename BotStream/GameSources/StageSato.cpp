@@ -71,6 +71,9 @@ namespace basecross {
 			//ポーズ生成
 			AddGameObject<PauseSprite>();
 
+			// 戦闘UI
+			//AddGameObject<PlayerWeaponUI>();
+
 			// ボスゲージ
 			//AddGameObject<BossGaugeUI>();
 
