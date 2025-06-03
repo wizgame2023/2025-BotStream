@@ -90,6 +90,16 @@ namespace basecross {
         enemyMgr->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         enemyMgr->InstEnemy<EnemyZako>(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+
+        //パーツ関係//
+        //パーツマネージャ生成
+        auto partsManager = AddGameObject<PartsManager>();
+        SetSharedGameObject(L"PartsManager", partsManager);
+
+        auto equippedParts = AddGameObject<EquippedParts>();
+        SetSharedGameObject(L"PartsPoach", equippedParts);
+        AddGameObject<PartsHiMoter>(Vec3(-20.0f,1.0f,-230.0f),Vec3(0.0f,0.0f,0.0f),Vec3(1.0f,1.0f,1.0f));
+        //////////////
         
         //カメラマネージャー
         auto cameraManager = AddGameObject<CameraManager>();
