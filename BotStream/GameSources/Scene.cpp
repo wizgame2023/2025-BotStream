@@ -191,6 +191,14 @@ namespace basecross{
 		strTexture = texPath + L"Avoidance_UI.png";
 		app->RegisterTexture(L"AvoidTex", strTexture);
 
+		// パーツのステータス
+		strTexture = texPath + L"PartsUI1.png";
+		app->RegisterTexture(L"Parts1TEX", strTexture);
+		strTexture = texPath + L"PartsUI2.png";
+		app->RegisterTexture(L"Parts2TEX", strTexture);
+		strTexture = texPath + L"PartsUI3.png";
+		app->RegisterTexture(L"Parts3TEX", strTexture);
+
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";
 		app->RegisterTexture(L"BarTex", strTexture);
