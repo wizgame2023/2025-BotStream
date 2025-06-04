@@ -192,11 +192,11 @@ namespace basecross{
 		app->RegisterTexture(L"AvoidTex", strTexture);
 
 		// パーツのステータス
-		strTexture = texPath + L"PartsUI1.png";
+		strTexture = texPath + L"PartsUI1_2.png";
 		app->RegisterTexture(L"PartsTestTEX", strTexture);
-		strTexture = texPath + L"PartsUI2.png";
+		strTexture = texPath + L"PartsUI2_2.png";
 		app->RegisterTexture(L"PartsHiMoterTEX", strTexture);
-		strTexture = texPath + L"PartsUI3.png";
+		strTexture = texPath + L"PartsUI3_2.png";
 		app->RegisterTexture(L"PartsBattlePatchTEX", strTexture);
 		app->RegisterTexture(L"Parts3TEX", strTexture);
 		strTexture = texPath + L"PartsTexts.png";
