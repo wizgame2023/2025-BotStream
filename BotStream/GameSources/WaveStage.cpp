@@ -420,7 +420,7 @@ namespace basecross {
         // Wave2の壁の大きさ
         Vec3 wallSclWv2(110.0f, 4.0f, 41.0f);
         // Bossの壁の大きさ
-        Vec3 wallSclBoss(160.5f, 4.0f, 41.0f);
+        Vec3 wallSclBoss(151.0f, 4.0f, 41.0f);
 
         vector < vector<Vec3> > vec =
         {
@@ -646,13 +646,13 @@ namespace basecross {
         ptrTransform->SetScale(m_Scale);
         ptrTransform->SetRotation(m_Rotation);
         ptrTransform->SetPosition(m_Position);
-
+        
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"CeilingTex");
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
