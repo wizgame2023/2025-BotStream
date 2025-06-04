@@ -27,7 +27,7 @@ namespace basecross {
 		auto stage = GetStage();
 		//par = 10;//テスト用に絶対生成する
 		//35%ぐらいの確率でパーツドロップ
-		if (par > 0 && par <= 35)
+		if (par > 0 && par <= 15)
 		{
 			switch (drop)
 			{

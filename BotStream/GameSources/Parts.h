@@ -48,6 +48,7 @@ namespace basecross {
 		//ビルボード
 		shared_ptr<BillBoard> m_billBoard;
 
+		bool m_pose = false;
 
 	public:
 		Parts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
@@ -55,6 +56,11 @@ namespace basecross {
 
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
+
+		void SetPose(bool onOff)
+		{
+			m_pose = onOff;
+		}
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 	};

@@ -94,6 +94,12 @@ namespace basecross {
 			player->SetEquippedParts(allParts);
 		}
 
+		//装備パーツを受け取る処理
+		vector<PartsStatus> GetEquippedParts()
+		{
+			return m_EquippedParts;
+		}
+
 		//ポーチを受け取る処理
 		vector<PartsStatus> GetParts()
 		{
