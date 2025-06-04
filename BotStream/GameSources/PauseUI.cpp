@@ -414,6 +414,7 @@ namespace basecross {
 			{
 				auto actor = dynamic_pointer_cast<Actor>(obj);
 				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+				auto parts = dynamic_pointer_cast<Parts>(obj);
 
 				if (actor)
 				{
@@ -422,6 +423,10 @@ namespace basecross {
 				if (cameraManager)
 				{
 					cameraManager->SetPose(true);
+				}
+				if (parts)
+				{
+					parts->SetPose(true);
 				}
 			}
 		}
@@ -433,6 +438,7 @@ namespace basecross {
 			{
 				auto actor = dynamic_pointer_cast<Actor>(obj);
 				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+				auto parts = dynamic_pointer_cast<Parts>(obj);
 
 				if (actor)
 				{
@@ -441,6 +447,10 @@ namespace basecross {
 				if (cameraManager)
 				{
 					cameraManager->SetPose(false);
+				}
+				if (parts)
+				{
+					parts->SetPose(false);
 				}
 			}
 		}

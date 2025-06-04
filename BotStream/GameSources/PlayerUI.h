@@ -224,5 +224,26 @@ namespace basecross {
 
 		void AllFightSpriteClear(bool clear);
 	};
+
+	//==============================================================================
+	// ëïîıÉpÅ[ÉcUI
+	//==============================================================================
+	class PartsTextChange : public MyGameObject {
+		shared_ptr<Stage> m_stage;
+		shared_ptr<Sprite> m_partsTextSprite[3];
+		shared_ptr<Sprite> m_num[3];
+	public:
+		PartsTextChange(const std::shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
+		{
+		}
+
+		virtual ~PartsTextChange() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+		void AllClear(bool clear);
+	};
 }
 // namespace basecross
