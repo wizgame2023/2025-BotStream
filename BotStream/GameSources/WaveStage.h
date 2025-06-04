@@ -96,6 +96,22 @@ namespace basecross {
         virtual void OnCreate() override;
     };
 
+    // 壁のテクスチャが違うやつを生成--------------
+    class Wall2 : public GameObject {
+        Vec3 m_Scale;
+        Vec3 m_Rotation;
+        Vec3 m_Position;
+    public:
+        Wall2(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Rotation,
+            const Vec3& Position
+        );
+        virtual ~Wall2();
+        virtual void OnCreate() override;
+    };
+    // ---------------------------------------------
+
     class Ceiling : public GameObject {
         Vec3 m_Scale;
         Vec3 m_Rotation;
