@@ -223,6 +223,14 @@ namespace basecross{
 		strTexture = texPath + L"WallTexture.png";
 		app->RegisterTexture(L"WallTex", strTexture);
 
+		// ステージの壁とか
+		strTexture = texPath + L"WallSide.png";
+		app->RegisterTexture(L"WallSideTex", strTexture);
+		strTexture = texPath + L"WallFront.png";
+		app->RegisterTexture(L"WallFrontTex", strTexture);
+		strTexture = texPath + L"Ceiling.png";
+		app->RegisterTexture(L"CeilingTex", strTexture);
+
 		//モデル
 
 		//ボーンマルチメッシュ
