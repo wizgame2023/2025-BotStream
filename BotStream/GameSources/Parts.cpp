@@ -32,7 +32,8 @@ namespace basecross {
 		trans->SetScale(m_scale);
 		auto ptrDraw = AddComponent<BcPNTStaticDraw>();
 		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-		ptrDraw->SetDiffuse(Col4(1, 0, 0, 1));
+		ptrDraw->SetDiffuse(Col4(1, 1, 1, 1));
+		ptrDraw->SetTextureResource(L"PartsTEX");
 
 		//OBB衝突判定を付ける
 		auto ptrColl = AddComponent<CollisionSphere>();
@@ -47,29 +48,37 @@ namespace basecross {
 		m_billBoard = stage->AddGameObject<BillBoard>(GetThis<GameObject>(),
 			m_partsStatus.partsImagePass
 			);
-		m_billBoard->SetPushY(10.0f);
+		m_billBoard->SetPushY(5.0f);
 		
 		
 	}
 
 	void Parts::OnUpdate()
 	{
+		//ポーズ状態がオンならアップデートしない
+		if (m_pose) return;
+
 		auto stage = GetStage();
 		auto player = stage->GetSharedGameObject<Player>(L"Player");
 		auto playerPos = player->GetPosition();
-
+		auto deltaTime = App::GetApp()->GetElapsedTime();
 		//プレイヤーとパーツの距離を取る
 		auto distPos = playerPos - m_pos;
 
 		//プレイヤーとの距離が一定以下ならパーツ説明ビルボードを出す
 		if (distPos.length() <= 30.0f)
 		{
-			m_billBoard->SetScale(Vec3(10.0f, 1.0f, 10.0f));
+			m_billBoard->SetScale(Vec3(7.0f, 7.0f, 1.0f));
 		}
 		else
 		{
 			m_billBoard->SetScale(Vec3(0.0f, 0.0f, 0.0f));
 		}
+
+		auto partsQt = GetComponent<Transform>()->GetQuaternion();
+		partsQt = partsQt * (Quat(0.0f, 1.0f * (sin(XMConvertToRadians(-2.0f) / 2.0f)), 0.0f, cos(XMConvertToRadians(-2.0f) / 2.0f)) * deltaTime);
+
+		GetComponent<Transform>()->SetQuaternion(partsQt);
 	}
 
 	void Parts::OnCollisionEnter(shared_ptr<GameObject>& Other)
@@ -77,7 +86,8 @@ namespace basecross {
 		//パーツのデータを渡す
 		if (Other->FindTag(L"Player"))
 		{
-			SetDrawActive(false);
+			//SetDrawActive(false);
+			GetStage()->RemoveGameObject<Parts>(GetThis<Parts>());
 			m_partspoach->AddParts(m_partsStatus);
 		}
 
@@ -93,7 +103,7 @@ namespace basecross {
 
     void HeadParts::OnUpdate()
     {
-
+		Parts::OnUpdate();
 	}
 
 }

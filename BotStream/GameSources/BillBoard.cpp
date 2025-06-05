@@ -72,6 +72,8 @@ namespace basecross {
 			auto DrawComp = AddComponent<PCTStaticDraw>();
 			DrawComp->SetMeshResource(m_SquareMeshResource);
 			DrawComp->SetTextureResource(m_textureName);
+			// エフェクトの消える現象の解決
+			DrawComp->SetDepthStencilState(DepthStencilState::Read);
 			SetAlphaActive(true);
 			SetDrawLayer(m_layer);
 		}

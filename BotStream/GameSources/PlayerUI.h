@@ -23,6 +23,7 @@ namespace basecross {
 		float m_playerMaxSP = 100.0f;   // SPの最大値
 		float m_playerSP = 0.0f;        // 初期値SP
 
+		void AllClear(bool clear);
 	public:
 		PlayerGaugeUI(const std::shared_ptr<Stage>& stagePtr, int HPMax = 1000.0f, int SPMax = 100.0f) :
 			MyGameObject(stagePtr),
@@ -223,6 +224,27 @@ namespace basecross {
 		virtual void OnUpdate() override;
 
 		void AllFightSpriteClear(bool clear);
+	};
+
+	//==============================================================================
+	// 装備パーツUI
+	//==============================================================================
+	class PartsTextChange : public MyGameObject {
+		shared_ptr<Stage> m_stage;
+		shared_ptr<Sprite> m_partsTextSprite[3];
+		shared_ptr<Sprite> m_num[3];
+	public:
+		PartsTextChange(const std::shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
+		{
+		}
+
+		virtual ~PartsTextChange() {}
+
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
+		void AllClear(bool clear);
 	};
 }
 // namespace basecross

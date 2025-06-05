@@ -83,7 +83,7 @@ namespace basecross {
 
 		// UI追加
 		// 現在の球数を出すUI
-		m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(295.0f, -260.0f), m_bulletNum,32.0f);		
+		//m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(295.0f, -260.0f), m_bulletNum,32.0f);		
 
 		//auto stage = GetStage();
 		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
@@ -888,7 +888,16 @@ namespace basecross {
 				//初期ステートに戻す
 				ChangeState(L"Stand");
 			}
-		}	
+		}
+		if (m_beforUsed)
+		{
+			if (!m_used)
+			{
+				auto stage = GetStage();
+				auto pos = GetComponent<Transform>()->GetPosition();
+				stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(pos);
+			}
+		}
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
 
@@ -976,6 +985,13 @@ namespace basecross {
 	void EnemyZako::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
 		DetectBeingAttacked(Other);
+	}
+
+	//削除時処理
+	void EnemyZako::OnDestroy()
+	{
+		auto stage = GetStage();
+		stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(m_pos);
 	}
 
 	//ダメージを受けた際の処理

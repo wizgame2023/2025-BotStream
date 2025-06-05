@@ -33,6 +33,9 @@ namespace basecross {
 			L"PLSP", spGaugeSize,
 			Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));
 		m_plSPSprite->SetDrawLayer(2);
+
+		// UI非表示
+		//AllClear(true);
 	}
 
 	void PlayerGaugeUI::OnUpdate()
@@ -82,6 +85,13 @@ namespace basecross {
 		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
 		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
 
+	}
+
+	void PlayerGaugeUI::AllClear(bool clear)
+	{
+		m_gaugeFrameSprite->OnClear(clear);
+		m_plHPSprite->OnClear(clear);
+		m_plSPSprite->OnClear(clear);
 	}
 
 	//-----------------------------------------------
@@ -170,59 +180,6 @@ namespace basecross {
 			RSUV1(0.333f, 0.25f), RSUV2(0.666f, 0.5f),
 			LSUV1(0.666f, 0.25f), LSUV2(1.0f, 0.5f),
 			HOLDAUV1(0.0f, 0.5f), HOLDAUV2(0.666f, 1.0f);
-		/*
-		switch (m_buttonSwitch)
-		{
-		case 0:	//A
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(AUV1, AUV2);
-			break;
-
-		case 1: // X
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(XUV1, XUV2);
-			break;
-
-		case 2: // RB
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(RBUV1, RBUV2);
-			break;
-
-		case 3: // RS
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(RSUV1, RSUV2);
-			break;
-
-		case 4: // LS
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(LSUV1, LSUV2);
-			break;
-
-		case 5: // Hold
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(HOLDAUV1, HOLDAUV2);
-			break;
-
-		}
-		*/
 
 		//A
 		auto sprite = m_stage->AddGameObject<Sprite>(
@@ -439,6 +396,9 @@ namespace basecross {
 		);
 		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
 		// ----------------------------------------------
+
+		// UI非表示(後でコメントアウト)
+		//AllFightSpriteClear(true);
 	}
 
 	void PlayerWeaponUI::OnUpdate()
@@ -450,12 +410,124 @@ namespace basecross {
 	// 戦闘用UIすべての表示非表示を設定する
 	void PlayerWeaponUI::AllFightSpriteClear(bool clear)
 	{
-		constexpr int spriteNum = 6;
+		constexpr int spriteNum = 8;
 		for (int i = 0; i < spriteNum; i++)
 		{
 			m_fightSprite[i]->OnClear(clear);
 		}
 	}
+	// --------------------------------------------------------------------------------------
 
+
+	//================================================================
+	// パーツ交換の処理
+	//================================================================
+
+	void PartsTextChange::OnCreate()
+	{
+		m_stage = GetStage();
+		Vec2 scl(200.0f, 100.0f),numScl(30.0f,60.0f);
+		int layer = 5;
+		float offsetY = 50.0f;
+
+		// SetUVRectの早見表的なもの
+		// SetUVRectに適用するなら1を先に入れてください
+		// 戦闘用パッチ
+		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
+		// 高性能モーター
+		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
+		// 試作パーツ
+		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_partsTextSprite[i] = m_stage->AddGameObject<Sprite>(
+				L"PartsText",
+				scl,
+				Vec3(-480,-250 - (i * offsetY),0.0f),
+				Vec3(0.0f),
+				Col4(1.0f),
+				layer
+			);
+			m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
+			m_partsTextSprite[i]->OnClear(true);
+
+			m_num[i] = m_stage->AddGameObject<Sprite>(
+				L"Numbers",
+				numScl,
+				Vec3(-600,-250 - (i * offsetY),0.0f),
+				Vec3(0.0f),
+				Col4(1.0f),
+				layer
+			);
+			m_num[i]->SetColor(Col4(0.0f, 0.0f, 0.0f, 1.0f));
+		}
+		m_num[0]->SetUVRect(Vec2(0.1f, 0.0f), Vec2(0.2f, 1.0f));
+		m_num[1]->SetUVRect(Vec2(0.2f, 0.0f), Vec2(0.3f, 1.0f));
+		m_num[2]->SetUVRect(Vec2(0.3f, 0.0f), Vec2(0.4f, 1.0f));
+		//最初は透明状態にする
+		//m_partsTextSprite[0]->OnClear(true);
+		//m_partsTextSprite[1]->OnClear(true);
+		//m_partsTextSprite[2]->OnClear(true);
+
+		// UI非表示(後でコメントアウト)
+		//AllClear(true);
+	}
+
+	void PartsTextChange::OnUpdate()
+	{
+		// SetUVRectの早見表的なもの
+		// SetUVRectに適用するなら1を先に入れてください
+		// 戦闘用パッチ
+		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
+		// 高性能モーター
+		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
+		// 試作パーツ
+		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
+
+
+		auto stage = GetStage();
+		auto equippedParts = stage->GetSharedGameObject<EquippedParts>(L"PartsPoach")->GetEquippedParts();
+		int equippedPartsSize = 0;
+		equippedPartsSize = equippedParts.size();
+		auto a = 0;
+
+		for (int i = 0; i < equippedPartsSize; i++)
+		{
+			int partsId = equippedParts[i].id;
+			switch (partsId)
+			{
+			case 1:
+				//試作パーツ
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
+				break;
+			case 2:
+				//高性能モーター
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(motor1, motor2);
+				break;
+			case 3:
+				//戦闘用パッチ
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(patch1, patch2);
+				break;
+			default:
+				//装備していないもしくはその他の場合は透明にする
+				m_partsTextSprite[i]->OnClear(true);
+				break;
+			}
+		}
+	}
+
+	void PartsTextChange::AllClear(bool clear)
+	{
+		int parts = 3;
+		for (int i = 0; i < parts; i++)
+		{
+			m_partsTextSprite[i]->OnClear(clear);
+			m_num[i]->OnClear(clear);
+		}
+	}
 }
 //end basecross

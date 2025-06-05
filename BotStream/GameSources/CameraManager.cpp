@@ -341,7 +341,7 @@ namespace basecross {
 		//銃を使わないフラグ
 		m_meleeFlag = true;
 		//ここはUIを出さない
-		//m_spriteAiming->OnClear(true);
+		m_spriteAiming->OnClear(true);
 
 		//注視点の変更
 		m_lockStageCamera->SetAt

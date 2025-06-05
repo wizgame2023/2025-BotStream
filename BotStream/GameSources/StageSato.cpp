@@ -74,6 +74,9 @@ namespace basecross {
 			// 戦闘UI
 			AddGameObject<PlayerWeaponUI>();
 
+			// パーツ
+			AddGameObject<PartsTextChange>();
+
 			// ボスゲージ
 			//AddGameObject<BossGaugeUI>();
 

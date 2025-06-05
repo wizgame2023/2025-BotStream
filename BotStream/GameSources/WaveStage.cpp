@@ -90,6 +90,19 @@ namespace basecross {
         enemyMgr->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         enemyMgr->InstEnemy<EnemyZako>(Vec3(-30.0f,2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
         //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+
+        //パーツ関係//
+        //パーツマネージャ生成
+        auto partsManager = AddGameObject<PartsManager>();
+        SetSharedGameObject(L"PartsManager", partsManager);
+
+        auto equippedParts = AddGameObject<EquippedParts>();
+        SetSharedGameObject(L"PartsPoach", equippedParts);
+        //AddGameObject<PartsHiMoter>(Vec3(-20.0f,1.0f,-230.0f),Vec3(0.0f,0.0f,0.0f),Vec3(1.0f,1.0f,1.0f));
+
+        //装備したパーツが何かわかるようにする
+        AddGameObject<PartsTextChange>();
+        //////////////
         
         //カメラマネージャー
         auto cameraManager = AddGameObject<CameraManager>();
@@ -395,94 +408,117 @@ namespace basecross {
         // テクスチャ
         ptrDraw->SetTextureResource(L"FloorTex");
 
+        //影をつける（シャドウマップを描画する）
+        auto shadowPtr = AddComponent<Shadowmap>();
+        ptrDraw->SetOwnShadowActive(true);
+
     }
     // END -----------------------------------------------------------------------------------------
 
     //壁作成
     void WaveStage::CreateWall()
     {
+        // Wave1の壁の大きさ
+        Vec3 wallSclWv1(110.0f, 4.0f, 41.0f);
+        // Wave2の壁の大きさ
+        Vec3 wallSclWv2(110.0f, 4.0f, 41.0f);
+        // Bossの壁の大きさ
+        Vec3 wallSclBoss(151.0f, 4.0f, 41.0f);
+
         vector < vector<Vec3> > vec =
         {
             //Boss
             //右
             {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
                 Vec3(77.5f, 19.0f, 260.0f)
             },
             //左
             {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
                 Vec3(-77.5f, 19.0f, 260.0f)
-            },
-            //前
-            {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 336.0f)
-            },
-            //後
-            {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 183.0f)
             },
             //Wave2
             //右
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
                 Vec3(57.5f, 19.0f, 0.0f)
             },
             //左
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
                 Vec3(-57.5f, 19.0f, 0.0f)
-            },
-            //前
-            {
-                Vec3(41.0f, 4.0f, 115.0f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 56.0f)
-            },
-            //後
-            {
-                Vec3(41.0f, 4.0f, 115.0f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -56.0f)
             },
             //Wave1
             //右
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
                 Vec3(57.0f, 19.0f, -260.0f)
             },
             //左
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
                 Vec3(-57.0f, 19.0f, -260.0f)
-            },
-            //前
-            {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -203.0f)
-            },
-             //後
-            {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -317.0f)
             },
         };
         for (auto v : vec)
         {
             AddGameObject<Wall>(v[0], v[1], v[2]);
         }
+
+        vector < vector<Vec3> > vec2 =
+        {
+            ////Boss
+            //前
+            {
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, 336.0f)
+            },
+            //後
+            {
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, 183.0f)
+            },
+            ////Wave2
+            //前
+            {
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, 56.0f)
+            },
+            //後
+            {
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, -56.0f)
+            },
+            ////Wave1
+            //前
+            {
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, -203.0f)
+            },
+             //後
+            {
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, -317.0f)
+            },
+        };
+        for (auto v : vec2)
+        {
+            AddGameObject<Wall2>(v[0], v[1], v[2]);
+        }
+
     }
 
     //壁
@@ -511,7 +547,7 @@ namespace basecross {
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"WallSideTex");
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -523,6 +559,44 @@ namespace basecross {
 
     }
 
+    //壁2------------------------------------------------
+    Wall2::Wall2(const shared_ptr<Stage>& StagePtr,
+        const Vec3& Scale,
+        const Vec3& Rotation,
+        const Vec3& Position
+    ) :
+        GameObject(StagePtr),
+        m_Scale(Scale),
+        m_Rotation(Rotation),
+        m_Position(Position)
+    {
+    }
+    Wall2::~Wall2() {}
+
+    void Wall2::OnCreate()
+    {
+        auto ptrTransform = GetComponent<Transform>();
+        ptrTransform->SetScale(m_Scale);
+        ptrTransform->SetRotation(m_Rotation);
+        ptrTransform->SetPosition(m_Position);
+
+        auto ptrColl = AddComponent<CollisionObb>();
+        ptrColl->SetFixed(true);
+
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
+        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallFrontTex");
+
+
+        //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
+        ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
+        //ptrDraw->SetTextureResource(L"Wall");
+
+        AddTag(L"CameraObstacles");
+        AddTag(L"Terrain");
+
+    }
+    //-------------------------------------------------------
 
     //天井作成
     void WaveStage::CreateCeiling()
@@ -575,13 +649,13 @@ namespace basecross {
         ptrTransform->SetScale(m_Scale);
         ptrTransform->SetRotation(m_Rotation);
         ptrTransform->SetPosition(m_Position);
-
+        
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"CeilingTex");
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 
