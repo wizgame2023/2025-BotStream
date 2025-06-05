@@ -19,15 +19,46 @@ namespace basecross {
 
 	}
 
-
-
-	void PartsPoach::OnCreate()
+	//パーツドロップ処理
+	void PartsManager::PartsDrop(Vec3 dropPos)
 	{
-
+		float par = rand() % 100;
+		int drop = rand() % 3;
+		auto stage = GetStage();
+		//par = 10;//テスト用に絶対生成する
+		//35%ぐらいの確率でパーツドロップ
+		if (par > 0 && par <= 15)
+		{
+			switch (drop)
+			{
+			case 0:
+				//戦闘用パッチ
+				stage->AddGameObject<PartsBattlePatch>(dropPos,Vec3(0.0f,0.0f,0.0f),Vec3(1.0f,1.0f,1.0f));
+				break;
+			case 1:
+				//試作パーツ
+				stage->AddGameObject<HeadParts>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+				break;
+			case 2:
+				//高性能モーター
+				stage->AddGameObject<PartsHiMoter>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
-	void PartsPoach::OnUpdate()
-	{
 
+
+	void EquippedParts::OnCreate()
+	{
+		
+	}
+
+	void EquippedParts::OnUpdate()
+	{
+		auto test = m_EquippedParts;
+		auto a = 0;
 	}
 }

@@ -17,7 +17,7 @@ namespace basecross {
 		const Vec2 gaugeSize(300, 75);
 		const Vec2 hpGaugeSize(gaugeSize.x * 0.8f, gaugeSize.y * 0.3f);
 		const Vec2 spGaugeSize(gaugeSize.x * 0.47f, gaugeSize.y * 0.09f);
-		const float gaugePosX = 0.0f, gaugePosY = -250;
+		const float gaugePosX = 0.0f, gaugePosY = -350;
 
 		//Playerに関するバーUI生成
 		m_gaugeFrameSprite = m_stage->AddGameObject<Sprite>(
@@ -33,6 +33,9 @@ namespace basecross {
 			L"PLSP", spGaugeSize,
 			Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));
 		m_plSPSprite->SetDrawLayer(2);
+
+		// UI非表示
+		//AllClear(true);
 	}
 
 	void PlayerGaugeUI::OnUpdate()
@@ -84,6 +87,13 @@ namespace basecross {
 
 	}
 
+	void PlayerGaugeUI::AllClear(bool clear)
+	{
+		m_gaugeFrameSprite->OnClear(clear);
+		m_plHPSprite->OnClear(clear);
+		m_plSPSprite->OnClear(clear);
+	}
+
 	//-----------------------------------------------
 	//bullet
 	//-----------------------------------------------
@@ -121,21 +131,15 @@ namespace basecross {
 		//プレイヤーの現在の球数によって数値が変わる
 		m_bulletNum =  m_player.lock()->GetBulletNum();
 
-		// 仮：AボタンでUIの数字が下がる
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A)
-		//{
-		//	m_bulletNum = max(0, m_bulletNum - 1);
-		//}
-		//else if (m_bulletNum <= 0)
-		//{
-		//	m_bulletNum = 90;
-		//}
-
 		// 弾数を文字列に変換
 		std::string bulletStr = std::to_string(m_bulletNum);
 		size_t digitCount = bulletStr.size();
-		Vec2 bulletPos(-100, 0);               // 表示位置(CreateSpriteの値と同じ)
-		float uvWidth = 1.0f / 10.0f;          // UVの幅
+
+		// 表示位置(CreateSpriteの値と同じ)
+		Vec2 bulletPos(-100, 0);               		
+
+		// UVの幅
+		float uvWidth = 1.0f / 10.0f;
 
 		// 桁数に応じてスプライトを更新(UVだけ更新)
 		for (size_t i = 0; i < m_bulletDigits.size(); ++i)
@@ -176,59 +180,6 @@ namespace basecross {
 			RSUV1(0.333f, 0.25f), RSUV2(0.666f, 0.5f),
 			LSUV1(0.666f, 0.25f), LSUV2(1.0f, 0.5f),
 			HOLDAUV1(0.0f, 0.5f), HOLDAUV2(0.666f, 1.0f);
-		/*
-		switch (m_buttonSwitch)
-		{
-		case 0:	//A
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(AUV1, AUV2);
-			break;
-
-		case 1: // X
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(XUV1, XUV2);
-			break;
-
-		case 2: // RB
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(RBUV1, RBUV2);
-			break;
-
-		case 3: // RS
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(RSUV1, RSUV2);
-			break;
-
-		case 4: // LS
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(LSUV1, LSUV2);
-			break;
-
-		case 5: // Hold
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(HOLDAUV1, HOLDAUV2);
-			break;
-
-		}
-		*/
 
 		//A
 		auto sprite = m_stage->AddGameObject<Sprite>(
@@ -346,37 +297,237 @@ namespace basecross {
 	//-----------------------------------------------
 	void PlayerWeaponUI::OnCreate()
 	{
-		//現在の攻撃方法関係--------------------------------------------------
-		// 近接
-		m_weaponSprite[0] = m_stage->AddGameObject<Sprite>(
-			L"KatanaTex",  			//テクスチャ名
-			m_weaponSize,       // サイズ
-			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//表示位置
+		m_stage = GetStage();
+		Vec2 iconScl(80.0f, 80.0f);
+		Vec3 pos(430.0f, -320.0f, 0.0f);
+		float offsetX = 120.0f;
+		int layer = 3;
 
-		m_weaponSprite[1] = m_stage->AddGameObject<Sprite>(
-			L"GunTex",  			//テクスチャ名
-			m_weaponSize,       // サイズ
-			Vec3(m_weaponPos.x, m_weaponPos.y, 0));	//表示位置
-		m_weaponSprite[1]->OnClear(true);
-		//--------------------------------------------------------------------
+		// アイコン -------------------------------------
+		// 剣
+		m_fightSprite[0] = m_stage->AddGameObject<Sprite>(
+			L"KatanaTex",
+			iconScl,
+			pos,
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
 
+		// 銃
+		m_fightSprite[1] = m_stage->AddGameObject<Sprite>(
+			L"GunTex",
+			iconScl,
+			Vec3(pos.x - offsetX, pos.y, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+
+		// 回避
+		m_fightSprite[2] = m_stage->AddGameObject<Sprite>(
+			L"AvoidTex",
+			iconScl,
+			Vec3(pos.x + offsetX, pos.y, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		// ----------------------------------------------
+
+		Vec2 buttonScl(35.0f, 35.0f);
+		float buttonOffsetY = 60.0f;
+		float gunOffsetX = 35.0f;
+		// ボタン関係 -----------------------------------
+		// RB / 剣----------------------
+		m_fightSprite[3] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+		// 剣 --------------------------
+
+		// LB / 銃----------------------
+		m_fightSprite[4] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x - offsetX - gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
+
+		// プラスの部分
+		m_fightSprite[5] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			Vec2(buttonScl.x - 5.0f, buttonScl.y - 5.0f),
+			Vec3(pos.x - offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[5]->SetUVRect(Vec2(0.666f, 0.75f), Vec2(1.0f, 1.0f));
+
+		// RB 
+		m_fightSprite[6] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x - offsetX + gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+		// 銃 --------------------------
+
+		// A / 回避
+		m_fightSprite[7] = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			buttonScl,
+			Vec3(pos.x + offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+		// ----------------------------------------------
+
+		// UI非表示(後でコメントアウト)
+		//AllFightSpriteClear(true);
 	}
 
 	void PlayerWeaponUI::OnUpdate()
 	{
-		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
-
-		// 仮：Xボタンで武器UI切り替え
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		{
-			m_weaponSprite[0]->OnClear(!m_weaponSwitchFlag);
-			m_weaponSprite[1]->OnClear(m_weaponSwitchFlag);
-			m_weaponSwitchFlag = !m_weaponSwitchFlag; // m_weaponSwitchFlagがtrueであればfalseを返す、falseであればtrueを返す。
-		}
-
-
+		// ムービー中などはUIを非表示にするとかになったら多分使うと思うので書いておく
+		//AllFightSpriteClear(m_movieFlag);
 	}
 
+	// 戦闘用UIすべての表示非表示を設定する
+	void PlayerWeaponUI::AllFightSpriteClear(bool clear)
+	{
+		constexpr int spriteNum = 8;
+		for (int i = 0; i < spriteNum; i++)
+		{
+			m_fightSprite[i]->OnClear(clear);
+		}
+	}
+	// --------------------------------------------------------------------------------------
 
+
+	//================================================================
+	// パーツ交換の処理
+	//================================================================
+
+	void PartsTextChange::OnCreate()
+	{
+		m_stage = GetStage();
+		Vec2 scl(200.0f, 100.0f),numScl(30.0f,60.0f);
+		int layer = 5;
+		float offsetY = 50.0f;
+
+		// SetUVRectの早見表的なもの
+		// SetUVRectに適用するなら1を先に入れてください
+		// 戦闘用パッチ
+		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
+		// 高性能モーター
+		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
+		// 試作パーツ
+		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_partsTextSprite[i] = m_stage->AddGameObject<Sprite>(
+				L"PartsText",
+				scl,
+				Vec3(-480,-250 - (i * offsetY),0.0f),
+				Vec3(0.0f),
+				Col4(1.0f),
+				layer
+			);
+			m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
+			m_partsTextSprite[i]->OnClear(true);
+
+			m_num[i] = m_stage->AddGameObject<Sprite>(
+				L"Numbers",
+				numScl,
+				Vec3(-600,-250 - (i * offsetY),0.0f),
+				Vec3(0.0f),
+				Col4(1.0f),
+				layer
+			);
+			m_num[i]->SetColor(Col4(0.0f, 0.0f, 0.0f, 1.0f));
+		}
+		m_num[0]->SetUVRect(Vec2(0.1f, 0.0f), Vec2(0.2f, 1.0f));
+		m_num[1]->SetUVRect(Vec2(0.2f, 0.0f), Vec2(0.3f, 1.0f));
+		m_num[2]->SetUVRect(Vec2(0.3f, 0.0f), Vec2(0.4f, 1.0f));
+		//最初は透明状態にする
+		//m_partsTextSprite[0]->OnClear(true);
+		//m_partsTextSprite[1]->OnClear(true);
+		//m_partsTextSprite[2]->OnClear(true);
+
+		// UI非表示(後でコメントアウト)
+		//AllClear(true);
+	}
+
+	void PartsTextChange::OnUpdate()
+	{
+		// SetUVRectの早見表的なもの
+		// SetUVRectに適用するなら1を先に入れてください
+		// 戦闘用パッチ
+		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
+		// 高性能モーター
+		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
+		// 試作パーツ
+		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
+
+
+		auto stage = GetStage();
+		auto equippedParts = stage->GetSharedGameObject<EquippedParts>(L"PartsPoach")->GetEquippedParts();
+		int equippedPartsSize = 0;
+		equippedPartsSize = equippedParts.size();
+		auto a = 0;
+
+		for (int i = 0; i < equippedPartsSize; i++)
+		{
+			int partsId = equippedParts[i].id;
+			switch (partsId)
+			{
+			case 1:
+				//試作パーツ
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
+				break;
+			case 2:
+				//高性能モーター
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(motor1, motor2);
+				break;
+			case 3:
+				//戦闘用パッチ
+				m_partsTextSprite[i]->OnClear(false);
+				m_partsTextSprite[i]->SetUVRect(patch1, patch2);
+				break;
+			default:
+				//装備していないもしくはその他の場合は透明にする
+				m_partsTextSprite[i]->OnClear(true);
+				break;
+			}
+		}
+	}
+
+	void PartsTextChange::AllClear(bool clear)
+	{
+		int parts = 3;
+		for (int i = 0; i < parts; i++)
+		{
+			m_partsTextSprite[i]->OnClear(clear);
+			m_num[i]->OnClear(clear);
+		}
+	}
 }
 //end basecross

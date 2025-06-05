@@ -113,6 +113,8 @@ namespace basecross {
 			auto DrawComp = GetComponent<PCTStaticDraw>();
 			DrawComp->SetMeshResource(m_SquareMeshResource);
 			DrawComp->SetTextureResource(m_textureName);
+			// エフェクトの消える現象の解決
+			DrawComp->SetDepthStencilState(DepthStencilState::Read);
 
 			auto PtrCamera = GetStage()->GetView()->GetTargetCamera();
 

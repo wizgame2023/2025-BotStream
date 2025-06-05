@@ -148,6 +148,9 @@ namespace basecross{
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
 
+		// Floor
+		strTexture = texPath + L"FloorTex2.png";
+		app->RegisterTexture(L"FloorTex", strTexture);
 
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
@@ -180,12 +183,30 @@ namespace basecross{
 		strTexture = texPath + L"ClearOverText.png";
 		app->RegisterTexture(L"ClearOverText", strTexture);
 
-		//使っている武器を表示するUIテクスチャ
+		// 戦闘UI
 		strTexture = texPath + L"Attack_UI.png";
 		app->RegisterTexture(L"KatanaTex", strTexture);
 		strTexture = texPath + L"Gun_UI.png";
 		app->RegisterTexture(L"GunTex", strTexture);
+		strTexture = texPath + L"Avoidance_UI.png";
+		app->RegisterTexture(L"AvoidTex", strTexture);
 
+		// パーツのステータス
+		strTexture = texPath + L"PartsUI1_2.png";
+		app->RegisterTexture(L"PartsTestTEX", strTexture);
+		strTexture = texPath + L"PartsUI2_2.png";
+		app->RegisterTexture(L"PartsHiMoterTEX", strTexture);
+		strTexture = texPath + L"PartsUI3_2.png";
+		app->RegisterTexture(L"PartsBattlePatchTEX", strTexture);
+		app->RegisterTexture(L"Parts3TEX", strTexture);
+		strTexture = texPath + L"PartsTexts.png";
+		app->RegisterTexture(L"PartsText", strTexture);
+
+		//パーツ用のテクスチャ
+		strTexture = texPath + L"gear.png";
+		app->RegisterTexture(L"PartsTEX", strTexture);
+
+		
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";
 		app->RegisterTexture(L"BarTex", strTexture);
@@ -201,6 +222,14 @@ namespace basecross{
 		//壁用のテクスチャ
 		strTexture = texPath + L"WallTexture.png";
 		app->RegisterTexture(L"WallTex", strTexture);
+
+		// ステージの壁とか
+		strTexture = texPath + L"WallSide.png";
+		app->RegisterTexture(L"WallSideTex", strTexture);
+		strTexture = texPath + L"WallFront.png";
+		app->RegisterTexture(L"WallFrontTex", strTexture);
+		strTexture = texPath + L"Ceiling.png";
+		app->RegisterTexture(L"CeilingTex", strTexture);
 
 		//モデル
 
@@ -253,6 +282,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"dslashHit.efkefc");
+
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Slash02Efk", efkPath + L"slash02.efkefc");
@@ -295,7 +326,9 @@ namespace basecross{
 		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
 		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
-		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav"); 
+		//パーツ入手
+		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
 
 	}
 

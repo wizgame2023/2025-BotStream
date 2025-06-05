@@ -65,6 +65,23 @@ namespace basecross {
         virtual void OnCreate() override;
     };
 
+    // 床のテクスチャ用--------------------------------
+    class Block : public MyGameObject
+    {
+    public:
+        Block(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Position);
+        virtual ~Block() {}
+
+        virtual void OnCreate() override;
+
+        static constexpr float BLOCK_XZ_SCALE = 10.0f;
+
+    private:
+        Vec3 m_pos;
+    };
+    // END --------------------------------------------
+
     class Wall : public GameObject {
         Vec3 m_Scale;
         Vec3 m_Rotation;
@@ -78,6 +95,22 @@ namespace basecross {
         virtual ~Wall();
         virtual void OnCreate() override;
     };
+
+    // 壁のテクスチャが違うやつを生成--------------
+    class Wall2 : public GameObject {
+        Vec3 m_Scale;
+        Vec3 m_Rotation;
+        Vec3 m_Position;
+    public:
+        Wall2(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Rotation,
+            const Vec3& Position
+        );
+        virtual ~Wall2();
+        virtual void OnCreate() override;
+    };
+    // ---------------------------------------------
 
     class Ceiling : public GameObject {
         Vec3 m_Scale;
