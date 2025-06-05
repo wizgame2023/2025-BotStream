@@ -207,39 +207,39 @@ namespace basecross {
 		//CameraPosUpdate();
 
 
-		////デバック用
-		//wstringstream wss(L"");
-		//auto scene = App::GetApp()->GetScene<Scene>();
+		//デバック用
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
 
-		////ロックオン対象との距離を計算
-		//if (m_targetObj)
-		//{
-		//	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-		//	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
-		//}
+		//ロックオン対象との距離を計算
+		if (m_targetObj)
+		{
+			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
+		}
 
-		//
-		//wss /* << L"デバッグ用文字列 "*/
-		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-		//	<< L"\nターゲット対象の距離: " << m_targetDis
-		//	<< L"\nFPS: " << 1.0f/m_delta
-		//	//<< L"\n当たった場所x: " << hitPos.x
-		//	//<< L"\n当たった場所y: " << hitPos.y
-		//	//<< L"\n当たった場所z: " << hitPos.z
-		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-		//	//<<L"\nFPS:"<< 1.0f/delta
-		//	<< endl;
+		
+		wss /* << L"デバッグ用文字列 "*/
+			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+			<< L"\nターゲット対象の距離: " << m_targetDis
+			<< L"\nFPS: " << 1.0f/m_delta
+			//<< L"\n当たった場所x: " << hitPos.x
+			//<< L"\n当たった場所y: " << hitPos.y
+			//<< L"\n当たった場所z: " << hitPos.z
+			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+			//<<L"\nFPS:"<< 1.0f/delta
+			<< endl;
 
-		//	//if (m_lockOnNum >= 0)
-		//	//{		
-		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-		//	//	float a = targetAngle;
-		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-		//	//}
+			//if (m_lockOnNum >= 0)
+			//{		
+			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+			//	float a = targetAngle;
+			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+			//}
 
-		//scene->SetDebugString(wss.str());
+		scene->SetDebugString(wss.str());
 
 	}
 
@@ -328,15 +328,15 @@ namespace basecross {
 	void CameraManager::CameraControlNomalMode()
 	{
 		//通常状態
-		m_range = 15.0f;
+		//m_range = 15.0f;
 
 		//m_spriteAttack->SetTexture(L"KatanaTex");
 
 		auto pushMaxAtPos = -5.0f;
 		//移動処理
-		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 8.0f);
-		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, 8.0f);
-		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 8.0f);
+		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, 120.0f);
+		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 120.0f);
+		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 120.0f);
 
 		//銃を使わないフラグ
 		m_meleeFlag = true;
@@ -357,16 +357,17 @@ namespace basecross {
 	{
 		//射撃状態
 		//Playerとの距離を縮めて狙いを定めているっぽくする
-		m_range = 10.0f;
+		//m_range = 10.0f;
 
 		//m_spriteAttack->SetTexture(L"GunTex");
 
 
 		auto pushMaxAtPos = -15.0f;
+		auto pushMaxAtPosY = -15.0f;
 		//移動処理
-		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 8.0f);
-		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, 8.0f);
-		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 8.0f);
+		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 16.0f*5);
+		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPosY, 16.0f*5);
+		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 16.0f*5);
 
 		//銃使うフラグにした
 		m_meleeFlag = false;
@@ -445,7 +446,7 @@ namespace basecross {
 	}
 
 	//カメラのポジションを決める関数
-	void CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength)
+	void CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght)
 	{
 		auto objVec = m_stage->GetGameObjectVec();
 		m_cameraPos = m_lockStageCamera->GetEye();
@@ -479,9 +480,37 @@ namespace basecross {
 			m_pushPos.y = maxPushPosY;
 		}
 
+
+		//移動する距離の差(カメラとプレイヤーの半径)
+		difference = CameraLenght - m_range;
+
+		//プラスする位置になるまで縮ませる
+		if (m_range > CameraLenght && difference < 0)
+		{
+			m_range -= m_delta * 30.0f;
+		}
+		//プラスする位置になるまで縮ませる
+		if (m_range < CameraLenght && difference > 0)
+		{
+			m_range += m_delta * 30.0f;
+		}
+		//プラスする位置が既定から越えないようにする
+		if (m_range < CameraLenght && difference < 0)
+		{
+			m_range = CameraLenght;
+		}
+		//プラスする位置が既定から越えないようにする
+		if (m_range > CameraLenght && difference > 0)
+		{
+			m_range = CameraLenght;
+		}
+
+
+
 		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
 			(m_playerPos.y + m_pushPos.y) + cos(m_cameraAngleX) * m_range,
 			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+
 
 		//移動する距離の差
 		difference = maxLength - m_gunShiftLength;
@@ -535,7 +564,7 @@ namespace basecross {
 			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
 			{
 				min = hitLength;
-				hitPos.y = m_cameraPos.y;//Y座標は変えないようにする
+				//hitPos.y = m_cameraPos.y;//Y座標は変えないようにする
 				m_cameraPos = hitPos;
 			}
 		}

@@ -128,7 +128,7 @@ namespace basecross{
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 		//カメラのX軸回転の制限
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		void CameraPosUpdate(float maxPushPosY = 10.0f, float maxLength = 0.0f);//カメラのポジションの更新
+		void CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//カメラのポジションの更新
 		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
 
 		//カメラの操作をする処理
