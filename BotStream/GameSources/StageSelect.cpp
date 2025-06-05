@@ -56,15 +56,14 @@ namespace basecross {
 		// 右に倒すとステージが切り替わる(+側)
 		if (ret.x >= dead && !m_selectOnceFlag && m_selectStageNum < stageMaxNum)
 		{
+			
 			m_selectStageNum += 1;
-			m_stageNum->SetUVRect(Vec2(m_selectStageNum * 0.1f,0.0f), Vec2((m_selectStageNum * 0.1f) + 0.1f, 1.0f));
 			m_selectOnceFlag = true;
 		}
 		// 左に倒すとステージが切り替わる(-側)
 		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum)
 		{
 			m_selectStageNum -= 1;
-			m_stageNum->SetUVRect(Vec2(m_selectStageNum * 0.1f,0.0f), Vec2((m_selectStageNum * 0.1f) + 0.1f, 1.0f));
 			m_selectOnceFlag = true;
 		}
 		// Aボタンかエンターキーで決定
@@ -120,14 +119,20 @@ namespace basecross {
 		//	Vec3(0, -250, 0)
 		//);
 
-		Vec2 titleSize3(titleX * 0.125f, titleX * 0.25f);
+		Vec2 numSize(75, 150);
 
-		m_stageNum = AddGameObject<Sprite>(
-			L"Numbers",
-			titleSize3,
-			Vec3(0, 0, 0)
-		);
-		m_stageNum->SetUVRect(Vec2(0.1f, 0), Vec2(0.2f, 1));
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_stageNum[i] = AddGameObject<Sprite>(
+				L"Numbers",
+				numSize,
+				Vec3(-300.0f + (i * 300), 100, 0)
+			);
+			m_stageNum[i]->SetUVRect(Vec2(0.1f + (0.1f * i), 0), Vec2(0.2f + (0.1f * i), 1));
+
+		}
+		m_stageNum[0]->SetColor(Col4(1, 1, 0, 1));
 	}
 
 }

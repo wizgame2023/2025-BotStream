@@ -33,6 +33,9 @@ namespace basecross {
 			L"PLSP", spGaugeSize,
 			Vec3(gaugePosX - (gaugeSize.x * 0.098f), gaugePosY - 19.8f, 0));
 		m_plSPSprite->SetDrawLayer(2);
+
+		// UI非表示
+		//AllClear(true);
 	}
 
 	void PlayerGaugeUI::OnUpdate()
@@ -82,6 +85,13 @@ namespace basecross {
 		Vec3 spOffset(-300.0f * 0.098f, -19.8f, 0.0f);
 		spTrans->SetPosition(framePos + spOffset + Vec3(spOffsetX, 0.0f, 0.0f));
 
+	}
+
+	void PlayerGaugeUI::AllClear(bool clear)
+	{
+		m_gaugeFrameSprite->OnClear(clear);
+		m_plHPSprite->OnClear(clear);
+		m_plSPSprite->OnClear(clear);
 	}
 
 	//-----------------------------------------------
@@ -170,59 +180,6 @@ namespace basecross {
 			RSUV1(0.333f, 0.25f), RSUV2(0.666f, 0.5f),
 			LSUV1(0.666f, 0.25f), LSUV2(1.0f, 0.5f),
 			HOLDAUV1(0.0f, 0.5f), HOLDAUV2(0.666f, 1.0f);
-		/*
-		switch (m_buttonSwitch)
-		{
-		case 0:	//A
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(AUV1, AUV2);
-			break;
-
-		case 1: // X
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(XUV1, XUV2);
-			break;
-
-		case 2: // RB
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(RBUV1, RBUV2);
-			break;
-
-		case 3: // RS
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(RSUV1, RSUV2);
-			break;
-
-		case 4: // LS
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(LSUV1, LSUV2);
-			break;
-
-		case 5: // Hold
-			m_button = m_stage->AddGameObject<Sprite>(
-				L"Buttons",         // テクスチャ名
-				m_buttonSize,      // サイズ
-				Vec3(m_buttonPos.x, m_buttonPos.y, 0));        // 表示位置
-			m_button->SetUVRect(HOLDAUV1, HOLDAUV2);
-			break;
-
-		}
-		*/
 
 		//A
 		auto sprite = m_stage->AddGameObject<Sprite>(
@@ -439,6 +396,9 @@ namespace basecross {
 		);
 		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
 		// ----------------------------------------------
+
+		// UI非表示(後でコメントアウト)
+		//AllFightSpriteClear(true);
 	}
 
 	void PlayerWeaponUI::OnUpdate()
@@ -509,6 +469,9 @@ namespace basecross {
 		//m_partsTextSprite[0]->OnClear(true);
 		//m_partsTextSprite[1]->OnClear(true);
 		//m_partsTextSprite[2]->OnClear(true);
+
+		// UI非表示(後でコメントアウト)
+		//AllClear(true);
 	}
 
 	void PartsTextChange::OnUpdate()
@@ -559,7 +522,12 @@ namespace basecross {
 
 	void PartsTextChange::AllClear(bool clear)
 	{
-
+		int parts = 3;
+		for (int i = 0; i < parts; i++)
+		{
+			m_partsTextSprite[i]->OnClear(clear);
+			m_num[i]->OnClear(clear);
+		}
 	}
 }
 //end basecross
