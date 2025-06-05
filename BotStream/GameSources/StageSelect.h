@@ -14,8 +14,9 @@ namespace basecross {
 		shared_ptr<Sprite> m_selectSprite;
 		shared_ptr<Sprite> m_selectBackSprite;
 		shared_ptr<Sprite> m_textSprite;
-		shared_ptr<Sprite> m_stageNum;
 		shared_ptr<SoundItem> m_BGM;
+
+		shared_ptr<Sprite> m_stageNum[3];
 
 		Vec3 m_selectPos;
 
