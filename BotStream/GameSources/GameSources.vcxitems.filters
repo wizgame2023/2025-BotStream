@@ -158,6 +158,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)WaveStageBase.h">
       <Filter>Stage</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyZako.h">
+      <Filter>ObjectMove</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
