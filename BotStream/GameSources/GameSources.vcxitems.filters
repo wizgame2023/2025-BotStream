@@ -153,6 +153,8 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CameraState.h">
       <Filter>State</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyZako.h" />
+      <Filter>ObjectMove</Filter>
     <ClInclude Include="$(MSBuildThisFileDirectory)WaveStageBase.h">
       <Filter>Stage</Filter>
     </ClInclude>
