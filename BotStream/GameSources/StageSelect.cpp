@@ -33,14 +33,17 @@ namespace basecross {
 	void StageSelect::OnUpdate()
 	{
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto delta = App::GetApp()->GetElapsedTime();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
+
+		float time;
 
 		// デッドゾーン
 		constexpr float dead = 0.3f;
 		// ステージの最大数
-		constexpr int stageMaxNum = 3;
-		constexpr int stageMinNum = 1;
+		constexpr int stageMaxNum = 2;
+		constexpr int stageMinNum = 0;
 		// コントローラーの左スティックの判定
 		Vec2 ret;
 		if (cntl[0].bConnected)
@@ -54,33 +57,118 @@ namespace basecross {
 			m_selectOnceFlag = false;
 
 		// 右に倒すとステージが切り替わる(+側)
-		if (ret.x >= dead && !m_selectOnceFlag && m_selectStageNum < stageMaxNum)
+		if (ret.x >= dead && !m_selectOnceFlag && m_selectStageNum < stageMaxNum && !m_stageFlag)
 		{
-			
+
+			// 前のステージ番号の色を戻す
+			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
+			// ステージ番号を更新
 			m_selectStageNum += 1;
+			// ステージ番号の色を変更
+			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
+
 			m_selectOnceFlag = true;
 		}
 		// 左に倒すとステージが切り替わる(-側)
-		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum)
+		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum && !m_stageFlag)
 		{
+			// 前のステージ番号の色を戻す
+			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
+			// ステージ番号を更新
 			m_selectStageNum -= 1;
+			// ステージ番号の色を変更
+			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
+
 			m_selectOnceFlag = true;
 		}
-		// Aボタンかエンターキーで決定
-		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
+
+		// Aボタンかエンターキーで選択
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
+		{
+			m_stageFlag = true;
+			m_selectOnceFlag = true;
+
+			// 選択したステージの写真を表示(仮置き)
+			for (int i = 0; i < 2; i++)
+			{
+				m_stagePhoto[i]->OnClear(false);
+			}
+
+			//// 選択したステージの写真を表示(本番の方)
+			//for (int i = m_selectStageNum * 2; i < m_selectStageNum + 2; i++)
+			//{
+				//m_stagePhoto[i]->OnClear(false);
+			//}
+			
+
+			// 他のステージを非表示
+			for (int i = 0; i < 3; i++)
+			{
+				if (i != m_selectStageNum)
+				{
+					m_stageNum[i]->OnClear(true);
+				}
+			}
+			// 選択したステージを移動、拡大
+			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-250, 0, 0));
+			m_stageNum[m_selectStageNum]->SetScale(Vec3(2.0f, 2.0f, 1.0f));
+
+			time = 0;
+		}
+
+		// Bボタンかスペースキーで戻る
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag)
+		{
+			m_stageFlag = false;
+			m_selectOnceFlag = true;
+			// 選択したステージ以外を表示
+			for (int i = 0; i < 3; i++)
+			{
+				m_stageNum[i]->OnClear(false);
+			}
+
+			// 選択したステージを戻す
+			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-300 + (m_selectStageNum * 300), 100, 0));
+			m_stageNum[m_selectStageNum]->SetScale(Vec3(1.0f, 1.0f, 1.0f));
+
+			// 選択したステージの写真を非表示(仮置き)
+			for (int i = 0; i < 2; i++)
+			{
+				m_stagePhoto[i]->OnClear(true);
+			}
+
+			//// 選択したステージの写真を非表示(本番の方)
+			//for (int i = m_selectStageNum * 2; i < m_selectStageNum + 2; i++)
+			//{
+				//m_stagePhoto[i]->OnClear(false);
+			//}
+
+
+		}
+
+		// ステージ選択中に写真を透明不透明をゆっくり切り替える
+		if (m_stageFlag)
+		{
+
+			time += delta;
+			m_stagePhoto[(m_selectStageNum * 2)]->SetColor(Col4(1, 1, 1, time));
+		}
+
+		// Aボタンかエンターキーで最終決定
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && !m_selectOnceFlag)
 		{
 			ptrMana->Stop(m_BGM);
 			switch (m_selectStageNum)
 			{
-			case 1:
+			case 0:
 				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
 				break;
-			case 2:
+			case 1:
 				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage2");
 				break;
-			case 3:
+			case 2:
 				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage3");
-				break;	
+				break;
 			}
 		}
 
@@ -103,7 +191,7 @@ namespace basecross {
 			titleSize,
 			Vec3(0, 0, 0)
 		);
-		m_selectBackSprite->SetColor(Col4(0.49f,0.49f,0.49f,1));
+		m_selectBackSprite->SetColor(Col4(0.49f, 0.49f, 0.49f, 1));
 
 		Vec2 titleSize2(titleX * 0.25f, titleX * 0.125f);
 		m_selectSprite = AddGameObject<Sprite>(
@@ -133,6 +221,29 @@ namespace basecross {
 
 		}
 		m_stageNum[0]->SetColor(Col4(1, 1, 0, 1));
+
+		Vec3 photoPos(300, 100, 0);
+
+		m_stagePhoto[0] = AddGameObject<Sprite>(
+			L"Stage1-1Tex",
+			Vec2(300, 200),
+			photoPos
+		);
+		m_stagePhoto[1] = AddGameObject<Sprite>(
+			L"Stage1-2Tex",
+			Vec2(300, 200),
+			photoPos
+		);
+
+		// ステージ写真の総数
+		constexpr int photoNum = 2;
+
+		// 全てのステージ写真を非表示にする、レイヤー設定
+		for (int i = 0; i < photoNum; i++)
+		{
+			m_stagePhoto[i]->OnClear(true);
+			m_stagePhoto[i]->SetDrawLayer(3);
+		}
 	}
 
 }
