@@ -185,9 +185,9 @@ namespace basecross {
 			//EfkPlaying(L"WaveEfk", GetAngle(), Vec3(0, 1, 0));
 
 			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"DamageEfk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			//EfkPlaying(L"Damage", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 
-			//EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 1));
+			//EfkPlaying(L"SlashHitEfk", GetAngle() + XM_PI, Vec3(0, 1, 1));
 
 		}
 		//-------------------------------------------------------------
@@ -702,7 +702,8 @@ namespace basecross {
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 0.1f;//のけぞり時間
 		tmp.InvincibleOnHit = true;
-		
+		tmp.HitEffect = L"GunHitEfk";
+
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;
 		GetAttackPtr()->SetPos(Vec3(0, 0, 0));
