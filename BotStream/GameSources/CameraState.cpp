@@ -29,7 +29,7 @@ namespace basecross {
 		////慣性付きの回転処理
 		//m_cameraManager->InertialRotation();
 		//X軸回転の制限処理
-		m_cameraManager->CameraAngleXLimit();
+		m_cameraManager->CameraAngleXLimit(XMConvertToRadians(120.0f), XMConvertToRadians(60.0f));
 
 		//角度の調整0~360度までしか出ないようにする
 		m_cameraManager->AdjustmentAngle();
@@ -55,7 +55,7 @@ namespace basecross {
 		CameraStateBase::Update(deltaTime);
 
 		//カメラの位置更新
-		m_cameraManager->CameraPosUpdate();
+		m_cameraManager->CameraPosUpdate(8,0,17.0f);
 
 		//通常モード時のカメラ操作処理
 		m_cameraManager->CameraControlNomalMode();
@@ -100,7 +100,7 @@ namespace basecross {
 		CameraStateBase::Update(deltaTime);
 
 		//カメラの位置更新
-		m_cameraManager->CameraPosUpdate(3.0f, 5.0f);
+		m_cameraManager->CameraPosUpdate(3.0f, 3.0f, 8.0f);
 		//慣性付きの回転処理
 		m_cameraManager->InertialRotation(0.7f, 60.0f);
 
