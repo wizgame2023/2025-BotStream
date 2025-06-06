@@ -25,14 +25,14 @@ namespace basecross {
 		shared_ptr<Sprite> m_audioSelect[2];	// オーディオ設定の選択しているところ
 
 		shared_ptr<Stage> m_stage;
-		// 選択切り替えフラグ
-		bool m_selectFlag = false;
-		// Audio用の選択切り替えフラグ
-		bool m_audioSelectFlag = false;
 		
-
+		// フラグ -------------------------------------------------
+		bool m_selectFlag = false; // 選択切り替えフラグ
+		bool m_audioSelectFlag = false;// Audio用の選択切り替えフラグ
+		
 		bool m_pauseFlag = false;		// ポーズのフラグ
 		bool m_pauseAudioFlag = false;	// オーディオ設定のフラグ
+		// -------------------------------------------------
 
 		float m_audioMax[2] = { 1.0f , 1.0f };	// 音量の実数値(0:BGM 1:SE)
 		int m_audioMaxSetCol[2] = { 10, 10 };	// 音量の色変えるためだけに存在するもの
@@ -70,6 +70,13 @@ namespace basecross {
 
 		virtual void OnCreate()override;
 		virtual void OnUpdate()override;
+
+		// オーディオの現在値を取得
+		// retun: 0=BGM, 1=SE
+		float GetAudioMax(int BGMorSE)
+		{
+			return m_audioMax[BGMorSE];
+		}
 	};
 
 }
