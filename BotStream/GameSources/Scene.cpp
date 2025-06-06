@@ -123,6 +123,12 @@ namespace basecross{
 		app->RegisterTexture(L"StageSelectString", strTexture);
 		strTexture = texPath + L"SelectBack2.png";
 		app->RegisterTexture(L"SelectBack", strTexture);
+		strTexture = texPath + L"StagePhoto1_1.png";
+
+		// StageSelectのステージ写真
+		app->RegisterTexture(L"Stage1-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto1_2.png";
+		app->RegisterTexture(L"Stage1-2Tex", strTexture);
 
 		// GameClear / GameOver
 		strTexture = texPath + L"GameOverBack.png";
