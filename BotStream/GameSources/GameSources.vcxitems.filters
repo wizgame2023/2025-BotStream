@@ -153,10 +153,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)CameraState.h">
       <Filter>State</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyZako.h" />
-      <Filter>ObjectMove</Filter>
     <ClInclude Include="$(MSBuildThisFileDirectory)WaveStageBase.h">
       <Filter>Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyZako.h">
+      <Filter>ObjectMove</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SoundManager.h">
+      <Filter>Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -276,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WaveStageBase.cpp">
       <Filter>Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SoundManager.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

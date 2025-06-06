@@ -14,6 +14,7 @@ namespace basecross {
 		shared_ptr<Sprite> m_selectSprite;
 		shared_ptr<Sprite> m_selectBackSprite;
 		shared_ptr<Sprite> m_textSprite;
+		shared_ptr<Sprite> m_stagePhoto[2];
 		shared_ptr<SoundItem> m_BGM;
 
 		shared_ptr<Sprite> m_stageNum[3];
@@ -24,7 +25,10 @@ namespace basecross {
 		bool m_selectOnceFlag = false;
 
 		// 選んでいるステージ数
-		short int m_selectStageNum = 1;
+		short int m_selectStageNum = 0;
+
+		bool m_stageFlag = false; // ステージ選択フラグ
+
 	public:
 		//構築と破棄
 		StageSelect() :Stage() {}
