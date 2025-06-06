@@ -24,6 +24,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Enemy.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyState.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyUI.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EnemyZako.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameClearScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameOverScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)GameStage.h" />
@@ -53,7 +54,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyManager.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)TitleStage.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)WaveStage.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)WaveStageBase.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ZakoState.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)SoundManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Actor.cpp" />
@@ -66,6 +69,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)EnemyUI.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EnemyZako.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameClearScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameOverScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)GameStage.cpp" />
@@ -81,6 +85,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PlayerState.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PlayerUI.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Scene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)SoundManager.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageAbe.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageCollisionController.cpp" />
@@ -91,6 +96,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WaveStage.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WaveStageBase.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinMain.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ZakoState.cpp" />
   </ItemGroup>
