@@ -156,6 +156,13 @@ namespace basecross {
 
         EffectManager::Instance().InterfaceUpdate();
 
+        ////デバック用
+        wstringstream wss(L"");
+        wss /* << L"デバッグ用文字列 "*/
+            << L"\n FPS: " << App::GetApp()->App::GetApp()->GetStepTimer().GetFramesPerSecond() << endl;
+
+        scene->SetDebugString(wss.str());
+
 
         if (m_waveNow == 1 && EnemyNum == 0)
         {
@@ -409,8 +416,8 @@ namespace basecross {
         ptrDraw->SetTextureResource(L"FloorTex");
 
         //影をつける（シャドウマップを描画する）
-        auto shadowPtr = AddComponent<Shadowmap>();
-        ptrDraw->SetOwnShadowActive(true);
+        //auto shadowPtr = AddComponent<Shadowmap>();
+        //ptrDraw->SetOwnShadowActive(true);
 
     }
     // END -----------------------------------------------------------------------------------------

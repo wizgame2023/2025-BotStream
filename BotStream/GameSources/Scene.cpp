@@ -123,6 +123,12 @@ namespace basecross{
 		app->RegisterTexture(L"StageSelectString", strTexture);
 		strTexture = texPath + L"SelectBack2.png";
 		app->RegisterTexture(L"SelectBack", strTexture);
+		strTexture = texPath + L"StagePhoto1_1.png";
+
+		// StageSelectのステージ写真
+		app->RegisterTexture(L"Stage1-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto1_2.png";
+		app->RegisterTexture(L"Stage1-2Tex", strTexture);
 
 		// GameClear / GameOver
 		strTexture = texPath + L"GameOverBack.png";
@@ -282,7 +288,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
-		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"dslashHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"slashHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"GunHitEfk", efkPath + L"GunHit.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
