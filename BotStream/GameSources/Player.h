@@ -27,24 +27,6 @@ namespace basecross {
 		PlayerState_AttackEx
 	};
 
-	enum PlayerEffect
-	{
-		PlayerEffect_Attack1,
-		PlayerEffect_Attack2,
-		PlayerEffect_Attack3,
-		PlayerEffect_AttackEx,
-		PlayerEffect_Beam,
-		PlayerEffect_Dodge,
-		PlayerEffect_Dash,
-		PlayerEffect_DashRipple,
-		EnemyEffect_Stun,
-		EnemyEffect_ArmorBreak,
-		EnemyEffect_Beam,
-		EnemyEffect_Sphere,
-		EnemyEffect_SphereEnd,
-		EnemyEffect_Spin,
-		EnemyEffect_Wave
-	};
 
 	enum ActorName
 	{
