@@ -159,6 +159,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyZako.h">
       <Filter>ObjectMove</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)SoundManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)WaveStageBase.cpp">
       <Filter>Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)SoundManager.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
