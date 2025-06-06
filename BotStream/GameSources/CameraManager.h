@@ -57,6 +57,7 @@ namespace basecross{
 
 		Vec3 m_pushPos = Vec3(5.0f, 10.0f, 5.0f);		//カメラがプレイヤーから離れる位置
 		Vec3 m_pushAtPos = Vec3(-5.0f, -5.0f, -5.0f);	//カメラの注視点のずらす位置
+		bool m_pushStart = true;
 
 
 

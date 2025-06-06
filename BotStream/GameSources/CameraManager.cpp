@@ -456,90 +456,62 @@ namespace basecross {
 		size_t triangleNumber; // レイが交差したポリゴンの番号
 		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
 
-		//移動する距離の差
-		float difference = maxPushPosY - m_pushPos.y;
-
-		//プラスする位置になるまで縮ませる
-		if (m_pushPos.y > maxPushPosY && difference < 0)
-		{
-			m_pushPos.y -= m_delta * 20.0f;
-		}
-		//プラスする位置になるまで縮ませる
-		if (m_pushPos.y < maxPushPosY && difference > 0)
-		{
-			m_pushPos.y += m_delta * 20.0f;
-		}
-		//プラスする位置が既定から越えないようにする
-		if (m_pushPos.y < maxPushPosY && difference < 0)
-		{
-			m_pushPos.y = maxPushPosY;
-		}
-		//プラスする位置が既定から越えないようにする
-		if (m_pushPos.y > maxPushPosY && difference > 0)
-		{
-			m_pushPos.y = maxPushPosY;
-		}
-
-
-		//移動する距離の差(カメラとプレイヤーの半径)
-		difference = CameraLenght - m_range;
-
-		//プラスする位置になるまで縮ませる
-		if (m_range > CameraLenght && difference < 0)
-		{
-			m_range -= m_delta * 30.0f;
-		}
-		//プラスする位置になるまで縮ませる
-		if (m_range < CameraLenght && difference > 0)
-		{
-			m_range += m_delta * 30.0f;
-		}
-		//プラスする位置が既定から越えないようにする
-		if (m_range < CameraLenght && difference < 0)
-		{
-			m_range = CameraLenght;
-		}
-		//プラスする位置が既定から越えないようにする
-		if (m_range > CameraLenght && difference > 0)
-		{
-			m_range = CameraLenght;
-		}
-
-
-
-		m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
-			(m_playerPos.y + m_pushPos.y) + cos(m_cameraAngleX) * m_range,
-			m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
-
-
-		//移動する距離の差
-		difference = maxLength - m_gunShiftLength;
-			
-		//ずらす位置を既定の長さになるまで伸ばす
-		if (m_gunShiftLength < maxLength && difference > 0)
-		{
-			m_gunShiftLength += m_delta * 20.0f;
-		}
-		//ずらす位置を既定の長さになるまで伸ばす
-		if (m_gunShiftLength > maxLength && difference < 0)
-		{
-			m_gunShiftLength -= m_delta * 20.0f;
-		}
-		//ずらす長さを既定から越えないようにする
-		if (m_gunShiftLength > maxLength && difference > 0)
-		{
-			m_gunShiftLength = maxLength;
-		}
-		//ずらす長さを既定から越えないようにする
-		if (m_gunShiftLength < maxLength && difference < 0)
-		{
-			m_gunShiftLength = maxLength;
-		}
-
-		//射撃モードは少し通常の状態から位置をずらす
-		m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength,
+		//プレイヤーからどのくらい離れるのかのベクトルの計算
+		Vec3 CameraPushGoalPos = Vec3((cos(m_cameraAngleY) * sin(m_cameraAngleX) * CameraLenght),
+			(maxPushPosY) + cos(m_cameraAngleX) * CameraLenght,
+			(sin(m_cameraAngleY) * sin(m_cameraAngleX) * CameraLenght));
+		//銃モード用の離れる距離をプラスする
+		CameraPushGoalPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * maxLength,
 			0.0f,
-			sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength);
+			sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * maxLength);
+
+		//m_cameraPos = CameraPushPos;
+
+		//現在のカメラ位置を取得する
+		//auto cameraEye = m_stageCamera.lock()->GetEye();
+
+		//現在の位置と目的地の方向ベクトルの計算
+		Vec3 directionVec = CameraPushGoalPos - m_pushPos;	
+		
+		//ある程度カメラの位置が目的地に近かったら目的地にたどり着いたとみなす
+		if (directionVec.length() <= 1.0f)
+		{
+			m_pushPos = CameraPushGoalPos;
+		}
+		//ステージ開始時にカメラの移動が始まらないようにする例外処理
+		if (m_pushStart)
+		{
+			m_pushPos = CameraPushGoalPos;
+			m_pushStart = false;
+		}
+
+		//正規化
+		directionVec = directionVec.normalize();
+		//auto test = directionVec.length();
+
+		//カメラの位置と目的地が一緒でなければ移動する(うまくいってないです)
+		if (m_pushPos != CameraPushGoalPos)
+		{
+			auto cameraSpeed = 40.0f;
+			m_pushPos += directionVec * cameraSpeed * m_delta;
+		}
+
+
+		m_cameraPos = m_playerPos + m_pushPos;
+
+
+		//移動する距離の差
+		//float difference = maxPushPosY - m_pushPos.y;
+
+
+		//m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
+		//	(m_playerPos.y + m_pushPos.y) + cos(m_cameraAngleX) * m_range,
+		//	m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
+		//	
+		////射撃モードは少し通常の状態から位置をずらす
+		//m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength,
+		//	0.0f,
+		//	sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength);
 
 
 		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
