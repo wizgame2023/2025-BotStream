@@ -40,7 +40,7 @@ namespace basecross {
 		//エフェクト・音のキー
 		wstring HitEffect;
 		wstring HitSound;
-		
+
 		//コンストラクタ
 		HitInfo::HitInfo(AttackType attacktype, 
 			int damage, int stundamage, float pausetime,
@@ -74,7 +74,7 @@ namespace basecross {
 			this->HitVel_Air = Vec3(0);
 			this->InvincibleOnHit = false;
 			this->HitOnce = false;
-			this->HitEffect = L"Damage";
+			this->HitEffect = L"SlashHitEfk";
 			this->HitSound = L"Damage";
 		}
 	};
