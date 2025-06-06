@@ -44,6 +44,8 @@ namespace basecross {
 			return q * r * r2;
 		}
 
+		shared_ptr<Stage> GetWaveStage(bool ExceptionActive) const;
+
 	protected:
 
 		//void OnCreate()override;

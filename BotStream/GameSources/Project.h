@@ -54,6 +54,7 @@
 #include "StageSanpei.h"
 #include "StageSato.h"
 #include "StageTuboi.h"
+#include "WaveStageBase.h"
 #include "WaveStage.h"
 #include "TitleStage.h"
 #include "StageSelect.h"
