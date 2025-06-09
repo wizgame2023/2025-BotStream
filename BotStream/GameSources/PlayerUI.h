@@ -23,6 +23,7 @@ namespace basecross {
 		float m_playerMaxSP = 100.0f;   // SP‚ÌÅ‘å’l
 		float m_playerSP = 0.0f;        // ‰Šú’lSP
 
+		void AllClear(bool clear);
 	public:
 		PlayerGaugeUI(const std::shared_ptr<Stage>& stagePtr, int HPMax = 1000.0f, int SPMax = 100.0f) :
 			MyGameObject(stagePtr),

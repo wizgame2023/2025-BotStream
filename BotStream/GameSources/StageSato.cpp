@@ -60,6 +60,20 @@ namespace basecross {
 
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
 
+			//パーツ関係//
+			//パーツマネージャ生成
+			auto partsManager = AddGameObject<PartsManager>();
+			SetSharedGameObject(L"PartsManager", partsManager);
+
+			auto equippedParts = AddGameObject<EquippedParts>();
+			SetSharedGameObject(L"PartsPoach", equippedParts);
+			//AddGameObject<PartsHiMoter>(Vec3(-20.0f,1.0f,-230.0f),Vec3(0.0f,0.0f,0.0f),Vec3(1.0f,1.0f,1.0f));
+
+			//装備したパーツが何かわかるようにする
+			AddGameObject<PartsTextChange>();
+			//////////////
+
+
 			auto actorPtr = static_pointer_cast<GameObject>(m_player);
 
 			DamageBill(actorPtr, 19);
@@ -69,7 +83,7 @@ namespace basecross {
 			auto ground = AddGameObject<Ground>();
 
 			//ポーズ生成
-			AddGameObject<PauseSprite>();
+			m_pauseSprite = AddGameObject<PauseSprite>();
 
 			// 戦闘UI
 			AddGameObject<PlayerWeaponUI>();
@@ -628,40 +642,6 @@ namespace basecross {
 	// Enemy やダメージを受ける箇所で呼び出す例
 	void StageSato::DamageBill(shared_ptr<GameObject> target, int damage)
 	{
-		/*
-		// 数値を文字列に変換
-		std::string str = std::to_string(damage);
-		shared_ptr<BillBoard> damageBB[2];
-		for (size_t i = 0; i < str.size(); ++i)
-		{
-			char setDamage = str[i];
-
-			short int digit = setDamage - '0';
-			
-			// 1) BillBoard を生成
-			damageBB[i] = AddGameObject<BillBoard>(
-				target,					// ← ビルボードを付ける対象
-				L"Numbers",				// ← テクスチャ
-				3,						// レイヤー
-				5.0f,					// キャラ位置からの高さ
-				Vec3(1.5f, 1.5f, 1.0f),	// 大きさ
-				Col4(1.0f,1.0f,1.0f,1.0f),
-				i * 50.0f
-			);
-
-			// 2) ダメージ値を 1桁ずつ切り出して UV 設定
-			// 数字スプライトシートの１文字分の幅
-			const float uvWidth = 1.0f / 10.0f;
-
-			// 例として「1桁目」だけ表示する場合
-			int d = damage % 10;
-			Vec2 uv0(d * uvWidth, 0.0f);
-			Vec2 uv1((d + 1) * uvWidth, 1.0f);
-			damageBB[i]->SetBillUV(uv0, uv1);
-
-		}
-		*/
-
 		// ダメージを文字列に変換
 		std::string str = std::to_string(damage);
 		// ビルボードを入れる配列は最大桁数分
@@ -763,34 +743,36 @@ namespace basecross {
 		if (m_pauseFlag) wss << "Pause is True" << endl;
 		else wss << "Pause is False" << endl;
 
+		wss << "BGM Volume : " << m_pauseSprite->GetAudioMax(0) << "\n"
+			<< "SE Volume : " << m_pauseSprite->GetAudioMax(1) << endl;
 
-		wss << "m_selectPos : "
-			<< selectPos.x << ", "
-			<< selectPos.y << ", "
-			<< selectPos.z << "\n"
-			<< m_select2 << "\n"
-			<< endl;
-		if (m_resultFlag)
-		{
-			switch (m_type)
-			{
-			case StageSato::Type_Speed:
-				wss << "Type   :  Speed" << "\n"
-					<< endl;
-				break;
-			case StageSato::Type_Power:
-				wss << "Type   :  Power" << "\n"
-					<< endl;
-				break;
-			case StageSato::Type_Balance:
-				wss << "Type   :  Balance" << "\n"
-					<< endl;
-				break;
-			default:
-				break;
-			}
+		//wss << "m_selectPos : "
+		//	<< selectPos.x << ", "
+		//	<< selectPos.y << ", "
+		//	<< selectPos.z << "\n"
+		//	<< m_select2 << "\n"
+		//	<< endl;
+		//if (m_resultFlag)
+		//{
+		//	switch (m_type)
+		//	{
+		//	case StageSato::Type_Speed:
+		//		wss << "Type   :  Speed" << "\n"
+		//			<< endl;
+		//		break;
+		//	case StageSato::Type_Power:
+		//		wss << "Type   :  Power" << "\n"
+		//			<< endl;
+		//		break;
+		//	case StageSato::Type_Balance:
+		//		wss << "Type   :  Balance" << "\n"
+		//			<< endl;
+		//		break;
+		//	default:
+		//		break;
+		//	}
 
-		}
+		//}
 
 		scene->SetDebugString(wss.str());
 

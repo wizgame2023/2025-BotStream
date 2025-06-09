@@ -156,6 +156,13 @@ namespace basecross {
 
         EffectManager::Instance().InterfaceUpdate();
 
+        ////デバック用
+        wstringstream wss(L"");
+        wss /* << L"デバッグ用文字列 "*/
+            << L"\n FPS: " << App::GetApp()->App::GetApp()->GetStepTimer().GetFramesPerSecond() << endl;
+
+        scene->SetDebugString(wss.str());
+
 
         if (m_waveNow == 1 && EnemyNum == 0)
         {
@@ -408,94 +415,117 @@ namespace basecross {
         // テクスチャ
         ptrDraw->SetTextureResource(L"FloorTex");
 
+        //影をつける（シャドウマップを描画する）
+        //auto shadowPtr = AddComponent<Shadowmap>();
+        //ptrDraw->SetOwnShadowActive(true);
+
     }
     // END -----------------------------------------------------------------------------------------
 
     //壁作成
     void WaveStage::CreateWall()
     {
+        // Wave1の壁の大きさ
+        Vec3 wallSclWv1(120.0f, 4.0f, 41.0f);
+        // Wave2の壁の大きさ
+        Vec3 wallSclWv2(120.0f, 4.0f, 41.0f);
+        // Bossの壁の大きさ
+        Vec3 wallSclBoss(170.0f, 4.0f, 41.0f);
+
         vector < vector<Vec3> > vec =
         {
             //Boss
             //右
             {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(77.5f, 19.0f, 260.0f)
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                Vec3(86.9f, 19.0f, 260.0f)
             },
             //左
             {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-77.5f, 19.0f, 260.0f)
-            },
-            //前
-            {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 336.0f)
-            },
-            //後
-            {
-                Vec3(41.0f, 4.0f, 160.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 183.0f)
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                Vec3(-86.9f, 19.0f, 260.0f)
             },
             //Wave2
             //右
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(57.5f, 19.0f, 0.0f)
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                Vec3(62.0f, 19.0f, 0.0f)
             },
             //左
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-57.5f, 19.0f, 0.0f)
-            },
-            //前
-            {
-                Vec3(41.0f, 4.0f, 115.0f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, 56.0f)
-            },
-            //後
-            {
-                Vec3(41.0f, 4.0f, 115.0f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -56.0f)
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                Vec3(-61.9f, 19.0f, 0.0f)
             },
             //Wave1
             //右
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(57.0f, 19.0f, -260.0f)
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                Vec3(62.0f, 19.0f, -260.0f)
             },
             //左
             {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 0.0f, 1.57f),
-                Vec3(-57.0f, 19.0f, -260.0f)
-            },
-            //前
-            {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -203.0f)
-            },
-             //後
-            {
-                Vec3(41.0f, 4.0f, 110.5f),
-                Vec3(0.0f, 1.57f, 1.57f),
-                Vec3(0.0f, 19.0f, -317.0f)
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                Vec3(-62.0f, 19.0f, -260.0f)
             },
         };
         for (auto v : vec)
         {
             AddGameObject<Wall>(v[0], v[1], v[2]);
         }
+
+        vector < vector<Vec3> > vec2 =
+        {
+            ////Boss
+            //前
+            {
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, 346.9f)
+            },
+            //後
+            {
+                wallSclBoss,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, 173.1f)
+            },
+            ////Wave2
+            //前
+            {
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, 62.0f)
+            },
+            //後
+            {
+                wallSclWv2,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, -62.0f)
+            },
+            ////Wave1
+            //前
+            {
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, -198.0f)
+            },
+             //後
+            {
+                wallSclWv1,
+                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                Vec3(0.0f, 19.0f, -322.0f)
+            },
+        };
+        for (auto v : vec2)
+        {
+            AddGameObject<Wall2>(v[0], v[1], v[2]);
+        }
+
     }
 
     //壁
@@ -524,7 +554,7 @@ namespace basecross {
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"WallSideTex");
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -536,6 +566,44 @@ namespace basecross {
 
     }
 
+    //壁2------------------------------------------------
+    Wall2::Wall2(const shared_ptr<Stage>& StagePtr,
+        const Vec3& Scale,
+        const Vec3& Rotation,
+        const Vec3& Position
+    ) :
+        GameObject(StagePtr),
+        m_Scale(Scale),
+        m_Rotation(Rotation),
+        m_Position(Position)
+    {
+    }
+    Wall2::~Wall2() {}
+
+    void Wall2::OnCreate()
+    {
+        auto ptrTransform = GetComponent<Transform>();
+        ptrTransform->SetScale(m_Scale);
+        ptrTransform->SetRotation(m_Rotation);
+        ptrTransform->SetPosition(m_Position);
+
+        auto ptrColl = AddComponent<CollisionObb>();
+        ptrColl->SetFixed(true);
+
+        auto ptrDraw = AddComponent<PNTStaticDraw>();
+        ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
+        ptrDraw->SetTextureResource(L"WallFrontTex");
+
+
+        //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
+        ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
+        //ptrDraw->SetTextureResource(L"Wall");
+
+        AddTag(L"CameraObstacles");
+        AddTag(L"Terrain");
+
+    }
+    //-------------------------------------------------------
 
     //天井作成
     void WaveStage::CreateCeiling()
@@ -544,19 +612,19 @@ namespace basecross {
         {
             //Boss
             {
-                Vec3(160.0f, 1.0f, 160.0f),
+                Vec3(170.0f, 1.0f, 170.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
                 Vec3(0.0f, 40.0f, 260.0f)
             },
             //Wave2
             {
-                Vec3(110.0f, 1.0f, 110.0f),
+                Vec3(120.0f, 1.0f, 120.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
                 Vec3(0.0f, 40.0f, 0.0f)
             },
             //Wave1
             {
-                Vec3(110.0f, 1.0f, 110.0f),
+                Vec3(120.0f, 1.0f, 120.0f),
                 Vec3(0.0f, 0.0f, 0.0f),
                 Vec3(0.0f, 40.0f, -260.0f)
             }
@@ -588,13 +656,13 @@ namespace basecross {
         ptrTransform->SetScale(m_Scale);
         ptrTransform->SetRotation(m_Rotation);
         ptrTransform->SetPosition(m_Position);
-
+        
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"CeilingTex");
 
         ptrDraw->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 

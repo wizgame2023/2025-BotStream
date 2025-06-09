@@ -123,6 +123,12 @@ namespace basecross{
 		app->RegisterTexture(L"StageSelectString", strTexture);
 		strTexture = texPath + L"SelectBack2.png";
 		app->RegisterTexture(L"SelectBack", strTexture);
+		strTexture = texPath + L"StagePhoto1_1.png";
+
+		// StageSelectのステージ写真
+		app->RegisterTexture(L"Stage1-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto1_2.png";
+		app->RegisterTexture(L"Stage1-2Tex", strTexture);
 
 		// GameClear / GameOver
 		strTexture = texPath + L"GameOverBack.png";
@@ -195,11 +201,11 @@ namespace basecross{
 		app->RegisterTexture(L"AvoidTex", strTexture);
 
 		// パーツのステータス
-		strTexture = texPath + L"PartsUI1.png";
+		strTexture = texPath + L"PartsUI1_2.png";
 		app->RegisterTexture(L"PartsTestTEX", strTexture);
-		strTexture = texPath + L"PartsUI2.png";
+		strTexture = texPath + L"PartsUI2_2.png";
 		app->RegisterTexture(L"PartsHiMoterTEX", strTexture);
-		strTexture = texPath + L"PartsUI3.png";
+		strTexture = texPath + L"PartsUI3_2.png";
 		app->RegisterTexture(L"PartsBattlePatchTEX", strTexture);
 		app->RegisterTexture(L"Parts3TEX", strTexture);
 		strTexture = texPath + L"PartsTexts.png";
@@ -225,6 +231,14 @@ namespace basecross{
 		//壁用のテクスチャ
 		strTexture = texPath + L"WallTexture.png";
 		app->RegisterTexture(L"WallTex", strTexture);
+
+		// ステージの壁とか
+		strTexture = texPath + L"WallSide.png";
+		app->RegisterTexture(L"WallSideTex", strTexture);
+		strTexture = texPath + L"WallFront.png";
+		app->RegisterTexture(L"WallFrontTex", strTexture);
+		strTexture = texPath + L"Ceiling.png";
+		app->RegisterTexture(L"CeilingTex", strTexture);
 
 		//モデル
 
@@ -277,7 +291,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
-		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"dslashHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"slashHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"GunHitEfk", efkPath + L"GunHit.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");

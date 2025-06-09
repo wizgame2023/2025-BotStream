@@ -59,6 +59,8 @@ namespace basecross {
 
 		shared_ptr<Player> m_player;
 
+		shared_ptr<PauseSprite> m_pauseSprite;
+
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
 		// 質問の内容を入れておくためのリスト
