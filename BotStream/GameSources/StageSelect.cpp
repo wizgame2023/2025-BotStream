@@ -37,8 +37,6 @@ namespace basecross {
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
-		float time;
-
 		// デッドゾーン
 		constexpr float dead = 0.3f;
 		// ステージの最大数
@@ -113,7 +111,7 @@ namespace basecross {
 			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-250, 0, 0));
 			m_stageNum[m_selectStageNum]->SetScale(Vec3(2.0f, 2.0f, 1.0f));
 
-			time = 0;
+			m_time = 0;
 		}
 
 		// Bボタンかスペースキーで戻る
@@ -149,9 +147,27 @@ namespace basecross {
 		// ステージ選択中に写真を透明不透明をゆっくり切り替える
 		if (m_stageFlag)
 		{
+			if (m_time < 1.2f && !m_timeFlag)
+			{
+				m_time += delta / 2;
+				if(m_time > 1.0f) 
+					m_timeFlag = true;
 
-			time += delta;
-			m_stagePhoto[(m_selectStageNum * 2)]->SetColor(Col4(1, 1, 1, time));
+			}
+			if (m_time > -0.2f && m_timeFlag)
+			{
+				m_time -= delta / 2;
+				if(m_time < 0.0f)
+					m_timeFlag = false;
+
+			}
+
+			// 交互に透明度を変える
+			float alphaA = m_time;          
+			float alphaB = 1.0f - m_time;
+
+			m_stagePhoto[(m_selectStageNum * 2)]->SetColor(Col4(1, 1, 1, alphaA));
+			m_stagePhoto[(m_selectStageNum * 2) + 1]->SetColor(Col4(1, 1, 1, alphaB));
 		}
 
 		// Aボタンかエンターキーで最終決定
