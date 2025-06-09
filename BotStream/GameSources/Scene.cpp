@@ -153,6 +153,9 @@ namespace basecross{
 		//敵のHPバー
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
+		//雑魚敵のHPバー
+		strTexture = texPath + L"BossHPMater3.png";
+		app->RegisterTexture(L"ZakoHPMater", strTexture);
 
 		// Floor
 		strTexture = texPath + L"FloorTex2.png";
