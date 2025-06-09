@@ -253,7 +253,7 @@ namespace basecross {
 		auto plRot = trans->GetRotation();
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		//EffectManager::Instance().SetRotate(efkHandler,XMConvertToRadians(45.0f),-plRot.y,0.0f);
-		EffectManager::Instance().SetRotation(efkHandler, rotate, rad);
+		EffectManager::Instance().SetRotationFromAxisAngle(efkHandler, rotate, rad);
 		EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 		return efkHandler;
 	}
@@ -267,7 +267,7 @@ namespace basecross {
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
-		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		EffectManager::Instance().SetRotationFromAxisAngle(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 		return efkHandler;
 	}
 
