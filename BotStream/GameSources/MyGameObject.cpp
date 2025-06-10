@@ -17,9 +17,9 @@ namespace basecross {
 
 	}
 
-	shared_ptr<Stage> MyGameObject::GetWaveStage(bool ExceptionActive) const {
-		auto shptr = GetStage();
-		auto wave = dynamic_pointer_cast<WaveStageBase>(shptr);
+	shared_ptr<WaveStageBase> MyGameObject::GetWaveStage(bool ExceptionActive) const {
+		shared_ptr<Stage> shptr = GetStage();
+		shared_ptr<WaveStageBase> wave = dynamic_pointer_cast<WaveStageBase>(shptr);
 		if (wave) {
 			return wave;
 		}

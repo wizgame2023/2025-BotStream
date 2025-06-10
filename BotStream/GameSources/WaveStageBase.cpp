@@ -23,9 +23,47 @@ namespace basecross {
         auto PtrMultiLight = CreateLight<MultiLight>();
         //デフォルトのライティングを指定
         PtrMultiLight->SetDefaultLighting();
+
+        //ついでにActorグループ生成
+        CreateSharedObjectGroup(L"Actor");
     }
 
+    void WaveStageBase::CreatePlayer(Vec3 pos, Vec3 rot, Vec3 scale) {
+        m_player = AddGameObject<Player>(pos, rot, scale);
+        SetSharedGameObject(L"Player", m_player.lock());
+
+    }
+
+    void WaveStageBase::SetActorPause(bool isPause) {
+        m_isPaused = isPause;
+
+        auto objVec = GetGameObjectVec();
+        for (auto obj : objVec)
+        {
+            auto actor = dynamic_pointer_cast<Actor>(obj);
+            auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+            auto parts = dynamic_pointer_cast<Parts>(obj);
+
+            if (actor)
+            {
+                actor->SetPose(isPause);
+            }
+            if (cameraManager)
+            {
+                cameraManager->SetPose(isPause);
+            }
+            if (parts)
+            {
+                parts->SetPose(isPause);
+            }
+        }
+    }
     void WaveStageBase::CreateManagerObjects() {
+
+        shared_ptr<FadeoutSprite> fadeout;
+        fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
+        SetSharedGameObject(L"Fadeout", fadeout);
+        fadeout->SetDrawLayer(4);
 
         // ------- パーツ関係 ---------------------------------------------------------
         //パーツマネージャ生成
@@ -58,6 +96,9 @@ namespace basecross {
 
         // 戦闘用UI
         AddGameObject<PlayerWeaponUI>();
+        auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+        SetSharedGameObject(L"PlayerUI", playerUI);
+
     }
 
     void WaveStageBase::OnCreate()
@@ -71,18 +112,7 @@ namespace basecross {
         CreateFloor();
         CreateWall();
         CreateCeiling();
-
-        m_waveCurrent = 1;//wave1から開始
-
-        shared_ptr<FadeoutSprite> fadeout;
-        fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
-        SetSharedGameObject(L"Fadeout", fadeout);
-        fadeout->SetDrawLayer(4);
-
-        CreateSharedObjectGroup(L"Actor");
-
-        m_player = AddGameObject<Player>(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
-        SetSharedGameObject(L"Player", m_player.lock());
+        CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
 
         //Enemyマネージャのテスト
         vector<EnemyVariation> enemyVariation;
@@ -102,9 +132,6 @@ namespace basecross {
 
         m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
         SetSharedGameObject(L"Boss", m_boss.lock());
-
-        auto playerUI = AddGameObject<PlayerGaugeUI>(100);
-        SetSharedGameObject(L"PlayerUI", playerUI);
 
 
         // ボスゲージ
@@ -193,6 +220,8 @@ namespace basecross {
 
     void WaveStageBase::OnUpdate()
     {
+        ShowFPS();
+
         auto& app = App::GetApp();
         auto KeyState = app->GetInputDevice().GetKeyState();
         auto pad = app->GetInputDevice().GetControlerVec()[0];
@@ -215,14 +244,6 @@ namespace basecross {
         int EnemyNum = EnemyVec.size();
 
         EffectManager::Instance().InterfaceUpdate();
-
-        ////デバック用
-        wstringstream wss(L"");
-        auto scene = App::GetApp()->GetScene<Scene>();
-        wss /* << L"デバッグ用文字列 "*/
-            << L"\n FPS: " << App::GetApp()->App::GetApp()->GetStepTimer().GetFramesPerSecond() << endl;
-
-        scene->SetDebugString(wss.str());
 
         if (m_waveCurrent == 1 && EnemyNum == 0)
         {
@@ -281,7 +302,7 @@ namespace basecross {
         soundManager->StopSE();
     }
 
-    void WaveStageBase::SetNextWaveFlag(int setNextWaveFlag)
+    void WaveStageBase::SetNextWaveFlag(bool setNextWaveFlag)
     {
         m_nextWaveFlag = setNextWaveFlag;
     }

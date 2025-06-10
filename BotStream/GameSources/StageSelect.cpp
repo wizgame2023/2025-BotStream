@@ -1,7 +1,7 @@
 #pragma once
 /*!
 @file StageSelect.cpp
-@brief ƒXƒe[ƒWƒZƒŒƒNƒg‰æ–Ê
+@brief ã‚¹ãƒ†ãƒ¼ã‚¸ã‚»ãƒ¬ã‚¯ãƒˆç”»é¢
 */
 
 #include "stdafx.h"
@@ -12,14 +12,14 @@ namespace basecross {
 		const Vec3 eye(0.0f, 5.0f, -10.0f);
 		const Vec3 at(0.0f);
 		auto PtrView = CreateView<SingleView>();
-		//ƒrƒ…[‚ÌƒJƒƒ‰‚Ìİ’è
+		//ãƒ“ãƒ¥ãƒ¼ã®ã‚«ãƒ¡ãƒ©ã®è¨­å®š
 		auto PtrCamera = ObjectFactory::Create<Camera>();
 		PtrView->SetCamera(PtrCamera);
 		PtrCamera->SetEye(eye);
 		PtrCamera->SetAt(at);
-		//ƒ}ƒ‹ƒ`ƒ‰ƒCƒg‚Ìì¬
+		//ãƒãƒ«ãƒãƒ©ã‚¤ãƒˆã®ä½œæˆ
 		auto PtrMultiLight = CreateLight<MultiLight>();
-		//ƒfƒtƒHƒ‹ƒg‚Ìƒ‰ƒCƒeƒBƒ“ƒO‚ğw’è
+		//ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ã‚’æŒ‡å®š
 		PtrMultiLight->SetDefaultLighting();
 	}
 
@@ -37,12 +37,14 @@ namespace basecross {
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
-		// ƒfƒbƒhƒ][ƒ“
+		float time = 0;
+
+		// ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³
 		constexpr float dead = 0.3f;
-		// ƒXƒe[ƒW‚ÌÅ‘å”
+		// ã‚¹ãƒ†ãƒ¼ã‚¸ã®æœ€å¤§æ•°
 		constexpr int stageMaxNum = 2;
 		constexpr int stageMinNum = 0;
-		// ƒRƒ“ƒgƒ[ƒ‰[‚Ì¶ƒXƒeƒBƒbƒN‚Ì”»’è
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®åˆ¤å®š
 		Vec2 ret;
 		if (cntl[0].bConnected)
 		{
@@ -50,56 +52,56 @@ namespace basecross {
 			ret.y = cntl[0].fThumbLY;
 		}
 
-		// ¶‰E‚¢‚¸‚ê‚©‚Ìƒfƒbƒhƒ][ƒ“•œ‹A‚Åƒtƒ‰ƒOƒNƒŠƒA
+		// å·¦å³ã„ãšã‚Œã‹ã®ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³å¾©å¸°ã§ãƒ•ãƒ©ã‚°ã‚¯ãƒªã‚¢
 		if (fabs(ret.x) < dead)
 			m_selectOnceFlag = false;
 
-		// ‰E‚É“|‚·‚ÆƒXƒe[ƒW‚ªØ‚è‘Ö‚í‚é(+‘¤)
+		// å³ã«å€’ã™ã¨ã‚¹ãƒ†ãƒ¼ã‚¸ãŒåˆ‡ã‚Šæ›¿ã‚ã‚‹(+å´)
 		if (ret.x >= dead && !m_selectOnceFlag && m_selectStageNum < stageMaxNum && !m_stageFlag)
 		{
 
-			// ‘O‚ÌƒXƒe[ƒW”Ô†‚ÌF‚ğ–ß‚·
+			// å‰ã®ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã®è‰²ã‚’æˆ»ã™
 			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
-			// ƒXƒe[ƒW”Ô†‚ğXV
+			// ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã‚’æ›´æ–°
 			m_selectStageNum += 1;
-			// ƒXƒe[ƒW”Ô†‚ÌF‚ğ•ÏX
+			// ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã®è‰²ã‚’å¤‰æ›´
 			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
 
 			m_selectOnceFlag = true;
 		}
-		// ¶‚É“|‚·‚ÆƒXƒe[ƒW‚ªØ‚è‘Ö‚í‚é(-‘¤)
+		// å·¦ã«å€’ã™ã¨ã‚¹ãƒ†ãƒ¼ã‚¸ãŒåˆ‡ã‚Šæ›¿ã‚ã‚‹(-å´)
 		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum && !m_stageFlag)
 		{
-			// ‘O‚ÌƒXƒe[ƒW”Ô†‚ÌF‚ğ–ß‚·
+			// å‰ã®ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã®è‰²ã‚’æˆ»ã™
 			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
-			// ƒXƒe[ƒW”Ô†‚ğXV
+			// ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã‚’æ›´æ–°
 			m_selectStageNum -= 1;
-			// ƒXƒe[ƒW”Ô†‚ÌF‚ğ•ÏX
+			// ã‚¹ãƒ†ãƒ¼ã‚¸ç•ªå·ã®è‰²ã‚’å¤‰æ›´
 			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
 
 			m_selectOnceFlag = true;
 		}
 
-		// Aƒ{ƒ^ƒ“‚©ƒGƒ“ƒ^[ƒL[‚Å‘I‘ğ
+		// Aãƒœã‚¿ãƒ³ã‹ã‚¨ãƒ³ã‚¿ãƒ¼ã‚­ãƒ¼ã§é¸æŠ
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
 		{
 			m_stageFlag = true;
 			m_selectOnceFlag = true;
 
-			// ‘I‘ğ‚µ‚½ƒXƒe[ƒW‚ÌÊ^‚ğ•\¦(‰¼’u‚«)
+			// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ã®å†™çœŸã‚’è¡¨ç¤º(ä»®ç½®ã)
 			for (int i = 0; i < 2; i++)
 			{
 				m_stagePhoto[i]->OnClear(false);
 			}
 
-			//// ‘I‘ğ‚µ‚½ƒXƒe[ƒW‚ÌÊ^‚ğ•\¦(–{”Ô‚Ì•û)
+			//// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ã®å†™çœŸã‚’è¡¨ç¤º(æœ¬ç•ªã®æ–¹)
 			//for (int i = m_selectStageNum * 2; i < m_selectStageNum + 2; i++)
 			//{
 				//m_stagePhoto[i]->OnClear(false);
 			//}
 			
 
-			// ‘¼‚ÌƒXƒe[ƒW‚ğ”ñ•\¦
+			// ä»–ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’éè¡¨ç¤º
 			for (int i = 0; i < 3; i++)
 			{
 				if (i != m_selectStageNum)
@@ -107,35 +109,35 @@ namespace basecross {
 					m_stageNum[i]->OnClear(true);
 				}
 			}
-			// ‘I‘ğ‚µ‚½ƒXƒe[ƒW‚ğˆÚ“®AŠg‘å
+			// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ã‚’ç§»å‹•ã€æ‹¡å¤§
 			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-250, 0, 0));
 			m_stageNum[m_selectStageNum]->SetScale(Vec3(2.0f, 2.0f, 1.0f));
 
 			m_time = 0;
 		}
 
-		// Bƒ{ƒ^ƒ“‚©ƒXƒy[ƒXƒL[‚Å–ß‚é
+		// Bãƒœã‚¿ãƒ³ã‹ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã§æˆ»ã‚‹
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag)
 		{
 			m_stageFlag = false;
 			m_selectOnceFlag = true;
-			// ‘I‘ğ‚µ‚½ƒXƒe[ƒWˆÈŠO‚ğ•\¦
+			// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ä»¥å¤–ã‚’è¡¨ç¤º
 			for (int i = 0; i < 3; i++)
 			{
 				m_stageNum[i]->OnClear(false);
 			}
 
-			// ‘I‘ğ‚µ‚½ƒXƒe[ƒW‚ğ–ß‚·
+			// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ã‚’æˆ»ã™
 			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-300 + (m_selectStageNum * 300), 100, 0));
 			m_stageNum[m_selectStageNum]->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 
-			// ‘I‘ğ‚µ‚½ƒXƒe[ƒW‚ÌÊ^‚ğ”ñ•\¦(‰¼’u‚«)
+			// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ã®å†™çœŸã‚’éè¡¨ç¤º(ä»®ç½®ã)
 			for (int i = 0; i < 2; i++)
 			{
 				m_stagePhoto[i]->OnClear(true);
 			}
 
-			//// ‘I‘ğ‚µ‚½ƒXƒe[ƒW‚ÌÊ^‚ğ”ñ•\¦(–{”Ô‚Ì•û)
+			//// é¸æŠã—ãŸã‚¹ãƒ†ãƒ¼ã‚¸ã®å†™çœŸã‚’éè¡¨ç¤º(æœ¬ç•ªã®æ–¹)
 			//for (int i = m_selectStageNum * 2; i < m_selectStageNum + 2; i++)
 			//{
 				//m_stagePhoto[i]->OnClear(false);
@@ -144,7 +146,7 @@ namespace basecross {
 
 		}
 
-		// ƒXƒe[ƒW‘I‘ğ’†‚ÉÊ^‚ğ“§–¾•s“§–¾‚ğ‚ä‚Á‚­‚èØ‚è‘Ö‚¦‚é
+		// ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠä¸­ã«å†™çœŸã‚’é€æ˜ä¸é€æ˜ã‚’ã‚†ã£ãã‚Šåˆ‡ã‚Šæ›¿ãˆã‚‹
 		if (m_stageFlag)
 		{
 			if (m_time < 1.2f && !m_timeFlag)
@@ -162,7 +164,7 @@ namespace basecross {
 
 			}
 
-			// ŒğŒİ‚É“§–¾“x‚ğ•Ï‚¦‚é
+			// äº¤äº’ã«é€æ˜åº¦ã‚’å¤‰ãˆã‚‹
 			float alphaA = m_time;          
 			float alphaB = 1.0f - m_time;
 
@@ -170,7 +172,7 @@ namespace basecross {
 			m_stagePhoto[(m_selectStageNum * 2) + 1]->SetColor(Col4(1, 1, 1, alphaB));
 		}
 
-		// Aƒ{ƒ^ƒ“‚©ƒGƒ“ƒ^[ƒL[‚ÅÅIŒˆ’è
+		// Aãƒœã‚¿ãƒ³ã‹ã‚¨ãƒ³ã‚¿ãƒ¼ã‚­ãƒ¼ã§æœ€çµ‚æ±ºå®š
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && !m_selectOnceFlag)
 		{
 			ptrMana->Stop(m_BGM);
@@ -251,10 +253,10 @@ namespace basecross {
 			photoPos
 		);
 
-		// ƒXƒe[ƒWÊ^‚Ì‘”
+		// ã‚¹ãƒ†ãƒ¼ã‚¸å†™çœŸã®ç·æ•°
 		constexpr int photoNum = 2;
 
-		// ‘S‚Ä‚ÌƒXƒe[ƒWÊ^‚ğ”ñ•\¦‚É‚·‚éAƒŒƒCƒ„[İ’è
+		// å…¨ã¦ã®ã‚¹ãƒ†ãƒ¼ã‚¸å†™çœŸã‚’éè¡¨ç¤ºã«ã™ã‚‹ã€ãƒ¬ã‚¤ãƒ¤ãƒ¼è¨­å®š
 		for (int i = 0; i < photoNum; i++)
 		{
 			m_stagePhoto[i]->OnClear(true);
