@@ -41,7 +41,7 @@ namespace basecross {
 
 	void Actor::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -285,9 +285,9 @@ namespace basecross {
 	//}
 
 	//ポーズのフラグをオンオフする
-	void Actor::SetPose(bool onOff)
+	void Actor::SetPause(bool onOff)
 	{
-		m_poseFlag = onOff;
+		m_PauseFlag = onOff;
 	}
 	
 	/// <summary>
@@ -341,7 +341,7 @@ namespace basecross {
 	void ProjectileBase::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
