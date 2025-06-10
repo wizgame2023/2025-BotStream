@@ -479,16 +479,16 @@ namespace basecross {
             {
                 for (int j = 0; j < blockNum; j++)
                 {
-                    AddGameObject<Block>(
-                        Vec3(
-                            // ブロック1個の大きさ - ステージの位置 + (ステージの大きさ / 2) + (ブロックの大きさ / 2)
-                            //                              ↑こうしないとステージの中央から生成されてしまう
-                            j * scaleXZ - (pos.x + (scl.x / 2) - shiftPos),
-                            pos.y + 0.05f,
-                            // 基本は変わらないけど、Wave1とBossの床が逆になっていたのでこうすると直りました
-                            i * scaleXZ + (pos.z - (scl.z / 2) + shiftPos)
-                        )
-                    );
+                    //AddGameObject<Block>(
+                    //    Vec3(
+                    //        // ブロック1個の大きさ - ステージの位置 + (ステージの大きさ / 2) + (ブロックの大きさ / 2)
+                    //        //                              ↑こうしないとステージの中央から生成されてしまう
+                    //        j * scaleXZ - (pos.x + (scl.x / 2) - shiftPos),
+                    //        pos.y + 0.05f,
+                    //        // 基本は変わらないけど、Wave1とBossの床が逆になっていたのでこうすると直りました
+                    //        i * scaleXZ + (pos.z - (scl.z / 2) + shiftPos)
+                    //    )
+                    //);
                 }
             }
         }
