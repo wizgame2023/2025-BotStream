@@ -317,6 +317,11 @@ namespace basecross {
         {
             AddGameObject<Floor>(v[0], v[1], v[2]);
 
+            // ブロック生成
+			//AddGameObject<Block>(v[0],v[2]);
+
+            /*
+            // 認識を間違えていたので没です。でも一応残す
             // ブロックの横と奥行きの静的定数
             constexpr float scaleXZ = Block::BLOCK_XZ_SCALE;
             // ブロック生成時のポジションのずれの修正
@@ -345,6 +350,7 @@ namespace basecross {
                     );
                 }
             }
+            */
         }
 
 
@@ -371,16 +377,55 @@ namespace basecross {
         ptrTransform->SetRotation(m_Rotation);
         ptrTransform->SetPosition(m_Position);
 
+        //Transformに対しての等差数列
+        Mat4x4 spanMat;
+        spanMat.affineTransformation(
+            Vec3(1.0f, 1.0f, 1.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        );
+
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"FloorTex");
+
+        ptrDraw->SetOwnShadowActive(true);
+
+        ptrDraw->SetMeshToTransformMatrix(spanMat);
+
+		for (int i = 0; i < (int)m_Scale.x / 10; i++)
+		{
+			for (int j = 0; j < (int)m_Scale.z / 10; j++)
+			{
+
+				// ブロックの位置を取得
+				float x = (j * 10.0f) - 5.0f;
+				float z = 5.0f - (i * 10.0f);
+				//インスタンス用の行列を作成する
+				Mat4x4 matrix;
+                matrix.affineTransformation(
+                    Vec3(10.0f, 0.1f, 10.0f),
+                    Vec3(),
+                    Vec3(),
+                    Vec3(x, 0.0f, z)
+                );
+                ptrDraw->AddMatrix(matrix);//ブロックを表示
+			}
+		}
+
+        GetStage()->SetCollisionPerformanceActive(true);
+        GetStage()->SetUpdatePerformanceActive(true);
+        GetStage()->SetDrawPerformanceActive(true);
 
         AddTag(L"Floor");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");
+
+        Shadowmap::SetLightHeight(70.0f);
 
         ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -391,6 +436,7 @@ namespace basecross {
     // 床の見た目変更用のブロックのクラス ---------------------------------------------------------
     // Floorクラスを参考に作りました
     Block::Block(const shared_ptr<Stage>& StagePtr,
+		const Vec3& Scale,
         const Vec3& Position
     ) :
         MyGameObject(StagePtr),
@@ -401,16 +447,27 @@ namespace basecross {
     void Block::OnCreate()
     {
         auto ptrTransform = GetComponent<Transform>();
-        // 大きさと回転は固定  必要に応じてメンバ変数増やします / 今のところはm_scaleXZが10で固定です
-        ptrTransform->SetScale(Vec3(BLOCK_XZ_SCALE, 3.0f, BLOCK_XZ_SCALE));
+        // 回転は固定  必要だったらメンバ変数増やします
+        ptrTransform->SetScale(m_scale);
         ptrTransform->SetRotation(Vec3(0.0f));
-        ptrTransform->SetPosition(m_pos);
+        ptrTransform->SetPosition(Vec3(m_pos.x, m_pos.y + 0.05f, m_pos.z));
+
+
+        //Transformに対しての等差数列
+        Mat4x4 spanMat;
+        spanMat.affineTransformation(
+            Vec3(1.0f, 1.0f, 1.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        );
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 
-        // 色変え
         ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
+
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
         // テクスチャ
         ptrDraw->SetTextureResource(L"FloorTex");
@@ -419,6 +476,28 @@ namespace basecross {
         //auto shadowPtr = AddComponent<Shadowmap>();
         //ptrDraw->SetOwnShadowActive(true);
 
+        float texOffset = 5.0f;
+
+   //     for (int i = 0; i < (int)m_scale.x / 10; i++)
+   //     {
+			//for (int j = 0; j < (int)m_scale.z / 10; j++)
+			//{
+   //             // ブロックの位置を取得
+   //             float x = (j * 10.0f) - texOffset;
+			//	float z = texOffset - (i * 10.0f);
+
+   //             //インスタンス用の行列を作成する
+   //             Mat4x4 matrix;
+
+   //             matrix.affineTransformation(
+   //                 Vec3(10.0f, 0.1f, 10.0f),
+   //                 Vec3(),
+   //                 Vec3(),
+   //                 Vec3(x, 0.0f, z)
+   //             );
+   //             ptrDraw->AddMatrix(matrix);//ブロックを表示
+   //         }
+   //     }
     }
     // END -----------------------------------------------------------------------------------------
 
