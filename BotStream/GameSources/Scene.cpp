@@ -153,6 +153,9 @@ namespace basecross{
 		//敵のHPバー
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
+		//雑魚敵のHPバー
+		strTexture = texPath + L"BossHPMater3.png";
+		app->RegisterTexture(L"ZakoHPMater", strTexture);
 
 		// Floor
 		strTexture = texPath + L"FloorTex2.png";
@@ -288,7 +291,8 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnergySphereEnd", efkPath + L"EnergySphereEnd.efk");
 		EffectManager::Instance().RegisterEffect(L"EnemyWave", efkPath + L"wave.efkefc");
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
-		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"dslashHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"slashHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"GunHitEfk", efkPath + L"GunHit.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");

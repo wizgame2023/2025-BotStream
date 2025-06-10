@@ -221,7 +221,7 @@ namespace basecross {
 			ret = EfkPlaying(L"Stun", angle, Vec3(0, 1, 0), Vec3(4), Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_ArmorBreak:
-			ret = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			ret = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(2.5f, 2.5f, 2.5f));
 			break;
 		case EnemyEffect_Beam:
 			ret = EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));

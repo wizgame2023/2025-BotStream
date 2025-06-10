@@ -471,7 +471,7 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		auto mag = 1.42f;//倍率
+		auto mag = 1.66f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.9f) * mag);
 		////移動処理
 		//m_player->PlayerMove(PlayerState_Attack2);
@@ -596,7 +596,7 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		auto mag = 1.25f;//倍率
+		auto mag = 1.42f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.8f)*mag);
 		//移動処理
 		//m_player->PlayerMove(PlayerState_Attack3);
@@ -670,25 +670,27 @@ namespace basecross {
 			m_attackCollisionFlag = 2;
 		}
 	}
+	//次の攻撃発生フラグ処理
+	void PlayerAttack3State::NextAttackFlag()
+	{
+		//攻撃ステートに変更する
+		if (AttackButton)
+		{
+			m_nestAttackFlag = true;
+		}
+	}
 	//次のステートに行く処理
 	void PlayerAttack3State::NextState()
 	{
-		//攻撃の時間を越えたら別のステートに移動する
-		if (m_timeOfAttack >= m_timeMaxOfAttackTotal)
+		//次の攻撃に遷移する	//一定時間後からフラグがオンになってたら次の攻撃が撃てるようになる
+		if (m_nestAttackFlag && m_timeOfAttack > m_graceTimeOfNextAttack)
 		{
-			auto stage = m_player->GetStage();
-			m_timeOfAttack = 0.0f;//リセット
-
-			//ステート遷移
-			if (m_nestAttackFlag)
-			{
-				m_player->ChangeState(L"AttackEx");//次の攻撃ステートに移動
-				m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
-			}
-			else
-			{
-				m_player->ChangeState(L"PlayerWalk");
-			}
+			m_player->ChangeState(L"AttackEx");////次の攻撃ステートに移動
+			m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
+		}
+		else if (m_timeOfAttack >= m_timeMaxOfAttackTotal)//攻撃時間を過ぎたら元のステートに戻る
+		{
+			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
 
@@ -698,6 +700,8 @@ namespace basecross {
 	{
 		PlayerAttackBaseState::Enter();
 		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
+
+		
 
 		//AttackExアニメーションに変更
 		m_player->ChangeAnim(L"AttackEx");
@@ -710,7 +714,7 @@ namespace basecross {
 		m_timeOfAttack += deltaTime;
 
 		//アニメーションの更新
-		auto mag = 1.25f;//倍率
+		auto mag = 1.66f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 2.2f) * mag);
 
 		AttackCollisionOccurs();
