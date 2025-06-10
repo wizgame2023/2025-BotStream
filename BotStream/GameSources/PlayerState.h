@@ -226,7 +226,7 @@ namespace basecross {
 		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
 		int m_attackCollisionFlag = 0;
 		//次の攻撃ボタン受付時間
-		float m_graceTimeOfNextAttack = 0.3f*0.6f;
+		float m_graceTimeOfNextAttack = 0.85f*0.6f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 		//アニメーションの経過時間
@@ -274,7 +274,7 @@ namespace basecross {
 		//攻撃判定出現フラグ(２段目は攻撃のフラグを2つほしいのでint型で再現)
 		int m_attackCollisionFlag = 0;
 		//次の攻撃ボタン受付時間
-		float m_graceTimeOfNextAttack = 0.9f*0.7f;
+		float m_graceTimeOfNextAttack = 1.0f*0.7f;
 		//次の攻撃をするかのフラグ
 		float m_nestAttackFlag = false;
 		//アニメーションの経過時間
@@ -320,6 +320,9 @@ namespace basecross {
 		float m_timeOfStartAttackFirst = 0.9f*0.6f;
 		//アニメーションの経過時間
 		float m_timeOfAnimation = 0.0f;
+
+		//再生曲線時間
+		float m_curveTime = 0.0f;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 

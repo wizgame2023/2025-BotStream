@@ -95,7 +95,7 @@ namespace basecross{
 		float m_meleeRange;	//近接戦闘の範囲
 		bool m_meleeFlag;	//近接戦闘していいかのフラグ	
 
-		bool m_poseFlag;	//ポーズのフラグ
+		bool m_PauseFlag;	//ポーズのフラグ
 
 		
 		//右か左かそれとも真ん中か
@@ -199,11 +199,11 @@ namespace basecross{
 		//ポーズフラグのゲッタセッタ
 		bool GetPose()
 		{
-			return m_poseFlag;
+			return m_PauseFlag;
 		}
-		void SetPose(bool onOff)
+		void SetPause(bool onOff)
 		{
-			m_poseFlag = onOff;
+			m_PauseFlag = onOff;
 		}
 
 		//ターゲット対象を渡す関数

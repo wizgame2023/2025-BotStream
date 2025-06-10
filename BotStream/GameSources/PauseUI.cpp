@@ -418,15 +418,15 @@ namespace basecross {
 
 				if (actor)
 				{
-					actor->SetPose(true);
+					actor->SetPause(true);
 				}
 				if (cameraManager)
 				{
-					cameraManager->SetPose(true);
+					cameraManager->SetPause(true);
 				}
 				if (parts)
 				{
-					parts->SetPose(true);
+					parts->SetPause(true);
 				}
 			}
 		}
@@ -442,15 +442,15 @@ namespace basecross {
 
 				if (actor)
 				{
-					actor->SetPose(false);
+					actor->SetPause(false);
 				}
 				if (cameraManager)
 				{
-					cameraManager->SetPose(false);
+					cameraManager->SetPause(false);
 				}
 				if (parts)
 				{
-					parts->SetPose(false);
+					parts->SetPause(false);
 				}
 			}
 		}
