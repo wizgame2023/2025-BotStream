@@ -85,7 +85,7 @@ namespace basecross {
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
 		//ボーズ状態かどうか
-		bool m_poseFlag = false;
+		bool m_PauseFlag = false;
 
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
@@ -165,7 +165,7 @@ namespace basecross {
 		virtual Effekseer::Handle AddEffect(int addEffect);
 
 		//ポーズのフラグをオンオフする関数
-		void SetPose(bool onOff);
+		void SetPause(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {

@@ -138,17 +138,69 @@ namespace basecross
 		m_manager->SetLocation(EfkHandle, Vector3D(Position.x, Position.y, Position.z));
 	}
 
-	void EffectManager::SetQuaternion(const Handle& EfkHandle, const Quat Quaternion)
+	void EffectManager::SetRotationFromEulerAngles(const Handle& EfkHandle, const Vec3 EulerAngles)
 	{
-		m_manager->SetRotation(EfkHandle, Vector3D(Quaternion.x, Quaternion.y, Quaternion.z), Quaternion.w);
+		float pitch = XMConvertToRadians(EulerAngles.x);
+		float yaw = XMConvertToRadians(EulerAngles.y);
+		float roll = XMConvertToRadians(EulerAngles.z);
+
+		XMVECTOR quat = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+
+		// クォータニオンの成分を抽出
+		float x = XMVectorGetX(quat);
+		float y = XMVectorGetY(quat);
+		float z = XMVectorGetZ(quat);
+		float w = XMVectorGetW(quat);
+
+		// 軸、角度変換
+		float angle = 2.0f * acosf(w);
+		float s = sqrtf(1.0f - w * w);
+		Vec3 axis;
+
+		if (s < 0.001f)
+		{
+			// 角度が非常に小さい場合、回転軸は任意に設定。ここではX軸を使う
+			axis = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+		else
+		{
+			axis = XMVectorSet(x / s, y / s, z / s, 0.0f);
+		}
+
+		m_manager->SetRotation(EfkHandle, Vector3D(axis.x, axis.y, axis.z), angle);
 	}
 
-	void EffectManager::SetRotation(const Handle& EfkHandle, Vec3 Rotation, const float Rad)
+	void EffectManager::SetRotationFromQuaternion(const Handle& EfkHandle, const Quat Quaternion)
 	{
-		Rotation.normalize();
-		m_manager->SetRotation(EfkHandle, Vector3D(Rotation.x, Rotation.y, Rotation.z), Rad);
+		// クォータニオンの成分を抽出
+		float x = XMVectorGetX(Quaternion);
+		float y = XMVectorGetY(Quaternion);
+		float z = XMVectorGetZ(Quaternion);
+		float w = XMVectorGetW(Quaternion);
+
+		// 軸、角度変換
+		float angle = 2.0f * acosf(w);
+		float s = sqrtf(1.0f - w * w);
+		Vec3 axis;
+
+		if (s < 0.001f)
+		{
+			// 角度が非常に小さい場合、回転軸は任意に設定。ここではX軸を使う
+			axis = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		}
+		else
+		{
+			axis = XMVectorSet(x / s, y / s, z / s, 0.0f);
+		}
+
+		m_manager->SetRotation(EfkHandle, Vector3D(axis.x, axis.y, axis.z), angle);
 	}
-	
+
+	void EffectManager::SetRotationFromAxisAngle(const Handle& EfkHandle, const Vec3 Axis, const float Angle)
+	{
+		m_manager->SetRotation(EfkHandle, Vector3D(Axis.x, Axis.y, Axis.z), Angle);
+	}
+
 	void EffectManager::SetScale(const Handle& EfkHandle, const Vec3 Scale)
 	{
 		m_manager->SetScale(EfkHandle, Scale.x, Scale.y, Scale.z);
@@ -173,8 +225,9 @@ namespace basecross
 		m_manager->SetSpeed(EfkHandle, Speed);
 	}
 
-	void EffectManager::SetRotate(const Handle EfkHandle, float x, float y, float z)
+	Handle EffectManager::GetEffNull()
 	{
-		m_manager->SetRotation(EfkHandle, x, y, z);
+		return Handle(-10000);
 	}
+
 }

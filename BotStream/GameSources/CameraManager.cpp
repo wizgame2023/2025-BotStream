@@ -23,7 +23,7 @@ namespace basecross {
 		m_speedYAxis(speedYAxis),
 		m_contrloerVec(Vec2(0.0f,0.0f)),
 		m_movePlayerAngleFlag(false),
-		m_poseFlag(false)
+		m_PauseFlag(false)
 	{
 
 	}
@@ -88,7 +88,7 @@ namespace basecross {
 			return;
 		}
 		//ポーズフラグがオンならカメラ移動はできない
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -970,7 +970,7 @@ namespace basecross {
 	//ポーズ処理のオンオフ
 	void CameraManager::PoseSwitch(bool onOff)
 	{
-		m_poseFlag = onOff;
+		m_PauseFlag = onOff;
 	}
 
 	//近遠どちらの攻撃をするかの処理
