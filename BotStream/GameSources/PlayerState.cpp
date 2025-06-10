@@ -364,7 +364,7 @@ namespace basecross {
 		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
 
 		//アニメーションが終わったら移動はしない(違和感が出てくるため)
-		if (m_timeOfAnimation <= 0.78f)
+		if (m_timeOfAnimation <= 0.63f)
 		{
 			//移動処理
 			m_player->PlayerMove(PlayerState_Attack1);
@@ -418,14 +418,10 @@ namespace basecross {
 	//次の攻撃発生フラグ
 	void PlayerAttack1State::NextAttackFlag()
 	{
-		//一定時間後にボタンを押すと次の攻撃が撃てるようになる
-		if (m_timeOfAttack > m_graceTimeOfNextAttack)
+		//攻撃ステートに変更する
+		if (AttackButton)
 		{
-			//攻撃ステートに変更する
-			if (AttackButton)
-			{
-				m_nestAttackFlag = true;
-			}
+			m_nestAttackFlag = true;
 		}
 	}
 	//次のステートに移行する処理
@@ -460,10 +456,7 @@ namespace basecross {
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
 
 		//Attack2アニメーションに変更
-		m_player->ChangeAnim(L"Attack2");
-	
-		//初期化
-		m_graceTimeOfNextAttack = 0.8f;//次の攻撃を開始できる時間
+		m_player->ChangeAnim(L"Attack2");	
 	}
 	void PlayerAttack2State::Update(float deltaTime)
 	{
@@ -473,13 +466,11 @@ namespace basecross {
 		//アニメーションの更新
 		auto mag = 1.66f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.9f) * mag);
-		////移動処理
-		//m_player->PlayerMove(PlayerState_Attack2);
 		//アニメーションの経過時間計測
 		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
 
 		//アニメーションが終わったら移動はしない(違和感が出てくるため)
-		if (m_timeOfAnimation <= 1.49f)
+		if (m_timeOfAnimation <= 0.99f)
 		{
 			//移動処理
 			m_player->PlayerMove(PlayerState_Attack2);
@@ -566,6 +557,8 @@ namespace basecross {
 		}
 
 		//次の攻撃に遷移する	//一定時間後からフラグがオンになってたら次の攻撃が撃てるようになる
+		auto test = m_graceTimeOfNextAttack;
+		auto test1 = m_timeOfStartAttackFirst;
 		if (m_nestAttackFlag && m_timeOfAttack > m_graceTimeOfNextAttack)
 		{
 			m_player->ChangeState(L"Attack3");////次の攻撃ステートに移動
@@ -586,9 +579,6 @@ namespace basecross {
 
 		//Attack3アニメーションに変更
 		m_player->ChangeAnim(L"Attack3");
-
-		//初期化
-		m_graceTimeOfNextAttack = 1.0f;
 	}
 	void PlayerAttack3State::Update(float deltaTime)
 	{
@@ -598,14 +588,12 @@ namespace basecross {
 		//アニメーションの更新
 		auto mag = 1.42f;//倍率
 		m_player->SetAddTimeAnimation((deltaTime * 1.8f)*mag);
-		//移動処理
-		//m_player->PlayerMove(PlayerState_Attack3);
 
 		//アニメーションの経過時間計測
 		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
 
 		//アニメーションが終わったら移動はしない(違和感が出てくるため)
-		if (m_timeOfAnimation <= 1.68f)
+		if (m_timeOfAnimation <= 1.24f)
 		{
 			//移動処理
 			m_player->PlayerMove(PlayerState_Attack3);
@@ -713,9 +701,31 @@ namespace basecross {
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
 
+		//回避処理
+		float timeSpeed = 80.0f;
+		m_curveTime += XMConvertToRadians(deltaTime * timeSpeed);
+
+		//二次関数的な動きで回避行動をする
+		//今は向いている方向に前方回避をする
+		//float dodge = 8.0f * 2.5f;
+		//totalVec.x = cos(m_angle) * dodge * abs(cos(m_dodgeTime));
+		//totalVec.z = sin(m_angle) * dodge * abs(cos(m_dodgeTime));
+		 
+		 
+		auto mag = 1.66f;
+		//アニメーションの経過時間計測
+		m_timeOfAnimation += ((deltaTime * 1.5f) * mag) * abs(cos(m_curveTime));
+
+		////アニメーションが終わったら移動はしない(違和感が出てくるため)
+		////if (m_timeOfAnimation <= 1.68f)
+		////{
+		////	//移動処理
+		////	m_player->PlayerMove(PlayerState_Attack3);
+		////}
+
 		//アニメーションの更新
-		auto mag = 1.66f;//倍率
-		m_player->SetAddTimeAnimation((deltaTime * 2.2f) * mag);
+		//auto mag = 1.66f;//倍率
+		m_player->SetAddTimeAnimation(((deltaTime * 2.2f) * mag) * cos(m_curveTime));
 
 		AttackCollisionOccurs();
 		//次のステートに行く処理
@@ -726,6 +736,9 @@ namespace basecross {
 		auto stage = m_player->GetStage();
 		m_timeOfAttack = 0.0f;//リセット
 		AttackCollisionFlag = true;//リセット
+		m_timeOfAnimation = 0.0f;
+		m_curveTime = 0.0f;
+
 	}
 	//攻撃の発生
 	void PlayerAttackExState::AttackCollisionOccurs()

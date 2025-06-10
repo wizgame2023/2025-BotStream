@@ -57,7 +57,7 @@ namespace basecross {
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 
-		void SetPose(bool onOff)
+		void SetPause(bool onOff)
 		{
 			m_pose = onOff;
 		}

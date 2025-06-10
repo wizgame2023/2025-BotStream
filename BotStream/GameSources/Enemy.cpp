@@ -66,7 +66,7 @@ namespace basecross {
 
 	void EnemyBase::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -276,7 +276,7 @@ namespace basecross {
 
 	void BossFirst::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -406,7 +406,7 @@ namespace basecross {
 	void BossFirstShockwave::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -621,7 +621,7 @@ namespace basecross {
 
 	void BossFirstSphere::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
