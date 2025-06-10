@@ -37,7 +37,7 @@ namespace basecross {
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
-		float time;
+		float time = 0;
 
 		// デッドゾーン
 		constexpr float dead = 0.3f;

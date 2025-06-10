@@ -406,33 +406,11 @@ namespace basecross {
 	//Actorを一時停止させたり動かしたりする処理(ポーズ状態)
 	void PauseSprite::MoveSwitchActor(bool OnOff)
 	{
-		//スイッチがオンだと止まる
-		if (OnOff)
-		{
-			auto objVec = GetStage()->GetGameObjectVec();
-			for (auto obj : objVec)
-			{
-				auto actor = dynamic_pointer_cast<Actor>(obj);
-				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
-				auto parts = dynamic_pointer_cast<Parts>(obj);
-
-				if (actor)
-				{
-					actor->SetPose(true);
-				}
-				if (cameraManager)
-				{
-					cameraManager->SetPose(true);
-				}
-				if (parts)
-				{
-					parts->SetPose(true);
-				}
-			}
+		auto stage = GetWaveStage(false);
+		if (stage) {
+			stage->SetActorPause(OnOff);
 		}
-		//オフなら動く
-		if (!OnOff)
-		{
+		else {
 			auto objVec = GetStage()->GetGameObjectVec();
 			for (auto obj : objVec)
 			{
@@ -442,17 +420,18 @@ namespace basecross {
 
 				if (actor)
 				{
-					actor->SetPose(false);
+					actor->SetPose(OnOff);
 				}
 				if (cameraManager)
 				{
-					cameraManager->SetPose(false);
+					cameraManager->SetPose(OnOff);
 				}
 				if (parts)
 				{
-					parts->SetPose(false);
+					parts->SetPose(OnOff);
 				}
 			}
 		}
 	}
+
 }
