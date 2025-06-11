@@ -8,6 +8,8 @@
 #include "Project.h"
 
 namespace basecross {
+	class WaveStageBase;
+
 	class MyGameObject : public GameObject
 	{
 	private:
@@ -43,6 +45,8 @@ namespace basecross {
 			Quat r2 = Quat(cos(rad / 2), -v.x * sin(rad / 2), -v.y * sin(rad / 2), -v.z * sin(rad / 2));
 			return q * r * r2;
 		}
+
+		shared_ptr<WaveStageBase> GetWaveStage(bool ExceptionActive) const;
 
 	protected:
 

@@ -57,7 +57,7 @@ namespace basecross {
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 
-		void SetPose(bool onOff)
+		void SetPause(bool onOff)
 		{
 			m_pose = onOff;
 		}
@@ -78,7 +78,7 @@ namespace basecross {
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 1;
 			m_partsStatus.addHP = 10;
-			m_partsStatus.addSpeed = 0.05f;
+			m_partsStatus.addSpeed = 0.1f;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 10;
 

@@ -70,6 +70,7 @@ namespace basecross {
     {
     public:
         Block(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
             const Vec3& Position);
         virtual ~Block() {}
 
@@ -79,6 +80,7 @@ namespace basecross {
 
     private:
         Vec3 m_pos;
+        Vec3 m_scale;
     };
     // END --------------------------------------------
 

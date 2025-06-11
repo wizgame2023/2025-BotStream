@@ -62,9 +62,8 @@ namespace basecross {
 			{
 				m_EquippedParts.push_back(addParts);
 			}
-			auto test = m_partspoach.size();
 			//そうでなければ、パーツを古いやつを捨てて新しいやつに変える
-			if (m_EquippedParts.size() >= 3)
+			else if (m_EquippedParts.size() >= 3)
 			{
 				//一番最初に取ったものを削除して新しく手に入れたものを入れる
 				m_EquippedParts.erase(m_EquippedParts.begin());

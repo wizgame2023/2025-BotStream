@@ -57,6 +57,7 @@ namespace basecross{
 
 		Vec3 m_pushPos = Vec3(5.0f, 10.0f, 5.0f);		//カメラがプレイヤーから離れる位置
 		Vec3 m_pushAtPos = Vec3(-5.0f, -5.0f, -5.0f);	//カメラの注視点のずらす位置
+		bool m_pushStart = true;
 
 
 
@@ -94,7 +95,7 @@ namespace basecross{
 		float m_meleeRange;	//近接戦闘の範囲
 		bool m_meleeFlag;	//近接戦闘していいかのフラグ	
 
-		bool m_poseFlag;	//ポーズのフラグ
+		bool m_PauseFlag;	//ポーズのフラグ
 
 		
 		//右か左かそれとも真ん中か
@@ -128,7 +129,7 @@ namespace basecross{
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 		//カメラのX軸回転の制限
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		void CameraPosUpdate(float maxPushPosY = 10.0f, float maxLength = 0.0f);//カメラのポジションの更新
+		void CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//カメラのポジションの更新
 		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
 
 		//カメラの操作をする処理
@@ -198,11 +199,11 @@ namespace basecross{
 		//ポーズフラグのゲッタセッタ
 		bool GetPose()
 		{
-			return m_poseFlag;
+			return m_PauseFlag;
 		}
-		void SetPose(bool onOff)
+		void SetPause(bool onOff)
 		{
-			m_poseFlag = onOff;
+			m_PauseFlag = onOff;
 		}
 
 		//ターゲット対象を渡す関数

@@ -91,6 +91,8 @@ namespace basecross {
 			// パーツ
 			AddGameObject<PartsTextChange>();
 
+			AddGameObject<Block>(Vec3(10.0f,3.0f,10.0f),Vec3(0.0f,1.4f,0.0f));
+
 			// ボスゲージ
 			//AddGameObject<BossGaugeUI>();
 
