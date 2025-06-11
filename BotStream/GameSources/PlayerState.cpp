@@ -7,7 +7,7 @@
 #include "Project.h"
 
 #define AttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
-#define DodgeButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_A
+#define DodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
 
 namespace basecross {
 	void PlayerStateBase::Enter()
@@ -17,9 +17,16 @@ namespace basecross {
 		//コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
+
+		//Playerがどの行動をしていいかのフラグを受け取る
+		m_attackFlag = m_player->GetAttackFlag();
+		m_dodgeFlag = m_player->GetDodgeFlag();
+		m_walkFlag = m_player->GetAttackFlag();
 	}
 	void PlayerStateBase::Update(float deltaTime)
 	{
+		m_deltaTime = deltaTime;
+
 		//コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
@@ -38,6 +45,30 @@ namespace basecross {
 		return m_targetDistance;
 	}
 
+	//移動についての処理
+	void PlayerStateBase::Walk(int state, bool onOff)
+	{
+		//フラグがオフなら移動しない
+		if (!onOff) return;
+
+		//移動処理
+		m_player->PlayerMove(state);
+	}
+
+	//回避についての処理
+	void PlayerStateBase::Dodge(bool onOff)
+	{
+		//フラグがオフなら移動しない
+		if (!onOff) return;
+
+		// 回避していいフラグ状態だったら回避ステートに変更
+		if (DodgeButton)
+		{
+			m_player->ChangeState(L"Dodge");
+		}
+	}
+
+
 	//Playerの歩くモーション
 	void PlayerWalkState::Enter()
 	{
@@ -54,10 +85,10 @@ namespace basecross {
 
 		PlayerStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
-		
+
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Walk);
-		m_player->PlayerMove(PlayerState_Walk);
+		Walk(PlayerState_Walk, m_walkFlag);
 
 		//歩きアニメーション再生(移動しているかによって変わる)
 		if (move.length() != 0 && m_meleeFlag)
@@ -73,42 +104,57 @@ namespace basecross {
 			m_player->ChangeAnim(L"Idle");
 		}
 
-		//歩きステートのアニメーション再生
+		// 歩きステートのアニメーション再生
 		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 	
-		//回避していいフラグ状態だったら回避ステートに変更
-		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
-		{
-			if (m_dodgeFlag)
-			{
-				m_player->ChangeState(L"Dodge");
-			}
-		}
+		// 回避していいフラグ状態だったら回避ステートに変更
+		Dodge(m_dodgeFlag);
+
+		//攻撃の処理
+		AttackTransition(m_attackFlag);
+	}
+	void PlayerWalkState::Exit()
+	{
+		
+	}
+
+	// 攻撃についての処理
+	void PlayerWalkState::AttackTransition(bool onOff)
+	{
+		// 攻撃していい判定でなければ通らない
+		if (!onOff) return;
+
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
-			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
+			// 押している時間を測る
+			m_timeOfPushAttackButton += m_deltaTime;
 		}
-		//攻撃するときの処理(刀か銃にするか)
+		// 攻撃するときの処理(刀か銃にするか)
 		if (AttackButton)
 		{
 			if (m_meleeFlag)
-			{//近距離
+			{
+				// 近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
-				{//長押しなら最終段の技が出る
+				{
+					// 長押しなら最終段の技が出る
 					m_player->ChangeState(L"AttackEx");
-					m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
+					// 攻撃エフェクトを出す
+					m_player->AddEffect(PlayerEffect_AttackEx);
 				}
 				if (m_timeOfPushAttackButton < 1.5f)
 				{
 					m_player->ChangeState(L"Attack1");
-					m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
+					// 攻撃エフェクトを出す
+					m_player->AddEffect(PlayerEffect_Attack1);
 				}
 			}
 			else if (!m_meleeFlag)
-			{//遠距離	
+			{
+				// 遠距離	
 				auto BulletNumNow = m_player->GetBulletNum();
-				//弾が残っていれば打てる
+				// 弾が残っていれば打てる
 				if (BulletNumNow > 0)
 				{
 					m_player->ChangeState(L"AttackLong");
@@ -119,10 +165,12 @@ namespace basecross {
 					m_SEManager->Start(L"CantShotSE", 0, 0.9f);
 				}
 			}
-			m_timeOfPushAttackButton = 0.0f;//押した時間リセット
+
+			// 押した時間リセット
+			m_timeOfPushAttackButton = 0.0f;
 		}
 
-		//もしSPゲージがMAXであれば必殺技が打てる
+		// もしSPゲージがMAXであれば必殺技が打てる
 		auto SPCurrent = m_player->GetSP();
 		auto SPMAX = m_player->GetMaxSP();
 		if (SPCurrent >= SPMAX)
@@ -133,10 +181,7 @@ namespace basecross {
 			}
 		}
 	}
-	void PlayerWalkState::Exit()
-	{
-		
-	}
+
 
 	//回避ステート
 	void PlayerDodgeState::Enter()
@@ -230,7 +275,7 @@ namespace basecross {
 
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dash);
-		m_player->PlayerMove(PlayerState_Dash);
+		Walk(PlayerState_Dash, m_walkFlag);
 
 		//ダッシュステートのアニメーション再生
 		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
@@ -258,35 +303,55 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 
+		//攻撃の処理
+		AttackTransition(m_attackFlag);
+	}
+
+	void PlayerDashState::Exit()
+	{
+		//ダッシュSEを止める
+		m_SEManager->Stop(m_SE);
+
+		EffectManager::Instance().StopEffect(m_effect);
+	}
+
+	// 攻撃についての処理
+	void PlayerDashState::AttackTransition(bool onOff)
+	{
+		// 攻撃していい判定でなければ通らない
+		if (!onOff) return;
+
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
-			m_timeOfPushAttackButton += deltaTime;//押している時間を測る
+			// 押している時間を測る
+			m_timeOfPushAttackButton += m_deltaTime;
 		}
+		// 攻撃するときの処理(刀か銃にするか)
 		if (AttackButton)
 		{
-			//攻撃する際状況によってステートの遷移が変わる
 			if (m_meleeFlag)
 			{
-				//近距離
+				// 近距離
 				if (m_timeOfPushAttackButton >= 1.5f)
 				{
-					//長押しなら最終段の技が出る
+					// 長押しなら最終段の技が出る
 					m_player->ChangeState(L"AttackEx");
-					m_player->AddEffect(PlayerEffect_AttackEx);//攻撃エフェクトを出す
+					// 攻撃エフェクトを出す
+					m_player->AddEffect(PlayerEffect_AttackEx);
 				}
-
 				if (m_timeOfPushAttackButton < 1.5f)
 				{
 					m_player->ChangeState(L"Attack1");
-					m_player->AddEffect(PlayerEffect_Attack1);//攻撃エフェクトを出す
+					// 攻撃エフェクトを出す
+					m_player->AddEffect(PlayerEffect_Attack1);
 				}
 			}
 			else if (!m_meleeFlag)
 			{
-				//遠距離	
+				// 遠距離	
 				auto BulletNumNow = m_player->GetBulletNum();
-				//弾が残っていれば打てる
+				// 弾が残っていれば打てる
 				if (BulletNumNow > 0)
 				{
 					m_player->ChangeState(L"AttackLong");
@@ -298,11 +363,11 @@ namespace basecross {
 				}
 			}
 
-			//押した時間リセット
+			// 押した時間リセット
 			m_timeOfPushAttackButton = 0.0f;
 		}
 
-		//もしSPゲージがMAXであれば必殺技が打てる
+		// もしSPゲージがMAXであれば必殺技が打てる
 		auto SPCurrent = m_player->GetSP();
 		auto SPMAX = m_player->GetMaxSP();
 		if (SPCurrent >= SPMAX)
@@ -314,13 +379,6 @@ namespace basecross {
 		}
 	}
 
-	void PlayerDashState::Exit()
-	{
-		//ダッシュSEを止める
-		m_SEManager->Stop(m_SE);
-
-		EffectManager::Instance().StopEffect(m_effect);
-	}
 
 
 	//攻撃ステートの元となるクラス	
@@ -332,8 +390,11 @@ namespace basecross {
 	}
 
 	//次の攻撃発生フラグ処理
-	void PlayerAttackBaseState::NextAttackFlag()
+	void PlayerAttackBaseState::NextAttackFlag(bool onOff)
 	{
+		//フラグがオフだと通らない
+		if (!onOff) return;
+
 		//攻撃ステートに変更する
 		if (AttackButton)
 		{
@@ -342,16 +403,26 @@ namespace basecross {
 	};
 	//////////////////////////////
 
-	//攻撃ステート(一番最初に出てくる攻撃)
+	//攻撃ステート(一番最初に出てくる攻撃)===============================================================>
 	void PlayerAttack1State::Enter()
 	{
 		PlayerAttackBaseState::Enter();
 
-		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
+		//SE再生
+		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);
 
 		//Attack1アニメーションに変更
 		m_player->ChangeAnim(L"Attack1");
+
+		//攻撃の瞬間にスティックを傾けていたらその方向に進む
+		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_player->MoveAngle(m_stickL);
+		}
+
 	}
+
 	void PlayerAttack1State::Update(float deltaTime)
 	{
 		// 入力デバイス取得
@@ -376,20 +447,21 @@ namespace basecross {
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
 		//一定時間後にボタンを押すと次の攻撃が撃てるようになる
-		NextAttackFlag();
+		NextAttackFlag(m_attackFlag);
 
 		//次のステートに移行する処理
 		NextState();		
 	}
+
 	void PlayerAttack1State::Exit()
 	{
 		auto stage = m_player->GetStage();
-		//stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
 		AttackCollisionFlag = true;//リセット
 		m_timeOfAnimation = 0.0f;
 	}
+
 	//攻撃コリジョンの発生処理
 	void PlayerAttack1State::AttackCollisionOccurs()
 	{
@@ -415,25 +487,15 @@ namespace basecross {
 			AttackCollisionFlag = false;
 		}
 	}
-	//次の攻撃発生フラグ
-	void PlayerAttack1State::NextAttackFlag()
-	{
-		//攻撃ステートに変更する
-		if (AttackButton)
-		{
-			m_nestAttackFlag = true;
-		}
-	}
+
 	//次のステートに移行する処理
 	void PlayerAttack1State::NextState()
 	{
 		//一定時間たったら回避行動ができる(一段目と二段目の攻撃のみ)
 		if (m_timeOfAttack > m_timeOfStartDodge)
 		{
-			if (DodgeButton)
-			{
-				m_player->ChangeState(L"Dodge");
-			}
+			// 回避していいフラグ状態だったら回避ステートに変更
+			Dodge(m_dodgeFlag);
 		}
 
 		//次の攻撃に遷移する	//一定時間後からフラグがオンになってたら次の攻撃が撃てるようになる
@@ -447,9 +509,9 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
+	//=========================================================================================================>
 
-
-	//攻撃ステート(２番目に出る攻撃)
+	//攻撃ステート(２番目に出る攻撃)===========================================================================>
 	void PlayerAttack2State::Enter()
 	{
 		PlayerAttackBaseState::Enter();
@@ -457,7 +519,15 @@ namespace basecross {
 
 		//Attack2アニメーションに変更
 		m_player->ChangeAnim(L"Attack2");	
+
+		//攻撃の瞬間にスティックを傾けていたらその方向に進む
+		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_player->MoveAngle(m_stickL);
+		}
 	}
+
 	void PlayerAttack2State::Update(float deltaTime)
 	{
 		// 入力デバイス取得
@@ -482,11 +552,12 @@ namespace basecross {
 
 		//攻撃判定の発生
 		AttackCollisionOccurs();
-		//ボタンを押したら次の攻撃ステートに遷移できる
-		NextAttackFlag();
+		//一定時間後にボタンを押すと次の攻撃が撃てるようになる
+		NextAttackFlag(m_attackFlag);
 		// 次のステートに移行する処理
 		NextState();
 	}
+
 	void PlayerAttack2State::Exit()
 	{
 		auto stage = m_player->GetStage();
@@ -495,6 +566,7 @@ namespace basecross {
 		m_attackCollisionFlag = 0;//リセット
 		m_timeOfAnimation = 0.0f;
 	}
+
 	//攻撃コリジョン発生
 	void PlayerAttack2State::AttackCollisionOccurs()
 	{
@@ -535,30 +607,17 @@ namespace basecross {
 			m_attackCollisionFlag = 2;
 		}
 	}
-	//次の攻撃発生フラグ処理
-	void PlayerAttack2State::NextAttackFlag()
-	{
-		//攻撃ステートに変更する
-		if (AttackButton)
-		{
-			m_nestAttackFlag = true;
-		}
-	}
+
 	//次のステートに移行する処理
 	void PlayerAttack2State::NextState()
 	{
 		//一定時間たったら回避行動ができる(一段目と二段目の攻撃のみ)
 		if (m_timeOfAttack > m_timeOfStartDodge)
 		{
-			if (DodgeButton)
-			{
-				m_player->ChangeState(L"Dodge");
-			}
+			Dodge(m_dodgeFlag);
 		}
 
 		//次の攻撃に遷移する	//一定時間後からフラグがオンになってたら次の攻撃が撃てるようになる
-		auto test = m_graceTimeOfNextAttack;
-		auto test1 = m_timeOfStartAttackFirst;
 		if (m_nestAttackFlag && m_timeOfAttack > m_graceTimeOfNextAttack)
 		{
 			m_player->ChangeState(L"Attack3");////次の攻撃ステートに移動
@@ -569,9 +628,10 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
+	//=========================================================================================================>
 
 
-	//攻撃ステート(3番目に出る攻撃)
+	//攻撃ステート(3番目に出る攻撃)============================================================================>
 	void PlayerAttack3State::Enter()
 	{
 		PlayerAttackBaseState::Enter();
@@ -579,7 +639,15 @@ namespace basecross {
 
 		//Attack3アニメーションに変更
 		m_player->ChangeAnim(L"Attack3");
+
+		//攻撃の瞬間にスティックを傾けていたらその方向に進む
+		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_player->MoveAngle(m_stickL);
+		}
 	}
+
 	void PlayerAttack3State::Update(float deltaTime)
 	{
 		// 入力デバイス取得
@@ -606,10 +674,11 @@ namespace basecross {
 		//攻撃発生の処理
 		AttackCollisionOccurs();
 		//攻撃ステートに変更する
-		NextAttackFlag();
+		NextAttackFlag(m_attackFlag);
 		//次のステートに行く処理
 		NextState();
 	}
+
 	void PlayerAttack3State::Exit()
 	{
 		auto stage = m_player->GetStage();
@@ -618,6 +687,7 @@ namespace basecross {
 		m_attackCollisionFlag = 0;//リセット
 		m_timeOfAnimation = 0.0f;
 	}
+
 	//攻撃コリジョン発生
 	void PlayerAttack3State::AttackCollisionOccurs()
 	{
@@ -658,15 +728,7 @@ namespace basecross {
 			m_attackCollisionFlag = 2;
 		}
 	}
-	//次の攻撃発生フラグ処理
-	void PlayerAttack3State::NextAttackFlag()
-	{
-		//攻撃ステートに変更する
-		if (AttackButton)
-		{
-			m_nestAttackFlag = true;
-		}
-	}
+
 	//次のステートに行く処理
 	void PlayerAttack3State::NextState()
 	{
@@ -681,21 +743,26 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
+	//=========================================================================================================>
 
 
-	//攻撃ステート(4番目に出る攻撃)
+	//攻撃ステート(4番目に出る攻撃)============================================================================>
 	void PlayerAttackExState::Enter()
 	{
 		PlayerAttackBaseState::Enter();
 		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
 
-		
-
 		//AttackExアニメーションに変更
 		m_player->ChangeAnim(L"AttackEx");
 
-
+		//攻撃の瞬間にスティックを傾けていたらその方向に進む
+		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
+		{
+			m_player->MoveAngle(m_stickL);
+		}
 	}
+
 	void PlayerAttackExState::Update(float deltaTime)
 	{
 		//攻撃の時間計測
@@ -731,6 +798,7 @@ namespace basecross {
 		//次のステートに行く処理
 		NextState();
 	}
+
 	void PlayerAttackExState::Exit()
 	{
 		auto stage = m_player->GetStage();
@@ -740,6 +808,7 @@ namespace basecross {
 		m_curveTime = 0.0f;
 
 	}
+
 	//攻撃の発生
 	void PlayerAttackExState::AttackCollisionOccurs()
 	{
@@ -763,6 +832,7 @@ namespace basecross {
 			AttackCollisionFlag = false;
 		}
 	}
+
 	//次のステートに行く処理
 	void PlayerAttackExState::NextState()
 	{
@@ -775,9 +845,9 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
+	//=========================================================================================================>
 
-
-	//必殺技
+	//必殺技===================================================================================================>
 	void PlayerAttackSpecialState::Enter()
 	{
 		PlayerStateBase::Enter();
@@ -826,10 +896,10 @@ namespace basecross {
 		stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 	}
-	
+	//=========================================================================================================>
 
 
-
+	//遠距離攻撃===============================================================================================>
 	void PlayerAttackLongState::Enter()
 	{
 		PlayerStateBase::Enter();
@@ -850,12 +920,11 @@ namespace basecross {
 
 		m_player->ChangeAnim(L"Shot_Gun");//撃つアニメーション変更
 	}
+
 	void PlayerAttackLongState::Update(float deltaTime)
 	{
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
-
-		
 
 		//攻撃の時間を越えたら別のステートに移動する
 		if (m_timeOfAttack >= m_timeMaxOfAttack)
@@ -865,17 +934,18 @@ namespace basecross {
 
 			m_player->ChangeState(L"PlayerWalk");
 		}
-
 	}
+
 	void PlayerAttackLongState::Exit()
 	{
 		auto stage = m_player->GetStage();
 		stage->RemoveGameObject<Cube>(m_AttackObj);//攻撃判定削除
 		m_timeOfAttack = 0.0f;//リセット
 	}
+	//=========================================================================================================>
 
 
-	//ダメージを受けた際のステート
+	//ダメージを受けた際のステート=============================================================================>
 	void PlayerHitState::Enter()
 	{
 		PlayerStateBase::Enter();
@@ -894,6 +964,7 @@ namespace basecross {
 			m_player->AddTag(L"invincible");//タメージを受けているときは無敵にする
 		}
 	}
+
 	void PlayerHitState::Update(float deltaTime)
 	{
 		//アニメーション更新
@@ -909,6 +980,7 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
+
 	void PlayerHitState::Exit()
 	{
 		if (m_player->FindTag(L"invincible")) 
@@ -917,6 +989,7 @@ namespace basecross {
 
 		}
 	}
+	//=========================================================================================================>
 
 }
 //end basecross

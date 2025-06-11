@@ -109,7 +109,7 @@ namespace basecross {
 		//CameraAngleXLimit();
 
 		//ステートマシン更新(ステート更新)
-		m_stateMashine->Update();
+		m_stateMashine->Update(m_delta);
 
 		////ロックオン処理
 		//auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");

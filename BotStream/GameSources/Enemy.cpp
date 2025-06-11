@@ -100,7 +100,7 @@ namespace basecross {
 		}
 
 		//‚È‚ñ‚â‚©‚ñ‚â
-		m_state->Update();
+		m_state->Update(_delta);
 
 	}
 

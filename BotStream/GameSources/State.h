@@ -36,7 +36,7 @@ namespace basecross {
 
 		bool ChangeState(wstring stateName);
 
-		void Update();
+		void Update(float deltatime);
 	};
 
 	/// <summary>
