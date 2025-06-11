@@ -46,15 +46,15 @@ namespace basecross {
 
             if (actor)
             {
-                actor->SetPose(isPause);
+                actor->SetPause(isPause);
             }
             if (cameraManager)
             {
-                cameraManager->SetPose(isPause);
+                cameraManager->SetPause(isPause);
             }
             if (parts)
             {
-                parts->SetPose(isPause);
+                parts->SetPause(isPause);
             }
         }
     }

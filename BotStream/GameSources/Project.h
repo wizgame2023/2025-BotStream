@@ -52,6 +52,7 @@
 //開発ステージ用
 #include "WaveStageBase.h"
 #include "TutorialStage.h"
+#include "StageFirst.h"
 
 #include "StageAbe.h"
 #include "StageSanpei.h"

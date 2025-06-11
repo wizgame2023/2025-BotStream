@@ -74,6 +74,8 @@ namespace basecross {
 		float m_angle;
 		//重力・摩擦処理の有無
 		bool m_doPhysics = true;
+		//スロー効果を無視するか否か
+		bool m_ignoreDeltaScale = false;
 
 		//喰らいモーション時間
 		float m_hitbacktime = 0;
