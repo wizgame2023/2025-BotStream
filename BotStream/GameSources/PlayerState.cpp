@@ -226,7 +226,7 @@ namespace basecross {
 		Quat playerQt = m_player->GetComponent<Transform>()->GetQuaternion();
 
 		EffectManager::Instance().SetPosition(m_effect, playerPos+Vec3(0.0f,1.9f,0.0f));
-		EffectManager::Instance().SetRotation(m_effect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+		EffectManager::Instance().SetRotationFromAxisAngle(m_effect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
 
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dash);

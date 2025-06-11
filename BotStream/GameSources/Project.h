@@ -50,11 +50,13 @@
 #include "PauseUI.h"
 
 //開発ステージ用
+#include "WaveStageBase.h"
+#include "TutorialStage.h"
+
 #include "StageAbe.h"
 #include "StageSanpei.h"
 #include "StageSato.h"
 #include "StageTuboi.h"
-#include "WaveStageBase.h"
 #include "WaveStage.h"
 #include "TitleStage.h"
 #include "StageSelect.h"
