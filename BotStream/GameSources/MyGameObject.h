@@ -8,6 +8,8 @@
 #include "Project.h"
 
 namespace basecross {
+	class WaveStageBase;
+
 	class MyGameObject : public GameObject
 	{
 	private:
@@ -44,7 +46,7 @@ namespace basecross {
 			return q * r * r2;
 		}
 
-		shared_ptr<Stage> GetWaveStage(bool ExceptionActive) const;
+		shared_ptr<WaveStageBase> GetWaveStage(bool ExceptionActive) const;
 
 	protected:
 

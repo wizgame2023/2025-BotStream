@@ -12,6 +12,7 @@ namespace basecross {
     class EnemyManager;
 
     class WaveStageBase : public Stage {
+    public:
         //ゲームの進行状況
         enum GamePhase {
             GPhase_None,
@@ -30,6 +31,8 @@ namespace basecross {
         virtual void CreateWall();
         virtual void CreateCeiling();
 
+        virtual void CreatePlayer(Vec3 pos, Vec3 rot, Vec3 scale);
+
         //各オブジェクトへの参照用
         // シーン
         weak_ptr<Scene> m_scene;
@@ -43,7 +46,9 @@ namespace basecross {
         //ゲームの進行状況
         GamePhase m_gamePhase = GPhase_None;
         //現在のwave
-        int m_waveCurrent = 0;
+        int m_waveCurrent = 1;
+        //最大wave数
+        int m_waveMax = 3;
         //BOSSの現在のHP
         int m_bossCurrentHP = 99999;
 
@@ -54,6 +59,8 @@ namespace basecross {
         bool m_BlackFlag = false;
         bool m_nextWaveFlag = false;
 
+        bool m_isPaused = false;
+
         shared_ptr<BossGaugeUI> m_bossGauge;
 
         //マネージャ、UIの類を生成する
@@ -63,6 +70,17 @@ namespace basecross {
         virtual void WaveInitialize();
 
         virtual void SetPlayerTransform(Vec3 pos, Vec3 rot);
+
+        void ShowFPS() {
+            ////デバック用
+            wstringstream wss(L"");
+            m_scene.lock() = App::GetApp()->GetScene<Scene>();
+            wss /* << L"デバッグ用文字列 "*/
+                << L"\n FPS: " << App::GetApp()->App::GetApp()->GetStepTimer().GetFramesPerSecond() << endl;
+
+            m_scene.lock()->SetDebugString(wss.str());
+
+        }
 
     public:
         //構築と破棄
@@ -75,7 +93,7 @@ namespace basecross {
         virtual void OnDestroy()override;
 
         bool GetNextWaveFlag();
-        void SetNextWaveFlag(int setNextWaveFlag);
+        void SetNextWaveFlag(bool setNextWaveFlag);
 
         GamePhase GetCurrentGamePhase() {
             return m_gamePhase;
@@ -83,6 +101,12 @@ namespace basecross {
 
         int GetNowWaveNum() {
             return m_waveCurrent;
+        }
+
+        void SetActorPause(bool isPause);
+
+        bool GetActorPause() {
+            return m_isPaused;
         }
     };
 
