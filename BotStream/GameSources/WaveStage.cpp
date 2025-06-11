@@ -387,8 +387,9 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
+        
 
-        auto ptrDraw = AddComponent<PNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         ptrDraw->SetTextureResource(L"FloorTex");
 
@@ -402,15 +403,15 @@ namespace basecross {
 			{
 
 				// ブロックの位置を取得
-				float x = (j * 10.0f) - 5.0f;
-				float z = 5.0f - (i * 10.0f);
+				float x = ((j * 10.0f) + 5.0) - (m_Scale.x / 2);
+				float z = (m_Scale.z / 2) - (5.0f + (i * 10.0f));
 				//インスタンス用の行列を作成する
 				Mat4x4 matrix;
                 matrix.affineTransformation(
                     Vec3(10.0f, 0.1f, 10.0f),
                     Vec3(),
                     Vec3(),
-                    Vec3(x, 0.0f, z)
+                    Vec3(x + m_Position.x, -1.5f, z + m_Position.z)
                 );
                 ptrDraw->AddMatrix(matrix);//ブロックを表示
 			}
