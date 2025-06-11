@@ -15,17 +15,26 @@ namespace basecross {
 	class PlayerStateBase :public StateBase
 	{
 	protected:
-		shared_ptr<Player> m_player;//プレイヤーの実体
-		CONTROLER_STATE m_controller;//コントローラー
-		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
-		shared_ptr<Actor> m_targetObj = nullptr;//ロックオン時の対象
-		float m_targetDistance;//ターゲット対象との距離
+		shared_ptr<Player> m_player;			 // プレイヤーの実体
+		CONTROLER_STATE m_controller;			 // コントローラー
+		float m_timeOfPushAttackButton = 0.0f;	 // 攻撃ボタンを押している時間
+		shared_ptr<Actor> m_targetObj = nullptr; // ロックオン時の対象
+		float m_targetDistance;					 // ターゲット対象との距離
 
-		bool m_dodgeFlag = true;//回避できるかのフラグ
-		bool m_meleeFlag = true;//接近戦できるかのフラグ
+		bool m_dodgeFlag = true;	// 回避できるかのフラグ
+		bool m_walkFlag = true;		// 移動できるかのフラグ
+		bool m_attackFlag = true;	// 攻撃できるかのフラグ
+		bool m_meleeFlag = true;	// 接近戦できるかのフラグ
 
-		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
-		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+		float m_deltaTime; // デルタタイム
+
+		shared_ptr<SoundItem> m_SE = nullptr;				// 再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;	// SEなどを再生するためのマネージャ
+
+		//移動についての処理
+		void Walk(int state, bool onOff);
+		//回避についての処理
+		void Dodge(bool onOff);
 
 	public:
 		PlayerStateBase(shared_ptr<GameObject>& obj) :
@@ -50,7 +59,9 @@ namespace basecross {
 	class PlayerWalkState :public PlayerStateBase
 	{
 	private:
-		//shared_ptr<Player> m_player;
+		//攻撃についての処理
+		void AttackTransition(bool onOff);
+
 	public:
 		PlayerWalkState(shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
@@ -98,7 +109,11 @@ namespace basecross {
 	{
 	private:
 		shared_ptr<Player> m_player;
+
 		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
+
+		//攻撃についての処理
+		void AttackTransition(bool onOff);
 	
 		Handle m_effect = NULL;
 	public:
@@ -154,7 +169,7 @@ namespace basecross {
 		//攻撃コリジョン発生
 		virtual void AttackCollisionOccurs() {};
 		//次の攻撃発生フラグ処理
-		virtual void NextAttackFlag();
+		virtual void NextAttackFlag(bool onOff);
 		//次のステート移動処理
 		virtual void NextState() {};
 	};
@@ -177,8 +192,6 @@ namespace basecross {
 		bool AttackCollisionFlag = true;
 		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 0.4f*0.7f;
-		//次の攻撃をするかのフラグ
-		float m_nestAttackFlag = false;
 
 		//アニメーションの経過時間
 		float m_timeOfAnimation = 0.0f;
@@ -201,8 +214,6 @@ namespace basecross {
 
 		//攻撃コリジョン発生
 		void AttackCollisionOccurs()override;
-		//次の攻撃発生フラグ処理
-		void NextAttackFlag()override;
 		//次のステート移動処理
 		void NextState()override;
 	};
@@ -227,8 +238,6 @@ namespace basecross {
 		int m_attackCollisionFlag = 0;
 		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 0.85f*0.6f;
-		//次の攻撃をするかのフラグ
-		float m_nestAttackFlag = false;
 		//アニメーションの経過時間
 		float m_timeOfAnimation = 0.0f;
 
@@ -250,8 +259,6 @@ namespace basecross {
 
 		//攻撃コリジョン発生
 		void AttackCollisionOccurs()override;
-		//次の攻撃発生フラグ処理
-		void NextAttackFlag()override;
 		//次のステート移動処理
 		void NextState()override;
 	};
@@ -275,8 +282,6 @@ namespace basecross {
 		int m_attackCollisionFlag = 0;
 		//次の攻撃ボタン受付時間
 		float m_graceTimeOfNextAttack = 1.0f*0.7f;
-		//次の攻撃をするかのフラグ
-		float m_nestAttackFlag = false;
 		//アニメーションの経過時間
 		float m_timeOfAnimation = 0.0f;
 
@@ -298,8 +303,6 @@ namespace basecross {
 
 		//攻撃コリジョン発生
 		void AttackCollisionOccurs()override;
-		//次の攻撃発生フラグ処理
-		void NextAttackFlag()override;
 		//次のステート移動処理
 		void NextState()override;
 	};
@@ -377,7 +380,7 @@ namespace basecross {
 	};
 
 
-	//攻撃ステート(最後に出る攻撃)
+	//攻撃ステート(銃攻撃)
 	class PlayerAttackLongState :public PlayerStateBase
 	{
 	private:
@@ -385,10 +388,6 @@ namespace basecross {
 		float m_timeMaxOfAttack = 0.3f;
 		//攻撃時間計測
 		float m_timeOfAttack;
-		////次の攻撃の猶予時間
-		//float m_graceTimeOfNextAttack = 0.9f;
-		////次の攻撃をするかのフラグ
-		//float m_nestAttackFlag = false;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 

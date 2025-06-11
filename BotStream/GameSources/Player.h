@@ -66,17 +66,13 @@ namespace basecross {
 		float m_dodgeCoolTime = 0.0f;
 		//回避のクールタイムの時間
 		float m_maxDodgeCoolTime = 0.3f;
+		//移動していいかのフラグ
+		bool m_walkFlag = true;
+		//攻撃していいかのフラグ
+		bool m_attackFlag = true;
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
-		////最大HP
-		//int m_HPMax = 100.0f;
-		////攻撃力
-		//int m_attack;
-		////防御力
-		//int m_defense;
-		////現在HP
-		//int m_HPCurrent;
 		//元々の最大HP
 		int m_originallyHPMax = 100;
 		//最大SP
@@ -197,6 +193,26 @@ namespace basecross {
 		void Player::SetStickL(Vec3 SetStickL)
 		{
 			m_stickL = SetStickL;
+		}
+
+		//攻撃フラグのゲッタセッタ
+		bool Player::GetAttackFlag()
+		{
+			return m_attackFlag;
+		}
+		void Player::SetAttackFlag(bool onOff)
+		{
+			m_attackFlag = onOff;
+		}
+
+		//移動フラグのゲッタセッタ
+		bool Player::GetwalkFlag()
+		{
+			return m_walkFlag;
+		}
+		void Player::SetWalkFlag(bool onOff)
+		{
+			m_walkFlag = onOff;
 		}
 
 		//アニメーションの追加時間のゲッタセッタ

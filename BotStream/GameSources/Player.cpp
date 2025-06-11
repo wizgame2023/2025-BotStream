@@ -76,7 +76,7 @@ namespace basecross {
 		shadowPtr->SetMeshToTransformMatrix(spanMat);
 
 		//コリジョン作成
-		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(true);
 
