@@ -420,15 +420,15 @@ namespace basecross {
 
 				if (actor)
 				{
-					actor->SetPose(OnOff);
+					actor->SetPause(OnOff);
 				}
 				if (cameraManager)
 				{
-					cameraManager->SetPose(OnOff);
+					cameraManager->SetPause(OnOff);
 				}
 				if (parts)
 				{
-					parts->SetPose(OnOff);
+					parts->SetPause(OnOff);
 				}
 			}
 		}
