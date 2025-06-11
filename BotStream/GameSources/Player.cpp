@@ -69,10 +69,16 @@ namespace basecross {
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
+		//影をつける（シャドウマップを描画する）
+		auto shadowPtr = AddComponent<Shadowmap>();
+		//影の形（メッシュ）を設定
+		shadowPtr->SetMultiMeshResource(L"PlayerModelTestVer2.0");
+		shadowPtr->SetMeshToTransformMatrix(spanMat);
+
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(false);
+		ptrColl->SetDrawActive(true);
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
@@ -107,7 +113,7 @@ namespace basecross {
 		auto testParts = m_equippedParts;
 
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -391,8 +397,8 @@ namespace basecross {
 			//二次関数的な動きで回避行動をする
 			//今は向いている方向に前方回避をする
 			float dodge = 8.0f * 2.5f;
-			totalVec.x = cos(m_angle) * (dodge * abs(cos(m_dodgeTime)));
-			totalVec.z = sin(m_angle) * (dodge * abs(cos(m_dodgeTime)));
+			totalVec.x = cos(m_angle) * dodge * abs(cos(m_dodgeTime));
+			totalVec.z = sin(m_angle) * dodge * abs(cos(m_dodgeTime));
 
 			//回避が終わったらダッシュ処理ができる
 			if (m_dodgeTime > XMConvertToRadians(20.0f))
@@ -717,7 +723,7 @@ namespace basecross {
 	void Bullet::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -865,16 +871,16 @@ namespace basecross {
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
-		//頭上にHPバーを表示させる
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
-		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		//頭上にHPバーを表示させる		
+		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 	}
 
 	void EnemyZako::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -1147,7 +1153,7 @@ namespace basecross {
 	void EnemyZakoFlying::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}

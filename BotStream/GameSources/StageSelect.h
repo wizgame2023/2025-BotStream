@@ -26,8 +26,12 @@ namespace basecross {
 
 		// 選んでいるステージ数
 		short int m_selectStageNum = 0;
+		 // ステージ選択フラグ
+		bool m_stageFlag = false;
+		// time切り替えフラグ
+		bool m_timeFlag = false;
 
-		bool m_stageFlag = false; // ステージ選択フラグ
+		float m_time = 0.0f;
 
 	public:
 		//構築と破棄

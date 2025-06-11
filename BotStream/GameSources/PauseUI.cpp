@@ -1,6 +1,6 @@
 /*!
 @file PauseUI.cpp
-@brief ƒ|[ƒY‰æ–Ê
+@brief ãƒãƒ¼ã‚ºç”»é¢
 */
 
 #pragma once
@@ -9,27 +9,27 @@
 
 namespace basecross {
 
-	//¶¬
+	//ç”Ÿæˆ
 	void PauseSprite::OnCreate()
 	{
 		auto stage = GetStage();
 		CreateSprite();
 	}
-	//XV
+	//æ›´æ–°
 	void PauseSprite::OnUpdate()
 	{
-		// ƒRƒ“ƒgƒ[ƒ‰[‚ÆƒL[ƒ{[ƒh‚Ì“ü—Íó•t
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã¨ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›å—ä»˜
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
-		// ƒRƒ“ƒgƒ[ƒ‰[‚Ì¶ƒXƒeƒBƒbƒN‚Ì”»’è
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å·¦ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®åˆ¤å®š
 		Vec2 ret;
 		if (cntl[0].bConnected)
 		{
 			ret.x = cntl[0].fThumbLX;
 			ret.y = cntl[0].fThumbLY;
 		}
-		// ƒRƒ“ƒgƒ[ƒ‰[‚ª‚Â‚È‚ª‚Á‚Ä‚¢‚È‚¢ê‡‚Í\šƒL[‘Î‰
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ãŒã¤ãªãŒã£ã¦ã„ãªã„å ´åˆã¯åå­—ã‚­ãƒ¼å¯¾å¿œ
 		else if (!cntl[0].bConnected)
 		{
 			if (keybord.m_bPushKeyTbl[VK_UP])
@@ -46,64 +46,64 @@ namespace basecross {
 
 		}
 
-		// ƒ|[ƒY’†‚¶‚á‚È‚¢‚ÉƒXƒ^[ƒgƒ{ƒ^ƒ“‚ğ‰Ÿ‚·‚Æƒ|[ƒY‚É‚È‚é
+		// ãƒãƒ¼ã‚ºä¸­ã˜ã‚ƒãªã„æ™‚ã«ã‚¹ã‚¿ãƒ¼ãƒˆãƒœã‚¿ãƒ³ã‚’æŠ¼ã™ã¨ãƒãƒ¼ã‚ºã«ãªã‚‹
 		if (!m_pauseFlag &&
 			(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
 				keybord.m_bPressedKeyTbl[VK_SPACE]))
 		{
 			m_pauseFlag = true;
 			m_pauseAudioFlag = false;
-			m_mainSelect = 0;     // ƒƒjƒ…[ƒCƒ“ƒfƒbƒNƒX 0 ‚©‚çƒXƒ^[ƒg
-			m_selectFlag = false; // ƒfƒbƒhƒ][ƒ“ƒtƒ‰ƒOƒNƒŠƒA
+			m_mainSelect = 0;     // ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ 0 ã‹ã‚‰ã‚¹ã‚¿ãƒ¼ãƒˆ
+			m_selectFlag = false; // ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³ãƒ•ãƒ©ã‚°ã‚¯ãƒªã‚¢
 		}
 
-		// --- ’è”’è‹` ------------------------------------
-		constexpr int MAIN_MENU_COUNT = 4; // ÄŠJ/ƒXƒe[ƒW‘I‘ğ/Audio/I—¹ ¨ 0`3
-		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE ¨ 0`1
-		const float dead = 0.6f;            // ƒfƒbƒhƒ][ƒ“
+		// --- å®šæ•°å®šç¾© ------------------------------------
+		constexpr int MAIN_MENU_COUNT = 4; // å†é–‹/ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠ/Audio/çµ‚äº† â†’ 0ï½3
+		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE â†’ 0ï½1
+		const float dead = 0.6f;            // ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³
 
-		// --- Pause OFF ¨ Š®‘S”ñ•\¦ ------------------
+		// --- Pause OFF â†’ å®Œå…¨éè¡¨ç¤º ------------------
 		if (!m_pauseFlag)
 		{
 			m_pauseBack->OnClear(true);
 			m_selectSprite->OnClear(true);
-			MoveSwitchActor(m_pauseFlag);//ƒAƒNƒ^[ƒNƒ‰ƒX‚ğˆê’â~‚©‚ç•œŠˆ‚³‚¹‚é
+			MoveSwitchActor(m_pauseFlag);//ã‚¢ã‚¯ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¹ã‚’ä¸€æ™‚åœæ­¢ã‹ã‚‰å¾©æ´»ã•ã›ã‚‹
 			for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
 				m_pauseTextSprite[i]->OnClear(true);
-			// i‚à‚µ m_BGMMater ‚È‚Ç•Ê”z—ñ‚ª‚ ‚ê‚Î‚±‚±‚Å‘S•” OnClear(true)j
+			// ï¼ˆã‚‚ã— m_BGMMater ãªã©åˆ¥é…åˆ—ãŒã‚ã‚Œã°ã“ã“ã§å…¨éƒ¨ OnClear(true)ï¼‰
 		}
-		// --- Pause ON ¨ •K—v—v‘f‚¾‚¯•\¦ -------------
+		// --- Pause ON â†’ å¿…è¦è¦ç´ ã ã‘è¡¨ç¤º -------------
 		else
 		{
-			// ”wŒi‚Æ‘I‘ğ‚µ‚Ä‚é‚Æ‚±‚ë‚Íí‚É•\¦
+			// èƒŒæ™¯ã¨é¸æŠã—ã¦ã‚‹ã¨ã“ã‚ã¯å¸¸ã«è¡¨ç¤º
 			m_pauseBack->OnClear(false);
 			m_selectSprite->OnClear(false);
-			MoveSwitchActor(m_pauseFlag);//ƒAƒNƒ^[ƒNƒ‰ƒX‚ğˆê’â~
+			MoveSwitchActor(m_pauseFlag);//ã‚¢ã‚¯ã‚¿ãƒ¼ã‚¯ãƒ©ã‚¹ã‚’ä¸€æ™‚åœæ­¢
 
-			// ƒƒCƒ“ƒƒjƒ…[ or ƒI[ƒfƒBƒIƒƒjƒ…[‚ÌØ‚è‘Ö‚¦
+			// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ or ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®åˆ‡ã‚Šæ›¿ãˆ
 			if (!m_pauseAudioFlag)
 			{
-				// ƒƒCƒ“4‚Â‚¾‚¯•\¦
+				// ãƒ¡ã‚¤ãƒ³4ã¤ã ã‘è¡¨ç¤º
 				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
 					m_pauseTextSprite[i]->OnClear(false);
-				// Audio€–Ú‚Í‰B‚·
+				// Audioé …ç›®ã¯éš ã™
 				AudioUIClear(true);
 			}
 			else
 			{
-				// ƒƒCƒ“€–Ú‚ğ‰B‚µ‚Ä
+				// ãƒ¡ã‚¤ãƒ³é …ç›®ã‚’éš ã—ã¦
 				//for (int i = 0; i < MAIN_MENU_COUNT; ++i)
 				//	m_pauseTextSprite[i]->OnClear(true);
-				// Audio€–Ú‚¾‚¯•\¦
+				// Audioé …ç›®ã ã‘è¡¨ç¤º
 				AudioUIClear(false);
 			}
 
-			// --- ƒXƒeƒBƒbƒNã‰º‚Åƒƒjƒ…[ˆÚ“® -----------  
+			// --- ã‚¹ãƒ†ã‚£ãƒƒã‚¯ä¸Šä¸‹ã§ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç§»å‹• -----------  
 			if (fabs(ret.y) < dead)
 				m_selectFlag = false;
 
 			if (!m_pauseAudioFlag) {
-				// ƒƒCƒ“ƒƒjƒ…[iÄŠJ/ƒZƒŒƒNƒg/Audioj‚Ìã‰ºˆÚ“®
+				// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ‹ãƒ¥ãƒ¼ï¼ˆå†é–‹/ã‚»ãƒ¬ã‚¯ãƒˆ/Audioï¼‰ã®ä¸Šä¸‹ç§»å‹•
 				int maxIndex = MAIN_MENU_COUNT - 2;
 				if (ret.y <= -dead && !m_selectFlag) {
 					m_mainSelect = clamp(m_mainSelect + 1, 0, maxIndex);
@@ -118,7 +118,7 @@ namespace basecross {
 
 			}
 			else {
-				// ƒI[ƒfƒBƒIİ’èiBGMÌSEj‚ÌØ‚è‘Ö‚¦‚É‚Í m_audioFlag ‚ğg‚¤
+				// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªè¨­å®šï¼ˆBGMâ‡”SEï¼‰ã®åˆ‡ã‚Šæ›¿ãˆã«ã¯ m_audioFlag ã‚’ä½¿ã†
 				if (ret.y <= -dead && !m_selectFlag) {
 					m_audioFlag = !m_audioFlag;
 					m_selectFlag = true;
@@ -131,17 +131,17 @@ namespace basecross {
 				}
 			}
 
-			// --- ‘I‘ğ•`‰æˆÊ’uXV --------------------
+			// --- é¸æŠæç”»ä½ç½®æ›´æ–° --------------------
 			Vec3 base = m_selectPos;
 			if (m_pauseAudioFlag)
-				base.x += 600;  // Audioƒƒjƒ…[‚¾‚¯‰EŠñ‚¹
+				base.x += 600;  // Audioãƒ¡ãƒ‹ãƒ¥ãƒ¼ã ã‘å³å¯„ã›
 
 			float offsetY;
 			if (!m_pauseAudioFlag) {
 				offsetY = m_mainSelect * 150;
 			}
 			else {
-				// ƒI[ƒfƒBƒIİ’è‚Íã‰º‚Pƒƒjƒ…[•ª‚¸‚ÂˆÚ“®
+				// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªè¨­å®šæ™‚ã¯ä¸Šä¸‹ï¼‘ãƒ¡ãƒ‹ãƒ¥ãƒ¼åˆ†ãšã¤ç§»å‹•
 				offsetY = (m_audioFlag ? 250.0f : 50.0f);
 			}
 
@@ -149,28 +149,28 @@ namespace basecross {
 				Vec3(base.x, base.y - offsetY, base.z)
 			);
 
-			// --- Audioİ’è‚ÌXVˆ— --------------------
+			// --- Audioè¨­å®šã®æ›´æ–°å‡¦ç† --------------------
 			if (m_pauseAudioFlag)
 			{
-				// ƒfƒbƒhƒ][ƒ“’è‹`
+				// ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³å®šç¾©
 				constexpr float dead = 0.65f;
 				constexpr float change = 50.0f;
 
-				// ¶‰E‚¢‚¸‚ê‚©‚Ìƒfƒbƒhƒ][ƒ“•œ‹A‚Åƒtƒ‰ƒOƒNƒŠƒA
+				// å·¦å³ã„ãšã‚Œã‹ã®ãƒ‡ãƒƒãƒ‰ã‚¾ãƒ¼ãƒ³å¾©å¸°ã§ãƒ•ãƒ©ã‚°ã‚¯ãƒªã‚¢
 				if (fabs(ret.x) < dead)
 					m_audioSelectFlag = false;
 
-				// ‚Ü‚¸Œ»İ‚Ì’²®‘ÎÛ‚ğ int idx ‚É
+				// ã¾ãšç¾åœ¨ã®èª¿æ•´å¯¾è±¡ã‚’ int idx ã«
 				int idx = m_audioFlag ? true : false;// false=BGM, true=SE
 
-				// ‰E‚É“|‚µ‚½‚ç +0.1f
+				// å³ã«å€’ã—ãŸã‚‰ +0.1f
 				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
 				{
 					auto selectPos = m_audioSelect[idx]->GetPosition();
 					m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
 					m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
 
-					// ƒ[ƒ^[F‚à idx ‚É‰‚¶‚ÄXV
+					// ãƒ¡ãƒ¼ã‚¿ãƒ¼è‰²ã‚‚ idx ã«å¿œã˜ã¦æ›´æ–°
 					if (idx == 0)
 						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor({ 0.59f,0.98f,0.59f,1 });
 					else
@@ -180,7 +180,7 @@ namespace basecross {
 
 					m_audioSelectFlag = true;
 				}
-				// ƒXƒeƒBƒbƒN‚ğ¶‚É“|‚µ‚½‚ç -0.1f
+				// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’å·¦ã«å€’ã—ãŸã‚‰ -0.1f
 				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.1f) 
 				{
 					auto selectPos = m_audioSelect[idx]->GetPosition();
@@ -198,7 +198,7 @@ namespace basecross {
 			}
 
 
-			// --- Œˆ’èiAƒ{ƒ^ƒ“ or Enterj ----------------
+			// --- æ±ºå®šï¼ˆAãƒœã‚¿ãƒ³ or Enterï¼‰ ----------------
 			if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A) ||
 				keybord.m_bPressedKeyTbl[VK_RETURN])
 			{
@@ -206,11 +206,11 @@ namespace basecross {
 				{
 					switch (m_mainSelect)
 					{
-					case 0: // ÄŠJ
+					case 0: // å†é–‹
 						m_pauseFlag = false;
 						break;
 
-					case 1: // ƒXƒe[ƒWƒZƒŒƒNƒg‚Ö‘JˆÚ
+					case 1: // ã‚¹ãƒ†ãƒ¼ã‚¸ã‚»ãƒ¬ã‚¯ãƒˆã¸é·ç§»
 						PostEvent(0.0f,
 							GetThis<ObjectInterface>(),
 							App::GetApp()->GetScene<Scene>(),
@@ -218,8 +218,8 @@ namespace basecross {
 						m_pauseFlag = false;
 						break;
 
-					case 2: // ƒI[ƒfƒBƒIİ’è‚Ö
-						// ƒƒCƒ“‚ğ‰B‚µ‚ÄAudio•\¦‚ÉˆÚs
+					case 2: // ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªè¨­å®šã¸
+						// ãƒ¡ã‚¤ãƒ³ã‚’éš ã—ã¦Audioè¡¨ç¤ºã«ç§»è¡Œ
 						m_pauseAudioFlag = true;
 						m_mainSelect = 0;
 						m_selectFlag = false;
@@ -232,7 +232,7 @@ namespace basecross {
 				}
 				else
 				{
-					// Audioƒƒjƒ…[’†‚ÌŒˆ’èˆ—
+					// Audioãƒ¡ãƒ‹ãƒ¥ãƒ¼ä¸­ã®æ±ºå®šå‡¦ç†
 					if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A) ||
 						keybord.m_bPressedKeyTbl[VK_RETURN])
 					{
@@ -250,9 +250,9 @@ namespace basecross {
 
 	void PauseSprite::AudioUIClear(bool clear)
 	{
-		// --- ’è”’è‹` ------------------------------------
-		constexpr int MAIN_MENU_COUNT = 4; // ÄŠJ/ƒXƒe[ƒW‘I‘ğ/Audio/I—¹ ¨ 0`3
-		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE ¨ 0`1
+		// --- å®šæ•°å®šç¾© ------------------------------------
+		constexpr int MAIN_MENU_COUNT = 4; // å†é–‹/ã‚¹ãƒ†ãƒ¼ã‚¸é¸æŠ/Audio/çµ‚äº† â†’ 0ï½3
+		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE â†’ 0ï½1
 		constexpr int AUDIO_MATER = 10;
 
 		for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
@@ -276,7 +276,7 @@ namespace basecross {
 		m_stage = GetStage();
 		constexpr float XY1 = 1450, textPosX = -400, textPosY = 300;
 		constexpr int layerTop = 20;
-		// pause”wŒi
+		// pauseèƒŒæ™¯
 		m_pauseBack = m_stage->AddGameObject<Sprite>(
 			L"PauseBack",
 			Vec2(XY1, XY1 * 0.5625f),
@@ -285,7 +285,7 @@ namespace basecross {
 		m_pauseBack->OnClear(true);
 		m_pauseBack->SetDrawLayer(layerTop);
 
-		// ƒ|[ƒY’†‚ÌƒeƒLƒXƒg(UVÀ•W‚Í‚±‚±‚Å‚Íİ’è‚µ‚Ä‚¢‚È‚¢‚Ì‚Å‰º‚É‘‚­)
+		// ãƒãƒ¼ã‚ºä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆ(UVåº§æ¨™ã¯ã“ã“ã§ã¯è¨­å®šã—ã¦ã„ãªã„ã®ã§ä¸‹ã«æ›¸ã)
 		for (int i = 0; i < 4; i++)
 		{
 			m_pauseTextSprite[i] = m_stage->AddGameObject<Sprite>(
@@ -298,7 +298,7 @@ namespace basecross {
 
 		}
 
-		// ƒI[ƒfƒBƒIİ’è‚ÌƒeƒLƒXƒg
+		// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªè¨­å®šã®ãƒ†ã‚­ã‚¹ãƒˆ
 		for (int i = 4; i < 6; i++)
 		{
 			m_pauseTextSprite[i] = m_stage->AddGameObject<Sprite>(
@@ -312,11 +312,11 @@ namespace basecross {
 
 		// pause
 		m_pauseTextSprite[0]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.5f));
-		// ÄŠJ
+		// å†é–‹
 		m_pauseTextSprite[1]->SetUVRect(Vec2(0.333f, 0.0f), Vec2(0.666f, 0.5f));
-		// ƒZƒŒƒNƒg
+		// ã‚»ãƒ¬ã‚¯ãƒˆ
 		m_pauseTextSprite[2]->SetUVRect(Vec2(0.666f, 0.0f), Vec2(1.0f, 0.5f));
-		// ƒI[ƒfƒBƒI
+		// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ª
 		m_pauseTextSprite[3]->SetUVRect(Vec2(0.0f, 0.5f), Vec2(0.333f, 1.0f));
 		// BGM
 		m_pauseTextSprite[4]->SetUVRect(Vec2(0.333f, 0.5f), Vec2(0.666f, 1.0f));
@@ -328,7 +328,7 @@ namespace basecross {
 		// SETextPos
 		auto SEPos = m_pauseTextSprite[5]->GetPosition();
 
-		// BGM‚Ìƒ[ƒ^[
+		// BGMã®ãƒ¡ãƒ¼ã‚¿ãƒ¼
 		for (int i = 0; i < 10; i++)
 		{
 			auto audioPos = /*i ? SEPos : */BGMPos;
@@ -344,7 +344,7 @@ namespace basecross {
 			m_BGMMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
 		}
 
-		// SE‚Ìƒ[ƒ^[
+		// SEã®ãƒ¡ãƒ¼ã‚¿ãƒ¼
 		for (int i = 0; i < 10; i++)
 		{
 			auto sePos = SEPos;
@@ -360,7 +360,7 @@ namespace basecross {
 			m_SEMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
 		}
 
-		// ƒXƒs[ƒJ[‚Ì}Œ`
+		// ã‚¹ãƒ”ãƒ¼ã‚«ãƒ¼ã®å›³å½¢
 		for (int i = 0; i < 2; i++)
 		{
 			auto audioPos = i ? SEPos : BGMPos;
@@ -374,7 +374,7 @@ namespace basecross {
 			m_speaker[i]->OnClear(true);
 		}
 
-		// ‘I‘ğ‚µ‚Ä‚é‚Æ‚±‚ë
+		// é¸æŠã—ã¦ã‚‹ã¨ã“ã‚
 		for (int i = 0; i < 2; i++)
 		{
 			auto bgmMax = m_BGMMater[9]->GetPosition();
@@ -393,46 +393,24 @@ namespace basecross {
 
 		Vec2 selectSize(400, 300);
 		m_selectPos = Vec3(textPosX, textPosY - 150, 0);
-		// ‘I‘ğ‚µ‚Ä‚é‚Æ‚±‚ë‚Ì‚â‚Â
+		// é¸æŠã—ã¦ã‚‹ã¨ã“ã‚ã®ã‚„ã¤
 		m_selectSprite = m_stage->AddGameObject<Sprite>(
-			L"Select",			//ƒeƒNƒXƒ`ƒƒ–¼
-			selectSize,      // ƒTƒCƒY
-			m_selectPos);        // •\¦ˆÊ’u
+			L"Select",			//ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+			selectSize,      // ã‚µã‚¤ã‚º
+			m_selectPos);        // è¡¨ç¤ºä½ç½®
 		m_selectSprite->OnClear(true);
 		m_selectSprite->SetDrawLayer(layerTop + 3);
 
 	}
 
-	//Actor‚ğˆê’â~‚³‚¹‚½‚è“®‚©‚µ‚½‚è‚·‚éˆ—(ƒ|[ƒYó‘Ô)
+	//Actorã‚’ä¸€æ™‚åœæ­¢ã•ã›ãŸã‚Šå‹•ã‹ã—ãŸã‚Šã™ã‚‹å‡¦ç†(ãƒãƒ¼ã‚ºçŠ¶æ…‹)
 	void PauseSprite::MoveSwitchActor(bool OnOff)
 	{
-		//ƒXƒCƒbƒ`‚ªƒIƒ“‚¾‚Æ~‚Ü‚é
-		if (OnOff)
-		{
-			auto objVec = GetStage()->GetGameObjectVec();
-			for (auto obj : objVec)
-			{
-				auto actor = dynamic_pointer_cast<Actor>(obj);
-				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
-				auto parts = dynamic_pointer_cast<Parts>(obj);
-
-				if (actor)
-				{
-					actor->SetPose(true);
-				}
-				if (cameraManager)
-				{
-					cameraManager->SetPose(true);
-				}
-				if (parts)
-				{
-					parts->SetPose(true);
-				}
-			}
+		auto stage = GetWaveStage(false);
+		if (stage) {
+			stage->SetActorPause(OnOff);
 		}
-		//ƒIƒt‚È‚ç“®‚­
-		if (!OnOff)
-		{
+		else {
 			auto objVec = GetStage()->GetGameObjectVec();
 			for (auto obj : objVec)
 			{
@@ -442,17 +420,18 @@ namespace basecross {
 
 				if (actor)
 				{
-					actor->SetPose(false);
+					actor->SetPose(OnOff);
 				}
 				if (cameraManager)
 				{
-					cameraManager->SetPose(false);
+					cameraManager->SetPose(OnOff);
 				}
 				if (parts)
 				{
-					parts->SetPose(false);
+					parts->SetPose(OnOff);
 				}
 			}
 		}
 	}
+
 }
