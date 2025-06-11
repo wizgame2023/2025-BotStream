@@ -456,7 +456,6 @@ namespace basecross {
 		{
 			AddGameObject<Wall2>(v[0], v[1], v[2]);
 		}
-
 	}
 
 	//°ì¬
