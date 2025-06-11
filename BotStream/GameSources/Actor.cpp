@@ -45,7 +45,16 @@ namespace basecross {
 		{
 			return;
 		}
+
+		//deltatimeの更新
 		_delta = App::GetApp()->GetElapsedTime();
+		//deltascaleを適用する
+		if (!m_ignoreDeltaScale) {
+			auto ws = GetWaveStage(false);
+			if (ws) {
+				_delta *= ws->GetDeltaScale();
+			}
+		}
 
 		//着地判定(無効化時間中ならそれを減算する)
 		if (m_LandDetect) {
