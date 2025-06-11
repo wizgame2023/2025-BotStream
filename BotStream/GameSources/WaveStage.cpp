@@ -111,7 +111,6 @@ namespace basecross {
         auto ptrSoundManager = AddGameObject<SoundManager>();
         SetSharedGameObject(L"SoundManager", ptrSoundManager);
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
-        GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
 
         auto colController = AddGameObject<StageCollisionController>();
         colController->SetCollisionSwhich(true);
