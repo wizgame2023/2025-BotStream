@@ -57,6 +57,13 @@ namespace basecross {
 			ptrDraw->AddAnimation(L"Melee_Scratch", 700, 22, false, 24.0f);
 		}
 
+		//影をつける（シャドウマップを描画する）
+		auto shadowPtr = AddComponent<Shadowmap>();
+		//影の形（メッシュ）を設定
+		shadowPtr->SetMeshResource(L"Enemy_A");
+		shadowPtr->SetMeshToTransformMatrix(spanMat);
+
+
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
@@ -245,6 +252,12 @@ namespace basecross {
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
+		//影をつける（シャドウマップを描画する）
+		auto shadowPtr = AddComponent<Shadowmap>();
+		//影の形（メッシュ）を設定
+		shadowPtr->SetMeshResource(L"Enemy_A");
+		shadowPtr->SetMeshToTransformMatrix(spanMat);
+
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 24.0f);
 		ptrDraw->AddAnimation(L"Walk", 0, 224, 24.0f);
@@ -319,6 +332,13 @@ namespace basecross {
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		//ptrDraw->SetTextureResource(L"Tx_Boss1");
+
+		//影をつける（シャドウマップを描画する）
+		auto shadowPtr = AddComponent<Shadowmap>();
+		//影の形（メッシュ）を設定
+		shadowPtr->SetMeshResource(L"Enemy_C");
+		shadowPtr->SetMeshToTransformMatrix(spanMat);
+
 
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 60.0f);
