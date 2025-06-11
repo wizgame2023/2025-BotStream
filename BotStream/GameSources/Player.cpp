@@ -233,7 +233,7 @@ namespace basecross {
 				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
-				auto ptrDraw = obstacles->GetComponent<PNTStaticDraw>();//Bc対応にしない
+				auto ptrDraw = obstacles->GetComponent<SmBaseDraw>();
 				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
 				Vec3 playerorObstaclesVec = hitPos - beforPos;
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
