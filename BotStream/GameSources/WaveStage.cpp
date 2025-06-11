@@ -509,16 +509,18 @@ namespace basecross {
     void WaveStage::CreateWall()
     {
         // 壁の厚さ
-		static constexpr float wallDepth = 8.0f; 
+		static constexpr float zakoWallDepth = 8.0f; 
+		// ボスの壁は厚くする
+        static constexpr float bossWallDepth = 15.0f; 
 
         // Sideの壁の大きさ
-        Vec3 wallSideSclWv1(wallDepth, 41.0f, 115.4f);
-        Vec3 wallSideSclWv2(wallDepth, 41.0f, 115.4f);
-        Vec3 wallSideSclBoss(wallDepth, 41.0f, 165.0f);
+        Vec3 wallSideSclWv1(zakoWallDepth, 41.0f, 115.4f);
+        Vec3 wallSideSclWv2(zakoWallDepth, 41.0f, 115.4f);
+        Vec3 wallSideSclBoss(bossWallDepth, 41.0f, 157.5f);
         // Frontの壁の大きさ
-        Vec3 wallFrontSclWv1(120.0f, 41.0f, wallDepth);
-        Vec3 wallFrontSclWv2(120.0f, 41.0f, wallDepth);
-        Vec3 wallFrontSclBoss(170.0f, 41.0f, wallDepth);
+        Vec3 wallFrontSclWv1(120.0f, 41.0f, zakoWallDepth);
+        Vec3 wallFrontSclWv2(120.0f, 41.0f, zakoWallDepth);
+        Vec3 wallFrontSclBoss(170.0f, 41.0f, bossWallDepth);
 
         vector < vector<Vec3> > vec =
         {
@@ -639,7 +641,7 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
-        //ptrColl->SetDrawActive(true);
+        ptrColl->SetDrawActive(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
@@ -688,7 +690,7 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
-        //ptrColl->SetDrawActive(true);
+        ptrColl->SetDrawActive(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
