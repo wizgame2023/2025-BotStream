@@ -173,7 +173,7 @@ namespace basecross {
 
 
 		//ステート処理
-		m_stateMachine->Update();
+		m_stateMachine->Update(_delta);
 
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 

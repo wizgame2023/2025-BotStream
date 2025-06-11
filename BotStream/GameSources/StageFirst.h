@@ -1,13 +1,14 @@
 /*!
-@file TutorialStage.h
+@file StageFirst.h
 @brief Derived WaveStage
 */
 
 #include "stdafx.h"
+#include "WaveStageBase.h"
 
 namespace basecross {
 
-    class TutorialStage : public WaveStageBase {
+    class StageFirst : public WaveStageBase {
     protected:
         //各オブジェクトへの参照用
         // シーン
@@ -21,11 +22,10 @@ namespace basecross {
 
         shared_ptr<BossGaugeUI> m_bossGauge;
 
-
     public:
         //構築と破棄
-        TutorialStage() : WaveStageBase() {}
-        virtual ~TutorialStage() {}
+        StageFirst() : WaveStageBase() {}
+        virtual ~StageFirst() {}
         //初期化
         virtual void OnCreate()override;
     };
