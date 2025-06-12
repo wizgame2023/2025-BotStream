@@ -40,6 +40,7 @@
 //Actor
 #include "Player.h"
 #include "Enemy.h"
+#include "EnemyZako.h"
 
 //Sprite
 #include "Sprite.h"
@@ -52,6 +53,7 @@
 //開発ステージ用
 #include "WaveStageBase.h"
 #include "TutorialStage.h"
+#include "StageFirst.h"
 
 #include "StageAbe.h"
 #include "StageSanpei.h"

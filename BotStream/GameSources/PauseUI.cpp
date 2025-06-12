@@ -65,36 +65,40 @@ namespace basecross {
 		// --- Pause OFF → 完全非表示 ------------------
 		if (!m_pauseFlag)
 		{
-			m_pauseBack->OnClear(true);
-			m_selectSprite->OnClear(true);
-			MoveSwitchActor(m_pauseFlag);//アクタークラスを一時停止から復活させる
-			for (int i = 0; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
-				m_pauseTextSprite[i]->OnClear(true);
-			// （もし m_BGMMater など別配列があればここで全部 OnClear(true)）
+			//全てのUIを非表示にする
+			AllUIClear(true);
+
+			//アクタークラスを一時停止から復活させる
+			MoveSwitchActor(m_pauseFlag);
 		}
 		// --- Pause ON → 必要要素だけ表示 -------------
 		else
 		{
-			// 背景と選択してるところは常に表示
-			m_pauseBack->OnClear(false);
+			// いったん全隠し
+			AllUIClear(true);    
+			// アクターを一時停止
+			MoveSwitchActor(true);
+
+			// 常に表示するもの
+			// 背景
+			m_pauseBack->OnClear(false);     
+			// カーソル
 			m_selectSprite->OnClear(false);
-			MoveSwitchActor(m_pauseFlag);//アクタークラスを一時停止
+
 
 			// メインメニュー or オーディオメニューの切り替え
 			if (!m_pauseAudioFlag)
 			{
 				// メイン4つだけ表示
-				for (int i = 0; i < MAIN_MENU_COUNT; ++i)
-					m_pauseTextSprite[i]->OnClear(false);
+				MainUIClear(false);
 				// Audio項目は隠す
 				AudioUIClear(true);
 			}
 			else
 			{
-				// メイン項目を隠して
-				//for (int i = 0; i < MAIN_MENU_COUNT; ++i)
-				//	m_pauseTextSprite[i]->OnClear(true);
-				// Audio項目だけ表示
+				// メイン項目表示
+				MainUIClear(false);
+				// Audio項目表示
 				AudioUIClear(false);
 			}
 
@@ -142,7 +146,7 @@ namespace basecross {
 			}
 			else {
 				// オーディオ設定時は上下１メニュー分ずつ移動
-				offsetY = (m_audioFlag ? 250.0f : 50.0f);
+				offsetY = (m_audioFlag ? 160.0f : -50.0f);
 			}
 
 			m_selectSprite->SetPosition(
@@ -206,11 +210,13 @@ namespace basecross {
 				{
 					switch (m_mainSelect)
 					{
-					case 0: // 再開
+					case 0: 
+						// 再開
 						m_pauseFlag = false;
 						break;
 
-					case 1: // ステージセレクトへ遷移
+					case 1: 
+						// ステージセレクトへ遷移
 						PostEvent(0.0f,
 							GetThis<ObjectInterface>(),
 							App::GetApp()->GetScene<Scene>(),
@@ -218,7 +224,8 @@ namespace basecross {
 						m_pauseFlag = false;
 						break;
 
-					case 2: // オーディオ設定へ
+					case 2: 
+						// オーディオ設定へ
 						// メインを隠してAudio表示に移行
 						m_pauseAudioFlag = true;
 						m_mainSelect = 0;
@@ -269,7 +276,24 @@ namespace basecross {
 		}
 	}
 
+	void PauseSprite::MainUIClear(bool clear)
+	{
+		constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
+		for (int i = 0; i < MAIN_MENU_COUNT; ++i)
+		{
+			m_pauseTextSprite[i]->OnClear(clear);
+		}
+		m_selectSprite->OnClear(clear);
+		m_pauseAButton->OnClear(clear);
+		m_buttonText->OnClear(clear);
+	}
 
+	void PauseSprite::AllUIClear(bool clear)
+	{
+		m_pauseBack->OnClear(clear);
+		MainUIClear(clear);
+		AudioUIClear(clear);
+	}
 
 	void PauseSprite::CreateSprite()
 	{
@@ -310,6 +334,24 @@ namespace basecross {
 			m_pauseTextSprite[i]->OnClear(true);
 		}
 
+		m_pauseAButton = m_stage->AddGameObject<Sprite>(
+			L"Buttons",
+			Vec2(50.0f, 50.0f),
+			Vec3(-500.0f, -300.0f, 0.0f)
+		);
+		m_pauseAButton->SetDrawLayer(layerTop + 1);
+		m_pauseAButton->OnClear(true);
+
+		auto AbuttonPos = m_pauseAButton->GetPosition();
+		m_buttonText = m_stage->AddGameObject<Sprite>(
+			L"Texts",
+			Vec2(150, 150 / 2),
+			Vec3(AbuttonPos.x + 80, AbuttonPos.y, AbuttonPos.z)
+		);
+		m_buttonText->SetDrawLayer(layerTop + 1);
+		m_buttonText->OnClear(true);
+		
+
 		// pause
 		m_pauseTextSprite[0]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.5f));
 		// 再開
@@ -322,6 +364,10 @@ namespace basecross {
 		m_pauseTextSprite[4]->SetUVRect(Vec2(0.333f, 0.5f), Vec2(0.666f, 1.0f));
 		// SE
 		m_pauseTextSprite[5]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 1.0f));
+		// Aボタン
+		m_pauseAButton->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+		// 決定
+		m_buttonText->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 0.333f));
 
 		// BGMTextPos
 		auto BGMPos = m_pauseTextSprite[4]->GetPosition();

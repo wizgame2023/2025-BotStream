@@ -100,7 +100,7 @@ namespace basecross {
 		}
 
 		//なんやかんや
-		m_state->Update();
+		m_state->Update(_delta);
 
 	}
 
@@ -263,6 +263,12 @@ namespace basecross {
 
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(false);//debug
+
+		//影をつける（シャドウマップを描画する）
+		auto shadowPtr = AddComponent<Shadowmap>();
+		//影の形（メッシュ）を設定
+		shadowPtr->SetMeshResource(L"Boss1");
+		shadowPtr->SetMeshToTransformMatrix(spanMat);
 
 		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
 		m_LandDetect->SetCollScale(1.5f);

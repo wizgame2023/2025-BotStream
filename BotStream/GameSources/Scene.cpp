@@ -64,7 +64,7 @@ namespace basecross{
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage")
 		{
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<WaveStageBase>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {

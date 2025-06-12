@@ -5,11 +5,11 @@
 
 #pragma once
 #include "stdafx.h"
+#include "EnemyManager.h"
 
 namespace basecross {
     class BossGaugeUI;
     class Player;
-    class EnemyManager;
 
     class WaveStageBase : public Stage {
     public:
@@ -51,6 +51,8 @@ namespace basecross {
         int m_waveMax = 3;
         //BOSSの現在のHP
         int m_bossCurrentHP = 99999;
+        //時間の早さ
+        float m_deltaScale = 1.0f;
 
         float TimeOfGameClear = 0.0f;//ゲームクリアするための時間計測
 
@@ -69,16 +71,17 @@ namespace basecross {
         //Waveが次に移ったときに呼び出される
         virtual void WaveInitialize();
 
+        //プレイヤーの位置を強制的に変える
         virtual void SetPlayerTransform(Vec3 pos, Vec3 rot);
 
         void ShowFPS() {
             ////デバック用
-            wstringstream wss(L"");
-            m_scene.lock() = App::GetApp()->GetScene<Scene>();
-            wss /* << L"デバッグ用文字列 "*/
-                << L"\n FPS: " << App::GetApp()->App::GetApp()->GetStepTimer().GetFramesPerSecond() << endl;
+            //wstringstream wss(L"");
+            //m_scene.lock() = App::GetApp()->GetScene<Scene>();
+            //wss /* << L"デバッグ用文字列 "*/
+            //    << L"\n FPS: " << App::GetApp()->App::GetApp()->GetStepTimer().GetFramesPerSecond() << endl;
 
-            m_scene.lock()->SetDebugString(wss.str());
+            //m_scene.lock()->SetDebugString(wss.str());
 
         }
 
@@ -101,6 +104,14 @@ namespace basecross {
 
         int GetNowWaveNum() {
             return m_waveCurrent;
+        }
+
+        float GetDeltaScale() {
+            return m_deltaScale;
+        }
+
+        void SetDeltaScale(float deltascale) {
+            m_deltaScale = deltascale;
         }
 
         void SetActorPause(bool isPause);
