@@ -92,7 +92,8 @@ namespace basecross {
         colController->SetCollisionSwhich(true);
 
         //ポーズ処理生成
-        AddGameObject<PauseSprite>();
+        auto pauseUI = AddGameObject<PauseSprite>();
+        SetSharedGameObject(L"PauseUI", pauseUI);
 
         // 戦闘用UI
         AddGameObject<PlayerWeaponUI>();
