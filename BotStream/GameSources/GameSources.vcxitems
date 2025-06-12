@@ -46,6 +46,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)Sprite.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageAbe.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageCollisionController.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageFirst.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSanpei.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSato.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSelect.h" />
@@ -90,6 +91,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Sprite.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageAbe.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageCollisionController.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageFirst.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSanpei.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSelect.cpp" />

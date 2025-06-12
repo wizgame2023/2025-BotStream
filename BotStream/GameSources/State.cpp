@@ -42,10 +42,9 @@ namespace basecross {
 	}
 
 	//これをオブジェクトのOnUpdateに置く
-	void StateMachineBase::Update() {
+	void StateMachineBase::Update(float deltatime) {
 		if (_currentState == nullptr) return;
-		auto _delta = App::GetApp()->GetElapsedTime();
-		_currentState->Update(_delta);
+		_currentState->Update(deltatime);
 		
 	}
 
