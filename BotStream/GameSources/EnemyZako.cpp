@@ -140,7 +140,8 @@ namespace basecross {
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		//位置更新
-		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
+		SpeedLimit(3.0f); //スピードリミット
+		UpdatePosition();
 	}
 
 	//HPバーの処理
