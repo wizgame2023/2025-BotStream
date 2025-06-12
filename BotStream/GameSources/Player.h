@@ -73,6 +73,13 @@ namespace basecross {
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
+
+		// ジャスト回避したかのフラグ
+		bool m_jastDodge = false;
+		// スローモーションをどれくらい継続するかの数値
+		float m_timeOfJastDodgeCount = 0.0f;
+		float m_timeOfJastDodgeMax = 1.0f;
+
 		//元々の最大HP
 		int m_originallyHPMax = 100;
 		//最大SP
@@ -140,6 +147,9 @@ namespace basecross {
 		void ReloadBullet(float ReloadTime);
 		//アニメーションの更新
 		void UpdateAnimation(float addTime);
+
+		//ジャスト回避時の処理
+		void JastDodge(float deltaScale,float slowTime);
 
 		//HPのゲッター
 		int GetHP();

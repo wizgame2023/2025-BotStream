@@ -27,6 +27,9 @@ namespace basecross {
 		m_HPMax = 100.0f;
 		m_HPCurrent = m_HPMax;
 
+		//Playerはスロー処理の影響にならない
+		m_ignoreDeltaScale = true;
+
 		//ActorのOnCreateを呼んでます
 		Actor::OnCreate();
 
@@ -171,6 +174,9 @@ namespace basecross {
 			}
 		}
 
+		//ジャスト回避処理
+		JastDodge(0.3f, 2.0f);
+
 
 		//ステート処理
 		m_stateMachine->Update(_delta);
@@ -211,7 +217,7 @@ namespace basecross {
 		//}
 
 		//デバック用文字列
-		//DebugLog();
+		DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
@@ -323,13 +329,42 @@ namespace basecross {
 		}
 	}
 
-	//アニメーションの更新
+	// アニメーションの更新
 	void Player::UpdateAnimation(float addTime)
 	{
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(addTime);
 	}
 
-	//プレイヤーの移動処理
+	// ジャスト回避処理(一定時間Player以外がスローになる)
+	void Player::JastDodge(float deltaScale, float slowTime)
+	{
+		// ジャスト回避できていなかったらこの処理はしない
+		if (!m_jastDodge) return;
+
+		//スロー処理
+		auto waveStage = GetWaveStage(true);
+		waveStage->SetDeltaScale(deltaScale);
+		m_timeOfJastDodgeMax = slowTime;
+
+		// ジャスト回避中は無敵状態
+		AddTag(L"invincible");
+
+		//時間経過でジャスト回避処理は終了する
+		m_timeOfJastDodgeCount += _delta;
+		if (m_timeOfJastDodgeCount >= m_timeOfJastDodgeMax)
+		{
+			waveStage->SetDeltaScale(1.0f);
+
+			// リセット
+			m_jastDodge = false;
+			m_timeOfJastDodgeCount = 0.0f;
+
+			// 無敵解除
+			RemoveTag(L"invincible");
+		}
+	}
+
+	// プレイヤーの移動処理
 	void Player::PlayerMove(int playerState)
 	{
 		Vec3 move = GetMoveVector(playerState);
@@ -584,6 +619,13 @@ namespace basecross {
 		if (!FindTag(L"invincible"))
 		{
 			DetectBeingAttacked(Other);
+		}
+		//攻撃をうまく回避出来たら一定時間スローモーションになる
+		if (FindTag(L"Dodge"))
+		{
+			m_jastDodge = true;
+			m_SEManager->Start(L"JastDodgeSE", 0, 2.0f);
+			m_timeOfJastDodgeCount = 0.0f;
 		}
 
 		////コリジョンが地面を接触してしまったら少し弾ませる
