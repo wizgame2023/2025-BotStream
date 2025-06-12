@@ -254,7 +254,7 @@ namespace basecross {
 			}
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
-
+		DebugLog();//デバックログ
 	}
 
 	//ジャンプ処理
@@ -337,7 +337,7 @@ namespace basecross {
 		Vec3 addmove = move * m_equippedParts.addSpeed;
 		m_accel = (move + addmove) * m_baseAccel;
 		m_velocity += (move + addmove);
-
+		//SetVelocity((move + addmove));
 		//プレイヤーの向き
 		if (move.length() != 0)
 		{
@@ -347,7 +347,6 @@ namespace basecross {
 
 			m_trans->SetRotation(m_rot);
 		}
-
 		SpeedLimit(move.length());
 	}
 
@@ -362,9 +361,6 @@ namespace basecross {
 
 		if (playerState == PlayerState_Walk || playerState == PlayerState_Dash)//徒歩、ダッシュ処理
 		{
-			//auto trans = GetTransform();
-			//auto camera = OnGetDrawCamera();
-
 			//スティックの向きと距離
 			float moveSize = m_stickL.length();
 
@@ -377,101 +373,103 @@ namespace basecross {
 			switch (playerState)
 			{
 			case PlayerState_Walk:
-				totalVec *= moveSize * 2.0f;
+				totalVec *= (moveSize * 2.0f);
 				break;
 			case PlayerState_Dash:
-				totalVec *= moveSize * 2.75f;
+				totalVec *= (moveSize * 2.75f);
 				break;
 			default:
 				break;
 			}
 
 		}
-		//回避処理
+		// 回避処理
 		if (playerState == PlayerState_Dodge)
 		{
-			//回避処理
-			float timeSpeed = 80.0f;
-			m_dodgeTime += XMConvertToRadians(_delta * timeSpeed);
+			// 回避処理
+			m_dodgeTime += _delta * 3.0f;
 
-			//二次関数的な動きで回避行動をする
-			//今は向いている方向に前方回避をする
-			float dodge = 8.0f * 2.5f;
-			totalVec.x = cos(m_angle) * dodge * abs(cos(m_dodgeTime));
-			totalVec.z = sin(m_angle) * dodge * abs(cos(m_dodgeTime));
+			// 回避のスピード曲線
+			auto cosCurve = (cos(m_dodgeTime) + 1.0f) / 2;
 
-			//回避が終わったらダッシュ処理ができる
-			if (m_dodgeTime > XMConvertToRadians(20.0f))
+			// 二次関数的な動きで回避行動をする
+			// 今は向いている方向に前方回避をする
+			float dodgeSpeed = 400.0f * 2.5f;
+			totalVec.x = (cos(m_angle) * (dodgeSpeed * (cosCurve)) * _delta);
+			totalVec.z = (sin(m_angle) * (dodgeSpeed * (cosCurve)) * _delta);
+
+			// 回避が終わったらダッシュ処理ができる
+			if (m_dodgeTime > XM_PI / 3)
 			{
-				//Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
+				// Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
 				if (m_controller.bConnected && m_controller.wButtons & XINPUT_GAMEPAD_A)
 				{
 					m_dashFlag = true;
 					m_dodgeTime = 0.0f;
-					m_endDodgeFlag = false;//回避処理終了
+					m_endDodgeFlag = false;// 回避処理終了
 				}
 				else
 				{
 					m_dodgeTime = 0.0f;
-					m_endDodgeFlag = false;//回避処理終了
+					m_endDodgeFlag = false;// 回避処理終了
 				}
 
 			}
 		}
-		//攻撃ステート時の移動
+		// 攻撃ステート時の移動
 		if (playerState == PlayerState_Attack1)
 		{
-			//移動スピード
+			// 移動スピード
 			float speed = 0.7f;
 
-			//前に進む
+			// 前に進む
 			totalVec.z = sin(m_angle) * speed;
 			totalVec.x = cos(m_angle) * speed;
 		}
-		//攻撃ステート時の移動
+		// 攻撃ステート時の移動
 		if (playerState == PlayerState_Attack2)
 		{
-			//移動スピード
+			// 移動スピード
 			float speed = 0.7f;
 
-			//前に進む
+			// 前に進む
 			totalVec.z = sin(m_angle) * speed;
 			totalVec.x = cos(m_angle) * speed;
 		}
-		//攻撃ステート時の移動
+		// 攻撃ステート時の移動
 		if (playerState == PlayerState_Attack3)
 		{
-			//移動スピード
+			// 移動スピード
 			float speed = 0.7f;
 
-			//前に進む
+			// 前に進む
 			totalVec.z = sin(m_angle) * speed;
 			totalVec.x = cos(m_angle) * speed;
 		}
 		return totalVec;
 	}
 
-	//動く方向を決める処理
+	// 動く方向を決める処理
 	float Player::MoveAngle(Vec3 stickL)
 	{
 		auto trans = GetTransform();
 		auto camera = OnGetDrawCamera();
 
-		//スティックの向きと距離
+		// スティックの向きと距離
 		float moveSize = stickL.length();
 		float moveAngle = atan2(-stickL.x, stickL.z);
 
-		//自分の位置とカメラの位置からカメラの角度を算出
+		// 自分の位置とカメラの位置からカメラの角度を算出
 		auto front = trans->GetPosition() - camera->GetEye();
 		front.y = 0;
 		front.normalize();
 		float frontAngle = atan2(front.z, front.x);
 
-		//合計の角度
+		// 合計の角度
 		float totalAngle = frontAngle + moveAngle;
 		if (stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
-			m_angle = totalAngle;//今向いている方向を渡す
+			m_angle = totalAngle;// 今向いている方向を渡す
 		}
 		return totalAngle;
 	}
@@ -611,17 +609,22 @@ namespace basecross {
 	//デバック用文字列表示関数
 	void Player::DebugLog()
 	{
+		auto deltaScale = GetWaveStage(false)->GetDeltaScale();
 		////デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
+		auto testVel = (m_velocity * _delta);
 		auto pos = GetPosition();
 		wss /* << L"デバッグ用文字列 "*/
-			<< L"\n Pos.x " << m_pos.x << " Pos.y " << pos.y <<" Pos.z " << m_pos.z
+			<< L"\n Pos.x " << m_pos.x << " Pos.y " << pos.y << " Pos.z " << m_pos.z
+			<< L"\n Vel.x " << testVel.x << " Vel.y " << testVel.y << " Vel.z " << testVel.z
 			<< L"\n 回避フラグ：  " << m_dodgeFlag
 			<< L"\n Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
+			<<L"\nDeltaTime" << _delta
+			<<L"\nDeltaScale" << deltaScale
 			<< L"\nAngle : " << GetAngle() << endl;
 
 		scene->SetDebugString(wss.str());
