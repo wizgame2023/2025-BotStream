@@ -16,6 +16,8 @@ namespace basecross {
 	class EnemyBase;//EnemyZakoが居なくなったら消す
 	class BillBoard;
 	class BillBoardGauge;
+	class Sprite;
+
 	enum PlayerState
 	{
 		PlayerState_Walk,
@@ -108,7 +110,9 @@ namespace basecross {
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
 		//UI関係
-		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;//現在の球数を表示するUI
+		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;// 現在の球数を表示するUI
+		shared_ptr<Sprite> m_JastDodgeSprite = nullptr;// ジャスト回避用の演出UI
+		float m_alphaColorjastDodge = 0.0f;
 
 		//コントローラー関係
 		CONTROLER_STATE m_controller;
