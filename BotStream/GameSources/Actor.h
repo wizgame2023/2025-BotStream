@@ -283,6 +283,10 @@ namespace basecross {
 			}
 			m_SEManager->Stop(m_SE);
 		}
+
+		void SetIgnoreDeltaScale(bool ignore) {
+			m_ignoreDeltaScale = ignore;
+		}
 	};
 
 	/// <summary>

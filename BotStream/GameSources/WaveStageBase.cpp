@@ -37,6 +37,8 @@ namespace basecross {
     void WaveStageBase::SetActorPause(bool isPause) {
         m_isPaused = isPause;
 
+        EffectManager::Instance().PauseAllEffects(isPause);
+
         auto objVec = GetGameObjectVec();
         for (auto obj : objVec)
         {
@@ -220,25 +222,20 @@ namespace basecross {
 
     void WaveStageBase::OnUpdate()
     {
-        ShowFPS();
-
         auto& app = App::GetApp();
         auto KeyState = app->GetInputDevice().GetKeyState();
         auto pad = app->GetInputDevice().GetControlerVec()[0];
 
+        ResetDeltaScaleToDefault();
+
         auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
 
-        fadeout->GetBlackFlag();
         m_BlackFlag = fadeout->GetBlackFlag();
-        fadeout->GetFadeOutFlag();
         m_IsFadeOutFlag = fadeout->GetFadeOutFlag();
-        fadeout->GetFadeInFlag();
         m_IsFadeInFlag = fadeout->GetFadeInFlag();
-
-        m_player.lock()->GetHP();
         auto plaHP = m_player.lock()->GetHP();
 
-        auto ptrSoundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+        m_sndMgr = GetSharedGameObject<SoundManager>(L"SoundManager");
 
         auto EnemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
         int EnemyNum = EnemyVec.size();
@@ -271,14 +268,14 @@ namespace basecross {
 
         if (m_waveCurrent == 3 && m_bossCurrentHP <= 0)
         {
-            GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+            m_sndMgr.lock()->StopBGM();
             m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
             m_waveCurrent = 4;//ウェーブ終了
         }
 
         if (plaHP <= 0)
         {
-            GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+            m_sndMgr.lock()->StopBGM();
             m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
 
         }
