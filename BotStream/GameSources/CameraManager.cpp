@@ -207,39 +207,39 @@ namespace basecross {
 		//CameraPosUpdate();
 
 
-		//デバック用
-		wstringstream wss(L"");
-		auto scene = App::GetApp()->GetScene<Scene>();
+		////デバック用
+		//wstringstream wss(L"");
+		//auto scene = App::GetApp()->GetScene<Scene>();
 
-		//ロックオン対象との距離を計算
-		if (m_targetObj)
-		{
-			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
-		}
+		////ロックオン対象との距離を計算
+		//if (m_targetObj)
+		//{
+		//	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+		//	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
+		//}
 
-		
-		wss /* << L"デバッグ用文字列 "*/
-			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-			<< L"\nターゲット対象の距離: " << m_targetDis
-			<< L"\nFPS: " << 1.0f/m_delta
-			//<< L"\n当たった場所x: " << hitPos.x
-			//<< L"\n当たった場所y: " << hitPos.y
-			//<< L"\n当たった場所z: " << hitPos.z
-			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-			//<<L"\nFPS:"<< 1.0f/delta
-			<< endl;
+		//
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+		//	<< L"\nターゲット対象の距離: " << m_targetDis
+		//	<< L"\nFPS: " << 1.0f/m_delta
+		//	//<< L"\n当たった場所x: " << hitPos.x
+		//	//<< L"\n当たった場所y: " << hitPos.y
+		//	//<< L"\n当たった場所z: " << hitPos.z
+		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+		//	//<<L"\nFPS:"<< 1.0f/delta
+		//	<< endl;
 
-			//if (m_lockOnNum >= 0)
-			//{		
-			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-			//	float a = targetAngle;
-			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-			//}
+		//	//if (m_lockOnNum >= 0)
+		//	//{		
+		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+		//	//	float a = targetAngle;
+		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+		//	//}
 
-		scene->SetDebugString(wss.str());
+		//scene->SetDebugString(wss.str());
 
 	}
 

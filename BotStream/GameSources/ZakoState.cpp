@@ -372,11 +372,11 @@ namespace basecross {
 		auto playerdist = m_enemyZako->GetPlayerDist();
 		if (playerdist > 30.0f)//中
 		{
-			m_speed = 350.0f;
+			m_speed = 300.0f;
 		}
 		else//近い
 		{
-			m_speed = 250.0f;
+			m_speed = 200.0f;
 		}
 	}
 

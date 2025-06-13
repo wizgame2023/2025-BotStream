@@ -16,6 +16,8 @@ namespace basecross {
 	class EnemyBase;//EnemyZakoが居なくなったら消す
 	class BillBoard;
 	class BillBoardGauge;
+	class Sprite;
+
 	enum PlayerState
 	{
 		PlayerState_Walk,
@@ -73,6 +75,13 @@ namespace basecross {
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
+
+		// ジャスト回避したかのフラグ
+		bool m_jastDodge = false;
+		// スローモーションをどれくらい継続するかの数値
+		float m_timeOfJastDodgeCount = 0.0f;
+		float m_timeOfJastDodgeMax = 1.0f;
+
 		//元々の最大HP
 		int m_originallyHPMax = 100;
 		//最大SP
@@ -101,7 +110,9 @@ namespace basecross {
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
 		//UI関係
-		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;//現在の球数を表示するUI
+		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;// 現在の球数を表示するUI
+		shared_ptr<Sprite> m_JastDodgeSprite = nullptr;// ジャスト回避用の演出UI
+		float m_alphaColorjastDodge = 0.0f;
 
 		//コントローラー関係
 		CONTROLER_STATE m_controller;
@@ -140,6 +151,9 @@ namespace basecross {
 		void ReloadBullet(float ReloadTime);
 		//アニメーションの更新
 		void UpdateAnimation(float addTime);
+
+		//ジャスト回避時の処理
+		void JastDodge(float deltaScale,float slowTime);
 
 		//HPのゲッター
 		int GetHP();
