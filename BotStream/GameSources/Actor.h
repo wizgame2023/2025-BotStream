@@ -229,6 +229,15 @@ namespace basecross {
 			m_velocity += vel;
 		}
 
+		float GetSpeedMax()
+		{
+			return m_speedMax;
+		}
+		void SetSpeedMax(float sppedMax)
+		{
+			m_speedMax = sppedMax;
+		}
+
 		//前方ベクトルの取得
 		Vec3 GetForward() {
 			Vec3 vec = GetComponent<Transform>()->GetForward();

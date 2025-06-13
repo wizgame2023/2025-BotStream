@@ -40,6 +40,7 @@
 //Actor
 #include "Player.h"
 #include "Enemy.h"
+#include "EnemyZako.h"
 
 //Sprite
 #include "Sprite.h"
