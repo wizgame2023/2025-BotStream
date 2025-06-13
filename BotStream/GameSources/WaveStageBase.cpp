@@ -37,6 +37,8 @@ namespace basecross {
     void WaveStageBase::SetActorPause(bool isPause) {
         m_isPaused = isPause;
 
+        EffectManager::Instance().PauseAllEffects(isPause);
+
         auto objVec = GetGameObjectVec();
         for (auto obj : objVec)
         {
@@ -165,7 +167,7 @@ namespace basecross {
 	}
 
 	void WaveStageBase::WaveInitialize() {
-		m_IsFadeInFlag = true;
+	 	m_IsFadeInFlag = true;
 		m_nextWaveFlag = false;
 
 		switch (m_waveCurrent) {
@@ -213,105 +215,99 @@ namespace basecross {
 
 			break;
 			// ----------------------------------------------------------------------------
+      }
 
-		}
+        m_waveCurrent++;
+    }
 
-		m_waveCurrent++;
-	}
+    void WaveStageBase::OnUpdate()
+    {
+        auto& app = App::GetApp();
+        auto KeyState = app->GetInputDevice().GetKeyState();
+        auto pad = app->GetInputDevice().GetControlerVec()[0];
 
-	void WaveStageBase::OnUpdate()
-	{
-		ShowFPS();
+        ResetDeltaScaleToDefault();
 
-		auto& app = App::GetApp();
-		auto KeyState = app->GetInputDevice().GetKeyState();
-		auto pad = app->GetInputDevice().GetControlerVec()[0];
+        auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
 
-		auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
+        m_BlackFlag = fadeout->GetBlackFlag();
+        m_IsFadeOutFlag = fadeout->GetFadeOutFlag();
+        m_IsFadeInFlag = fadeout->GetFadeInFlag();
+        auto plaHP = m_player.lock()->GetHP();
 
-		fadeout->GetBlackFlag();
-		m_BlackFlag = fadeout->GetBlackFlag();
-		fadeout->GetFadeOutFlag();
-		m_IsFadeOutFlag = fadeout->GetFadeOutFlag();
-		fadeout->GetFadeInFlag();
-		m_IsFadeInFlag = fadeout->GetFadeInFlag();
+        m_sndMgr = GetSharedGameObject<SoundManager>(L"SoundManager");
 
-		m_player.lock()->GetHP();
-		auto plaHP = m_player.lock()->GetHP();
+        auto EnemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
+        int EnemyNum = EnemyVec.size();
 
-		auto ptrSoundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+        EffectManager::Instance().InterfaceUpdate();
 
-		auto EnemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
-		int EnemyNum = EnemyVec.size();
+        if (m_waveCurrent == 1 && EnemyNum == 0)
+        {
+            m_IsFadeOutFlag = true;
+        }
+        if (m_waveCurrent == 2 && EnemyNum == 0)
+        {
+            m_IsFadeOutFlag = true;
+        }
 
-		EffectManager::Instance().InterfaceUpdate();
+        if (m_BlackFlag == true)
+        {
+            m_nextWaveFlag = true;
+        }
 
-		if (m_waveCurrent == 1 && EnemyNum == 0)
-		{
-			m_IsFadeOutFlag = true;
-		}
-		if (m_waveCurrent == 2 && EnemyNum == 0)
-		{
-			m_IsFadeOutFlag = true;
-		}
+        if (m_nextWaveFlag)
+        {
+            WaveInitialize();
+        }
 
-		if (m_BlackFlag == true)
-		{
-			m_nextWaveFlag = true;
-		}
+        if (m_waveCurrent == 3)
+        {
+            m_bossCurrentHP = m_boss.lock()->GetHPCurrent();//Boss��HP�擾
+        }
 
-		if (m_nextWaveFlag)
-		{
-			WaveInitialize();
-		}
+        if (m_waveCurrent == 3 && m_bossCurrentHP <= 0)
+        {
+            m_sndMgr.lock()->StopBGM();
+            m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
+            m_waveCurrent = 4;//�E�F�[�u�I��
+        }
 
-		if (m_waveCurrent == 3)
-		{
-			m_bossCurrentHP = m_boss.lock()->GetHPCurrent();//BossのHP取得
-		}
+        if (plaHP <= 0)
+        {
+            m_sndMgr.lock()->StopBGM();
+            m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
 
-		if (m_waveCurrent == 3 && m_bossCurrentHP <= 0)
-		{
-			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-			m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
-			m_waveCurrent = 4;//ウェーブ終了
-		}
+        }
 
-		if (plaHP <= 0)
-		{
-			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+        //�t�F�[�h���o�I�u�W�F�N�g�փt���O��n��
+        fadeout->SetFadeOutFlag(m_IsFadeOutFlag);
+        fadeout->SetFadeInFlag(m_IsFadeInFlag);
+        fadeout->SetBlackFlag(m_BlackFlag);
+    }
 
-		}
+    void WaveStageBase::OnDraw()
+    {
+        EffectManager::Instance().InterfaceDraw();
+    }
 
-		//フェード演出オブジェクトへフラグを渡す
-		fadeout->SetFadeOutFlag(m_IsFadeOutFlag);
-		fadeout->SetFadeInFlag(m_IsFadeInFlag);
-		fadeout->SetBlackFlag(m_BlackFlag);
-	}
+    void WaveStageBase::OnDestroy()
+    {
+        //BGM��SE���~�߂�
+        auto soundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
+        soundManager->StopBGM();
+        soundManager->StopSE();
+    }
 
-	void WaveStageBase::OnDraw()
-	{
-		EffectManager::Instance().InterfaceDraw();
-	}
+    void WaveStageBase::SetNextWaveFlag(bool setNextWaveFlag)
+    {
+        m_nextWaveFlag = setNextWaveFlag;
+    }
 
-	void WaveStageBase::OnDestroy()
-	{
-		//BGMとSEを止める
-		auto soundManager = GetSharedGameObject<SoundManager>(L"SoundManager");
-		soundManager->StopBGM();
-		soundManager->StopSE();
-	}
-
-	void WaveStageBase::SetNextWaveFlag(bool setNextWaveFlag)
-	{
-		m_nextWaveFlag = setNextWaveFlag;
-	}
-
-	bool WaveStageBase::GetNextWaveFlag()
-	{
-		return m_nextWaveFlag;
-	}
+    bool WaveStageBase::GetNextWaveFlag()
+    {
+        return m_nextWaveFlag;
+    }
 
 	//--------------------------------------------------------------------------------
 	// 地形生成
