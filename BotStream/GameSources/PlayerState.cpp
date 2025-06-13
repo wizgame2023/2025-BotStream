@@ -205,6 +205,7 @@ namespace basecross {
 
 		//回避タグ追加
 		m_player->AddTag(L"invincible");
+		m_player->AddTag(L"Dodge");
 
 		//回避判定が開始されたことを伝える
 		m_player->SetEndDodgeFlag(true);
@@ -248,6 +249,7 @@ namespace basecross {
 	{
 		//回避タグ削除
 		m_player->RemoveTag(L"invincible");
+		m_player->RemoveTag(L"Dodge");
 	}
 
 
