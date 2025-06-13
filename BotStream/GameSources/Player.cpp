@@ -94,28 +94,13 @@ namespace basecross {
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
 		m_JastDodgeSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 		
-		// UI追加
-		// 現在の球数を出すUI
-		//m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(295.0f, -260.0f), m_bulletNum,32.0f);		
-
-		//auto stage = GetStage();
-		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
-
 		//最初に流れる音
 		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
 
-
-		auto trans = GetComponent<Transform>();
-		m_EfkPos = trans->GetPosition();
-
-		//m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
 	}
 
 	void Player::OnUpdate()
 	{
-		//auto num = EffectManager::Instance().PlayEffect(L"ArmorBreak", m_pos);
-		//num;
-
 		//装備しているパーツは何があるのか確認する
 		auto testParts = m_equippedParts;
 
@@ -127,23 +112,6 @@ namespace basecross {
 
 		//親クラス処理
 		Actor::OnUpdate();
-
-		EffectManager::Instance().SetPosition(m_testEffect, m_EfkPos);
-
-
-		////着地判定(無効化時間中ならそれを減算する)
-		//OnLanding();
-
-		////物理的な処理
-		//if (m_doPhysics) {
-		//	if (!m_isLand) {
-		//		Gravity();
-		//	}
-		//	else {
-		//		Friction();
-		//	}
-		//}
-
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
@@ -207,26 +175,12 @@ namespace basecross {
 
 		}
 		//-------------------------------------------------------------
-
-
-
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		//{
-		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		//}
-
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		//{
-		//	EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
-		//}
-
+		
 		//デバック用文字列
 		DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		//GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetPosition());//移動処理
-
 		//移動ですり抜けない処理
 		auto objVec = stage->GetGameObjectVec();
 

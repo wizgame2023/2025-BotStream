@@ -126,10 +126,6 @@ namespace basecross {
 		//回避処理
 		void Dodge();
 
-		//エフェクトテスト用
-		Vec3 m_EfkPos;
-		Handle m_testEffect;
-
 	public:
 		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
 		~Player();
