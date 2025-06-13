@@ -640,7 +640,7 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
-        ptrColl->SetDrawActive(true);
+        ptrColl->SetDrawActive(false);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
@@ -689,7 +689,7 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
-        ptrColl->SetDrawActive(true);
+        ptrColl->SetDrawActive(false);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
