@@ -105,6 +105,8 @@ namespace basecross{
 		app->RegisterTexture(L"StoneBrick", strTexture);
 		strTexture = texPath + L"Fadeout.png";
 		app->RegisterTexture(L"Fadeout", strTexture);
+		strTexture = texPath + L"SlowSpeite.png";
+		app->RegisterTexture(L"SlowTex", strTexture);
 
 		// title
 		strTexture = texPath + L"TitleBack.png";
