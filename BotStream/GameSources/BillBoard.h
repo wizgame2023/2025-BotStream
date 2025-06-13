@@ -92,23 +92,37 @@ namespace basecross {
 
 	};
 
+	// ダメージビルボード
+	class DamageBill : public BillBoard 
+	{
+	public:
+		DamageBill(
+			const shared_ptr<Stage>& stagePtr,
+			shared_ptr<GameObject>& actorPtr,
+			wstring spriteName,
+			int layer = 2,
+			float pushY = 18.0f,
+			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
+			Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
+			float pushX = 0.0f
+		);
 
-	//class DamageBill : public BillBoard {
-	//public:
-	//	DamageBill(
-	//		const shared_ptr<Stage>& stagePtr,
-	//		shared_ptr<GameObject>& actorPtr,
-	//		wstring spriteName,
-	//		int layer = 2,
-	//		float pushY = 18.0f,
-	//		Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
-	//		Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
-	//		float pushX = 0.0f
-	//	);
+		virtual ~DamageBill() {}
 
-	//	virtual ~DamageBill() {}
+		virtual void OnUpdate() override;
+	};
 
-	//	virtual void OnUpdate() override;
-	//};
+	// ダメージビルボードの本体座標みたいな
+	class DamageBillRoot : public MyGameObject 
+	{
+		weak_ptr<GameObject> m_actor;
+		float m_pushY;
+		Quat Billboard(const Vec3& line);
+	public:
+		DamageBillRoot(const shared_ptr<Stage>& stagePtr, shared_ptr<GameObject>& actorPtr, float pushY = 18.0f);
+		virtual ~DamageBillRoot() {}
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+	};
 }
 //end basecross

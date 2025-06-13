@@ -136,7 +136,7 @@ namespace basecross {
 		void DebugLog();
 
 		//ダメージビルボード
-		void DamageBill(shared_ptr<GameObject> target, int damage);
+		//void DamageBill(shared_ptr<GameObject> target, int damage);
 
 		// 軸の正規化
 		float NormalizeAxis(float minusSide, float plusSide);
