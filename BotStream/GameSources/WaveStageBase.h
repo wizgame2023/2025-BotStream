@@ -10,6 +10,7 @@
 namespace basecross {
     class BossGaugeUI;
     class Player;
+    class SoundManager;
 
     class WaveStageBase : public Stage {
     public:
@@ -36,6 +37,8 @@ namespace basecross {
         //各オブジェクトへの参照用
         // シーン
         weak_ptr<Scene> m_scene;
+        //サウンドマネージャー
+        weak_ptr<SoundManager> m_sndMgr;
         // プレイヤー
         weak_ptr<Player> m_player;
         // 敵管理オブジェクト
@@ -53,12 +56,20 @@ namespace basecross {
         int m_bossCurrentHP = 99999;
         //時間の早さ
         float m_deltaScale = 1.0f;
+        //deltaScaleをデフォルトに戻すためのカウント
+        float m_deltaScaleCount = 0.0f;
+        //deltaScaleのデフォルト値(よっぽどのことがなけりゃ1)
+        const float m_deltaScaleDefault = 1.0f;
 
         float TimeOfGameClear = 0.0f;//ゲームクリアするための時間計測
 
+        //Waveクリア、フェードアウト開始
         bool m_IsFadeOutFlag = false;
+        //Wave切り替え終了
         bool m_IsFadeInFlag = false;
+        //暗転中
         bool m_BlackFlag = false;
+        //Wave切り替え
         bool m_nextWaveFlag = false;
 
         bool m_isPaused = false;
@@ -83,6 +94,17 @@ namespace basecross {
 
             //m_scene.lock()->SetDebugString(wss.str());
 
+        }
+
+        //OnUpdateに置く
+        void ResetDeltaScaleToDefault() {
+            if (m_deltaScaleCount > 0) {
+                m_deltaScaleCount -= App::GetApp()->GetElapsedTime();
+                
+                if (m_deltaScaleCount <= 0) {
+                    m_deltaScale = m_deltaScaleDefault;
+                }
+            }
         }
 
     public:
@@ -114,11 +136,94 @@ namespace basecross {
             m_deltaScale = deltascale;
         }
 
+        //指定時間後にdeltaScaleをデフォルトの値に戻す
+        void SetDeltaScaleCount(float counttime) {
+            m_deltaScaleCount = counttime;
+        }
+
         void SetActorPause(bool isPause);
 
         bool GetActorPause() {
             return m_isPaused;
         }
+
+    };
+
+    class Floor : public GameObject {
+        Vec3 m_Scale;
+        Vec3 m_Rotation;
+        Vec3 m_Position;
+    public:
+        Floor(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Rotation,
+            const Vec3& Position
+        );
+        virtual ~Floor();
+        virtual void OnCreate() override;
+    };
+
+    // 床のテクスチャ用--------------------------------
+    class Block : public MyGameObject
+    {
+    public:
+        Block(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Position);
+        virtual ~Block() {}
+
+        virtual void OnCreate() override;
+
+        static constexpr float BLOCK_XZ_SCALE = 10.0f;
+
+    private:
+        Vec3 m_pos;
+        Vec3 m_scale;
+    };
+    // END --------------------------------------------
+
+    class Wall : public GameObject {
+        Vec3 m_Scale;
+        Vec3 m_Rotation;
+        Vec3 m_Position;
+    public:
+        Wall(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Rotation,
+            const Vec3& Position
+        );
+        virtual ~Wall();
+        virtual void OnCreate() override;
+    };
+
+    // 壁のテクスチャが違うやつを生成--------------
+    class Wall2 : public GameObject {
+        Vec3 m_Scale;
+        Vec3 m_Rotation;
+        Vec3 m_Position;
+    public:
+        Wall2(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Rotation,
+            const Vec3& Position
+        );
+        virtual ~Wall2();
+        virtual void OnCreate() override;
+    };
+    // ---------------------------------------------
+
+    class Ceiling : public GameObject {
+        Vec3 m_Scale;
+        Vec3 m_Rotation;
+        Vec3 m_Position;
+    public:
+        Ceiling(const shared_ptr<Stage>& StagePtr,
+            const Vec3& Scale,
+            const Vec3& Rotation,
+            const Vec3& Position
+        );
+        virtual ~Ceiling();
+        virtual void OnCreate() override;
     };
 
 }

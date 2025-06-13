@@ -220,6 +220,11 @@ namespace basecross
 		}
 	}
 
+	void EffectManager::PauseAllEffects(const bool pause)
+	{
+		m_manager->SetPausedToAllEffects(pause);
+	}
+
 	void EffectManager::SetSpeed(const Handle& EfkHandle, const float Speed)
 	{
 		m_manager->SetSpeed(EfkHandle, Speed);

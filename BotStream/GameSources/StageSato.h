@@ -55,11 +55,15 @@ namespace basecross {
 		shared_ptr<Sprite> m_SEMater[10];
 		shared_ptr<Sprite> m_audioSelect[2];
 
+		shared_ptr<BillBoard> m_damageBill[2];
+
 		shared_ptr<BillBoard> m_testBill;
 
 		shared_ptr<Player> m_player;
 
 		shared_ptr<PauseSprite> m_pauseSprite;
+
+		shared_ptr<CameraManager> m_cameraMana;
 
 		// スプライトのリスト
 		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
@@ -106,6 +110,18 @@ namespace basecross {
 
 		PersonalState m_personality;
 		//----------------------------------------------------------
+
+		Vec3 BillPosAdjust(Vec3 fwd, Vec3 pos) {
+			Vec3 ret;
+
+			auto face = atan2f(fwd.z, fwd.x);
+
+			ret.x = (cosf(face) * pos.x) - (sinf(face) * pos.z);
+			ret.y = pos.y;
+			ret.z = (cosf(face) * pos.z) + (sinf(face) * pos.x);
+
+			return ret;
+		}
 
 	public:
 		//構築と破棄

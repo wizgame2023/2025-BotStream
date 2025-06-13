@@ -49,8 +49,8 @@ namespace basecross {
 			SetSharedGameObject(L"EnemyManager", enemyMgr);
 
 			//カメラマネージャ作成
-			auto cameraManager = AddGameObject<CameraManager>();
-			SetSharedGameObject(L"CameraManager", cameraManager);
+			m_cameraMana = AddGameObject<CameraManager>();
+			SetSharedGameObject(L"CameraManager", m_cameraMana);
 
 			//Player関係のUI生成
 			auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
@@ -590,6 +590,13 @@ namespace basecross {
 			//}
 			*/
 
+		auto camAt= m_cameraMana->GetCameraAt();
+		for (int i = 0; i < 2; i++)
+		{
+			m_damageBill[i]->SetPosition(m_player->GetPosition() + BillPosAdjust(camAt,m_player->GetPosition()));
+		}
+
+
 		DebugLog();
 
 	}
@@ -656,25 +663,27 @@ namespace basecross {
 			// 文字から数字に直す
 			int digit = str[i] - '0';
 
-			// 1) BillBoard を生成（i * オフセットで左右に並べる）
-			damageBB[i] = AddGameObject<BillBoard>(
+			// 左右オフセット
+			float offsetX = i ? 0.5f : -0.5f; 
+
+			// 1) BillBoard を生成
+			m_damageBill[i] = AddGameObject<BillBoard>(
 				target,                     // 付ける対象
 				L"Numbers",                 // テクスチャ
 				3,                          // レイヤー
 				5.0f,                       // 対象からの高さ
 				Vec3(1.5f, 1.5f, 1.0f),     // 大きさ
-				Col4(1, 1, 1, 1),
-				i * 1.0f                   // 左右オフセット
+				Col4(1, 1, 1, 1),			// 色
+				offsetX					// 左右オフセット
 			);
 
 			// 2) その桁の数字に対応するUVを設定
 			Vec2 uv0(digit * uvWidth, 0.0f);
 			Vec2 uv1((digit + 1) * uvWidth, 1.0f);
-			damageBB[i]->SetBillUV(uv0, uv1);
+			m_damageBill[i]->SetBillUV(uv0, uv1);
 		}
 
 		// 3) 1秒後に自分で消えるようにタイマーをセット
-		
 	}
 
 	//// ----------------------------------------------------------
@@ -745,8 +754,12 @@ namespace basecross {
 		if (m_pauseFlag) wss << "Pause is True" << endl;
 		else wss << "Pause is False" << endl;
 
+		auto camAngle = m_cameraMana->GetAngle(L"Y");
+
 		wss << "BGM Volume : " << m_pauseSprite->GetAudioMax(0) << "\n"
-			<< "SE Volume : " << m_pauseSprite->GetAudioMax(1) << endl;
+			<< "SE Volume : " << m_pauseSprite->GetAudioMax(1) << "\n"
+			<< "Camera Angle : " << camAngle << "\n"
+			<<endl;
 
 		//wss << "m_selectPos : "
 		//	<< selectPos.x << ", "
