@@ -161,9 +161,9 @@ namespace basecross {
 
 
 	}
-
-	//DamageBillBoard::DamageBillBoard(
-	//	const shared_ptr<Stage>& StagePtr,
+	
+	//DamageBill::DamageBill(
+	//	const shared_ptr<Stage>& stagePtr,
 	//	shared_ptr<GameObject>& actorPtr,
 	//	wstring spriteName,
 	//	int layer,
@@ -171,12 +171,40 @@ namespace basecross {
 	//	Vec3 scale,
 	//	Col4 color,
 	//	float pushX)
-	//	: BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
+	//	: BillBoard(stagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
 	//{
 	//}
 
-	//DamageBillBoard::~DamageBillBoard() {}
+	//void DamageBill::OnUpdate()
+	//{
+	//	if (m_actor.expired())
+	//	{
+	//		GetStage()->RemoveGameObject<DamageBill>(GetThis<DamageBill>());
+	//		return;
+	//	}
 
-	
+	//	auto actorPtr = m_actor.lock();
+	//	auto actorTrans = actorPtr->GetComponent<Transform>();
+	//	auto cam = GetStage()->GetView()->GetTargetCamera();
+
+	//	Quat qt = Billboard(cam->GetAt() - cam->GetEye());
+
+	//	// Compute local x offset rotated by billboard rotation
+	//	Vec3 localOffset(m_pushX, 0.0f, 0.0f);
+	//	Vec3 rotatedOffset = rotate(qt, localOffset);
+
+	//	Vec3 pos = actorTrans->GetPosition();
+	//	pos += Vec3(0.0f, m_pushY, 0.0f);
+	//	pos += rotatedOffset;
+
+	//	auto trans = GetComponent<Transform>();
+	//	trans->SetPosition(pos);
+	//	trans->SetScale(m_scale);
+	//	trans->SetQuaternion(qt);
+
+	//	auto draw = GetComponent<PCTStaticDraw>();
+	//	draw->SetTextureResource(m_textureName);
+	//}
 }
+
 //end basecross

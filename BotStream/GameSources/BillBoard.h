@@ -52,7 +52,14 @@ namespace basecross {
 	public:
 		//構築と破棄
 		BillBoard(const shared_ptr<Stage>& StagePtr,
-			shared_ptr<GameObject>& actorPtr, wstring spriteName, int layer = 2, float pushY = 18.0f, Vec3 scale = Vec3(3.0f, 3.0f, 3.0f), Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f), float pushX = 0.0f);
+			shared_ptr<GameObject>& actorPtr,
+			wstring spriteName, 
+			int layer = 2, 
+			float pushY = 18.0f,
+			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f), 
+			Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f), 
+			float pushX = 0.0f);
+
 		virtual ~BillBoard();
 		//初期化
 		virtual void OnCreate() override;
@@ -69,42 +76,39 @@ namespace basecross {
 		virtual void SetPushY(float pushY);
 
 		void SetBillUV(Vec2 topLeft, Vec2 botRight);
+
+		// ビルボードの位置調整
+		Vec3 BillPosAdjust(Vec3 fwd, Vec3 pos) {
+			Vec3 ret;
+
+			auto face = atan2f(fwd.z, fwd.x);
+
+			ret.x = (cosf(face) * pos.x) - (sinf(face) * pos.z);
+			ret.y = pos.y;
+			ret.z = (cosf(face) * pos.z) + (sinf(face) * pos.x);
+
+			return ret;
+		}
+
 	};
 
-	//class DamageBillBoard : public BillBoard
-	//{
-	//public:
 
-	//	DamageBillBoard(
-	//		const shared_ptr<Stage>& StagePtr,
+	//class DamageBill : public BillBoard {
+	//public:
+	//	DamageBill(
+	//		const shared_ptr<Stage>& stagePtr,
 	//		shared_ptr<GameObject>& actorPtr,
 	//		wstring spriteName,
 	//		int layer = 2,
 	//		float pushY = 18.0f,
 	//		Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
 	//		Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
-	//		float pushX = 0.0f);
+	//		float pushX = 0.0f
+	//	);
 
-	//	virtual ~DamageBillBoard();
+	//	virtual ~DamageBill() {}
 
-
-	//	weak_ptr<GameObject> m_actor;
-
-	//	wstring m_textureName;
-
-	//	Vec3 m_scale;
-
-	//	Col4 m_color;
-
-	//	float m_pushY;
-
-	//	float m_pushX;
-
-	//	int m_layer;
-
-
-	//	virtual void OnCreate()override;
-	//	virtual void OnUpdate()override;
+	//	virtual void OnUpdate() override;
 	//};
 }
 //end basecross
