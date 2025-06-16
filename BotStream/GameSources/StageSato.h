@@ -87,6 +87,8 @@ namespace basecross {
 		int m_select = 0;
 		Vec3 m_selectPos;
 
+		float m_time = 0;
+
 		bool m_pauseFlag = false;
 		bool m_pauseAudioFlag = false;
 		float m_audioMax[2] = { 1.0f , 1.0f };

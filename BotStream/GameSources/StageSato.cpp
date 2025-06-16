@@ -497,7 +497,7 @@ namespace basecross {
 		//エフェクト関係
 		EffectManager::Instance().InterfaceUpdate();
 		auto actorPtr = static_pointer_cast<GameObject>(m_player);
-
+		auto delta = App::GetApp()->GetElapsedTime();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -555,7 +555,20 @@ namespace basecross {
 					Vec2((dmgStr[i] - '0') * 0.1f, 0.0f), // UVの左上
 					Vec2((dmgStr[i] - '0' + 1) * 0.1f, 1.0f) // UVの右下
 				);
+				
+				auto test = dynamic_pointer_cast<BillBoard>(digitBill);
+				test->RemoveBill(test);
+				int a = 0;
 			}
+
+		}
+		
+
+
+		// ダメージビルボードを1秒後に削除
+		if (m_time >= 1.0f)
+		{
+			
 		}
 
 		//// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行

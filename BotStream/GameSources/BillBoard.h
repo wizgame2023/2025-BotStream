@@ -49,6 +49,8 @@ namespace basecross {
 
 		int m_layer;
 
+		// ビルボードの削除までの時間
+		float m_removeTime = 0.0f; 
 	public:
 		//構築と破棄
 		BillBoard(const shared_ptr<Stage>& StagePtr,
@@ -77,19 +79,7 @@ namespace basecross {
 
 		void SetBillUV(Vec2 topLeft, Vec2 botRight);
 
-		// ビルボードの位置調整
-		Vec3 BillPosAdjust(Vec3 fwd, Vec3 pos) {
-			Vec3 ret;
-
-			auto face = atan2f(fwd.z, fwd.x);
-
-			ret.x = (cosf(face) * pos.x) - (sinf(face) * pos.z);
-			ret.y = pos.y;
-			ret.z = (cosf(face) * pos.z) + (sinf(face) * pos.x);
-
-			return ret;
-		}
-
+		void RemoveBill(shared_ptr<BillBoard> bill);
 	};
 
 	// ダメージビルボード
