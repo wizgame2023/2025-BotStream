@@ -88,17 +88,11 @@ namespace basecross {
 			m_stageFlag = true;
 			m_selectOnceFlag = true;
 
-			// 選択したステージの写真を表示(仮置き)
-			for (int i = 0; i < 2; i++)
+			// 選択したステージの写真を表示
+			for (int i = m_selectStageNum * 2; i < (m_selectStageNum * 2) + 2; i++)
 			{
 				m_stagePhoto[i]->OnClear(false);
 			}
-
-			//// 選択したステージの写真を表示(本番の方)
-			//for (int i = m_selectStageNum * 2; i < m_selectStageNum + 2; i++)
-			//{
-				//m_stagePhoto[i]->OnClear(false);
-			//}
 			
 
 			// 他のステージを非表示
@@ -121,7 +115,7 @@ namespace basecross {
 		{
 			m_stageFlag = false;
 			m_selectOnceFlag = true;
-			// 選択したステージ以外を表示
+			// ステージ番号の表示
 			for (int i = 0; i < 3; i++)
 			{
 				m_stageNum[i]->OnClear(false);
@@ -131,17 +125,11 @@ namespace basecross {
 			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-300 + (m_selectStageNum * 300), 100, 0));
 			m_stageNum[m_selectStageNum]->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 
-			// 選択したステージの写真を非表示(仮置き)
-			for (int i = 0; i < 2; i++)
+			// ステージの写真を非表示
+			for (int i = 0; i < 6; i++)
 			{
 				m_stagePhoto[i]->OnClear(true);
 			}
-
-			//// 選択したステージの写真を非表示(本番の方)
-			//for (int i = m_selectStageNum * 2; i < m_selectStageNum + 2; i++)
-			//{
-				//m_stagePhoto[i]->OnClear(false);
-			//}
 
 
 		}
@@ -253,8 +241,30 @@ namespace basecross {
 			photoPos
 		);
 
+		m_stagePhoto[2] = AddGameObject<Sprite>(
+			L"Stage1-1Tex",
+			Vec2(300, 200),
+			photoPos
+		);
+		m_stagePhoto[3] = AddGameObject<Sprite>(
+			L"Stage1-2Tex",
+			Vec2(300, 200),
+			photoPos
+		);
+
+		m_stagePhoto[4] = AddGameObject<Sprite>(
+			L"Stage1-1Tex",
+			Vec2(300, 200),
+			photoPos
+		);
+		m_stagePhoto[5] = AddGameObject<Sprite>(
+			L"Stage1-2Tex",
+			Vec2(300, 200),
+			photoPos
+		);
+
 		// ステージ写真の総数
-		constexpr int photoNum = 2;
+		constexpr int photoNum = 6;
 
 		// 全てのステージ写真を非表示にする、レイヤー設定
 		for (int i = 0; i < photoNum; i++)
