@@ -60,12 +60,12 @@ namespace basecross {
             }
         }
     }
+
     void WaveStageBase::CreateManagerObjects() {
 
-        shared_ptr<FadeoutSprite> fadeout;
-        fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
-        SetSharedGameObject(L"Fadeout", fadeout);
-        fadeout->SetDrawLayer(4);
+        m_fadeout = AddGameObject<FadeoutSprite>(L"Fadeout");
+        SetSharedGameObject(L"Fadeout", m_fadeout.lock());
+		m_fadeout.lock()->SetDrawLayer(4);
 
         // ------- パーツ関係 ---------------------------------------------------------
         //パーツマネージャ生成
@@ -85,8 +85,8 @@ namespace basecross {
         auto cameraManager = AddGameObject<CameraManager>();
         SetSharedGameObject(L"CameraManager", cameraManager);
 
-        auto ptrSoundManager = AddGameObject<SoundManager>();
-        SetSharedGameObject(L"SoundManager", ptrSoundManager);
+        m_sndMgr = AddGameObject<SoundManager>();
+        SetSharedGameObject(L"SoundManager", m_sndMgr.lock());
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
 
@@ -136,7 +136,6 @@ namespace basecross {
         m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
         SetSharedGameObject(L"Boss", m_boss.lock());
 
-
         // ボスゲージ
         m_bossGauge = AddGameObject<BossGaugeUI>(
             m_boss.lock(),
@@ -166,18 +165,38 @@ namespace basecross {
 
 	}
 
-	void WaveStageBase::WaveInitialize() {
-	 	m_IsFadeInFlag = true;
-		m_nextWaveFlag = false;
+	bool WaveStageBase::ConsiderGoToNextWave() {
+		auto EnemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
+		int EnemyNum = EnemyVec.size();
 
+		bool ret = false;
+		ret |= (m_waveCurrent == 1 && EnemyNum == 0);
+		ret |= (m_waveCurrent == 2 && EnemyNum == 0);
+
+		return ret;
+	}
+
+	bool WaveStageBase::ConsiderGameClear() {
+		bool ret = false;
+		ret |= m_boss.lock()->GetHPCurrent() <= 0;
+
+		return ret;
+	}
+
+	bool WaveStageBase::ConsiderGameOver() {
+		bool ret = false;
+		ret |= m_player.lock()->GetHPCurrent() <= 0;
+
+		return ret;
+	}
+
+	void WaveStageBase::WaveInitialize() {
 		switch (m_waveCurrent) {
 
 			// ------- 1 -> 2 -------------------------------------------------------------
 		case 1:
 			//プレイヤーの位置を初期化
 			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
-
-			m_nextWaveFlag = false;
 
 			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -205,9 +224,6 @@ namespace basecross {
 			//プレイヤーの位置を初期化
 			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			m_IsFadeInFlag = true;
-			m_nextWaveFlag = false;
-
 			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
 
 			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
@@ -215,7 +231,7 @@ namespace basecross {
 
 			break;
 			// ----------------------------------------------------------------------------
-      }
+		}
 
         m_waveCurrent++;
     }
@@ -228,62 +244,36 @@ namespace basecross {
 
         ResetDeltaScaleToDefault();
 
-        auto fadeout = GetSharedGameObject<FadeoutSprite>(L"Fadeout");
-
-        m_BlackFlag = fadeout->GetBlackFlag();
-        m_IsFadeOutFlag = fadeout->GetFadeOutFlag();
-        m_IsFadeInFlag = fadeout->GetFadeInFlag();
-        auto plaHP = m_player.lock()->GetHP();
-
-        m_sndMgr = GetSharedGameObject<SoundManager>(L"SoundManager");
-
-        auto EnemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
-        int EnemyNum = EnemyVec.size();
-
         EffectManager::Instance().InterfaceUpdate();
 
-        if (m_waveCurrent == 1 && EnemyNum == 0)
+        if (ConsiderGoToNextWave())
         {
-            m_IsFadeOutFlag = true;
+			m_fadeout.lock()->SetFadeOutFlag(true);
         }
-        if (m_waveCurrent == 2 && EnemyNum == 0)
-        {
-            m_IsFadeOutFlag = true;
-        }
-
-        if (m_BlackFlag == true)
+        if (m_fadeout.lock()->GetBlackFlag())
         {
             m_nextWaveFlag = true;
         }
-
         if (m_nextWaveFlag)
         {
+			m_fadeout.lock()->SetFadeInFlag(true);
+			m_nextWaveFlag = false;
+
             WaveInitialize();
         }
 
-        if (m_waveCurrent == 3)
-        {
-            m_bossCurrentHP = m_boss.lock()->GetHPCurrent();//Boss��HP�擾
-        }
-
-        if (m_waveCurrent == 3 && m_bossCurrentHP <= 0)
+        if (m_waveCurrent == m_waveMax && ConsiderGameClear())
         {
             m_sndMgr.lock()->StopBGM();
             m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
-            m_waveCurrent = 4;//�E�F�[�u�I��
         }
 
-        if (plaHP <= 0)
+        if (ConsiderGameOver())
         {
             m_sndMgr.lock()->StopBGM();
             m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
-
         }
 
-        //�t�F�[�h���o�I�u�W�F�N�g�փt���O��n��
-        fadeout->SetFadeOutFlag(m_IsFadeOutFlag);
-        fadeout->SetFadeInFlag(m_IsFadeInFlag);
-        fadeout->SetBlackFlag(m_BlackFlag);
     }
 
     void WaveStageBase::OnDraw()
