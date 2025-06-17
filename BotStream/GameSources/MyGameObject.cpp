@@ -38,5 +38,38 @@ namespace basecross {
 		// 所属ステージがnullだった
 		return nullptr;
 	}
+
+	void MyGameObject::OnCreate()
+	{
+		m_BGMVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[0]);
+		m_SEVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[1]);
+
+	}
+
+	void MyGameObject::OnUpdate()
+	{
+
+	}
+
+	float MyGameObject::GetBGMVol()
+	{
+		return m_BGMVol;
+	}
+
+	void MyGameObject::SetBGMVol(int setBGM)
+	{
+		m_BGMVol = setBGM;
+	}
+
+	float MyGameObject::GetSEVol()
+	{
+		return m_SEVol;
+	}
+
+	void MyGameObject::SetSEVol(int setSE)
+	{
+		m_SEVol = setSE;
+
+	}
 }
 //end basecross
