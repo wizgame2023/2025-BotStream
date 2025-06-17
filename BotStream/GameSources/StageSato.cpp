@@ -76,7 +76,7 @@ namespace basecross {
 
 			auto actorPtr = static_pointer_cast<GameObject>(m_player);
 
-			DamageBill(actorPtr, 19);
+			//DamageBill(actorPtr, 19);
 
 			CreateBlock();
 
@@ -497,7 +497,7 @@ namespace basecross {
 		//エフェクト関係
 		EffectManager::Instance().InterfaceUpdate();
 		auto actorPtr = static_pointer_cast<GameObject>(m_player);
-
+		auto delta = App::GetApp()->GetElapsedTime();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
@@ -525,7 +525,50 @@ namespace basecross {
 
 		if (keybord.m_bPushKeyTbl[VK_RIGHT])
 		{
-			DamageBill(actorPtr, 30);
+			auto root = AddGameObject<DamageBillRoot>(
+				actorPtr,    // 対象 GameObject
+				50.0f        // Y オフセット
+			);
+
+			
+			string dmgStr = to_string(30);						// 受け取ったダメージの文字数(30であれば2文字)
+			int len = (int)dmgStr.size();						// ダメージの桁数
+			float charWidth = 1.0f;                             // 各スプライト幅
+			float totalW = charWidth * len;						// 全体幅
+			float startX = -totalW / 2.0f + charWidth / 2.0f;   // 左端基準
+
+			for (int i = 0; i < len; i++)
+			{
+				float offsetX = startX + i * charWidth;
+
+				auto digitBill = AddGameObject<DamageBill>(
+					actorPtr,					// 各ビルボードは敵にくっつける
+					L"Numbers",					// テクスチャ名
+					3,							// レイヤー
+					2.0f,						// Y オフセットはルートが持っているので 0
+					Vec3(1.0f, 1.0f, 1.0f),		// サイズ
+					Col4(1, 1, 1, 1),			// 色 (黄色など)
+					offsetX						// 左右オフセット
+				);
+
+				digitBill->SetBillUV(
+					Vec2((dmgStr[i] - '0') * 0.1f, 0.0f), // UVの左上
+					Vec2((dmgStr[i] - '0' + 1) * 0.1f, 1.0f) // UVの右下
+				);
+				
+				auto test = dynamic_pointer_cast<BillBoard>(digitBill);
+				test->RemoveBill(test);
+				int a = 0;
+			}
+
+		}
+		
+
+
+		// ダメージビルボードを1秒後に削除
+		if (m_time >= 1.0f)
+		{
+			
 		}
 
 		//// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
@@ -590,11 +633,11 @@ namespace basecross {
 			//}
 			*/
 
-		auto camAt= m_cameraMana->GetCameraAt();
-		for (int i = 0; i < 2; i++)
-		{
-			m_damageBill[i]->SetPosition(m_player->GetPosition() + BillPosAdjust(camAt,m_player->GetPosition()));
-		}
+		//auto camAt= m_cameraMana->GetCameraAt();
+		//for (int i = 0; i < 2; i++)
+		//{
+		//	m_damageBill[i]->SetPosition(m_player->GetPosition() + BillPosAdjust(camAt,m_player->GetPosition()));
+		//}
 
 
 		DebugLog();
@@ -649,42 +692,42 @@ namespace basecross {
 	// END-------------------------------------------------------
 
 	// Enemy やダメージを受ける箇所で呼び出す例
-	void StageSato::DamageBill(shared_ptr<GameObject> target, int damage)
-	{
-		// ダメージを文字列に変換
-		std::string str = std::to_string(damage);
-		// ビルボードを入れる配列は最大桁数分
-		std::vector<shared_ptr<BillBoard>> damageBB(str.size());
+	//void StageSato::DamageBill(shared_ptr<GameObject> target, int damage)
+	//{
+	//	// ダメージを文字列に変換
+	//	std::string str = std::to_string(damage);
+	//	// ビルボードを入れる配列は最大桁数分
+	//	std::vector<shared_ptr<BillBoard>> damageBB(str.size());
 
-		const float uvWidth = 1.0f / 10.0f;
+	//	const float uvWidth = 1.0f / 10.0f;
 
-		for (size_t i = 0; i < str.size(); ++i)
-		{
-			// 文字から数字に直す
-			int digit = str[i] - '0';
+	//	for (size_t i = 0; i < str.size(); ++i)
+	//	{
+	//		// 文字から数字に直す
+	//		int digit = str[i] - '0';
 
-			// 左右オフセット
-			float offsetX = i ? 0.5f : -0.5f; 
+	//		// 左右オフセット
+	//		float offsetX = i ? 0.5f : -0.5f; 
 
-			// 1) BillBoard を生成
-			m_damageBill[i] = AddGameObject<BillBoard>(
-				target,                     // 付ける対象
-				L"Numbers",                 // テクスチャ
-				3,                          // レイヤー
-				5.0f,                       // 対象からの高さ
-				Vec3(1.5f, 1.5f, 1.0f),     // 大きさ
-				Col4(1, 1, 1, 1),			// 色
-				offsetX					// 左右オフセット
-			);
+	//		// 1) BillBoard を生成
+	//		m_damageBill[i] = AddGameObject<BillBoard>(
+	//			target,                     // 付ける対象
+	//			L"Numbers",                 // テクスチャ
+	//			3,                          // レイヤー
+	//			5.0f,                       // 対象からの高さ
+	//			Vec3(1.5f, 1.5f, 1.0f),     // 大きさ
+	//			Col4(1, 1, 1, 1),			// 色
+	//			offsetX					// 左右オフセット
+	//		);
 
-			// 2) その桁の数字に対応するUVを設定
-			Vec2 uv0(digit * uvWidth, 0.0f);
-			Vec2 uv1((digit + 1) * uvWidth, 1.0f);
-			m_damageBill[i]->SetBillUV(uv0, uv1);
-		}
+	//		// 2) その桁の数字に対応するUVを設定
+	//		Vec2 uv0(digit * uvWidth, 0.0f);
+	//		Vec2 uv1((digit + 1) * uvWidth, 1.0f);
+	//		m_damageBill[i]->SetBillUV(uv0, uv1);
+	//	}
 
-		// 3) 1秒後に自分で消えるようにタイマーをセット
-	}
+	//	// 3) 1秒後に自分で消えるようにタイマーをセット
+	//}
 
 	//// ----------------------------------------------------------
 	//// 使い方：敵にダメージを与えるコードの中で…

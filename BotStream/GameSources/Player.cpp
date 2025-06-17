@@ -681,7 +681,13 @@ namespace basecross {
 	//デバック用文字列表示関数
 	void Player::DebugLog()
 	{
-		auto deltaScale = GetWaveStage(false)->GetDeltaScale();
+		auto waveStage = GetWaveStage(false);
+		float deltaScale = 0.0f;
+		if (waveStage)
+		{
+			deltaScale = GetWaveStage(false)->GetDeltaScale();
+		}
+
 		////デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
