@@ -25,8 +25,8 @@ namespace basecross {
 	void SoundManager::OnUpdate()
 	{
 
-		m_BGMVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetBGMVol();
-		m_SEVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetSEVol();
+		//m_BGMVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetBGMVol();
+		//m_SEVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetSEVol();
 
 
 		auto StageObj = GetStage()->GetGameObjectVec();
