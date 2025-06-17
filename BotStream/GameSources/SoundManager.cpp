@@ -4,7 +4,7 @@
 */
 
 #include "stdafx.h"
-#include "SoundManager.h"
+#include "Project.h"
 
 namespace basecross {
 
@@ -19,6 +19,29 @@ namespace basecross {
 
 	void SoundManager::OnCreate()
 	{
+
+	}
+
+	void SoundManager::OnUpdate()
+	{
+
+		m_BGMVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetBGMVol();
+		m_SEVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetSEVol();
+
+
+		auto StageObj = GetStage()->GetGameObjectVec();
+
+		for (auto obj : StageObj)
+		{
+		    auto myGameObject = dynamic_pointer_cast<MyGameObject>(obj);
+
+		    if (myGameObject)
+		    {
+		        myGameObject->SetBGMVol(m_BGMVol);
+		        myGameObject->SetSEVol(m_SEVol);
+		    }
+		}
+
 	}
 
 	void SoundManager::PlaySE(int sfx)
@@ -133,40 +156,4 @@ namespace basecross {
 		XAPtr->Stop(m_BGM);
 	}
 
-	void SoundManager::SetBGMVolume(float setVolume)
-	{
-		m_bgmVolume = setVolume;
-		auto PtrBGM = m_bgm.lock();
-		if (PtrBGM)
-		{
-			PtrBGM->m_SourceVoice->SetVolume(m_bgmMaxVolume * m_bgmVolume);
-		}
-	}
-
-	float SoundManager::GetBGMVolume()
-	{
-		return m_bgmVolume;
-	}
-
-	void SoundManager::SetSEVolume(float setVolume)
-	{
-		m_seVolume = setVolume;
-		for (auto se : m_seList)
-		{
-			auto PtrSE = se.lock();
-			if (PtrSE)
-			{
-				auto PtrAudioResource = PtrSE->m_AudioResource.lock();
-				if (PtrAudioResource)
-				{
-					PtrSE->m_SourceVoice->SetVolume(m_seMaxVolume * m_seVolume);
-				}
-			}
-		}
-	}
-
-	float SoundManager::GetSEVolume()
-	{
-		return m_seVolume;
-	}
 }

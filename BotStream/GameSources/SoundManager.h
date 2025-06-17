@@ -4,6 +4,7 @@
 */
 
 #pragma once
+#include "Project.h"
 #include "stdafx.h"
 
 namespace basecross {
@@ -14,20 +15,19 @@ namespace basecross {
 		shared_ptr<SoundItem> m_BGM;
 		shared_ptr<SoundItem> m_SE;
 
-		weak_ptr<SoundItem> m_bgm;
-		vector<weak_ptr<SoundItem>> m_seList;
 
+		float m_BGMVol;
+		float m_SEVol;
 
-		float m_bgmVolume;
-		float m_seVolume;
-		float m_bgmMaxVolume;
-		float m_seMaxVolume;
+		float m_audioMax[2];
 
 	public:
 		SoundManager(const shared_ptr<Stage>& StagePtr);
 		virtual ~SoundManager();
 
 		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+
 
 		void PlaySE(int sfx);
 
@@ -37,13 +37,6 @@ namespace basecross {
 
 		void StopBGM();
 
-		void SetBGMVolume(float setVolume);
-
-		float GetBGMVolume();
-
-		void SetSEVolume(float setVolume);
-
-		float GetSEVolume();
 	};
 
 }
