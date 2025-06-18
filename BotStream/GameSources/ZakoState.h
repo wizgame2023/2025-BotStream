@@ -18,6 +18,8 @@ namespace basecross {
 
 		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+		float m_deltaScale = 0.0f;
+
 	public:
 		EnemyZakoStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -245,6 +247,25 @@ namespace basecross {
 
 	};
 
+	//スタン時のステート(雑魚敵)
+	class EnemyZakoStanState : public EnemyZakoStateBase
+	{
+	private:
+		//スタン時間計測
+		float m_stunTimeMax = 3.0f;
+		float m_stunTimeCount;
+	public:
+		EnemyZakoStanState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	class EnemyZakoStateMachine :public StateMachineBase
 	{
 	public:
@@ -259,6 +280,7 @@ namespace basecross {
 			AddState(L"Charge", shared_ptr<EnemyZakoChargeState>(new EnemyZakoChargeState(obj)));//突進
 			AddState(L"Melee", shared_ptr<EnemyZakoMeleeState>(new EnemyZakoMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoHitState>(new EnemyZakoHitState(obj)));
+			AddState(L"Stun", shared_ptr<EnemyZakoStanState>(new EnemyZakoStanState(obj)));
 			AddState(L"Die", shared_ptr<EnemyZakoDieState>(new EnemyZakoDieState(obj)));
 
 			ChangeState(L"Stand");

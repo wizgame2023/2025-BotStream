@@ -31,6 +31,9 @@
     <Filter Include="ObjectNotMove">
       <UniqueIdentifier>{f6b1f275-82a8-4677-be23-172691801f85}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Stage\WaveStage">
+      <UniqueIdentifier>{9f404510-c3bb-4810-9510-eab8b89dfdf9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h">
@@ -162,6 +165,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)SoundManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)TutorialStage.h">
+      <Filter>Stage\WaveStage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageFirst.h">
+      <Filter>Stage\WaveStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -283,6 +292,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)SoundManager.cpp">
       <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)TutorialStage.cpp">
+      <Filter>Stage\WaveStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageFirst.cpp">
+      <Filter>Stage\WaveStage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

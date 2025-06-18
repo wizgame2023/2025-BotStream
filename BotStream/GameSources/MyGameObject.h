@@ -8,6 +8,8 @@
 #include "Project.h"
 
 namespace basecross {
+	class WaveStageBase;
+
 	class MyGameObject : public GameObject
 	{
 	private:
@@ -44,12 +46,27 @@ namespace basecross {
 			return q * r * r2;
 		}
 
-		shared_ptr<Stage> GetWaveStage(bool ExceptionActive) const;
+		shared_ptr<WaveStageBase> GetWaveStage(bool ExceptionActive) const;
+		
+
+		shared_ptr<SoundItem> m_BGM;
+		shared_ptr<SoundItem> m_SE;
+
+		float m_BGMVol;
+		float m_SEVol;
+
+		float m_audioMax[2];
+
+		float GetBGMVol();
+		void SetBGMVol(int setBGM);
+		float GetSEVol();
+		void SetSEVol(int setSE);
+
+		void OnCreate()override;
+		void OnUpdate()override;
 
 	protected:
 
-		//void OnCreate()override;
-		//void OnUpdate()override;
 	};
 
 }

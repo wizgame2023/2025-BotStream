@@ -41,11 +41,20 @@ namespace basecross {
 
 	void Actor::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
+
+		//deltatimeの更新
 		_delta = App::GetApp()->GetElapsedTime();
+		//deltascaleを適用する
+		if (!m_ignoreDeltaScale) {
+			auto ws = GetWaveStage(false);
+			if (ws) {
+				_delta *= ws->GetDeltaScale();
+			}
+		}
 
 		//着地判定(無効化時間中ならそれを減算する)
 		if (m_LandDetect) {
@@ -253,7 +262,7 @@ namespace basecross {
 		auto plRot = trans->GetRotation();
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		//EffectManager::Instance().SetRotate(efkHandler,XMConvertToRadians(45.0f),-plRot.y,0.0f);
-		EffectManager::Instance().SetRotation(efkHandler, rotate, rad);
+		EffectManager::Instance().SetRotationFromAxisAngle(efkHandler, rotate, rad);
 		EffectManager::Instance().SetScale(efkHandler, Vec3(scale.x, scale.y, scale.z));
 		return efkHandler;
 	}
@@ -267,7 +276,7 @@ namespace basecross {
 
 		auto efkHandler = EffectManager::Instance().PlayEffect(EfkKey, plPos);
 		EffectManager::Instance().SetAllColor(efkHandler, changeColor);//エフェクトの色を変える
-		EffectManager::Instance().SetRotation(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
+		EffectManager::Instance().SetRotationFromAxisAngle(efkHandler, Vec3(rotate.x, rotate.y, rotate.z), rad);
 		return efkHandler;
 	}
 
@@ -285,9 +294,9 @@ namespace basecross {
 	//}
 
 	//ポーズのフラグをオンオフする
-	void Actor::SetPose(bool onOff)
+	void Actor::SetPause(bool onOff)
 	{
-		m_poseFlag = onOff;
+		m_PauseFlag = onOff;
 	}
 	
 	/// <summary>
@@ -341,7 +350,7 @@ namespace basecross {
 	void ProjectileBase::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}

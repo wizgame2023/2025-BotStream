@@ -64,7 +64,7 @@ namespace basecross{
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage")
 		{
-			ResetActiveStage<WaveStage>();
+			ResetActiveStage<WaveStageBase>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {
@@ -105,6 +105,8 @@ namespace basecross{
 		app->RegisterTexture(L"StoneBrick", strTexture);
 		strTexture = texPath + L"Fadeout.png";
 		app->RegisterTexture(L"Fadeout", strTexture);
+		strTexture = texPath + L"SlowSpeite.png";
+		app->RegisterTexture(L"SlowTex", strTexture);
 
 		// title
 		strTexture = texPath + L"TitleBack.png";
@@ -153,6 +155,9 @@ namespace basecross{
 		//敵のHPバー
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
+		//雑魚敵のHPバー
+		strTexture = texPath + L"BossHPMater3.png";
+		app->RegisterTexture(L"ZakoHPMater", strTexture);
 
 		// Floor
 		strTexture = texPath + L"FloorTex2.png";
@@ -237,7 +242,14 @@ namespace basecross{
 		strTexture = texPath + L"Ceiling.png";
 		app->RegisterTexture(L"CeilingTex", strTexture);
 
-		//モデル
+		//スタティックメッシュ
+		auto staticModelMesh = MeshResource::CreateStaticModelMesh(modPath, L"Parts_A.bmf");//パーツメッシュ
+		app->RegisterResource(L"PartsMesh", staticModelMesh);
+		staticModelMesh = MeshResource::CreateStaticModelMesh(modPath, L"Parts_C.bmf");//パーツメッシュ(モーター)
+		app->RegisterResource(L"MoterPartsMesh", staticModelMesh);
+
+		auto staticMultiModelMesh = MultiMeshResource::CreateStaticModelMultiMesh(modPath, L"Parts_B.bmf");//パーツメッシュ(パッチ)
+		app->RegisterResource(L"PatchPartsMesh", staticMultiModelMesh);
 
 		//ボーンマルチメッシュ
 		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//仮のプレイヤーメッシュ(槍兵)
@@ -255,9 +267,17 @@ namespace basecross{
 		boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_C.bmf");//雑魚敵のメッシュ(近距離)
 		app->RegisterResource(L"Enemy_C", boneModelMesh);
 
-		//ボーンマルチメッシュ用テクスチャ
+		//スタティックメッシュ用テクスチャ
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
+
+		//ボーンマルチメッシュ用テクスチャ
+		auto staticModelTexture = modPath + L"Parts_A_T.png";
+		app->RegisterTexture(L"PartsTex", staticModelTexture);
+		staticModelTexture = modPath + L"Parts_B_T.png";
+		app->RegisterTexture(L"PatchPartsTex", staticModelTexture);
+		staticModelTexture = modPath + L"Parts_C_T.png";
+		app->RegisterTexture(L"MoterPartsTex", staticModelTexture);
 
 		//ボーンモデルの通常リソース
 		auto modelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Boss_1.bmf");
@@ -309,7 +329,6 @@ namespace basecross{
 
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
-		app->RegisterWav(L"Decision2", SoundPath + L"Decision2.wav");
 
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
 		app->RegisterWav(L"Enemy_Slash", SoundPath + L"Enemy_Slash.wav");
@@ -330,13 +349,12 @@ namespace basecross{
 		app->RegisterWav(L"HandGun", SoundPath + L"HandGun.wav");
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
-		app->RegisterWav(L"AssaultRifle", SoundPath + L"AssaultRifle.wav");
-		app->RegisterWav(L"LockOnSE", SoundPath + L"Lock-on.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
 		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav"); 
-		//パーツ入手
+		// パーツ入手
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
-
+		// ジャスト回避
+		app->RegisterWav(L"JastDodgeSE", SoundPath + L"JastDodge.wav");
 	}
 
 }

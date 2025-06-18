@@ -17,9 +17,9 @@ namespace basecross {
 
 	}
 
-	shared_ptr<Stage> MyGameObject::GetWaveStage(bool ExceptionActive) const {
-		auto shptr = GetStage();
-		auto wave = dynamic_pointer_cast<WaveStageBase>(shptr);
+	shared_ptr<WaveStageBase> MyGameObject::GetWaveStage(bool ExceptionActive) const {
+		shared_ptr<Stage> shptr = GetStage();
+		shared_ptr<WaveStageBase> wave = dynamic_pointer_cast<WaveStageBase>(shptr);
 		if (wave) {
 			return wave;
 		}
@@ -37,6 +37,39 @@ namespace basecross {
 		}
 		// 所属ステージがnullだった
 		return nullptr;
+	}
+
+	void MyGameObject::OnCreate()
+	{
+		m_BGMVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[0]);
+		m_SEVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[1]);
+
+	}
+
+	void MyGameObject::OnUpdate()
+	{
+
+	}
+
+	float MyGameObject::GetBGMVol()
+	{
+		return m_BGMVol;
+	}
+
+	void MyGameObject::SetBGMVol(int setBGM)
+	{
+		m_BGMVol = setBGM;
+	}
+
+	float MyGameObject::GetSEVol()
+	{
+		return m_SEVol;
+	}
+
+	void MyGameObject::SetSEVol(int setSE)
+	{
+		m_SEVol = setSE;
+
 	}
 }
 //end basecross

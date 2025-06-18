@@ -24,6 +24,11 @@ namespace basecross {
 		shared_ptr<Sprite> m_SEMater[10];	// SEのメーター
 		shared_ptr<Sprite> m_audioSelect[2];	// オーディオ設定の選択しているところ
 
+		// ポーズ中のボタンUI
+		shared_ptr<Sprite> m_pauseAButton;
+		// ボタンの説明
+		shared_ptr<Sprite> m_buttonText;	
+
 		shared_ptr<Stage> m_stage;
 		
 		// フラグ -------------------------------------------------
@@ -56,6 +61,12 @@ namespace basecross {
 
 		// BGM,SE関係の表示非表示の制御
 		void AudioUIClear(bool clear);
+
+		// メインのUIを消す
+		void MainUIClear(bool clear);
+	
+		// 全てのUIを消す
+		void AllUIClear(bool clear);
 
 		//Actorを止める処理
 		void MoveSwitchActor(bool OnOff);

@@ -161,22 +161,127 @@ namespace basecross {
 
 
 	}
-
-	//DamageBillBoard::DamageBillBoard(
-	//	const shared_ptr<Stage>& StagePtr,
-	//	shared_ptr<GameObject>& actorPtr,
-	//	wstring spriteName,
-	//	int layer,
-	//	float pushY,
-	//	Vec3 scale,
-	//	Col4 color,
-	//	float pushX)
-	//	: BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
-	//{
-	//}
-
-	//DamageBillBoard::~DamageBillBoard() {}
-
 	
+	void BillBoard::RemoveBill(shared_ptr<BillBoard> bill)
+	{
+		// ビルボードの削除までの時間をリセット
+		m_removeTime = 0.0f;
+
+		while (true)
+		{
+			auto delta = App::GetApp()->GetElapsedTime();
+			m_removeTime += delta;
+			// 1秒経過したらループから抜け出し
+			if (m_removeTime > 1.0f)
+				break;
+		}
+		auto test = dynamic_pointer_cast<BillBoard>(bill);
+		// 1秒後に削除
+		GetStage()->RemoveGameObject<BillBoard>(test);
+		int a = 1;
+	}
+
+	//------------------------------------------------
+	// ダメージビルボード
+	//------------------------------------------------
+	DamageBill::DamageBill(
+		const shared_ptr<Stage>& stagePtr,
+		shared_ptr<GameObject>& actorPtr,
+		wstring spriteName,
+		int layer,
+		float pushY,
+		Vec3 scale,
+		Col4 color,
+		float pushX)
+		: BillBoard(stagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
+	{
+	}
+
+	void DamageBill::OnUpdate()
+	{
+		if (m_actor.expired())
+		{
+			GetStage()->RemoveGameObject<DamageBill>(GetThis<DamageBill>());
+			return;
+		}
+
+		auto actorPtr = m_actor.lock();
+		// 受け取ったアクタのTransformを取得
+		auto actorTrans = actorPtr->GetComponent<Transform>();
+		// カメラの位置を取得
+		auto cam = GetStage()->GetView()->GetTargetCamera();
+
+		// カメラの方向を取得してビルボードの向きを計算
+		Quat qt = Billboard(cam->GetAt() - cam->GetEye());
+
+		// ビルボードの位置調整
+		Vec3 localOffset(m_pushX, 0.0f, 0.0f);
+		// 回転の調整
+		Vec3 rotatedOffset = rotate(qt, localOffset);
+
+		// アクタの位置を取得して、ビルボードの位置を計算
+		Vec3 pos = actorTrans->GetPosition();
+		pos += Vec3(0.0f, m_pushY, 0.0f);
+		pos += rotatedOffset;
+
+		auto trans = GetComponent<Transform>();
+		trans->SetPosition(pos);
+		trans->SetScale(m_scale);
+		trans->SetQuaternion(qt);
+
+		auto draw = GetComponent<PCTStaticDraw>();
+		draw->SetTextureResource(m_textureName);
+	}
+
+	//------------------------------------------------
+	// ダメージビルボードの本体座標みたいな
+	//------------------------------------------------
+	DamageBillRoot::DamageBillRoot(const shared_ptr<Stage>& stagePtr, shared_ptr<GameObject>& actorPtr, float pushY)
+		: MyGameObject(stagePtr), m_actor(actorPtr), m_pushY(pushY) {
+	}
+
+	Quat DamageBillRoot::Billboard(const Vec3& line)
+	{
+		Vec3 temp = line;
+		Mat4x4 rot;
+		Vec3 up(0, 1.0f, 0);
+		Vec2 tempXZ(temp.x, temp.z);
+		if (tempXZ.length() < 0.1f) {
+			up = Vec3(0, 0, 1.0f);
+		}
+		temp.normalize();
+		rot = XMMatrixLookAtLH(Vec3(0, 0, 0), temp, up);
+		rot.inverse();
+		Quat qt = rot.quatInMatrix();
+		qt.normalize();
+		return qt;
+	}
+
+	void DamageBillRoot::OnCreate()
+	{
+		SetDrawActive(false); // 透明
+	}
+
+	void DamageBillRoot::OnUpdate()
+	{
+		// アクタが存在しない場合はこのビルボードを削除
+		if (m_actor.expired()) {
+			GetStage()->RemoveGameObject<DamageBillRoot>(GetThis<DamageBillRoot>());
+			return;
+		}
+
+		auto actorLock = m_actor.lock();
+		auto actorTrans = actorLock->GetComponent<Transform>();
+		auto trans = GetComponent<Transform>();
+
+		Vec3 pos = actorTrans->GetPosition();
+		pos.y += m_pushY;
+		trans->SetPosition(pos);
+
+		auto cam = GetStage()->GetView()->GetTargetCamera();
+		Quat qt = Billboard(cam->GetAt() - cam->GetEye());
+		trans->SetQuaternion(qt);
+	}
 }
+
 //end basecross

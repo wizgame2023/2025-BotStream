@@ -107,23 +107,29 @@ namespace basecross
 		void SetPosition(const Handle& EfkHandle, const Vec3 Position);
 		//----------------------------------------------------------------------------------
 		/*
-			エフェクトを任意軸周りの反時計周りの回転角度を指定する
+			エフェクトをオイラー角による回転で設定する
 			@param EfkHandle エフェクトのハンドル
-			@param Quaternion 回転する値
+			@param EulerAngles オイラー角
 			@return	なし
 		*/
-		//----------------------------------------------------------------------------------
-		void SetQuaternion(const Handle& EfkHandle, const Quat Quaternion);
+		void SetRotationFromEulerAngles(const Handle& EfkHandle, const Vec3 EulerAngles);
 		//----------------------------------------------------------------------------------
 		/*
-			エフェクトをX軸周りに回転させる値を指定する
+			エフェクトをクォータニオンによる回転で設定する
 			@param EfkHandle エフェクトのハンドル
-			@param Rotation 回転させる軸
-			@param Rad 回転する値
+			@param Quaternion クォータニオンの値
 			@return	なし
 		*/
+		void SetRotationFromQuaternion(const Handle& EfkHandle, const Quat Quaternion);
 		//----------------------------------------------------------------------------------
-		void SetRotation(const Handle& EfkHandle, Vec3 Rotation, const float Rad);
+		/*
+			エフェクトを軸と角度による回転で設定する
+			@param EfkHandle エフェクトのハンドル
+			@param AxisVec 軸（方向ベクトル）
+			@param Angle 角度
+			@return	なし
+		*/
+		void SetRotationFromAxisAngle(const Handle& EfkHandle, const Vec3 Axis, const float Angle);
 		//----------------------------------------------------------------------------------
 		/*
 			エフェクトの拡大率を指定する。
@@ -144,6 +150,14 @@ namespace basecross
 		void SetAllColor(const Handle& EfkHandle, const Col4 Col);
 		//----------------------------------------------------------------------------------
 		/*
+			全てのエフェクトをポーズ状態にする
+			@param pause on/off
+			@return	なし
+		*/
+		//----------------------------------------------------------------------------------
+		void PauseAllEffects (const bool pause);
+		//----------------------------------------------------------------------------------
+		/*
 			エフェクトの再生を止める
 			@param EfkHandle エフェクトのハンドル
 			@return	なし
@@ -159,7 +173,13 @@ namespace basecross
 		*/
 		//----------------------------------------------------------------------------------
 		void SetSpeed(const Handle& EfkHandle, const float Speed);
+		//----------------------------------------------------------------------------------
+		/*
+			エフェクトのNull値を取得
+			@param なし
+			@return	effNull 値は-10000
+		*/
+		Handle GetEffNull();
 
-		void SetRotate(const Handle EfkHandle, float x, float y, float z);
 	};
 }

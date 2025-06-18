@@ -66,7 +66,7 @@ namespace basecross {
 
 	void EnemyBase::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -100,7 +100,7 @@ namespace basecross {
 		}
 
 		//なんやかんや
-		m_state->Update();
+		m_state->Update(_delta);
 
 	}
 
@@ -227,12 +227,12 @@ namespace basecross {
 		m_trans->SetRotation(m_rot);
 		m_trans->SetScale(m_scale);
 
-		m_HPMax = 450;
+		m_HPMax = 600;
 		m_attack = 10;
-		m_defense = 1;
+		m_defense = 5;
 		m_HPCurrent = m_HPMax;
 
-		m_armorMax = 150.0f;
+		m_armorMax = 200.0f;
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 6.0f;
 
@@ -264,6 +264,12 @@ namespace basecross {
 		ptrColl->SetMakedRadius(3);
 		ptrColl->SetDrawActive(false);//debug
 
+		//影をつける（シャドウマップを描画する）
+		auto shadowPtr = AddComponent<Shadowmap>();
+		//影の形（メッシュ）を設定
+		shadowPtr->SetMeshResource(L"Boss1");
+		shadowPtr->SetMeshToTransformMatrix(spanMat);
+
 		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
 		m_LandDetect->SetCollScale(1.5f);
 
@@ -276,7 +282,7 @@ namespace basecross {
 
 	void BossFirst::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -406,7 +412,7 @@ namespace basecross {
 	void BossFirstShockwave::OnUpdate()
 	{
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}
@@ -621,7 +627,7 @@ namespace basecross {
 
 	void BossFirstSphere::OnUpdate() {
 		//もしポーズフラグがオンであればアップデート処理は出来なくなる
-		if (m_poseFlag)
+		if (m_PauseFlag)
 		{
 			return;
 		}

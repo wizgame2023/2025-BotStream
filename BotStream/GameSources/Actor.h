@@ -74,6 +74,8 @@ namespace basecross {
 		float m_angle;
 		//重力・摩擦処理の有無
 		bool m_doPhysics = true;
+		//スロー効果を無視するか否か
+		bool m_ignoreDeltaScale = false;
 
 		//喰らいモーション時間
 		float m_hitbacktime = 0;
@@ -85,7 +87,7 @@ namespace basecross {
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
 		//ボーズ状態かどうか
-		bool m_poseFlag = false;
+		bool m_PauseFlag = false;
 
 		//攻撃判定
 		shared_ptr<AttackCollision> m_AttackCol;
@@ -165,7 +167,7 @@ namespace basecross {
 		virtual Effekseer::Handle AddEffect(int addEffect);
 
 		//ポーズのフラグをオンオフする関数
-		void SetPose(bool onOff);
+		void SetPause(bool onOff);
 
 		//HP関係のゲッタセッタ
 		int GetHPCurrent() {
@@ -227,6 +229,15 @@ namespace basecross {
 			m_velocity += vel;
 		}
 
+		float GetSpeedMax()
+		{
+			return m_speedMax;
+		}
+		void SetSpeedMax(float sppedMax)
+		{
+			m_speedMax = sppedMax;
+		}
+
 		//前方ベクトルの取得
 		Vec3 GetForward() {
 			Vec3 vec = GetComponent<Transform>()->GetForward();
@@ -280,6 +291,10 @@ namespace basecross {
 				return;
 			}
 			m_SEManager->Stop(m_SE);
+		}
+
+		void SetIgnoreDeltaScale(bool ignore) {
+			m_ignoreDeltaScale = ignore;
 		}
 	};
 

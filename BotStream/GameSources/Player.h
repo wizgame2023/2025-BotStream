@@ -16,6 +16,8 @@ namespace basecross {
 	class EnemyBase;//EnemyZakoが居なくなったら消す
 	class BillBoard;
 	class BillBoardGauge;
+	class Sprite;
+
 	enum PlayerState
 	{
 		PlayerState_Walk,
@@ -66,17 +68,23 @@ namespace basecross {
 		float m_dodgeCoolTime = 0.0f;
 		//回避のクールタイムの時間
 		float m_maxDodgeCoolTime = 0.3f;
+		//移動していいかのフラグ
+		bool m_walkFlag = true;
+		//攻撃していいかのフラグ
+		bool m_attackFlag = true;
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
 
-		////最大HP
-		//int m_HPMax = 100.0f;
-		////攻撃力
-		//int m_attack;
-		////防御力
-		//int m_defense;
-		////現在HP
-		//int m_HPCurrent;
+
+		// ジャスト回避したかのフラグ
+		bool m_jastDodge = false;
+		// スローモーションをどれくらい継続するかの数値
+		float m_timeOfJastDodgeCount = 0.0f;
+		float m_timeOfJastDodgeMax = 1.0f;
+
+		//地面にめり込んでしまっている時間
+		float m_immersedInTime = 0.0f;
+
 		//元々の最大HP
 		int m_originallyHPMax = 100;
 		//最大SP
@@ -105,7 +113,9 @@ namespace basecross {
 		shared_ptr<PlayerStateMachine> m_stateMachine;
 
 		//UI関係
-		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;//現在の球数を表示するUI
+		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;// 現在の球数を表示するUI
+		shared_ptr<Sprite> m_JastDodgeSprite = nullptr;// ジャスト回避用の演出UI
+		float m_alphaColorjastDodge = 0.0f;
 
 		//コントローラー関係
 		CONTROLER_STATE m_controller;
@@ -118,10 +128,6 @@ namespace basecross {
 
 		//回避処理
 		void Dodge();
-
-		//エフェクトテスト用
-		Vec3 m_EfkPos;
-		Handle m_testEffect;
 
 	public:
 		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
@@ -144,6 +150,12 @@ namespace basecross {
 		void ReloadBullet(float ReloadTime);
 		//アニメーションの更新
 		void UpdateAnimation(float addTime);
+
+		//ジャスト回避時の処理
+		void JastDodge(float deltaScale,float slowTime);
+
+		//地面めり込み回避処理
+		void ImmersedInCheck();
 
 		//HPのゲッター
 		int GetHP();
@@ -197,6 +209,26 @@ namespace basecross {
 		void Player::SetStickL(Vec3 SetStickL)
 		{
 			m_stickL = SetStickL;
+		}
+
+		//攻撃フラグのゲッタセッタ
+		bool Player::GetAttackFlag()
+		{
+			return m_attackFlag;
+		}
+		void Player::SetAttackFlag(bool onOff)
+		{
+			m_attackFlag = onOff;
+		}
+
+		//移動フラグのゲッタセッタ
+		bool Player::GetwalkFlag()
+		{
+			return m_walkFlag;
+		}
+		void Player::SetWalkFlag(bool onOff)
+		{
+			m_walkFlag = onOff;
 		}
 
 		//アニメーションの追加時間のゲッタセッタ
@@ -257,176 +289,6 @@ namespace basecross {
 
 		//攻撃しているアクターを指定する
 		void SetAttackActor(int actorName);
-	};
-
-
-	//雑魚敵の処理をいったんここに書きますマージ終わったらEnemy.cpp.hに戻す
-	class EnemyZako : public EnemyBase
-	{
-	protected:
-		void OnDamaged() override;
-
-		//HPバー用のビルボード
-		shared_ptr<BillBoard> m_HPFrame = nullptr;
-		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
-
-		shared_ptr<BillBoard> m_damageBill = nullptr;
-
-		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
-		int m_AttackType = Zako_Melee;
-
-		//アニメーションの更新時間
-		float m_addTimeAnimation = 0.0f;
-		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
-
-		//攻撃のクールダウン関係
-		bool m_attackFlag = false;
-		float m_timeOfAttackCool = 5.0f;
-		float m_timeCountOfAttackCool = 3.0f;
-
-		bool m_beforUsed = false;
-
-	public:
-		// 雑魚敵の種類を追加するときはここに書く
-		enum EnemyZakoAttackType
-		{
-			Zako_Melee,//近距離型
-			Zako_Long,//遠距離型
-			Zako_Flying,//滞空型
-		};
-
-		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee) :
-			EnemyBase(stagePtr, pos, rot, scale, used),
-			m_AttackType(attackType)
-		{
-
-		}
-		~EnemyZako() {}
-
-		//受けた攻撃の情報を渡すゲッター
-		HitInfo EnemyZako::GetHitInfo()
-		{
-			return m_getHitInfo;
-		}
-
-		void OnCreate() override;
-		void OnUpdate() override;
-		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
-		void OnDestroy()override;
-
-		//ビルボードの処理
-		virtual void UpdateHPBer();
-
-		//攻撃のクールタイム
-		virtual void TimeOfAttackCool();
-
-		//ダメージを受けたときにStandステートに戻る処理
-		virtual void HitBackStandBehavior()override;
-
-		//攻撃のタイプのゲッタ
-		virtual int GetAttackType()
-		{
-			return m_AttackType;
-		}
-
-		//攻撃フラグのゲッタセッタ
-		bool GetAttackFlag()
-		{
-			return m_attackFlag;
-		}
-		void SetAttackFlag(bool attackFlag)
-		{
-			m_attackFlag = attackFlag;
-		}
-
-		//アニメーションの追加時間のゲッタセッタ
-		float GetAddTimeAnimation()
-		{
-			return m_addTimeAnimation;
-		}
-		void SetAddTimeAnimation(float addTimeAnimation)
-		{
-			m_addTimeAnimation = addTimeAnimation;
-		}
-	};
-
-	//遠距離の雑魚
-	class EnemyZakoLong :public EnemyZako
-	{
-	private:
-
-	public:
-		EnemyZakoLong(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
-			EnemyZako(stagePtr, pos, rot, scale, used, Zako_Long)
-		{
-
-		}
-		~EnemyZakoLong() {};
-
-		void OnCreate()override;
-
-	};
-
-	class EnemyZakoFlying : public EnemyZako
-	{
-	private:
-		void OnDamaged() override;
-
-	public:
-		enum EnemyZakoFlyingAttackType
-		{
-			Zako_Melee,//近距離型
-			Zako_Long//遠距離型
-		};
-
-		EnemyZakoFlying(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
-			EnemyZako(stagePtr, pos, rot, scale, used)
-		{
-
-		}
-		~EnemyZakoFlying() {}
-
-		//受けた攻撃の情報を渡すゲッター
-		HitInfo EnemyZakoFlying::GetHitInfo()
-		{
-			return m_getHitInfo;
-		}
-
-		void OnCreate() override;
-		void OnUpdate() override;
-		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
-
-		//ビルボードの処理
-		void UpdateHPBer();
-
-		//攻撃のクールタイム
-		void TimeOfAttackCool();
-
-		//攻撃のタイプのゲッタ
-		int GetAttackType()
-		{
-			return m_AttackType;
-		}
-
-		//攻撃フラグのゲッタセッタ
-		bool GetAttackFlag()
-		{
-			return m_attackFlag;
-		}
-		void SetAttackFlag(bool attackFlag)
-		{
-			m_attackFlag = attackFlag;
-		}
-
-		//アニメーションの追加時間のゲッタセッタ
-		float GetAddTimeAnimation()
-		{
-			return m_addTimeAnimation;
-		}
-		void SetAddTimeAnimation(float addTimeAnimation)
-		{
-			m_addTimeAnimation = addTimeAnimation;
-		}
 	};
 }
 //end basecross

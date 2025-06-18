@@ -31,9 +31,26 @@ namespace basecross {
 		trans->SetRotation(m_rot);
 		trans->SetScale(m_scale);
 		auto ptrDraw = AddComponent<BcPNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 		ptrDraw->SetDiffuse(Col4(1, 1, 1, 1));
-		ptrDraw->SetTextureResource(L"PartsTEX");
+
+		//パーツタイプによって見た目が変わる
+		switch (m_partsStatus.partsType)
+		{
+		case parts:
+			ptrDraw->SetMeshResource(L"PartsMesh");
+			ptrDraw->SetTextureResource(L"PartsTex");
+			break;
+		case PatchParts:
+			ptrDraw->SetMultiMeshResource(L"PatchPartsMesh");
+			ptrDraw->SetTextureResource(L"PatchPartsTex");
+			break;
+		case MoterParts:
+			ptrDraw->SetMeshResource(L"MoterPartsMesh");
+			ptrDraw->SetTextureResource(L"MoterPartsTex");
+			break;
+		default:
+			break;
+		}
 
 		//OBB衝突判定を付ける
 		auto ptrColl = AddComponent<CollisionSphere>();

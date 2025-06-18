@@ -111,7 +111,6 @@ namespace basecross {
         auto ptrSoundManager = AddGameObject<SoundManager>();
         SetSharedGameObject(L"SoundManager", ptrSoundManager);
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
-        GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
 
         auto colController = AddGameObject<StageCollisionController>();
         colController->SetCollisionSwhich(true);
@@ -317,6 +316,11 @@ namespace basecross {
         {
             AddGameObject<Floor>(v[0], v[1], v[2]);
 
+            // ブロック生成
+			//AddGameObject<Block>(v[0],v[2]);
+
+            /*
+            // 認識を間違えていたので没です。でも一応残す
             // ブロックの横と奥行きの静的定数
             constexpr float scaleXZ = Block::BLOCK_XZ_SCALE;
             // ブロック生成時のポジションのずれの修正
@@ -345,6 +349,7 @@ namespace basecross {
                     );
                 }
             }
+            */
         }
 
 
@@ -371,16 +376,59 @@ namespace basecross {
         ptrTransform->SetRotation(m_Rotation);
         ptrTransform->SetPosition(m_Position);
 
+        //Transformに対しての等差数列
+        Mat4x4 spanMat;
+        spanMat.affineTransformation(
+            Vec3(1.0f, 1.0f, 1.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        );
+
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
+        
 
-        auto ptrDraw = AddComponent<PNTStaticDraw>();
+        auto ptrDraw = AddComponent<PNTStaticInstanceDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
-        ptrDraw->SetTextureResource(L"WallTex");
+        ptrDraw->SetTextureResource(L"FloorTex");
+
+        ptrDraw->SetOwnShadowActive(true);
+
+        ptrDraw->SetMeshToTransformMatrix(spanMat);
+
+		for (int i = 0; i < (int)m_Scale.x / 10; i++)
+		{
+			for (int j = 0; j < (int)m_Scale.z / 10; j++)
+			{
+
+				// ブロックの位置を取得
+				float x = ((j * 10.0f) + 5.0) - (m_Scale.x / 2);
+				float z = (m_Scale.z / 2) - (5.0f + (i * 10.0f));
+				//インスタンス用の行列を作成する
+				Mat4x4 matrix;
+                matrix.affineTransformation(
+                    Vec3(10.0f, 0.1f, 10.0f),
+                    Vec3(),
+                    Vec3(),
+                    Vec3(x + m_Position.x, -1.5f, z + m_Position.z)
+                );
+                ptrDraw->AddMatrix(matrix);//ブロックを表示
+			}
+		}
+
+        GetStage()->SetCollisionPerformanceActive(true);
+        GetStage()->SetUpdatePerformanceActive(true);
+        GetStage()->SetDrawPerformanceActive(true);
 
         AddTag(L"Floor");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");
+
+        Shadowmap::SetLightHeight(80.0f);
+        //Shadowmap::SetLightNear(10.0f);
+        Shadowmap::SetLightFar(400.0f);
+        Shadowmap::SetViewSize(150.0f);
 
         ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
@@ -391,6 +439,7 @@ namespace basecross {
     // 床の見た目変更用のブロックのクラス ---------------------------------------------------------
     // Floorクラスを参考に作りました
     Block::Block(const shared_ptr<Stage>& StagePtr,
+		const Vec3& Scale,
         const Vec3& Position
     ) :
         MyGameObject(StagePtr),
@@ -401,16 +450,27 @@ namespace basecross {
     void Block::OnCreate()
     {
         auto ptrTransform = GetComponent<Transform>();
-        // 大きさと回転は固定  必要に応じてメンバ変数増やします / 今のところはm_scaleXZが10で固定です
-        ptrTransform->SetScale(Vec3(BLOCK_XZ_SCALE, 3.0f, BLOCK_XZ_SCALE));
+        // 回転は固定  必要だったらメンバ変数増やします
+        ptrTransform->SetScale(m_scale);
         ptrTransform->SetRotation(Vec3(0.0f));
-        ptrTransform->SetPosition(m_pos);
+        ptrTransform->SetPosition(Vec3(m_pos.x, m_pos.y + 0.05f, m_pos.z));
+
+
+        //Transformに対しての等差数列
+        Mat4x4 spanMat;
+        spanMat.affineTransformation(
+            Vec3(1.0f, 1.0f, 1.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        );
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
 
-        // 色変え
         ptrDraw->SetDiffuse(Col4(0.7f, 0.8f, 0.9f, 0.0f));
+
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
         // テクスチャ
         ptrDraw->SetTextureResource(L"FloorTex");
@@ -419,58 +479,87 @@ namespace basecross {
         //auto shadowPtr = AddComponent<Shadowmap>();
         //ptrDraw->SetOwnShadowActive(true);
 
+        float texOffset = 5.0f;
+
+   //     for (int i = 0; i < (int)m_scale.x / 10; i++)
+   //     {
+			//for (int j = 0; j < (int)m_scale.z / 10; j++)
+			//{
+   //             // ブロックの位置を取得
+   //             float x = (j * 10.0f) - texOffset;
+			//	float z = texOffset - (i * 10.0f);
+
+   //             //インスタンス用の行列を作成する
+   //             Mat4x4 matrix;
+
+   //             matrix.affineTransformation(
+   //                 Vec3(10.0f, 0.1f, 10.0f),
+   //                 Vec3(),
+   //                 Vec3(),
+   //                 Vec3(x, 0.0f, z)
+   //             );
+   //             ptrDraw->AddMatrix(matrix);//ブロックを表示
+   //         }
+   //     }
     }
     // END -----------------------------------------------------------------------------------------
 
     //壁作成
     void WaveStage::CreateWall()
     {
-        // Wave1の壁の大きさ
-        Vec3 wallSclWv1(120.0f, 4.0f, 41.0f);
-        // Wave2の壁の大きさ
-        Vec3 wallSclWv2(120.0f, 4.0f, 41.0f);
-        // Bossの壁の大きさ
-        Vec3 wallSclBoss(170.0f, 4.0f, 41.0f);
+        // 壁の厚さ
+		static constexpr float zakoWallDepth = 8.0f; 
+		// ボスの壁は厚くする
+        static constexpr float bossWallDepth = 15.0f; 
+
+        // Sideの壁の大きさ
+        Vec3 wallSideSclWv1(zakoWallDepth, 41.0f, 115.4f);
+        Vec3 wallSideSclWv2(zakoWallDepth, 41.0f, 115.4f);
+        Vec3 wallSideSclBoss(bossWallDepth, 41.0f, 157.5f);
+        // Frontの壁の大きさ
+        Vec3 wallFrontSclWv1(120.0f, 41.0f, zakoWallDepth);
+        Vec3 wallFrontSclWv2(120.0f, 41.0f, zakoWallDepth);
+        Vec3 wallFrontSclBoss(170.0f, 41.0f, bossWallDepth);
 
         vector < vector<Vec3> > vec =
         {
             //Boss
             //右
             {
-                wallSclBoss,
-                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                wallSideSclBoss,
+                Vec3(0.0f),
                 Vec3(86.9f, 19.0f, 260.0f)
             },
             //左
             {
-                wallSclBoss,
-                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                wallSideSclBoss,
+                Vec3(0.0f),
                 Vec3(-86.9f, 19.0f, 260.0f)
             },
             //Wave2
             //右
             {
-                wallSclWv2,
-                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                wallSideSclWv2,
+                Vec3(0.0f),
                 Vec3(62.0f, 19.0f, 0.0f)
             },
             //左
             {
-                wallSclWv2,
-                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                wallSideSclWv2,
+                Vec3(0.0f),
                 Vec3(-61.9f, 19.0f, 0.0f)
             },
             //Wave1
             //右
             {
-                wallSclWv1,
-                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                wallSideSclWv1,
+                Vec3(0.0f),
                 Vec3(62.0f, 19.0f, -260.0f)
             },
             //左
             {
-                wallSclWv1,
-                Vec3(-XM_PIDIV2, 0.0f, 1.57f),
+                wallSideSclWv1,
+                Vec3(0.0f),
                 Vec3(-62.0f, 19.0f, -260.0f)
             },
         };
@@ -484,40 +573,40 @@ namespace basecross {
             ////Boss
             //前
             {
-                wallSclBoss,
-                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                wallFrontSclBoss,
+                Vec3(0.0f),
                 Vec3(0.0f, 19.0f, 346.9f)
             },
             //後
             {
-                wallSclBoss,
-                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                wallFrontSclBoss,
+                Vec3(0.0f),
                 Vec3(0.0f, 19.0f, 173.1f)
             },
             ////Wave2
             //前
             {
-                wallSclWv2,
-                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                wallFrontSclWv2,
+                Vec3(0.0f),
                 Vec3(0.0f, 19.0f, 62.0f)
             },
             //後
             {
-                wallSclWv2,
-                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                wallFrontSclWv2,
+                Vec3(0.0f),
                 Vec3(0.0f, 19.0f, -62.0f)
             },
             ////Wave1
             //前
             {
-                wallSclWv1,
-                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                wallFrontSclWv1,
+                Vec3(0.0f),
                 Vec3(0.0f, 19.0f, -198.0f)
             },
              //後
             {
-                wallSclWv1,
-                Vec3(-XM_PIDIV2, 1.57f, 1.57f),
+                wallFrontSclWv1,
+                Vec3(0.0f),
                 Vec3(0.0f, 19.0f, -322.0f)
             },
         };
@@ -551,11 +640,22 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
+        ptrColl->SetDrawActive(false);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         ptrDraw->SetTextureResource(L"WallSideTex");
+        
 
+        //Transformに対しての等差数列
+        Mat4x4 spanMat;
+        spanMat.affineTransformation(
+            Vec3(0.5f, 1.0f, 1.2f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        );
+        ptrDraw->SetMeshToTransformMatrix(spanMat);
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
         ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
@@ -589,10 +689,21 @@ namespace basecross {
 
         auto ptrColl = AddComponent<CollisionObb>();
         ptrColl->SetFixed(true);
+        ptrColl->SetDrawActive(false);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         ptrDraw->SetTextureResource(L"WallFrontTex");
+
+        //Transformに対しての等差数列
+        Mat4x4 spanMat;
+        spanMat.affineTransformation(
+            Vec3(1.0f, 1.0f, 0.5f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        );
+        ptrDraw->SetMeshToTransformMatrix(spanMat);
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
