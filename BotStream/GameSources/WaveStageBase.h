@@ -71,6 +71,8 @@ namespace basecross {
 
         bool m_isPaused = false;
 
+        bool m_onceFlag = false;
+
         shared_ptr<BossGaugeUI> m_bossGauge;
 
         void ShowFPS() {
