@@ -188,6 +188,10 @@ namespace basecross {
 	{
 		//ダメージを受けた後のHPによってステートの遷移を変える
 		m_hitbacktime -= _delta;
+
+		//スタン値追加
+		m_stun += m_getHitInfo.StunDamage;
+
 		if (m_hitbacktime <= 0) {
 			if (m_HPCurrent <= 0)
 			{
@@ -197,6 +201,12 @@ namespace basecross {
 			{
 				ChangeState(L"Stand");
 			}
+		}
+
+		//スタン値が一定を過ぎたらスタン状態になる
+		if (m_stun >= m_stunMax)
+		{
+			ChangeState(L"Stun");
 		}
 	}
 
