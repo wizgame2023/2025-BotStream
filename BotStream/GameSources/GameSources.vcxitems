@@ -49,6 +49,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StageFirst.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSanpei.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSato.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageSecond.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSelect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageTuboi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)State.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StageFirst.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSanpei.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageSecond.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSelect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageTuboi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp" />
