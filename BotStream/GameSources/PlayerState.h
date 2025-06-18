@@ -476,6 +476,7 @@ namespace basecross {
 			AddState(L"AttackLong", shared_ptr<PlayerAttackLongState>(new PlayerAttackLongState(obj)));
 			AddState(L"AttackSpecial", shared_ptr<PlayerAttackSpecialState>(new PlayerAttackSpecialState(obj)));
 			AddState(L"Hit", shared_ptr<PlayerHitState>(new PlayerHitState(obj)));
+			AddState(L"StartMovie", shared_ptr<PlayerStartMovieState>(new PlayerStartMovieState(obj)));
 
 
 			//最初のステートはWalkここからいろんなステートに変更する イーブイみたいなもの
