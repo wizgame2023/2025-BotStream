@@ -115,15 +115,15 @@ namespace basecross {
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
-			//m_pos = GetPosition();	
-			//if (m_pos.y < 1.0f)
-			//{
-			//	m_pos.y = 1.0f;
-			//	SetPosition(m_pos);
-			//	auto test = GetVelocity();
-			//	test.y = 0.0f;
-			//	SetVelocity(test);
-			//}
+			m_pos = GetPosition();	
+			if (m_pos.y < 1.0f)
+			{
+				m_pos.y = 1.0f;
+				SetPosition(m_pos);
+				auto test = GetVelocity();
+				test.y = 0.0f;
+				SetVelocity(test);
+			}
 
 		}
 
@@ -225,7 +225,7 @@ namespace basecross {
 
 		DebugLog();//デバックログ
 		//めり込み防止処理
-		ImmersedInCheck();
+		//ImmersedInCheck();
 	}
 
 	//ジャンプ処理
