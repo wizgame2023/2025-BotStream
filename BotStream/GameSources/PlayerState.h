@@ -437,6 +437,28 @@ namespace basecross {
 	};
 
 
+	//ステージ開始用のムービステート
+	class PlayerStartMovieState :public PlayerStateBase
+	{
+	private:
+
+	public:
+		PlayerStartMovieState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerStartMovieState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+
+	};
+
+
 	//プレイヤーステートマシン
 	class PlayerStateMachine : public StateMachineBase
 	{
