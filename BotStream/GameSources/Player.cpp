@@ -641,13 +641,12 @@ namespace basecross {
 		{
 			auto attack = dynamic_pointer_cast<AttackCollision>(Other);
 
-			if (attack)
+			if (attack->GetHitInfo().Type == AttackType::Enemy)
 			{
 				m_jastDodge = true;
 				m_SEManager->Start(L"JastDodgeSE", 0, 2.0f);
 				m_timeOfJastDodgeCount = 0.0f;
 			}
-
 		}
 
 		////コリジョンが地面を接触してしまったら少し弾ませる
