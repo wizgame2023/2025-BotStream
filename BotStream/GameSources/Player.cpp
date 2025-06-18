@@ -115,12 +115,16 @@ namespace basecross {
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
-			m_pos = GetPosition();
-			if (m_pos.y < 1.0f)
-			{
-				m_pos.y = 1.0f;
-				SetPosition(m_pos);
-			}
+			//m_pos = GetPosition();	
+			//if (m_pos.y < 1.0f)
+			//{
+			//	m_pos.y = 1.0f;
+			//	SetPosition(m_pos);
+			//	auto test = GetVelocity();
+			//	test.y = 0.0f;
+			//	SetVelocity(test);
+			//}
+
 		}
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
@@ -177,7 +181,7 @@ namespace basecross {
 		//-------------------------------------------------------------
 		
 		//デバック用文字列
-		DebugLog();
+		//DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
@@ -218,7 +222,10 @@ namespace basecross {
 			}
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
+
 		DebugLog();//デバックログ
+		//めり込み防止処理
+		ImmersedInCheck();
 	}
 
 	//ジャンプ処理
@@ -340,6 +347,37 @@ namespace basecross {
 			// 無敵解除
 			RemoveTag(L"invincible");
 		}
+	}
+
+	//めり込み処理チェック処理
+	void Player::ImmersedInCheck()
+	{
+		m_pos = GetPosition();
+
+		float immersedInTimeMax = 0.1f;
+		//めり込んで居なければカウントをリセット
+		if (m_pos.y >= 1.0f)
+		{
+			m_immersedInTime = 0.0f;
+		}
+
+		//めり込んでいる時間をカウントする
+		if (m_pos.y < 1.0f)
+		{
+			m_immersedInTime += _delta;
+		}
+
+		//一定時間めり込んでいたら強制的にめり込まないようにする
+		if (m_immersedInTime >= immersedInTimeMax)
+		{
+			m_pos.y = 1.0f;
+			SetPosition(m_pos);
+			m_velocity.y = 0.0f;
+
+			//リセット
+			m_immersedInTime = 0.0f;
+		}
+
 	}
 
 	// プレイヤーの移動処理
