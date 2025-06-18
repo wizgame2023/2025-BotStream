@@ -171,6 +171,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StageFirst.h">
       <Filter>Stage\WaveStage</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageSecond.h">
+      <Filter>Stage\WaveStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -297,6 +300,9 @@
       <Filter>Stage\WaveStage</Filter>
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StageFirst.cpp">
+      <Filter>Stage\WaveStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageSecond.cpp">
       <Filter>Stage\WaveStage</Filter>
     </ClCompile>
   </ItemGroup>
