@@ -22,6 +22,9 @@ namespace basecross {
         virtual ~StageFirst() {}
         //‰Šú‰»
         virtual void OnCreate()override;
+        virtual void OnUpdate()override;
+
+        void UpdateGamePhase()override;
     };
 
 }
