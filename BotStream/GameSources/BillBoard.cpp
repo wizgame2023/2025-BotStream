@@ -162,23 +162,10 @@ namespace basecross {
 
 	}
 	
-	void BillBoard::RemoveBill(shared_ptr<BillBoard> bill)
+	void BillBoard::RemoveBill()
 	{
-		// ビルボードの削除までの時間をリセット
-		m_removeTime = 0.0f;
-
-		while (true)
-		{
-			auto delta = App::GetApp()->GetElapsedTime();
-			m_removeTime += delta;
-			// 1秒経過したらループから抜け出し
-			if (m_removeTime > 1.0f)
-				break;
-		}
-		auto test = dynamic_pointer_cast<BillBoard>(bill);
-		// 1秒後に削除
-		GetStage()->RemoveGameObject<BillBoard>(test);
-		int a = 1;
+		// 削除
+		GetStage()->RemoveGameObject<BillBoard>(GetThis<BillBoard>());
 	}
 
 	//------------------------------------------------
@@ -195,6 +182,11 @@ namespace basecross {
 		float pushX)
 		: BillBoard(stagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
 	{
+	}
+
+	void DamageBill::OnCreate()
+	{
+		
 	}
 
 	void DamageBill::OnUpdate()
@@ -231,6 +223,12 @@ namespace basecross {
 
 		auto draw = GetComponent<PCTStaticDraw>();
 		draw->SetTextureResource(m_textureName);
+	}
+
+	void DamageBill::RemoveBill()
+	{
+		// 削除
+		GetStage()->RemoveGameObject<DamageBill>(GetThis<DamageBill>());
 	}
 
 	//------------------------------------------------
@@ -281,6 +279,12 @@ namespace basecross {
 		auto cam = GetStage()->GetView()->GetTargetCamera();
 		Quat qt = Billboard(cam->GetAt() - cam->GetEye());
 		trans->SetQuaternion(qt);
+	}
+
+	void DamageBillRoot::RemoveBill()
+	{
+		// 削除
+		GetStage()->RemoveGameObject<DamageBillRoot>(GetThis<DamageBillRoot>());
 	}
 }
 

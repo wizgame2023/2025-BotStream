@@ -525,11 +525,9 @@ namespace basecross {
 
 		if (keybord.m_bPushKeyTbl[VK_RIGHT])
 		{
-			auto root = AddGameObject<DamageBillRoot>(
-				actorPtr,    // 対象 GameObject
-				50.0f        // Y オフセット
+			m_root.push_back(
+				AddGameObject<DamageBillRoot>(actorPtr, 0.0f)
 			);
-
 			
 			string dmgStr = to_string(30);						// 受け取ったダメージの文字数(30であれば2文字)
 			int len = (int)dmgStr.size();						// ダメージの桁数
@@ -541,7 +539,7 @@ namespace basecross {
 			{
 				float offsetX = startX + i * charWidth;
 
-				auto digitBill = AddGameObject<DamageBill>(
+				m_damageBill.push_back(AddGameObject<DamageBill>(
 					actorPtr,					// 各ビルボードは敵にくっつける
 					L"Numbers",					// テクスチャ名
 					3,							// レイヤー
@@ -549,16 +547,21 @@ namespace basecross {
 					Vec3(1.0f, 1.0f, 1.0f),		// サイズ
 					Col4(1, 1, 1, 1),			// 色 (黄色など)
 					offsetX						// 左右オフセット
-				);
+				));
 
-				digitBill->SetBillUV(
+				m_damageBill[i]->SetBillUV(
 					Vec2((dmgStr[i] - '0') * 0.1f, 0.0f), // UVの左上
 					Vec2((dmgStr[i] - '0' + 1) * 0.1f, 1.0f) // UVの右下
 				);
 				
-				auto test = dynamic_pointer_cast<BillBoard>(digitBill);
-				test->RemoveBill(test);
+				//RemoveGameObject<DamageBillRoot>(m_root[0]);
+
+
+
 				int a = 0;
+				//auto test = dynamic_pointer_cast<BillBoard>(digitBill);
+
+				//test->RemoveBill();
 			}
 
 		}

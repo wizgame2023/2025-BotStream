@@ -77,9 +77,11 @@ namespace basecross {
 		//出現する高さ変更
 		virtual void SetPushY(float pushY);
 
+		// UV値の変更
 		void SetBillUV(Vec2 topLeft, Vec2 botRight);
 
-		void RemoveBill(shared_ptr<BillBoard> bill);
+		// ビルボードの削除
+		void RemoveBill();
 	};
 
 	// ダメージビルボード
@@ -99,7 +101,11 @@ namespace basecross {
 
 		virtual ~DamageBill() {}
 
+		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
+
+		// ビルボード削除
+		void RemoveBill();
 	};
 
 	// ダメージビルボードの本体座標みたいな
@@ -113,6 +119,9 @@ namespace basecross {
 		virtual ~DamageBillRoot() {}
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
+
+		// ビルボード削除
+		void RemoveBill();
 	};
 }
 //end basecross
