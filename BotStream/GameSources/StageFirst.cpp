@@ -54,6 +54,7 @@ namespace basecross {
 		m_gamePhase = GamePhase::GPhase_Start;
 	}
 
+	//次のWaveに行くか確認する処理
 	bool StageFirst::ConsiderGoToNextWave() {
 		auto EnemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
 		int EnemyNum = EnemyVec.size();
@@ -65,6 +66,7 @@ namespace basecross {
 		return ret;
 	}
 
+	//ゲームクリアしていいか確認する処理
 	bool StageFirst::ConsiderGameClear() {
 		bool ret = false;
 		ret |= m_boss.lock()->GetHPCurrent() <= 0;
@@ -72,6 +74,7 @@ namespace basecross {
 		return ret;
 	}
 
+	//ゲームオーバーしていいか確認する処理
 	bool StageFirst::ConsiderGameOver() {
 		bool ret = false;
 		ret |= m_player.lock()->GetHPCurrent() <= 0;
@@ -79,6 +82,7 @@ namespace basecross {
 		return ret;
 	}
 
+	//ウェーブ移行処理
 	void StageFirst::WaveInitialize() {
 		switch (m_waveCurrent) {
 
