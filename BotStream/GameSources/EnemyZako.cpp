@@ -192,21 +192,27 @@ namespace basecross {
 		//スタン値追加
 		m_stun += m_getHitInfo.StunDamage;
 
-		if (m_hitbacktime <= 0) {
+		//攻撃を受けたときの処理
+		if (m_hitbacktime <= 0) 
+		{
 			if (m_HPCurrent <= 0)
 			{
 				ChangeState(L"Die");
 			}
 			else
 			{
-				ChangeState(L"Stand");
+				//スタン値が一定を過ぎたらスタン状態になる
+				if (m_stun >= m_stunMax)
+				{
+					ChangeState(L"Stun");
+					AddEffect(EnemyEffect_Stun);
+					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+				}
+				else
+				{
+					ChangeState(L"Stand");
+				}
 			}
-		}
-
-		//スタン値が一定を過ぎたらスタン状態になる
-		if (m_stun >= m_stunMax)
-		{
-			ChangeState(L"Stun");
 		}
 	}
 
