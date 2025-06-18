@@ -51,6 +51,17 @@ namespace basecross {
 			ret.x = cntl[0].fThumbLX;
 			ret.y = cntl[0].fThumbLY;
 		}
+		else if (!cntl[0].bConnected)
+		{
+			if (keybord.m_bPushKeyTbl[VK_UP])
+				ret.y = 1;
+			if (keybord.m_bPushKeyTbl[VK_LEFT])
+				ret.x = -1;
+			if (keybord.m_bPushKeyTbl[VK_DOWN])
+				ret.y = -1;
+			if (keybord.m_bPushKeyTbl[VK_RIGHT])
+				ret.x = 1;
+		}
 
 		// 左右いずれかのデッドゾーン復帰でフラグクリア
 		if (fabs(ret.x) < dead)

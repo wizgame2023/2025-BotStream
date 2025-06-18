@@ -94,28 +94,13 @@ namespace basecross {
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
 		m_JastDodgeSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 		
-		// UI追加
-		// 現在の球数を出すUI
-		//m_playerBulletUI = GetStage()->AddGameObject<PlayerBulletUI>(GetThis<Player>(), Vec2(295.0f, -260.0f), m_bulletNum,32.0f);		
-
-		//auto stage = GetStage();
-		//auto playerButton = stage->GetSharedGameObject<PlayerButtonUI>(L"PlayerButton");
-
 		//最初に流れる音
 		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
 
-
-		auto trans = GetComponent<Transform>();
-		m_EfkPos = trans->GetPosition();
-
-		//m_testEffect = EffectManager::Instance().PlayEffect(L"Dash", m_EfkPos);
 	}
 
 	void Player::OnUpdate()
 	{
-		//auto num = EffectManager::Instance().PlayEffect(L"ArmorBreak", m_pos);
-		//num;
-
 		//装備しているパーツは何があるのか確認する
 		auto testParts = m_equippedParts;
 
@@ -127,32 +112,19 @@ namespace basecross {
 
 		//親クラス処理
 		Actor::OnUpdate();
-
-		EffectManager::Instance().SetPosition(m_testEffect, m_EfkPos);
-
-
-		////着地判定(無効化時間中ならそれを減算する)
-		//OnLanding();
-
-		////物理的な処理
-		//if (m_doPhysics) {
-		//	if (!m_isLand) {
-		//		Gravity();
-		//	}
-		//	else {
-		//		Friction();
-		//	}
-		//}
-
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
-			m_pos = GetPosition();
+			m_pos = GetPosition();	
 			if (m_pos.y < 1.0f)
 			{
 				m_pos.y = 1.0f;
 				SetPosition(m_pos);
+				auto test = GetVelocity();
+				test.y = 0.0f;
+				SetVelocity(test);
 			}
+
 		}
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
@@ -207,26 +179,12 @@ namespace basecross {
 
 		}
 		//-------------------------------------------------------------
-
-
-
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_B)
-		//{
-		//	EfkPlaying(L"Laser", angle + XM_PIDIV2, Vec3(0, 1, 0));
-		//}
-
-		//if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_X)
-		//{
-		//	EfkPlaying(L"Sword", angle + XM_PI, Vec3(0, 1, 0));
-		//}
-
+		
 		//デバック用文字列
-		DebugLog();
+		//DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		//GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetPosition());//移動処理
-
 		//移動ですり抜けない処理
 		auto objVec = stage->GetGameObjectVec();
 
@@ -264,7 +222,10 @@ namespace basecross {
 			}
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
+
 		DebugLog();//デバックログ
+		//めり込み防止処理
+		//ImmersedInCheck();
 	}
 
 	//ジャンプ処理
@@ -386,6 +347,37 @@ namespace basecross {
 			// 無敵解除
 			RemoveTag(L"invincible");
 		}
+	}
+
+	//めり込み処理チェック処理
+	void Player::ImmersedInCheck()
+	{
+		m_pos = GetPosition();
+
+		float immersedInTimeMax = 0.1f;
+		//めり込んで居なければカウントをリセット
+		if (m_pos.y >= 1.0f)
+		{
+			m_immersedInTime = 0.0f;
+		}
+
+		//めり込んでいる時間をカウントする
+		if (m_pos.y < 1.0f)
+		{
+			m_immersedInTime += _delta;
+		}
+
+		//一定時間めり込んでいたら強制的にめり込まないようにする
+		if (m_immersedInTime >= immersedInTimeMax)
+		{
+			m_pos.y = 1.0f;
+			SetPosition(m_pos);
+			m_velocity.y = 0.0f;
+
+			//リセット
+			m_immersedInTime = 0.0f;
+		}
+
 	}
 
 	// プレイヤーの移動処理
@@ -649,13 +641,12 @@ namespace basecross {
 		{
 			auto attack = dynamic_pointer_cast<AttackCollision>(Other);
 
-			if (attack)
+			if (attack->GetHitInfo().Type == AttackType::Enemy)
 			{
 				m_jastDodge = true;
 				m_SEManager->Start(L"JastDodgeSE", 0, 2.0f);
 				m_timeOfJastDodgeCount = 0.0f;
 			}
-
 		}
 
 		////コリジョンが地面を接触してしまったら少し弾ませる

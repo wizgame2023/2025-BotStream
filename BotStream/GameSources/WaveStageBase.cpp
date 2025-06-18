@@ -102,6 +102,13 @@ namespace basecross {
         auto playerUI = AddGameObject<PlayerGaugeUI>(100);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
+		// ボスゲージ
+		m_bossGauge = AddGameObject<BossGaugeUI>(
+			m_boss.lock(),
+			m_boss.lock()->GetHPMax()
+		);
+		SetSharedGameObject(L"BossUI", m_bossGauge);
+
     }
 
     void WaveStageBase::OnCreate()
@@ -135,13 +142,6 @@ namespace basecross {
 
         m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
         SetSharedGameObject(L"Boss", m_boss.lock());
-
-        // ボスゲージ
-        m_bossGauge = AddGameObject<BossGaugeUI>(
-            m_boss.lock(),
-            m_boss.lock()->GetHPMax()
-        );
-        SetSharedGameObject(L"BossUI", m_bossGauge);
 
         //wave1敵
         m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -190,44 +190,65 @@ namespace basecross {
 		return ret;
 	}
 
+	//GamePhaseの変更
+	void WaveStageBase::UpdateGamePhase() {
+		switch (m_gamePhase) {
+		case GPhase_Start:
+			//開始→ゲーム本編
+			if (m_player.lock()->GetwalkFlag()) {
+				m_gamePhase = GPhase_Playing;
+			}
+			break;
+		case GPhase_Playing:
+			//仮
+			if (false) {
+				m_gamePhase = GPhase_Result;
+			}
+			if (false) {
+				m_gamePhase = GPhase_GameOver;
+			}
+		}
+	}
+
+	//Waveが切り替わる際に行う処理
 	void WaveStageBase::WaveInitialize() {
 		switch (m_waveCurrent) {
 
 			// ------- 1 -> 2 -------------------------------------------------------------
 		case 1:
 			//プレイヤーの位置を初期化
-			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
-
-			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-30.0f, 2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
 			//m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy(Vec3(-30.0f, 2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+			////m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			////m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			////m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			////m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
 			break;
 			// ----------------------------------------------------------------------------
 
 			// ------- 2 -> 3 -------------------------------------------------------------
 		case 2:
-			m_bossGauge->ClearBossGaugeUI(false);
+			//m_bossGauge->ClearBossGaugeUI(false);
 
-			//プレイヤーの位置を初期化
-			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			////プレイヤーの位置を初期化
+			//SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
+			//m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
 
-			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-			GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
+			//GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+			//GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
 
 			break;
 			// ----------------------------------------------------------------------------
@@ -243,6 +264,7 @@ namespace basecross {
         auto pad = app->GetInputDevice().GetControlerVec()[0];
 
         ResetDeltaScaleToDefault();
+		UpdateGamePhase();
 
         EffectManager::Instance().InterfaceUpdate();
 
@@ -262,15 +284,17 @@ namespace basecross {
             WaveInitialize();
         }
 
-        if (m_waveCurrent == m_waveMax && ConsiderGameClear())
+        if (m_waveCurrent == m_waveMax && ConsiderGameClear() && m_onceFlag == false)
         {
             m_sndMgr.lock()->StopBGM();
+			m_onceFlag = true;
             m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
         }
 
-        if (ConsiderGameOver())
+        if (ConsiderGameOver() && m_onceFlag == false)
         {
             m_sndMgr.lock()->StopBGM();
+			m_onceFlag = true;
             m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
         }
 

@@ -242,7 +242,14 @@ namespace basecross{
 		strTexture = texPath + L"Ceiling.png";
 		app->RegisterTexture(L"CeilingTex", strTexture);
 
-		//モデル
+		//スタティックメッシュ
+		auto staticModelMesh = MeshResource::CreateStaticModelMesh(modPath, L"Parts_A.bmf");//パーツメッシュ
+		app->RegisterResource(L"PartsMesh", staticModelMesh);
+		staticModelMesh = MeshResource::CreateStaticModelMesh(modPath, L"Parts_C.bmf");//パーツメッシュ(モーター)
+		app->RegisterResource(L"MoterPartsMesh", staticModelMesh);
+
+		auto staticMultiModelMesh = MultiMeshResource::CreateStaticModelMultiMesh(modPath, L"Parts_B.bmf");//パーツメッシュ(パッチ)
+		app->RegisterResource(L"PatchPartsMesh", staticMultiModelMesh);
 
 		//ボーンマルチメッシュ
 		auto boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Spearmen_Animation.bmf");//仮のプレイヤーメッシュ(槍兵)
@@ -260,9 +267,17 @@ namespace basecross{
 		boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_C.bmf");//雑魚敵のメッシュ(近距離)
 		app->RegisterResource(L"Enemy_C", boneModelMesh);
 
-		//ボーンマルチメッシュ用テクスチャ
+		//スタティックメッシュ用テクスチャ
 		auto boneMultiModelTexture = modPath + L"Spearmen_T.png";
 		app->RegisterTexture(L"SpearmenTexture", boneMultiModelTexture);
+
+		//ボーンマルチメッシュ用テクスチャ
+		auto staticModelTexture = modPath + L"Parts_A_T.png";
+		app->RegisterTexture(L"PartsTex", staticModelTexture);
+		staticModelTexture = modPath + L"Parts_B_T.png";
+		app->RegisterTexture(L"PatchPartsTex", staticModelTexture);
+		staticModelTexture = modPath + L"Parts_C_T.png";
+		app->RegisterTexture(L"MoterPartsTex", staticModelTexture);
 
 		//ボーンモデルの通常リソース
 		auto modelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Boss_1.bmf");

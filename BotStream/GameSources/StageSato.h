@@ -55,7 +55,7 @@ namespace basecross {
 		shared_ptr<Sprite> m_SEMater[10];
 		shared_ptr<Sprite> m_audioSelect[2];
 
-		shared_ptr<BillBoard> m_damageBill[2];
+		//shared_ptr<BillBoard> m_damageBill[2];
 
 		shared_ptr<BillBoard> m_testBill;
 
@@ -65,10 +65,14 @@ namespace basecross {
 
 		shared_ptr<CameraManager> m_cameraMana;
 
+		vector<shared_ptr<DamageBillRoot>> m_root;
+
+		vector<shared_ptr<DamageBill>> m_damageBill;
+
 		// スプライトのリスト
-		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
+		//std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
 		// 質問の内容を入れておくためのリスト
-		std::vector<int> m_questionOrder;
+		//std::vector<int> m_questionOrder;
 
 		float m_playerMaxHP = 1000.0f;		// HPの最大値
 		float m_playerHP = m_playerMaxHP;	// HPの初期値

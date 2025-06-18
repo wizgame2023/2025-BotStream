@@ -71,16 +71,9 @@ namespace basecross {
 
         bool m_isPaused = false;
 
+        bool m_onceFlag = false;
+
         shared_ptr<BossGaugeUI> m_bossGauge;
-
-        //マネージャ、UIの類を生成する
-        virtual void CreateManagerObjects();
-
-        //Waveが次に移ったときに呼び出される
-        virtual void WaveInitialize();
-
-        //プレイヤーの位置を強制的に変える
-        virtual void SetPlayerTransform(Vec3 pos, Vec3 rot);
 
         void ShowFPS() {
             ////デバック用
@@ -104,9 +97,20 @@ namespace basecross {
             }
         }
 
+        //マネージャ、UIの類を生成する
+        virtual void CreateManagerObjects();
+        //Waveが次に移ったときに呼び出される
+        virtual void WaveInitialize();
+        //プレイヤーの位置を強制的に変える
+        virtual void SetPlayerTransform(Vec3 pos, Vec3 rot);
+        //次のWaveへ移行するフラグの定義
         virtual bool ConsiderGoToNextWave();
+        //クリアフェーズに移行するフラグの定義
         virtual bool ConsiderGameClear();
+        //ゲームオーバーフラグの定義
         virtual bool ConsiderGameOver();
+        //条件によってGamePhaseを変更
+        virtual void UpdateGamePhase();
 
     public:
         //構築と破棄
