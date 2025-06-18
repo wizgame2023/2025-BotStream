@@ -993,5 +993,29 @@ namespace basecross {
 	}
 	//=========================================================================================================>
 
+	//ステージ開始ムービ用ステート=============================================================================>
+	void PlayerStartMovieState::Enter()
+	{
+
+	}
+
+	void PlayerStartMovieState::Update(float deltaTime)
+	{
+		//ステージの状態がPlayingになったらこのステートは終了
+		auto gamePhase = m_player->GetWaveStage(true)->GetCurrentGamePhase();
+
+		if (gamePhase == WaveStageBase::GamePhase::GPhase_Playing)
+		{
+			m_player->ChangeState(L"Stand");
+		}
+	}
+
+	void PlayerStartMovieState::Exit()
+	{
+
+	}
+	//=========================================================================================================>
+
+
 }
 //end basecross

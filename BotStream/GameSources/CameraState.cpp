@@ -159,4 +159,25 @@ namespace basecross {
 	}
 	//
 
+
+	//ムービー用のステート(ステージ開始時)//
+	void CameraStartMovieState::Enter()
+	{
+		CameraStateBase::Enter();
+	}
+
+	void CameraStartMovieState::Update(float deltaTime)
+	{
+		CameraStateBase::Update(deltaTime);
+
+		//移動モード時のカメラ操作処理
+		m_cameraManager->CameraControlTransitionMode();
+	}
+
+	void CameraStartMovieState::Exit()
+	{
+
+	}
+
+	//
 }
