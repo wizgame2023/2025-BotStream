@@ -11,6 +11,7 @@ namespace basecross {
     class BossGaugeUI;
     class Player;
     class SoundManager;
+    class FadeoutSprite;
 
     class WaveStageBase : public Stage {
     public:
@@ -39,6 +40,8 @@ namespace basecross {
         weak_ptr<Scene> m_scene;
         //サウンドマネージャー
         weak_ptr<SoundManager> m_sndMgr;
+        //フェード用オブジェクト
+        weak_ptr<FadeoutSprite> m_fadeout;
         // プレイヤー
         weak_ptr<Player> m_player;
         // 敵管理オブジェクト
@@ -63,12 +66,6 @@ namespace basecross {
 
         float TimeOfGameClear = 0.0f;//ゲームクリアするための時間計測
 
-        //Waveクリア、フェードアウト開始
-        bool m_IsFadeOutFlag = false;
-        //Wave切り替え終了
-        bool m_IsFadeInFlag = false;
-        //暗転中
-        bool m_BlackFlag = false;
         //Wave切り替え
         bool m_nextWaveFlag = false;
 
@@ -106,6 +103,10 @@ namespace basecross {
                 }
             }
         }
+
+        virtual bool ConsiderGoToNextWave();
+        virtual bool ConsiderGameClear();
+        virtual bool ConsiderGameOver();
 
     public:
         //構築と破棄
