@@ -71,5 +71,6 @@
 #include "EnemyManager.h"
 #include "StageCollisionController.h"
 #include "PartsManager.h"
+#include "SoundManager.h"
 
 
