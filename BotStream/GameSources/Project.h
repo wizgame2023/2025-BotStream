@@ -54,6 +54,7 @@
 #include "WaveStageBase.h"
 #include "TutorialStage.h"
 #include "StageFirst.h"
+#include "StageSecond.h"
 
 #include "StageAbe.h"
 #include "StageSanpei.h"
