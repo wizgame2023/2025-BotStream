@@ -125,6 +125,27 @@ namespace basecross {
 
 	};
 
+	//ムービー用のカメラステート(開始時)
+	class CameraStartMovieState :public CameraStateBase
+	{
+	private:
+
+	public:
+		CameraStartMovieState(shared_ptr<GameObject>& obj) :
+			CameraStateBase(obj)
+		{
+
+		}
+		~CameraStartMovieState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+
+	};
+
 
 	//カメラステートマシン
 	class CameraStateMachine :public StateMachineBase
