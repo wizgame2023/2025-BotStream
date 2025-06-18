@@ -564,15 +564,15 @@ namespace basecross {
 
 
 	//スタン処理(雑魚敵) ===================================
-	void EnemyZakoStunState::Enter()
+	void EnemyZakoStanState::Enter()
 	{
 		//スタンアニメーション再生
-		m_enemyZako->ChangeAnim(L"Stun");
+		m_enemyZako->ChangeAnim(L"Stan");
 	}
 	
-	void EnemyZakoStunState::Update(float deltaTime)
+	void EnemyZakoStanState::Update(float deltaTime)
 	{
-		m_stunTimeCount = deltaTime;
+		m_stunTimeCount += deltaTime;
 
 		//一定時間過ぎたらステート変更する
 		if (m_stunTimeCount > m_stunTimeMax)
@@ -583,7 +583,7 @@ namespace basecross {
 		m_enemyZako->SetAddTimeAnimation(deltaTime);
 	}
 
-	void EnemyZakoStunState::Exit()
+	void EnemyZakoStanState::Exit()
 	{
 		//リセット
 		m_stunTimeCount = 0.0f;
