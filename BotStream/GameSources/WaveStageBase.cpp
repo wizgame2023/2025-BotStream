@@ -190,6 +190,27 @@ namespace basecross {
 		return ret;
 	}
 
+	//GamePhaseの変更
+	void WaveStageBase::UpdateGamePhase() {
+		switch (m_gamePhase) {
+		case GPhase_Start:
+			//開始→ゲーム本編
+			if (m_player.lock()->GetwalkFlag()) {
+				m_gamePhase = GPhase_Playing;
+			}
+			break;
+		case GPhase_Playing:
+			//仮
+			if (false) {
+				m_gamePhase = GPhase_Result;
+			}
+			if (false) {
+				m_gamePhase = GPhase_GameOver;
+			}
+		}
+	}
+
+	//Waveが切り替わる際に行う処理
 	void WaveStageBase::WaveInitialize() {
 		switch (m_waveCurrent) {
 
@@ -243,6 +264,7 @@ namespace basecross {
         auto pad = app->GetInputDevice().GetControlerVec()[0];
 
         ResetDeltaScaleToDefault();
+		UpdateGamePhase();
 
         EffectManager::Instance().InterfaceUpdate();
 

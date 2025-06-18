@@ -107,6 +107,8 @@ namespace basecross {
         virtual bool ConsiderGameClear();
         //ゲームオーバーフラグの定義
         virtual bool ConsiderGameOver();
+        //条件によってGamePhaseを変更
+        virtual void UpdateGamePhase();
 
     public:
         //構築と破棄
