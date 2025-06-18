@@ -563,6 +563,32 @@ namespace basecross {
 	}
 
 
+	//スタン処理(雑魚敵) ===================================
+	void EnemyZakoStunState::Enter()
+	{
+		//スタンアニメーション再生
+		m_enemyZako->ChangeAnim(L"Stun");
+	}
+	
+	void EnemyZakoStunState::Update(float deltaTime)
+	{
+		m_stunTimeCount = deltaTime;
+
+		//一定時間過ぎたらステート変更する
+		if (m_stunTimeCount > m_stunTimeMax)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+
+		m_enemyZako->SetAddTimeAnimation(deltaTime);
+	}
+
+	void EnemyZakoStunState::Exit()
+	{
+		//リセット
+		m_stunTimeCount = 0.0f;
+	}
+	// =====================================================
 
 	//--------------------------------------------
 	// 飛ぶザコのステート

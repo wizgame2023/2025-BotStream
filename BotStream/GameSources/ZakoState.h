@@ -247,6 +247,25 @@ namespace basecross {
 
 	};
 
+	//スタン時のステート(雑魚敵)
+	class EnemyZakoStunState : public EnemyZakoStateBase
+	{
+	private:
+		//スタン時間計測
+		float m_stunTimeMax = 3.0f;
+		float m_stunTimeCount;
+	public:
+		EnemyZakoStunState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	class EnemyZakoStateMachine :public StateMachineBase
 	{
 	public:
