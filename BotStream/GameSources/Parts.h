@@ -12,11 +12,21 @@ namespace basecross {
 	class EquippedParts;
 	class BillBoard;
 
+	//パーツタイプ
+	enum partsType
+	{
+		parts,
+		MoterParts,
+		PatchParts
+	};
+
 	//パーツのステータス一覧
 	struct PartsStatus
 	{
 		//ID
 		int id;
+		//パーツタイプ
+		int partsType;
 		//攻撃力
 		int addAttack;
 		//速度
@@ -82,6 +92,9 @@ namespace basecross {
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 10;
 
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = parts;
+
 			//名前
 			m_partsStatus.partsName = L"テスト用パーツ";
 			//とりあえず適当なテクスチャにする
@@ -111,6 +124,9 @@ namespace basecross {
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 10;
 
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = MoterParts;
+
 			//名前
 			m_partsStatus.partsName = L"高性能モーター";
 			//とりあえず適当なテクスチャにする
@@ -137,6 +153,9 @@ namespace basecross {
 			m_partsStatus.addSpeed = 0.0f;
 			m_partsStatus.addAttack = 3;
 			m_partsStatus.addAttribute = -20;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = PatchParts;
 
 			//名前
 			m_partsStatus.partsName = L"戦闘用パッチ";

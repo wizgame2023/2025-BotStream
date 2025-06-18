@@ -82,6 +82,9 @@ namespace basecross {
 		float m_timeOfJastDodgeCount = 0.0f;
 		float m_timeOfJastDodgeMax = 1.0f;
 
+		//地面にめり込んでしまっている時間
+		float m_immersedInTime = 0.0f;
+
 		//元々の最大HP
 		int m_originallyHPMax = 100;
 		//最大SP
@@ -126,10 +129,6 @@ namespace basecross {
 		//回避処理
 		void Dodge();
 
-		//エフェクトテスト用
-		Vec3 m_EfkPos;
-		Handle m_testEffect;
-
 	public:
 		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
 		~Player();
@@ -154,6 +153,9 @@ namespace basecross {
 
 		//ジャスト回避時の処理
 		void JastDodge(float deltaScale,float slowTime);
+
+		//地面めり込み回避処理
+		void ImmersedInCheck();
 
 		//HPのゲッター
 		int GetHP();
