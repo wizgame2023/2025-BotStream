@@ -9,23 +9,31 @@ namespace basecross {
 
     class TutorialStage : public WaveStageBase {
     protected:
-        //各オブジェクトへの参照用
-        // シーン
-        weak_ptr<Scene> m_scene;
-        // プレイヤー
-        weak_ptr<Player> m_player;
-        // 敵管理オブジェクト
-        weak_ptr<EnemyManager> m_enemyMgr;
-        // ボス
-        weak_ptr<EnemyBase> m_boss;
+        enum TutorialPhase {
+            Tutorial_MoveAndCamera,
+            Tutorial_Evade,
+            Tutorial_KeepRunning,
+            Tutorial_HitTheCombos,
+            Tutorial_ShootFromAfar,
+            Tutorial_KillAsYouLike
 
-        shared_ptr<BossGaugeUI> m_bossGauge;
+        };
 
-
+        TutorialPhase m_tutorialPhase;
     public:
         //構築と破棄
         TutorialStage() : WaveStageBase() {}
         virtual ~TutorialStage() {}
+        //初期化
+        virtual void OnCreate()override;
+    };
+
+    class TutorialDialog : public MyGameObject {
+
+    public:
+        //構築と破棄
+        TutorialDialog() : MyGameObject() {}
+        virtual ~TutorialDialog() {}
         //初期化
         virtual void OnCreate()override;
     };
