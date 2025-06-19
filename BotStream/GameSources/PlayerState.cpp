@@ -996,17 +996,25 @@ namespace basecross {
 	//ステージ開始ムービ用ステート=============================================================================>
 	void PlayerStartMovieState::Enter()
 	{
-
+		//ステージ開始用ムービーのアニメーションになるかも
 	}
 
 	void PlayerStartMovieState::Update(float deltaTime)
 	{
 		//ステージの状態がPlayingになったらこのステートは終了
 		auto gamePhase = m_player->GetWaveStage(true)->GetCurrentGamePhase();
-
 		if (gamePhase == WaveStageBase::GamePhase::GPhase_Playing)
 		{
 			m_player->ChangeState(L"Stand");
+		}
+
+		//ムービー用コントローラー取得
+		auto RT_movieController = m_player->GetStage()->GetSharedGameObject<RT_MovieController>(L"RT_MovieController");
+		
+		//地面に着地したらこのステートの処理は終了
+		if (m_player->GetLand())
+		{
+			RT_movieController->SetPlayerEnd(true);
 		}
 	}
 

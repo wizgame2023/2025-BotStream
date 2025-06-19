@@ -641,6 +641,8 @@ namespace basecross {
 		{
 			auto attack = dynamic_pointer_cast<AttackCollision>(Other);
 
+			//attackが入っていなければreturnする
+			if (!attack) return;
 			if (attack->GetHitInfo().Type == AttackType::Enemy)
 			{
 				m_jastDodge = true;
