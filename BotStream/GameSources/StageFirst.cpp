@@ -50,6 +50,16 @@ namespace basecross {
 		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
+		//次のWaveに行くための暗闇生成
+		auto darkObj = AddGameObject<DarkObj>(Vec3(-0.0f, 3.0f, -200.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(10.0f, 10.0f, 10.0f));
+		m_darkObjs.push_back(darkObj);
+
+		//Wave1のドア生成
+		auto doorLeft = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-2.5f, 3.0f, -200.5f));
+		m_doors.push_back(doorLeft);
+		auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, -200.5f));
+		m_doors.push_back(doorRight);
+
 		// マネージャー系生成
 		CreateManagerObjects();		
 		
@@ -117,44 +127,56 @@ namespace basecross {
 	//ウェーブ移行処理
 	void StageFirst::WaveInitialize() {
 		switch (m_waveCurrent) {
-
 			// ------- 1 -> 2 -------------------------------------------------------------
-		case 1:
-			//プレイヤーの位置を初期化
-			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			case 1:
+			{
+				//プレイヤーの位置を初期化
+				SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+				m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				//AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
 
-			//m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 3.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 3.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 3.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				//m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				//m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 3.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 3.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+				m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 3.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
-			break;
+				//次のWaveに行くための暗闇生成
+				auto darkObj = AddGameObject<DarkObj>(Vec3(-0.0f, 3.0f, 60.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(10.0f, 10.0f, 10.0f));
+				m_darkObjs.push_back(darkObj);
+
+				//Wave1のドア生成
+				auto doorLeft = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-2.5f, 3.0f, 59.5f));
+				m_doors.push_back(doorLeft);
+				auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, 59.5f));
+				m_doors.push_back(doorRight);
+				break;
+			}
 			// ----------------------------------------------------------------------------
 
 			// ------- 2 -> 3 -------------------------------------------------------------
-		case 2:
-			m_bossGauge->ClearBossGaugeUI(false);
+			case 2:
+			{
+				m_bossGauge->ClearBossGaugeUI(false);
 
-			//プレイヤーの位置を初期化
-			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+				//プレイヤーの位置を初期化
+				SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
+				m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
 
-			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-			GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
+				GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+				GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
 
-			break;
+				break;
+			}
 			// ----------------------------------------------------------------------------
 		}
 
@@ -163,7 +185,50 @@ namespace basecross {
 
 	void StageFirst::OnUpdate()
 	{
-		WaveStageBase::OnUpdate();
+		//WaveStageBase::OnUpdate();
+
+		auto& app = App::GetApp();
+		auto KeyState = app->GetInputDevice().GetKeyState();
+		auto pad = app->GetInputDevice().GetControlerVec()[0];
+
+		ResetDeltaScaleToDefault();
+		UpdateGamePhase();
+
+		EffectManager::Instance().InterfaceUpdate();
+
+		if (ConsiderGoToNextWave())
+		{
+			// ドアを動かす
+			DoorsMove(m_waveCurrent);
+			// 暗闇の有効化
+			ActivateDark(m_waveCurrent);
+		}
+		if (m_fadeout.lock()->GetBlackFlag())
+		{
+			m_nextWaveFlag = true;
+		}
+		if (m_nextWaveFlag)
+		{
+			m_fadeout.lock()->SetFadeInFlag(true);
+			m_nextWaveFlag = false;
+
+			WaveInitialize();
+		}
+
+		if (m_waveCurrent == m_waveMax && ConsiderGameClear() && m_onceFlag == false)
+		{
+			m_sndMgr.lock()->StopBGM();
+			m_onceFlag = true;
+			m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
+		}
+
+		if (ConsiderGameOver() && m_onceFlag == false)
+		{
+			m_sndMgr.lock()->StopBGM();
+			m_onceFlag = true;
+			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+		}
+
 
 		//フェーズの状態によって処理が変わる
 		if (m_gamePhase == GPhase_Start)
@@ -180,6 +245,68 @@ namespace basecross {
 			
 			//SetActorPause(false);
 		}
+	}
+
+	//ドアを動かす処理
+	void StageFirst::DoorsMove(int group)
+	{
+		int leftNum = 2 * group - 1;
+		int rightNum = 2 * group;
+
+		//ゴール基準値
+		float goolLeght = 7.5f;
+
+		float delta = App::GetApp()->GetElapsedTime();
+
+		//指定しているグループまでドアがなかったリターンする
+		if (m_doors.size() < rightNum)
+		{
+			return;
+		}
+
+		//ドアを動かす(←　こんな動き　→)
+		auto leftDoor = m_doors[leftNum-1]->GetComponent<Transform>();
+		auto rightDoor = m_doors[rightNum-1]->GetComponent<Transform>();
+
+		auto leftPos = leftDoor->GetPosition();
+		auto rightPos = rightDoor->GetPosition();
+
+		//ゴール地点まできたら、過ぎないようにする
+		if (leftPos.x <= -goolLeght &&rightPos.x >= goolLeght)
+		{
+			leftPos.x = -goolLeght;
+			rightPos.x = goolLeght;
+
+			leftDoor->SetPosition(leftPos);
+			rightDoor->SetPosition(rightPos);
+			return;
+		}
+
+		//移動処理
+		float speed = 3.0f;
+		leftPos.x -= speed * delta;
+		leftDoor->SetPosition(leftPos);
+		rightPos.x += speed * delta;
+		rightDoor->SetPosition(rightPos);
+	}
+
+	//暗闇(次のWaveに移行するオブジェクト)の有効化
+	void StageFirst::ActivateDark(int activeteNum)
+	{
+		// 配列外を選択しようとしたらreturnさせる
+		if (m_darkObjs.size() < activeteNum)
+		{
+			return;
+		}
+
+		//コリジョンの有効化
+		m_darkObjs[activeteNum - 1]->SetActivateCollsion(true);
+	}
+
+	//暗転を開始する処理
+	void StageFirst::FadeOutStart()
+	{
+		m_fadeout.lock()->SetFadeOutFlag(true);
 	}
 
 }
