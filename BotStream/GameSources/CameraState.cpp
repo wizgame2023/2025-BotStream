@@ -240,4 +240,24 @@ namespace basecross {
 	}
 	//
 
+
+	//ボスムービー用のカメラステート//
+	void CameraBossMovieState::Enter()
+	{
+		//ボスを取得
+		//App::GetApp()->GetScene<Scene>()->GameResourses()
+
+	}
+	
+	void CameraBossMovieState::Update(float deltaTime)
+	{
+
+	}
+
+	void CameraBossMovieState::Exit()
+	{
+
+	}
+	//
+
 }

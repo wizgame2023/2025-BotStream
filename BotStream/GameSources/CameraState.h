@@ -169,6 +169,29 @@ namespace basecross {
 
 	};
 
+	//ボスムービー用のカメラステート
+	class CameraBossMovieState :public CameraStateBase
+	{
+	private:
+		// ボス
+		//weak_ptr<EnemyBase> m_boss;
+
+	public:
+		CameraBossMovieState(shared_ptr<GameObject>& obj) :
+			CameraStateBase(obj)
+		{
+
+		}
+		~CameraBossMovieState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+
+	};
+
 
 	//カメラステートマシン
 	class CameraStateMachine :public StateMachineBase
