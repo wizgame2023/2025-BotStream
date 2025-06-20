@@ -808,6 +808,7 @@ namespace basecross {
         ptrColl->SetFixed(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
+        ptrDraw->SetTextureResource(L"DoorTex");
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");
