@@ -3,6 +3,13 @@
 #include "MyGameObject.h"
 
 namespace basecross {
+    enum RT_MoviePhase
+    {
+        Movie_None,
+        StartMovie_First,
+        StartMovie_Second,
+        StartMovie_Three
+    };
 
     class RT_MovieController : public MyGameObject {
     protected:
@@ -14,12 +21,14 @@ namespace basecross {
         bool m_cameraEnd = false;
 
         // ƒ€[ƒr‚ªÄ¶‚³‚ê‚Ä‚¢‚é‚©‚Ìˆ—
-        bool m_startMovie = false;
+        int m_startMovie = Movie_None;
 
     public:
         // \’z‚Æ”jŠü
         RT_MovieController(const shared_ptr<Stage>& stagePtr,shared_ptr<Player> player, shared_ptr<CameraManager> cameraManager) :
-            MyGameObject(stagePtr)
+            MyGameObject(stagePtr),
+            m_player(player),
+            m_cameraManager(cameraManager)
         {
         }
         virtual ~RT_MovieController() 
