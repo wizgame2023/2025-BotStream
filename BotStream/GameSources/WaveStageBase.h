@@ -128,6 +128,9 @@ namespace basecross {
         GamePhase GetCurrentGamePhase() {
             return m_gamePhase;
         }
+        void SetGamePhase(GamePhase gamePhase){
+            m_gamePhase = gamePhase;
+        }
 
         int GetNowWaveNum() {
             return m_waveCurrent;
