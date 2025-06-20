@@ -129,13 +129,14 @@ namespace basecross{
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 		//カメラのX軸回転の制限
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		void CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//カメラのポジションの更新
+		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//カメラのポジションの更新
 		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
 
 		//カメラの操作をする処理
 		void CameraControlNomalMode();
 		void CameraControlShotMode();
 		void CameraControlTransitionMode();
+		void CameraControlStartMovieMode();
 
 		//現在地から目的地までの移動処理
 		float MoveToDestination(float nowOnePos,float destination, float speed = 20.0f);
@@ -195,6 +196,30 @@ namespace basecross{
 		{
 			return m_lockStageCamera->GetAt();
 		}
+		void SetCameraAt(Vec3 setAt)
+		{
+			m_lockStageCamera->SetAt(setAt);
+		}
+
+		//カメラのEyeセッタゲッタ
+		Vec3 GetCameraEye()
+		{
+			return m_lockStageCamera->GetEye();
+		}
+		void SetCameraEye(Vec3 setEye)
+		{
+			m_lockStageCamera->SetEye(setEye);
+		}
+
+		//pushStartのゲッタセッタ
+		bool GetPushStart()
+		{
+			return m_pushStart;
+		}
+		void SetPushStart(bool onOff)
+		{
+			m_pushStart = onOff;
+		}
 
 		//ポーズフラグのゲッタセッタ
 		bool GetPose()
@@ -204,6 +229,16 @@ namespace basecross{
 		void SetPause(bool onOff)
 		{
 			m_PauseFlag = onOff;
+		}
+
+		//pushPosのゲッタセッタ
+		Vec3 GetPushPos()
+		{
+			return m_pushPos;
+		}
+		void SetPushPos(Vec3 pushPos)
+		{
+			m_pushPos = pushPos;
 		}
 
 		//ターゲット対象を渡す関数
