@@ -144,6 +144,36 @@ namespace basecross {
 		UpdatePosition();
 	}
 
+	void EnemyZako::CreateDamageBill(shared_ptr<GameObject> actorPtr, int damage, float pushY, float scale, float displayTime)
+	{
+		string dmgStr = to_string(damage);                    // 受け取ったダメージの文字数(30であれば「3」と「0」で2文字)
+		int len = (int)dmgStr.size();                        // ダメージの桁数
+		float charWidth = scale;                             // 各スプライト幅
+		float totalW = charWidth * len;                        // 全体幅
+		float startX = -totalW / 2.0f + charWidth / 2.0f;   // 左端基準
+		for (int i = 0; i < len; i++)
+		{
+			float offsetX = startX + i * charWidth;
+
+			auto damageBill = GetStage()->AddGameObject<DamageBill>(
+				actorPtr,                    // 各ビルボードは敵にくっつける
+				L"Numbers",                  // テクスチャ名
+				3,                           // レイヤー
+				pushY,                       // Y軸オフセット
+				Vec3(scale),				 // サイズ
+				Col4(1, 1, 1, 1),            // 色 (黄色など)
+				offsetX,                     // 左右オフセット
+				displayTime					 // 表示時間
+			);
+
+			// ダメージの文字を設定
+			damageBill->SetBillUV(
+				Vec2((dmgStr[i] - '0') * 0.1f, 0.0f), // UVの左上
+				Vec2((dmgStr[i] - '0' + 1) * 0.1f, 1.0f) // UVの右下
+			);
+		}
+	}
+
 	//HPバーの処理
 	void EnemyZako::UpdateHPBer()
 	{
@@ -161,10 +191,7 @@ namespace basecross {
 			//HPの割合によってゲージが減る
 			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
 			m_HPBer->SetPercent(HPPercent);
-
 		}
-
-
 	}
 
 	//攻撃のクールタイム
@@ -232,9 +259,15 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::OnDamaged()
 	{
+		float damage = m_getHitInfo.Damage;
+		float pushY = 2.5f;
+		float scale = 0.7f;
+		float displayTime = 0.5f;
+
 		//hpがあるならダメージ処理する
 		if (m_HPCurrent > 0)
 		{
+			CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
 			m_state->ChangeState(L"Hit");
 		}
 	}
