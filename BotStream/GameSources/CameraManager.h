@@ -241,6 +241,12 @@ namespace basecross{
 			m_pushPos = pushPos;
 		}
 
+		//AddAngleの数値を受け取る xがx軸,yがy軸
+		Vec2 GetAddAngleNAxis()
+		{
+			return Vec2(m_addAngleXAxis, m_addAngleYAxis);
+		}
+
 		//ターゲット対象を渡す関数
 		shared_ptr<Actor> GetTargetObj();
 	};
