@@ -19,7 +19,7 @@ namespace basecross {
 		CreateFloor();
 		CreateWall();
 		CreateCeiling();
-		CreatePlayer(Vec3(0.0f, 1.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
+		CreatePlayer(Vec3(0.0f, 8.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
 
 		//Enemyマネージャのテスト
 		vector<EnemyVariation> enemyVariation;
@@ -34,6 +34,7 @@ namespace basecross {
 
 		enemyVariation.push_back(EVar_Aerial);
 
+
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
 
@@ -41,17 +42,27 @@ namespace basecross {
 		SetSharedGameObject(L"Boss", m_boss.lock());
 
 		//wave1敵
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 1.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 1.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 1.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(20.0f, 1.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 1.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 1.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 1.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
-		CreateManagerObjects();
+		// マネージャー系生成
+		CreateManagerObjects();		
+		
+		//ムービコントローラー作成
+		if (!m_player.lock()) return;
+		auto movieController = AddGameObject<RT_MovieController>(m_player.lock(), GetSharedGameObject<CameraManager>(L"CameraManager"));
+		SetSharedGameObject(L"MovieController", movieController);
 
-		m_gamePhase = GamePhase::GPhase_Start;
+		//ステージ開始時のムービ開始
+		movieController->StartMovie();
+
+
+		//m_gamePhase = GamePhase::GPhase_Start;
 	}
 
 	//次のWaveに行くか確認する処理
@@ -86,7 +97,7 @@ namespace basecross {
 	void StageFirst::UpdateGamePhase() {
 		switch (m_gamePhase) {
 		case GPhase_Start:
-			//開始→ゲーム本編
+			////開始→ゲーム本編
 			//if (m_player.lock()->GetwalkFlag()) {
 			//	m_gamePhase = GPhase_Playing;
 			//}
@@ -110,23 +121,23 @@ namespace basecross {
 			// ------- 1 -> 2 -------------------------------------------------------------
 		case 1:
 			//プレイヤーの位置を初期化
-			SetPlayerTransform(Vec3(0.0f, 1.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 1.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 1.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 1.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 1.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 1.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(30.0f, 1.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
 
 			//m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 3.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 3.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 3.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
 			break;
 			// ----------------------------------------------------------------------------
@@ -154,9 +165,6 @@ namespace basecross {
 	{
 		WaveStageBase::OnUpdate();
 
-		//フェーズの変更処理
-		UpdateGamePhase();
-
 		//フェーズの状態によって処理が変わる
 		if (m_gamePhase == GPhase_Start)
 		{
@@ -164,6 +172,13 @@ namespace basecross {
 			//SetActorPause(true);
 			m_deltaScaleCount = 1.0f; // deltaScaleを元に戻らないようにする
 			m_deltaScale = 0.0f;
+		}
+		if (m_gamePhase == GPhase_Playing)
+		{
+			m_deltaScale = 1.0f;
+			m_deltaScaleCount = 0.0f; // deltaScaleを元に戻らないようにする
+			
+			//SetActorPause(false);
 		}
 	}
 
