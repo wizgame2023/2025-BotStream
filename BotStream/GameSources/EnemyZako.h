@@ -16,14 +16,11 @@ namespace basecross {
 		shared_ptr<BillBoard> m_HPFrame = nullptr;
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
-		shared_ptr<BillBoard> m_damageBill = nullptr;
-
 		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
 		int m_AttackType = Zako_Melee;
 
 		//アニメーションの更新時間
 		float m_addTimeAnimation = 0.0f;
-		//shared_ptr<EnemyDamageBill> m_damageBill = nullptr;
 
 		//攻撃のクールダウン関係
 		bool m_attackFlag = false;
@@ -59,6 +56,15 @@ namespace basecross {
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
 		void OnDestroy()override;
+
+		//ダメージビルボード
+		void CreateDamageBill(
+			shared_ptr<GameObject> actorPtr,
+			int damage,
+			float pushY = 2.0f,
+			float scale = 1.0f,
+			float displayTime = 0.5f
+		);
 
 		//ビルボードの処理
 		virtual void UpdateHPBer();
