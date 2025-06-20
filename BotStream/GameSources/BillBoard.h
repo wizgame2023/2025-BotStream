@@ -87,6 +87,11 @@ namespace basecross {
 	// ダメージビルボード
 	class DamageBill : public BillBoard 
 	{
+		//ビルボードを表示しておく時間
+		float m_displayTime = 0.0f;
+		
+		// 現在の時間
+		float m_time = 0.0f;
 	public:
 		DamageBill(
 			const shared_ptr<Stage>& stagePtr,
@@ -96,16 +101,14 @@ namespace basecross {
 			float pushY = 18.0f,
 			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
 			Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
-			float pushX = 0.0f
+			float pushX = 0.0f,
+
+			float displayTime = 1.0f // ビルボードの表示時間
 		);
 
 		virtual ~DamageBill() {}
 
-		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
-
-		// ビルボード削除
-		void RemoveBill();
 	};
 
 	// ダメージビルボードの本体座標みたいな
@@ -119,9 +122,6 @@ namespace basecross {
 		virtual ~DamageBillRoot() {}
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
-
-		// ビルボード削除
-		void RemoveBill();
 	};
 }
 //end basecross

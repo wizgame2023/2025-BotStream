@@ -146,7 +146,7 @@ namespace basecross {
 		for (auto& v : m_vertices) {
 			VertexPositionColorTexture nv;
 			nv.position = v.position;
-			nv.color = Col4(1.0f, 1.0f, 1.0f, 1.0f);//赤
+			nv.color = Col4(1.0f, 1.0f, 1.0f, 1.0f);
 			nv.textureCoordinate = v.textureCoordinate;
 			new_vertices.push_back(nv);
 		}
@@ -179,23 +179,27 @@ namespace basecross {
 		float pushY,
 		Vec3 scale,
 		Col4 color,
-		float pushX)
-		: BillBoard(stagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX)
+		float pushX,
+		float displayTime)
+		: BillBoard(stagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX),
+		m_displayTime(displayTime)
 	{
 	}
 
-	void DamageBill::OnCreate()
-	{
-		
-	}
+	// ==============================================
+	// ビルボードのクラスを継承しているから、ぜっっっっっっっっっっっっっったいにOnCreateは書くな！！！！！！！！！！！
+	// ==============================================
 
 	void DamageBill::OnUpdate()
 	{
-		if (m_actor.expired())
+		// アクタが存在しないか、表示時間を超えた場合はこのビルボードを削除
+		if (m_actor.expired() || m_time >= m_displayTime)
 		{
 			GetStage()->RemoveGameObject<DamageBill>(GetThis<DamageBill>());
 			return;
 		}
+
+		m_time += App::GetApp()->GetElapsedTime();
 
 		auto actorPtr = m_actor.lock();
 		// 受け取ったアクタのTransformを取得
@@ -223,12 +227,6 @@ namespace basecross {
 
 		auto draw = GetComponent<PCTStaticDraw>();
 		draw->SetTextureResource(m_textureName);
-	}
-
-	void DamageBill::RemoveBill()
-	{
-		// 削除
-		GetStage()->RemoveGameObject<DamageBill>(GetThis<DamageBill>());
 	}
 
 	//------------------------------------------------
@@ -281,11 +279,6 @@ namespace basecross {
 		trans->SetQuaternion(qt);
 	}
 
-	void DamageBillRoot::RemoveBill()
-	{
-		// 削除
-		GetStage()->RemoveGameObject<DamageBillRoot>(GetThis<DamageBillRoot>());
-	}
 }
 
 //end basecross
