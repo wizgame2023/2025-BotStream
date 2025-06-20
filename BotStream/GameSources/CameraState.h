@@ -22,6 +22,8 @@ namespace basecross {
 		shared_ptr<Actor> m_targetObj = nullptr;//ロックオン時の対象
 		float m_targetDistance;//ターゲット対象との距離
 
+		shared_ptr<Stage> m_stage;
+
 	public:
 		CameraStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -126,17 +128,38 @@ namespace basecross {
 	};
 
 	//ムービー用のカメラステート(開始時)
-	class CameraStartMovieState :public CameraStateBase
+	class CameraStartMovieState_First :public CameraStateBase
 	{
 	private:
 
 	public:
-		CameraStartMovieState(shared_ptr<GameObject>& obj) :
+		CameraStartMovieState_First(shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
 		}
-		~CameraStartMovieState()
+		~CameraStartMovieState_First()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+
+	};
+
+	//ムービー用のカメラステート(開始時)
+	class CameraStartMovieState_Second :public CameraStateBase
+	{
+	private:
+
+	public:
+		CameraStartMovieState_Second(shared_ptr<GameObject>& obj) :
+			CameraStateBase(obj)
+		{
+
+		}
+		~CameraStartMovieState_Second()
 		{
 		}
 
@@ -160,6 +183,10 @@ namespace basecross {
 			AddState(L"Gun", shared_ptr<CameraGunState>(new CameraGunState(obj)));
 			//カメラをプレイヤーの方向に向かう状態
 			AddState(L"Reset", shared_ptr<CameraResetState>(new CameraResetState(obj)));
+			//ムービー用のカメラステート(開始時一段階目)
+			AddState(L"StartMovie_First", shared_ptr<CameraStartMovieState_First>(new CameraStartMovieState_First(obj)));
+			//ムービー用のカメラステート(開始時二段階目)
+			AddState(L"StartMovie_Second", shared_ptr<CameraStartMovieState_Second>(new CameraStartMovieState_Second(obj)));
 
 			ChangeState(L"Normal");
 		}
