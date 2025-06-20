@@ -140,7 +140,25 @@ namespace basecross {
 			atk->SetMoveContact(true);
 			Vec3 v = GetForward();
 			float fwd = atan2(v.z, v.x);
-			EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0),Vec3(1), Vec3(0));
+
+			if (info.HitEffect == L"SlashHitEfk")
+			{
+				EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0), Col4(1.0f, 0.35f, 0.15f, 1.0f), Vec3(0));
+			}
+			if (info.HitEffect == L"GunHitEfk")
+			{
+				EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0), Col4(1.0f, 0.95f, 0.45f, 1.0f), Vec3(0));
+			}
+			if (info.HitEffect == L"EnemyHitEfk")
+			{
+				EfkPlaying(info.HitEffect, GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 0.35f, 0.15f, 1.0f), Vec3(0));
+			}
+			if (info.HitEffect == L"EnemyLongHitEfk")
+			{
+				EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0), Col4(1.0f, 0.95f, 0.45f, 1.0f), Vec3(0));
+			}
+
+
 			PlaySnd(info.HitSound, 1.0f, 0);
 
 			//攻撃判定から攻撃のデータを取得
@@ -246,6 +264,12 @@ namespace basecross {
 			break;
 		case EnemyEffect_Spin:
 			ret = EfkPlaying(L"Landing", angle, Vec3(0, 1, 0), Vec3(8), Vec3(0, -2.7f, 0));
+			break;
+		case EnemyEffect_Rush:
+			ret = EfkPlaying(L"RushEfk", angle, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 0.5f), Vec3(0.0f, 1.0f, 0.0f));
+			break;
+		case EnemyEffect_Attack:
+			ret = EfkPlaying(L"EnemyAttack", angle, Vec3(0, 1, 0), Vec3(1.5f, 1.5f, 1.5f), Vec3(0.0f, -1.5f, 0.0f));
 			break;
 		default:
 			break;

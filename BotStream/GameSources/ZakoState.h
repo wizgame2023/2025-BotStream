@@ -20,6 +20,8 @@ namespace basecross {
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 		float m_deltaScale = 0.0f;
 
+		Effekseer::Handle m_effect;
+
 	public:
 		EnemyZakoStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
