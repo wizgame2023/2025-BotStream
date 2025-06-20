@@ -54,6 +54,7 @@
 #include "WaveStageBase.h"
 #include "TutorialStage.h"
 #include "StageFirst.h"
+#include "StageSecond.h"
 
 #include "StageAbe.h"
 #include "StageSanpei.h"
@@ -64,6 +65,9 @@
 #include "StageSelect.h"
 #include "GameClearScene.h"
 #include "GameOverScene.h"
+
+//Controller
+#include "RT_MovieController.h"
 
 //Manager
 #include "CameraManager.h"

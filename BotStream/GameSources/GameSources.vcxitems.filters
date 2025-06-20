@@ -34,6 +34,9 @@
     <Filter Include="Stage\WaveStage">
       <UniqueIdentifier>{9f404510-c3bb-4810-9510-eab8b89dfdf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{adc2f2e1-a1cc-4e74-9336-c6612d9da2c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Project.h">
@@ -171,6 +174,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StageFirst.h">
       <Filter>Stage\WaveStage</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageSecond.h">
+      <Filter>Stage\WaveStage</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)RT_MovieController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
@@ -298,6 +307,12 @@
     </ClCompile>
     <ClCompile Include="$(MSBuildThisFileDirectory)StageFirst.cpp">
       <Filter>Stage\WaveStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageSecond.cpp">
+      <Filter>Stage\WaveStage</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)RT_MovieController.cpp">
+      <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
