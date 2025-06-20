@@ -404,10 +404,10 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = 3.0f;
+			m_speed = 0.5f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
-			m_enemyZako->SetVelocity(move);
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
