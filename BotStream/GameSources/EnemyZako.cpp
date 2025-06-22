@@ -84,7 +84,7 @@ namespace basecross {
 
 		//頭上にHPバーを表示させる		
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 	}
 
@@ -334,7 +334,7 @@ namespace basecross {
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 	}
@@ -415,7 +415,7 @@ namespace basecross {
 		m_state = shared_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 
@@ -517,20 +517,5 @@ namespace basecross {
 		DetectBeingAttacked(Other);
 	}
 
-	//ダメージを受けた際の処理
-	void EnemyZakoFlying::OnDamaged()
-	{
-		////攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
-		//if (!FindTag(L"AttackNow"))
-		//{
-		//	m_state->ChangeState(L"Hit");
-		//}
-		//else if (FindTag(L"AttackNow"))
-		//{
-		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
-		//}
-
-		m_state->ChangeState(L"Hit");
-	}
 
 }

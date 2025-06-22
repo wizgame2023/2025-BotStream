@@ -94,7 +94,7 @@ namespace basecross {
 			AddGameObject<Block>(Vec3(10.0f,3.0f,10.0f),Vec3(0.0f,1.4f,0.0f));
 
 			// ボスゲージ
-			//AddGameObject<BossGaugeUI>();
+			//m_bossGaugeUI = AddGameObject<BossGaugeUI>();
 
 		}
 		catch (...) {
@@ -522,6 +522,12 @@ namespace basecross {
 				ret.x = 1;
 
 		}
+
+		if (keybord.m_bPushKeyTbl[VK_RIGHT])
+		{
+			m_bossGaugeUI->ClearBossGaugeUI(false);
+		}
+
 
 		if (keybord.m_bPushKeyTbl[VK_RIGHT])
 		{

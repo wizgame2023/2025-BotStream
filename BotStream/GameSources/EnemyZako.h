@@ -121,9 +121,6 @@ namespace basecross {
 
 	class EnemyZakoFlying : public EnemyZako
 	{
-	private:
-		void OnDamaged() override;
-
 	public:
 		enum EnemyZakoFlyingAttackType
 		{
