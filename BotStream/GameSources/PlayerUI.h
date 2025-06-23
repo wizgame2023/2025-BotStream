@@ -115,10 +115,9 @@ namespace basecross {
 		// digitPos:ˆÊ’uİ’è
 		// bulletNum:Å‘å‘•“U”
 		// digitSize:•¶š‚Ì‘å‚«‚³
-		PlayerBulletUI(const shared_ptr<Stage>& stagePtr, shared_ptr<Player> player, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
+		PlayerBulletUI(const shared_ptr<Stage>& stagePtr, shared_ptr<Player> player, Vec2 digitPos, float digitSize = 40.0f) :
 			MyGameObject(stagePtr),
 			m_digitPos(digitPos),
-			m_bulletNum(bulletNum),
 			m_digitSize(digitSize),
 			m_player(player)
 		{
