@@ -70,7 +70,7 @@ namespace basecross {
         SetSharedGameObject(L"Boss", boss);
         //enemyMgr->InstBoss(dynamic_pointer_cast<EnemyBase>(boss));
 
-        auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+        auto playerUI = AddGameObject<PlayerGaugeUI>(player);
         SetSharedGameObject(L"PlayerUI", playerUI);
 
 

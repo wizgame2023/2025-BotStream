@@ -53,9 +53,9 @@ namespace basecross {
 			SetSharedGameObject(L"CameraManager", m_cameraMana);
 
 			//Player関係のUI生成
-			auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
-			SetSharedGameObject(L"PlayerGauge", playerGauge);
-			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+			//auto playerGauge = AddGameObject<PlayerGaugeUI>(m_player);
+			//SetSharedGameObject(L"PlayerGauge", playerGauge);
+			auto playerUI = AddGameObject<PlayerGaugeUI>(m_player);
 			SetSharedGameObject(L"PlayerUI", playerUI);
 
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
