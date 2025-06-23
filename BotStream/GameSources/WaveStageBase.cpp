@@ -88,7 +88,7 @@ namespace basecross {
         m_sndMgr = AddGameObject<SoundManager>();
         SetSharedGameObject(L"SoundManager", m_sndMgr.lock());
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
-        GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
+        //GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
 
         auto colController = AddGameObject<StageCollisionController>();
         colController->SetCollisionSwhich(true);
