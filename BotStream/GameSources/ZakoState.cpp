@@ -22,12 +22,12 @@ namespace basecross {
 		//雑魚敵のタイプによって攻撃の方法が変わる
 		//遠距離
 		m_timeOfShot += deltaTime;
-		if (attackType == m_enemyZako->Zako_Long && isLand)
+		if (attackType == m_enemyZako->Zako_Long)
 		{
 			m_enemyZako->ChangeState(L"PreparationforLong");//軸合わせから始まる
 		}
 		//近距離
-		if (attackType == m_enemyZako->Zako_Melee && isLand)
+		if (attackType == m_enemyZako->Zako_Melee)
 		{
 			if (m_enemyZako->GetAttackFlag())//攻撃フラグが立ってなかったら攻撃動作はできない
 			{
@@ -97,6 +97,9 @@ namespace basecross {
 		{
 			m_enemyZako->ChangeState(L"Stand");
 		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(1.0f);
 	}
 	void EnemyZakoEscapeState::Exit()
 	{
@@ -211,6 +214,8 @@ namespace basecross {
 			m_enemyZako->ChangeState(L"Charge");//突進ステートに遷移
 		}
 
+		//スピード制限
+		m_enemyZako->SpeedLimit(3.0f);
 
 		////移動中なのでそれに合わせたアニメーション
 		//m_enemyZako->ChangeAnim(L"Walk");
@@ -298,6 +303,9 @@ namespace basecross {
 			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
 			m_Attack = false;//攻撃判定が複数発生させないようにする
 		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(5.0f);
 	}
 	void EnemyZakoChargeState::Exit()
 	{
@@ -359,6 +367,9 @@ namespace basecross {
 				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 			}
 		}
+
+		//スピードリミット
+		m_enemyZako->SpeedLimit(2.5f);
 	}
 	void EnemyZakoPreparationforMeleeState::Exit()
 	{
@@ -373,10 +384,14 @@ namespace basecross {
 		if (playerdist > 30.0f)//中
 		{
 			m_speed = 300.0f;
+			//スピード制限
+			m_enemyZako->SpeedLimit(5.0f);
 		}
 		else//近い
 		{
 			m_speed = 200.0f;
+			//スピード制限
+			m_enemyZako->SpeedLimit(3.0f);
 		}
 	}
 
@@ -404,10 +419,11 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = 3.0f;
+			m_speed = 1.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
-			m_enemyZako->SetVelocity(move);
+			//スピードを加える
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
@@ -436,6 +452,9 @@ namespace basecross {
 				m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
 			}
 		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(2.0f);
 	}
 	void EnemyZakoPreparationforLongState::Exit()
 	{

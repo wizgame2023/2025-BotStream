@@ -180,8 +180,6 @@ namespace basecross {
 		}
 		//-------------------------------------------------------------
 		
-		//デバック用文字列
-		//DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);

@@ -64,7 +64,7 @@ namespace basecross{
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage")
 		{
-			ResetActiveStage<WaveStageBase>();
+			ResetActiveStage<StageFirst>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {
@@ -107,6 +107,8 @@ namespace basecross{
 		app->RegisterTexture(L"Fadeout", strTexture);
 		strTexture = texPath + L"SlowSpeite.png";
 		app->RegisterTexture(L"SlowTex", strTexture);
+		strTexture = texPath + L"Door.png";
+		app->RegisterTexture(L"DoorTex", strTexture);
 
 		// title
 		strTexture = texPath + L"TitleBack.png";
@@ -357,7 +359,10 @@ namespace basecross{
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
-		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav"); 
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
+		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
+		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
+
 		// パーツ入手
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
 		// ジャスト回避
