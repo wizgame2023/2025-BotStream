@@ -40,6 +40,11 @@ namespace basecross {
 
 	void PlayerGaugeUI::OnUpdate()
 	{
+		auto player = m_player.lock();
+
+		m_playerMaxHP = player->GetMaxHP();
+		m_playerHP = player->GetHP();
+
 		Vec3 framePos = m_gaugeFrameSprite->GetComponent<Transform>()->GetPosition();
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 

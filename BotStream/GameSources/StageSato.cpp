@@ -53,9 +53,9 @@ namespace basecross {
 			SetSharedGameObject(L"CameraManager", m_cameraMana);
 
 			//Player関係のUI生成
-			auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
-			SetSharedGameObject(L"PlayerGauge", playerGauge);
-			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+			//auto playerGauge = AddGameObject<PlayerGaugeUI>(m_player);
+			//SetSharedGameObject(L"PlayerGauge", playerGauge);
+			auto playerUI = AddGameObject<PlayerGaugeUI>(m_player);
 			SetSharedGameObject(L"PlayerUI", playerUI);
 
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
@@ -94,7 +94,7 @@ namespace basecross {
 			AddGameObject<Block>(Vec3(10.0f,3.0f,10.0f),Vec3(0.0f,1.4f,0.0f));
 
 			// ボスゲージ
-			//AddGameObject<BossGaugeUI>();
+			//m_bossGaugeUI = AddGameObject<BossGaugeUI>();
 
 		}
 		catch (...) {
@@ -522,6 +522,12 @@ namespace basecross {
 				ret.x = 1;
 
 		}
+
+		if (keybord.m_bPushKeyTbl[VK_RIGHT])
+		{
+			m_bossGaugeUI->ClearBossGaugeUI(false);
+		}
+
 
 		if (keybord.m_bPushKeyTbl[VK_RIGHT])
 		{

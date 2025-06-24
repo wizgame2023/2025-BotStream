@@ -75,6 +75,7 @@ namespace basecross {
 		void ClearBossGaugeUI(bool clear)
 		{
 			m_hitPointSp->OnClear(clear);
+			m_armorPointSp->OnClear(clear);
 			m_gaugeFrameSp->OnClear(clear);
 		}
 

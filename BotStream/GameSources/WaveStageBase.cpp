@@ -88,7 +88,7 @@ namespace basecross {
         m_sndMgr = AddGameObject<SoundManager>();
         SetSharedGameObject(L"SoundManager", m_sndMgr.lock());
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
-        GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
+        //GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
 
         auto colController = AddGameObject<StageCollisionController>();
         colController->SetCollisionSwhich(true);
@@ -99,8 +99,14 @@ namespace basecross {
 
         // 戦闘用UI
         AddGameObject<PlayerWeaponUI>();
-        auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+        auto playerUI = AddGameObject<PlayerGaugeUI>(m_player.lock());
         SetSharedGameObject(L"PlayerUI", playerUI);
+
+		// 数字の位置,大きさ
+		Vec2 digitPos(300.0f, -260.0f);
+		constexpr float digitSize = 25.0f;
+		// プレイヤーの弾のUI
+		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos,digitSize);
 
 		// ボスゲージ
 		m_bossGauge = AddGameObject<BossGaugeUI>(
@@ -145,13 +151,13 @@ namespace basecross {
 
         //wave1敵
         m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
         CreateManagerObjects();
 
@@ -217,9 +223,9 @@ namespace basecross {
 			// ------- 1 -> 2 -------------------------------------------------------------
 		case 1:
 			//プレイヤーの位置を初期化
-			//SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			//m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -240,12 +246,12 @@ namespace basecross {
 
 			// ------- 2 -> 3 -------------------------------------------------------------
 		case 2:
-			//m_bossGauge->ClearBossGaugeUI(false);
+			m_bossGauge->ClearBossGaugeUI(false);
 
 			////プレイヤーの位置を初期化
-			//SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			//m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
+			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
 
 			//GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
 			//GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
