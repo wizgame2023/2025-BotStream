@@ -70,6 +70,7 @@ namespace basecross {
 
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//影をつける（シャドウマップを描画する）
@@ -81,7 +82,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
