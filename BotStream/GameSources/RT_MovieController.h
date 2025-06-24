@@ -8,7 +8,11 @@ namespace basecross {
         Movie_None,
         StartMovie_First,
         StartMovie_Second,
-        StartMovie_Three
+        StartMovie_Three,
+        Movie_Boss,
+        Movie_BossDie,
+        Movie_BossDie_Second,
+        Movie_BossDie_Three
     };
 
     class RT_MovieController : public MyGameObject {
@@ -22,6 +26,11 @@ namespace basecross {
 
         // ムービが再生されているかの処理
         int m_startMovie = Movie_None;
+
+        //時間計測
+        float m_timeCount = 0.0f; 
+        //ボスを倒したときの二番目のボイスを出す時間
+        float m_maxTimeOfBossDieSecond = 1.3f;
 
     public:
         // 構築と破棄
@@ -41,6 +50,12 @@ namespace basecross {
 
         // 最初のムービー処理
         void StartMovie();
+
+        // ボスムービの処理
+        void BossMovie();
+
+        // ボスを倒したときのムービー処理
+        void BossDieMovie();
 
         // m_playerEndのゲッタセッタ
         void SetPlayerEnd(bool onOff)
