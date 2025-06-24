@@ -410,7 +410,7 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
