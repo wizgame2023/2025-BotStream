@@ -108,7 +108,7 @@ namespace basecross {
 
 		return ret;
 	}
-
+	
 	//GamePhase‚Ì•ÏX GamePhase‚Ìó‘Ô‚É‚æ‚Á‚ÄŠÔ‚ª~‚Ü‚é‚©•Ï‚í‚é
 	void StageFirst::UpdateGamePhase() {
 		switch (m_gamePhase) {
