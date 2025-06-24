@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 			
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<TitleStage> ();
 
 		}
 
@@ -62,9 +62,16 @@ namespace basecross{
 
 		// ここは後にWaveStageに変更する
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
-		if (event->m_MsgStr == L"ToWaveStage")
+		if (event->m_MsgStr == L"ToWaveStage1")
 		{
-			ResetActiveStage<StageFirst>();
+			m_stageNum = 1;
+			ResetActiveStage<WaveStageBase>();
+		}
+
+		if (event->m_MsgStr == L"ToWaveStage2")
+		{
+			m_stageNum = 2;
+			ResetActiveStage<WaveStage2>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {

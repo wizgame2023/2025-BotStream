@@ -639,9 +639,9 @@ namespace basecross {
 		auto pos = m_enemyZako->GetPosition();
 		auto isLand = m_enemyZako->GetLand();//着地しているかのフラグ
 
-		if (pos.y <= 10.0)
+		if (pos.y <= 10.0f)
 		{
-			m_enemyZako->SetVelocity(Vec3(0, 10.0f, 0));
+			m_enemyZako->SetVelocity(Vec3(0, 5.0f, 0));
 		}
 		else
 		{
