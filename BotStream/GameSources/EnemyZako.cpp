@@ -234,6 +234,7 @@ namespace basecross {
 					ChangeState(L"Stun");
 					AddEffect(EnemyEffect_Stun);
 					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+					m_stun = 0;
 				}
 				else
 				{
@@ -394,12 +395,13 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 60.0f);
 		ptrDraw->AddAnimation(L"Walk", 126, 49, 60.0f);
 		ptrDraw->AddAnimation(L"Charge", 0, 125, 60.0f);
-		ptrDraw->AddAnimation(L"Down", 637, 88, 60.0f);
+		ptrDraw->AddAnimation(L"Down", 637, 88, false, 60.0f);
+		ptrDraw->AddAnimation(L"Stan", 637, 88, false, 60.0f);
 
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);//デバック用
+		ptrColl->SetDrawActive(false);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");
@@ -471,51 +473,5 @@ namespace basecross {
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
 	}
-
-	//HPバーの処理
-	void EnemyZakoFlying::UpdateHPBer()
-	{
-		//ビルボードの処理
-		if (!m_used)
-		{
-			m_HPFrame->SetScale(Vec3(0.0f));
-			m_HPBer->SetScale(Vec3(0.0f));
-		}
-		if (m_used)
-		{
-			m_HPFrame->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-			m_HPBer->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-
-			//HPの割合によってゲージが減る
-			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
-			m_HPBer->SetPercent(HPPercent);
-
-		}
-
-
-	}
-
-	//攻撃のクールタイム
-	void EnemyZakoFlying::TimeOfAttackCool()
-	{
-		//攻撃のクールタイム
-		if (!m_attackFlag)
-		{
-			m_timeCountOfAttackCool += _delta;
-			//クールタイム過ぎたら攻撃できるようになる
-			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
-			{
-				m_timeCountOfAttackCool = 0.0f;//リセット
-				m_attackFlag = true;
-			}
-		}
-	}
-
-	//コリジョン判定
-	void EnemyZakoFlying::OnCollisionEnter(shared_ptr<GameObject>& Other)
-	{
-		DetectBeingAttacked(Other);
-	}
-
 
 }

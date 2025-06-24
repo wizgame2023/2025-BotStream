@@ -143,13 +143,6 @@ namespace basecross {
 
 		void OnCreate() override;
 		void OnUpdate() override;
-		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
-
-		//ビルボードの処理
-		void UpdateHPBer();
-
-		//攻撃のクールタイム
-		void TimeOfAttackCool();
 
 		//攻撃のタイプのゲッタ
 		int GetAttackType()
