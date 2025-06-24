@@ -231,4 +231,21 @@ namespace basecross {
         virtual void OnCreate() override;
     };
 
+
+    // ==========================================================
+    // WaveStageBase2‚Ìæ“ª
+    // ==========================================================
+
+    class WaveStage2 : public WaveStageBase
+    {
+    private:
+
+    public:
+        virtual void OnCreate()override;
+        virtual void OnUpdate()override;
+        //Wave‚ªŸ‚ÉˆÚ‚Á‚½‚Æ‚«‚ÉŒÄ‚Ño‚³‚ê‚é
+        virtual void WaveInitialize();
+
+    };
+
 }
