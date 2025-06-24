@@ -185,6 +185,22 @@ namespace basecross {
 		Vec3 hpOffset(0.0f * 0.066f, 0.7f, 0.0f);
 		hpTrans->SetPosition(framePos + hpOffset + Vec3(hpOffsetX, 0.0f, 0.0f));
 
+
+
+		// アーマーゲージの割合を取得
+		m_armorPointMax = m_boss.lock()->GetArmorePercentage();
+
+		auto armorTrans = m_armorPointSp->GetComponent<Transform>();
+		armorTrans->SetScale(Vec3(m_armorPointMax, 1.0f, 1.0f));
+
+		// アーマーゲージの位置を調整(左端固定)
+		const float gaugeArmorWidth = 300.0f * 0.8f;
+		float armorOffsetX = (m_armorPointMax - 1.0f) * (gaugeArmorWidth * 0.965f);
+		armorTrans->SetPosition(Vec3(20.0f + armorOffsetX, -200.0f, 0.0f));
+
+		// アーマーゲージの枠の位置からの相対座標（プラマイ補正）
+		Vec3 armorOffset(0.0f * 0.066f, -28.0f, 0.0f);
+		armorTrans->SetPosition(framePos + armorOffset + Vec3(armorOffsetX, 0.0f, 0.0f));
 	}
 
 	void BossGaugeUI::CreateSprite()
@@ -198,10 +214,17 @@ namespace basecross {
 
 		auto framePos = m_gaugeFrameSp->GetPosition();
 
+
 		m_hitPointSp = m_stage->AddGameObject<Sprite>(
 			L"BossHPMater",
 			Vec2(frameSizeX * 0.966f, frameSizeY * 0.826f),
 			Vec3(framePos.x, framePos.y + 0.7f, framePos.z)
+		);
+
+		m_armorPointSp= m_stage->AddGameObject<Sprite>(
+			L"BossArmor",
+			Vec2(frameSizeX * 0.96f, frameSizeY * 0.16f),
+			Vec3(framePos.x, framePos.y - 3.0f, framePos.z)
 		);
 	}
 	// END ---------------------------------------------------

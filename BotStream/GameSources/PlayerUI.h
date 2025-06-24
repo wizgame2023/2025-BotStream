@@ -17,6 +17,8 @@ namespace basecross {
 		shared_ptr<Sprite> m_plSPSprite;
 		shared_ptr<Stage> m_stage;
 
+		weak_ptr<Player> m_player;
+
 		float m_playerMaxHP = 1000.0f;		// HPの最大値
 		float m_playerHP = m_playerMaxHP;	// HPの初期値
 
@@ -25,12 +27,9 @@ namespace basecross {
 
 		void AllClear(bool clear);
 	public:
-		PlayerGaugeUI(const std::shared_ptr<Stage>& stagePtr, int HPMax = 1000.0f, int SPMax = 100.0f) :
+		PlayerGaugeUI(const shared_ptr<Stage>& stagePtr,shared_ptr<Player> player) :
 			MyGameObject(stagePtr),
-			m_playerMaxHP(HPMax),
-			m_playerHP(HPMax),
-			m_playerSP(0.0f),
-			m_playerMaxSP(SPMax)
+			m_player(player)
 		{
 		}
 		virtual ~PlayerGaugeUI() {}
@@ -100,7 +99,7 @@ namespace basecross {
 	class PlayerBulletUI : public MyGameObject
 	{
 		// スプライトのリスト
-		std::vector<std::shared_ptr<Sprite>> m_bulletDigits;
+		vector<std::shared_ptr<Sprite>> m_bulletDigits;
 
 		shared_ptr<Stage> m_stage;
 		weak_ptr<Player> m_player;
@@ -116,10 +115,9 @@ namespace basecross {
 		// digitPos:位置設定
 		// bulletNum:最大装填数
 		// digitSize:文字の大きさ
-		PlayerBulletUI(const std::shared_ptr<Stage>& stagePtr, shared_ptr<Player> player, Vec2 digitPos, int bulletNum = 100, float digitSize = 40.0f) :
+		PlayerBulletUI(const shared_ptr<Stage>& stagePtr, shared_ptr<Player> player, Vec2 digitPos, float digitSize = 40.0f) :
 			MyGameObject(stagePtr),
 			m_digitPos(digitPos),
-			m_bulletNum(bulletNum),
 			m_digitSize(digitSize),
 			m_player(player)
 		{

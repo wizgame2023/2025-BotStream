@@ -46,7 +46,7 @@ namespace basecross {
 		SetSharedGameObject(L"Player", player);
 
 		//Playerä÷åWÇÃUIê∂ê¨
-		auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+		auto playerUI = AddGameObject<PlayerGaugeUI>(player);
 		SetSharedGameObject(L"PlayerUI", playerUI);
 		//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
 
