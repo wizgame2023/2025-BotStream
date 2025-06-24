@@ -798,6 +798,12 @@ namespace basecross {
 			sin(m_angleXAxis) * sin(m_AngleYAxis)),
 			Col4(0.22f, 1.0f, 0.48f, 1.0f));
 
+		//クォータニオン回転
+		Quat Qt = Quat(0.0f, sin((m_AngleYAxis + XMConvertToRadians(90.0f)) / 2), 0.0f, cos((m_AngleYAxis + XMConvertToRadians(90.0f)) / 2));
+		//Qt *= Quat(sin((m_angleXAxis + XMConvertToRadians(90.0f)) / 2), 0.0f, 0.0f, cos((m_angleXAxis + XMConvertToRadians(90.0f)) / 2));
+		//EffectManager::Instance().SetRotationFromQuaternion(m_gunLine, Quat(0.0f, sin((m_AngleYAxis+XMConvertToRadians(90.0f)) / 2), 0.0f, cos((m_AngleYAxis + XMConvertToRadians(90.0f)) / 2)));
+		EffectManager::Instance().SetRotationFromQuaternion(m_gunLine,Qt);
+
 	}
 
 	void Bullet::OnUpdate()
