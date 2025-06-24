@@ -25,8 +25,8 @@ namespace basecross {
 		float par = rand() % 100;
 		int drop = rand() % 3;
 		auto stage = GetStage();
-		par = 10;//テスト用に絶対生成する
-		drop = 0;
+		//par = 10;//テスト用に絶対生成する
+		//drop = 0;
 		//35%ぐらいの確率でパーツドロップ
 		if (par > 0 && par <= 15)
 		{

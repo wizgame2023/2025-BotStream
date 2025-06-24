@@ -151,7 +151,7 @@ namespace basecross {
 			m_partsStatus.id = 3;
 			m_partsStatus.addHP = 20;
 			m_partsStatus.addSpeed = 0.0f;
-			m_partsStatus.addAttack = 399;
+			m_partsStatus.addAttack = 3;
 			m_partsStatus.addAttribute = -20;
 
 			// どのタイプのパーツか決める
