@@ -409,6 +409,33 @@ namespace basecross {
 		}
 	}
 
+	//開始ムービー用のカメラ操作処理
+	void CameraManager::CameraControlStartMovieMode()
+	{
+
+		auto pushMaxAtPos = -5.0f;
+		float speed = 1.0f;
+		//移動処理
+		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, speed);
+		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, speed);
+		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, speed);
+
+		//銃を使わないフラグ
+		m_meleeFlag = true;
+		//ここはUIを出さない
+		m_spriteAiming->OnClear(true);
+
+		//注視点の変更
+		m_lockStageCamera->SetAt
+		(
+			m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.x,
+				cos(m_cameraAngleX) * m_pushAtPos.y,
+				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.z)
+		);
+
+	}
+	
+
 	//現在地から目的地までの移動処理
 	float CameraManager::MoveToDestination(float nowPos, float destinationPos,float speed)
 	{
@@ -439,57 +466,58 @@ namespace basecross {
 		return nowPos;
 	}
 
-	//ステート変更処理 引数に入れたステートに変更する
+	// ステート変更処理 引数に入れたステートに変更する
 	void CameraManager::ChangeState(wstring stateName)
 	{
 		m_stateMashine->ChangeState(stateName);
 	}
 
-	//カメラのポジションを決める関数
-	void CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght)
+	// カメラのポジションを決める関数
+	bool CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght)
 	{
 		auto objVec = m_stage->GetGameObjectVec();
 		m_cameraPos = m_lockStageCamera->GetEye();
 
-		Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
-		TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
-		size_t triangleNumber; // レイが交差したポリゴンの番号
-		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
+		Vec3 hitPos;			// 出力用：レイの交差地点(衝突点)
+		TRIANGLE triangle;		// レイが交差したポリゴンを構成する頂点の座標
+		size_t triangleNumber;	// レイが交差したポリゴンの番号
+		float min = 9999999.9f;	//Playerから見てカメラの障害となる距離の最小値
+		bool moveEnd = false;	//移動処理が終わったかを保存する変数
 
-		//プレイヤーからどのくらい離れるのかのベクトルの計算
+		// プレイヤーからどのくらい離れるのかのベクトルの計算
 		Vec3 CameraPushGoalPos = Vec3((cos(m_cameraAngleY) * sin(m_cameraAngleX) * CameraLenght),
 			(maxPushPosY) + cos(m_cameraAngleX) * CameraLenght,
 			(sin(m_cameraAngleY) * sin(m_cameraAngleX) * CameraLenght));
-		//銃モード用の離れる距離をプラスする
+		// 銃モード用の離れる距離をプラスする
 		CameraPushGoalPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * maxLength,
 			0.0f,
 			sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * maxLength);
 
 		//m_cameraPos = CameraPushPos;
 
-		//現在のカメラ位置を取得する
+		// 現在のカメラ位置を取得する
 		//auto cameraEye = m_stageCamera.lock()->GetEye();
 
-		//現在の位置と目的地の方向ベクトルの計算
+		// 現在の位置と目的地の方向ベクトルの計算
 		Vec3 directionVec = CameraPushGoalPos - m_pushPos;	
 		
 		//ある程度カメラの位置が目的地に近かったら目的地にたどり着いたとみなす
 		if (directionVec.length() <= 1.0f)
 		{
 			m_pushPos = CameraPushGoalPos;
+			moveEnd = true; // 移動終了
 		}
-		//ステージ開始時にカメラの移動が始まらないようにする例外処理
+		// ステージ開始時にカメラの移動が始まらないようにする例外処理
 		if (m_pushStart)
 		{
 			m_pushPos = CameraPushGoalPos;
 			m_pushStart = false;
 		}
 
-		//正規化
+		// 正規化
 		directionVec = directionVec.normalize();
-		//auto test = directionVec.length();
 
-		//カメラの位置と目的地が一緒でなければ移動する(うまくいってないです)
+		// カメラの位置と目的地が一緒でなければ移動する
 		if (m_pushPos != CameraPushGoalPos)
 		{
 			auto cameraSpeed = 40.0f;
@@ -500,7 +528,7 @@ namespace basecross {
 		m_cameraPos = m_playerPos + m_pushPos;
 
 
-		//移動する距離の差
+		// 移動する距離の差
 		//float difference = maxPushPosY - m_pushPos.y;
 
 
@@ -508,22 +536,22 @@ namespace basecross {
 		//	(m_playerPos.y + m_pushPos.y) + cos(m_cameraAngleX) * m_range,
 		//	m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
 		//	
-		////射撃モードは少し通常の状態から位置をずらす
+		//// 射撃モードは少し通常の状態から位置をずらす
 		//m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength,
 		//	0.0f,
 		//	sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength);
 
 
-		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
+		// 障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
 		{
-			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
-			float hitLength = min;//Playerと障害物の距離の長さ
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj);// 当たり判定の対象
+			float hitLength = min;// Playerと障害物の距離の長さ
 
-			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
+			// 障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
 			if (obstacles)
 			{
-				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+				// カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
 				if (!obstacles->FindTag(L"CameraObstacles")) continue;
 
 				auto ptrDraw = obstacles->GetComponent<SmBaseDraw>();
@@ -532,7 +560,7 @@ namespace basecross {
 				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
 			}
 
-			//minよりhitLengthが短かったら位置更新する
+			// minよりhitLengthが短かったら位置更新する
 			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
 			{
 				min = hitLength;
@@ -541,9 +569,11 @@ namespace basecross {
 			}
 		}
 
-		//カメラの位置更新
+		// カメラの位置更新
 		m_lockStageCamera->SetEye(m_cameraPos);
-
+		
+		// 移動処理が終わったか伝える
+		return moveEnd;
 	}
 
 	//LockOnCanを決める関数

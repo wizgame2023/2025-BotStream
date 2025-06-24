@@ -1005,15 +1005,16 @@ namespace basecross {
 		auto gamePhase = m_player->GetWaveStage(true)->GetCurrentGamePhase();
 		if (gamePhase == WaveStageBase::GamePhase::GPhase_Playing)
 		{
-			m_player->ChangeState(L"Stand");
+			m_player->ChangeState(L"PlayerWalk");
 		}
 
-		//ムービー用コントローラー取得
-		auto RT_movieController = m_player->GetStage()->GetSharedGameObject<RT_MovieController>(L"RT_MovieController");
 		
 		//地面に着地したらこのステートの処理は終了
-		if (m_player->GetLand())
+		if (m_player->GetPosition().y <= 1.0f)
 		{
+			//ムービー用コントローラー取得
+			auto RT_movieController = m_player->GetStage()->GetSharedGameObject<RT_MovieController>(L"MovieController");
+
 			RT_movieController->SetPlayerEnd(true);
 		}
 	}

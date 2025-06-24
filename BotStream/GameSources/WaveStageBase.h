@@ -73,6 +73,7 @@ namespace basecross {
 
         bool m_onceFlag = false;
 
+
         shared_ptr<BossGaugeUI> m_bossGauge;
 
         void ShowFPS() {
@@ -128,6 +129,9 @@ namespace basecross {
         GamePhase GetCurrentGamePhase() {
             return m_gamePhase;
         }
+        void SetGamePhase(GamePhase gamePhase){
+            m_gamePhase = gamePhase;
+        }
 
         int GetNowWaveNum() {
             return m_waveCurrent;
@@ -146,7 +150,7 @@ namespace basecross {
             m_deltaScaleCount = counttime;
         }
 
-        void SetActorPause(bool isPause);
+        void SetActorPause(bool isPause,bool andCamera = true);
 
         bool GetActorPause() {
             return m_isPaused;
