@@ -715,14 +715,14 @@ namespace basecross {
 		////テストで撃つ場所にキューブを生成してみる
 		//GetStage()->AddGameObject<Cube>(m_pos, m_rot, Vec3(1.0f, 1.0f, 1.0f));
 
-		//ドローメッシュの設定
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetDiffuse(Col4(0.24f, 0.7f, 0.43f, 1.0f));
-		ptrDraw->SetOwnShadowActive(false);//影は消す
-		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
-		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+		////ドローメッシュの設定
+		//auto ptrDraw = AddComponent<PNTStaticDraw>();
+		//ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		//ptrDraw->SetDiffuse(Col4(0.24f, 0.7f, 0.43f, 1.0f));
+		//ptrDraw->SetOwnShadowActive(false);//影は消す
+		//ptrDraw->SetDrawActive(true);
+		//ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		//ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
 		//原点オブジェクトが消えていたら自分も消える
 		auto originLock = m_originObj.lock();
@@ -791,6 +791,13 @@ namespace basecross {
 
 		DefAttack(5.0f, tmp);
 
+		// エフェクト生成
+		//AddEffect(PlayerEffect_Shot);
+		m_gunLine = EfkPlaying(L"GunLine", m_AngleYAxis + XMConvertToRadians(90.0f), Vec3(cos(m_angleXAxis) * sin(m_AngleYAxis),
+			cos(m_AngleYAxis),
+			sin(m_angleXAxis) * sin(m_AngleYAxis)),
+			Col4(0.22f, 1.0f, 0.48f, 1.0f));
+
 	}
 
 	void Bullet::OnUpdate()
@@ -800,6 +807,9 @@ namespace basecross {
 		{
 			return;
 		}
+
+		//エフェクト(弾を追いかけさせる)
+		EffectManager::Instance().SetPosition(m_gunLine, GetPosition());
 
 		Actor::OnUpdate();
 
