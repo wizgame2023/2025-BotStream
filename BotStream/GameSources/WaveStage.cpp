@@ -862,7 +862,7 @@ namespace basecross {
 
         if (m_IsFadeOutFlag == true)
         {
-            m_Color += 0.01;
+            m_Color += 0.02;
         }
 
         if (m_Color >= 1)
