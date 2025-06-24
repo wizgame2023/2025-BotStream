@@ -46,11 +46,12 @@ namespace basecross {
             ChangeTutorialPhase(Tutorial_MoveAndCamera);
             break;
         case Tutorial_MoveAndCamera:
-            Vec3 move = m_player.lock()->GetVelocity();
-            move.y = 0;
-            m_progress[0] += move.length() * m_tutorialMoveRequired;
-
-            GetSharedGameObject(L"CameraManager")
+            {
+                Vec3 move = m_player.lock()->GetVelocity();
+                move.y = 0;
+                m_progress[0] += move.length() * m_tutorialMoveRequired;
+                auto camera = dynamic_pointer_cast<CameraManager>(GetSharedGameObject<CameraManager>(L"CameraManager"));
+            }
             break;
         default:
             break;
