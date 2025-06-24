@@ -38,7 +38,7 @@ namespace basecross {
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
 
-		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, XMConvertToRadians(90.0f), 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 		SetSharedGameObject(L"Boss", m_boss.lock());
 
 		//wave1敵
@@ -65,11 +65,11 @@ namespace basecross {
 		
 		//ムービコントローラー作成
 		if (!m_player.lock()) return;
-		auto movieController = AddGameObject<RT_MovieController>(m_player.lock(), GetSharedGameObject<CameraManager>(L"CameraManager"));
-		SetSharedGameObject(L"MovieController", movieController);
+		m_movieController = AddGameObject<RT_MovieController>(m_player.lock(), GetSharedGameObject<CameraManager>(L"CameraManager"));
+		SetSharedGameObject(L"MovieController", m_movieController);
 
 		//ステージ開始時のムービ開始
-		movieController->StartMovie();
+		m_movieController->StartMovie();
 
 
 		//m_gamePhase = GamePhase::GPhase_Start;
@@ -89,6 +89,12 @@ namespace basecross {
 
 	//ゲームクリアしていいか確認する処理
 	bool StageFirst::ConsiderGameClear() {
+		return m_gameClearFlag;
+	}
+
+	//ボスのHPが0になっているか確認する処理
+	bool StageFirst::ConsiderBossCheck()
+	{
 		bool ret = false;
 		ret |= m_boss.lock()->GetHPCurrent() <= 0;
 
@@ -119,8 +125,15 @@ namespace basecross {
 			}
 			if (false) {
 				m_gamePhase = GPhase_GameOver;
-			}
+			}	
+			break;
+		case GPhase_CutScene:
+
+			//ムービー中はPlayerや敵が動かないようにステージをポーズ状態にする
+			SetActorPause(true, false);
+			break;
 		}
+
 	}
 
 
@@ -168,12 +181,15 @@ namespace basecross {
 				m_bossGauge->ClearBossGaugeUI(false);
 
 				//プレイヤーの位置を初期化
-				SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+				SetPlayerTransform(Vec3(0.0f, 1.2f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
 				m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
 
 				GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
 				GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
+
+				//ボスムービー再生
+				m_movieController->BossMovie();
 
 				break;
 			}
@@ -215,18 +231,27 @@ namespace basecross {
 			WaveInitialize();
 		}
 
-		if (m_waveCurrent == m_waveMax && ConsiderGameClear() && m_onceFlag == false)
+		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_onceFlag == false)
 		{
+			m_movieController->BossDieMovie();
+
 			m_sndMgr.lock()->StopBGM();
 			m_onceFlag = true;
-			m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}
 
 		if (ConsiderGameOver() && m_onceFlag == false)
 		{
 			m_sndMgr.lock()->StopBGM();
 			m_onceFlag = true;
-			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
+			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+		}
+
+		//ゲームクリア処理
+		if (m_gameClearFlag)
+		{
+			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
+			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}
 
 
@@ -307,6 +332,12 @@ namespace basecross {
 	void StageFirst::FadeOutStart()
 	{
 		m_fadeout.lock()->SetFadeOutFlag(true);
+	}
+
+	//ゲームクリアを渡す
+	void StageFirst::SetGameClear(bool onOff)
+	{
+		m_gameClearFlag = onOff;
 	}
 
 }
