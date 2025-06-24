@@ -765,11 +765,13 @@ namespace basecross {
 		case ActorName_Player:
 			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
 			tmp.Damage = 5 + player->GetEquippedParts().addAttack;//ダメージ
+			tmp.HitEffect = L"GunHitEfk";
 
 			break;
 		case ActorName_Enemy:
 			tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
 			tmp.Damage = 5;//ダメージ
+			tmp.HitEffect = L"EnemyLongHitEfk";
 			break;
 		default:
 			break;
@@ -780,7 +782,6 @@ namespace basecross {
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 0.1f;//のけぞり時間
 		tmp.InvincibleOnHit = true;
-		tmp.HitEffect = L"GunHitEfk";
 
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;

@@ -153,6 +153,8 @@ namespace basecross {
 			tmp.Damage = 10;
 			tmp.HitVel_Stand = Vec3(-5, 0, 0);
 			tmp.HitTime_Stand = 1.2f;
+			tmp.HitEffect = L"EnemyHitEfk";
+
 			boss->DefAttack(.3f, tmp);
 			boss->GetAttackPtr()->SetCollScale(6.0f);
 			boss->GetAttackPtr()->SetPos(Vec3(3.0f, 1, 0));
@@ -187,6 +189,8 @@ namespace basecross {
 			tmp.Damage = 10;
 			tmp.HitVel_Stand = Vec3(-10, 20, 0);
 			tmp.HitTime_Stand = 1.2f;
+			tmp.HitEffect = L"EnemyHitEfk";
+
 			boss->DefAttack(.3f, tmp);
 			boss->GetAttackPtr()->SetCollScale(6.0f);
 			boss->GetAttackPtr()->SetPos(Vec3(3.0f, 1, 0));
@@ -273,6 +277,8 @@ namespace basecross {
 			tmp.Damage = 1;
 			tmp.HitVel_Stand = Vec3(-8, 3, 0);
 			tmp.HitTime_Stand = 1.2f;
+			tmp.HitEffect = L"EnemyHitEfk";
+
 			boss->DefAttack(.1f, tmp);
 			boss->GetAttackPtr()->SetCollScale(10.0f);
 			boss->GetAttackPtr()->SetPos(Vec3(0, 3, 0));
@@ -536,6 +542,8 @@ namespace basecross {
 			tmp.Damage = 12;
 			tmp.HitVel_Stand = Vec3(-5, 0, 0);
 			tmp.HitTime_Stand = 1.2f;
+			tmp.HitEffect = L"EnemyHitEfk";
+
 			boss->DefAttack(.3f, tmp);
 			boss->GetAttackPtr()->SetCollScale(10.0f);
 			boss->GetAttackPtr()->SetPos(Vec3(3.0f, 1, 0));

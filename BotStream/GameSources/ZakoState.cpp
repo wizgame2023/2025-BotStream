@@ -146,6 +146,7 @@ namespace basecross {
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .3f;
 			tmp.Type = AttackType::Enemy;
+			tmp.HitEffect = L"EnemyHitEfk";
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
 			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
@@ -159,6 +160,9 @@ namespace basecross {
 
 			//攻撃用SE再生
 			m_SE = m_SEManager->Start(L"Enemy_Slash", 0, 0.4f);
+
+			m_effect = m_enemyZako->AddEffect(EnemyEffect_Attack);
+
 		}
 
 		//一定時間たったら攻撃ステートをやめる
@@ -256,10 +260,16 @@ namespace basecross {
 		m_enemyZako->ChangeAnim(L"Walk");
 		//SE再生
 		m_SE = m_SEManager->Start(L"EnemyZako_Charge", 0, 0.4f);
+
+		m_effect = m_enemyZako->AddEffect(EnemyEffect_Rush);
+		
 	}
 	void EnemyZakoChargeState::Update(float deltaTime)
 	{
 		m_deltaScale = m_enemyZako->GetWaveStage(false)->GetDeltaScale();
+
+		Vec3 enemyPos = m_enemyZako->GetPosition();
+		EffectManager::Instance().SetPosition(m_effect, enemyPos);
 
 		//突進していい距離を過ぎるまで突進する
 		if (m_playerdistance >= 0)
@@ -293,6 +303,7 @@ namespace basecross {
 			tmp.HitVel_Stand = Vec3(-8, 15, 0);
 			tmp.HitTime_Stand = .5f;
 			tmp.Type = AttackType::Enemy;
+			tmp.HitEffect = L"EnemyHitEfk";
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
 			m_enemyZako->GetAttackPtr()->SetPos(Vec3(0, 0, 0));

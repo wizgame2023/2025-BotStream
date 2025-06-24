@@ -26,7 +26,9 @@ namespace basecross {
 		EnemyEffect_Sphere,
 		EnemyEffect_SphereEnd,
 		EnemyEffect_Spin,
-		EnemyEffect_Wave
+		EnemyEffect_Wave,
+		EnemyEffect_Rush,
+		EnemyEffect_Attack
 	};
 
 	class Actor : public ObjectMove
