@@ -140,7 +140,7 @@ namespace basecross {
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		//位置更新
-		SpeedLimit(3.0f); //スピードリミット
+		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
 	}
 
@@ -207,6 +207,7 @@ namespace basecross {
 					ChangeState(L"Stun");
 					AddEffect(EnemyEffect_Stun);
 					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+					m_stun = 0;
 				}
 				else
 				{
