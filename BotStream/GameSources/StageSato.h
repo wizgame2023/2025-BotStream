@@ -55,6 +55,8 @@ namespace basecross {
 		shared_ptr<Sprite> m_SEMater[10];
 		shared_ptr<Sprite> m_audioSelect[2];
 
+		shared_ptr<BossGaugeUI> m_bossGaugeUI;
+
 		//shared_ptr<BillBoard> m_damageBill[2];
 
 		shared_ptr<BillBoard> m_testBill;
@@ -142,7 +144,7 @@ namespace basecross {
 		void DebugLog();
 
 		//ダメージビルボード
-		//void DamageBill(shared_ptr<GameObject> target, int damage);
+		void CreateDamageBill(shared_ptr<GameObject> actorPtr, int damage, float pushY = 2.0f, float width = 1.0f);
 
 		// 軸の正規化
 		float NormalizeAxis(float minusSide, float plusSide);

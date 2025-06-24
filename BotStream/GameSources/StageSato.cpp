@@ -53,9 +53,9 @@ namespace basecross {
 			SetSharedGameObject(L"CameraManager", m_cameraMana);
 
 			//Player関係のUI生成
-			auto playerGauge = AddGameObject<PlayerGaugeUI>(100);
-			SetSharedGameObject(L"PlayerGauge", playerGauge);
-			auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+			//auto playerGauge = AddGameObject<PlayerGaugeUI>(m_player);
+			//SetSharedGameObject(L"PlayerGauge", playerGauge);
+			auto playerUI = AddGameObject<PlayerGaugeUI>(m_player);
 			SetSharedGameObject(L"PlayerUI", playerUI);
 
 			//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
@@ -94,7 +94,7 @@ namespace basecross {
 			AddGameObject<Block>(Vec3(10.0f,3.0f,10.0f),Vec3(0.0f,1.4f,0.0f));
 
 			// ボスゲージ
-			//AddGameObject<BossGaugeUI>();
+			//m_bossGaugeUI = AddGameObject<BossGaugeUI>();
 
 		}
 		catch (...) {
@@ -525,54 +525,16 @@ namespace basecross {
 
 		if (keybord.m_bPushKeyTbl[VK_RIGHT])
 		{
-			m_root.push_back(
-				AddGameObject<DamageBillRoot>(actorPtr, 0.0f)
-			);
-			
-			string dmgStr = to_string(30);						// 受け取ったダメージの文字数(30であれば2文字)
-			int len = (int)dmgStr.size();						// ダメージの桁数
-			float charWidth = 1.0f;                             // 各スプライト幅
-			float totalW = charWidth * len;						// 全体幅
-			float startX = -totalW / 2.0f + charWidth / 2.0f;   // 左端基準
-
-			for (int i = 0; i < len; i++)
-			{
-				float offsetX = startX + i * charWidth;
-
-				m_damageBill.push_back(AddGameObject<DamageBill>(
-					actorPtr,					// 各ビルボードは敵にくっつける
-					L"Numbers",					// テクスチャ名
-					3,							// レイヤー
-					2.0f,						// Y オフセットはルートが持っているので 0
-					Vec3(1.0f, 1.0f, 1.0f),		// サイズ
-					Col4(1, 1, 1, 1),			// 色 (黄色など)
-					offsetX						// 左右オフセット
-				));
-
-				m_damageBill[i]->SetBillUV(
-					Vec2((dmgStr[i] - '0') * 0.1f, 0.0f), // UVの左上
-					Vec2((dmgStr[i] - '0' + 1) * 0.1f, 1.0f) // UVの右下
-				);
-				
-				//RemoveGameObject<DamageBillRoot>(m_root[0]);
+			m_bossGaugeUI->ClearBossGaugeUI(false);
+		}
 
 
-
-				int a = 0;
-				//auto test = dynamic_pointer_cast<BillBoard>(digitBill);
-
-				//test->RemoveBill();
-			}
-
+		if (keybord.m_bPushKeyTbl[VK_RIGHT])
+		{
+			// 付ける対象、ダメージ、付ける対象からの高さ、幅(実質大きさ)
+			CreateDamageBill(actorPtr, 10, 2.5f, 0.7f);
 		}
 		
-
-
-		// ダメージビルボードを1秒後に削除
-		if (m_time >= 1.0f)
-		{
-			
-		}
 
 		//// 結果が出た状態でAボタン、もしくはEnterを押したら次のシーンに移行
 		//if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])/* && m_resultFlag == true*/)
@@ -645,6 +607,37 @@ namespace basecross {
 
 		DebugLog();
 
+	}
+
+	void StageSato::CreateDamageBill(shared_ptr<GameObject> actorPtr, int damage, float pushY, float width)
+	{
+		string dmgStr = to_string(damage);                    // 受け取ったダメージの文字数(30であれば「3」と「0」で2文字)
+		int len = (int)dmgStr.size();                        // ダメージの桁数
+		float charWidth = width;                             // 各スプライト幅
+		float totalW = charWidth * len;                        // 全体幅
+		float startX = -totalW / 2.0f + charWidth / 2.0f;   // 左端基準
+		float displayTime = 0.3f;							// 表示時間
+		for (int i = 0; i < len; i++)
+		{
+			float offsetX = startX + i * charWidth;
+
+			auto damageBill = AddGameObject<DamageBill>(
+				actorPtr,                    // 各ビルボードは敵にくっつける
+				L"Numbers",                  // テクスチャ名
+				3,                           // レイヤー
+				pushY,                       // Y軸オフセット
+				Vec3(width),				 // サイズ
+				Col4(1, 1, 1, 1),            // 色 (黄色など)
+				offsetX,                      // 左右オフセット
+				displayTime
+			);
+
+			// ダメージの文字を設定
+			damageBill->SetBillUV(
+				Vec2((dmgStr[i] - '0') * 0.1f, 0.0f), // UVの左上
+				Vec2((dmgStr[i] - '0' + 1) * 0.1f, 1.0f) // UVの右下
+			);
+		}
 	}
 
 	void StageSato::OnDraw()

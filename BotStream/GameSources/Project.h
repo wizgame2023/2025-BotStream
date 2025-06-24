@@ -66,6 +66,9 @@
 #include "GameClearScene.h"
 #include "GameOverScene.h"
 
+//Controller
+#include "RT_MovieController.h"
+
 //Manager
 #include "CameraManager.h"
 #include "EffectManager.h"

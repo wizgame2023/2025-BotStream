@@ -150,14 +150,21 @@ namespace basecross{
 		app->RegisterTexture(L"PLSP", strTexture);
 
 		//敵のゲージフレーム
-		strTexture = texPath + L"BossGaugeFrame2.png";
-		app->RegisterTexture(L"BossGaugeFrame", strTexture);
+		strTexture = texPath + L"ZakoGaugeFrame.png";
+		app->RegisterTexture(L"ZakoGaugeFrame", strTexture);
 		//敵のHPバー
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
 		//雑魚敵のHPバー
-		strTexture = texPath + L"BossHPMater3.png";
+		strTexture = texPath + L"ZakoHPMater3.png";
 		app->RegisterTexture(L"ZakoHPMater", strTexture);
+		// ボスのアーマーゲージ
+		strTexture = texPath + L"BossArmor.png";
+		app->RegisterTexture(L"BossArmor", strTexture);
+		// ボスのゲージフレーム
+		strTexture = texPath + L"BossGaugeFrame.png";
+		app->RegisterTexture(L"BossGaugeFrame", strTexture);
+
 
 		// Floor
 		strTexture = texPath + L"FloorTex2.png";
