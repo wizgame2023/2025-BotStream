@@ -683,6 +683,7 @@ namespace basecross {
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
+		auto efkMana = EffectManager::Instance().GetTotalInstanceCount();
 		auto testVel = (m_velocity * _delta);
 		auto pos = GetPosition();
 		wss /* << L"デバッグ用文字列 "*/
@@ -694,7 +695,8 @@ namespace basecross {
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
 			<<L"\nDeltaTime" << _delta
 			<<L"\nDeltaScale" << deltaScale
-			<< L"\nAngle : " << GetAngle() << endl;
+			<< L"\nAngle : " << GetAngle()
+			<< L"\ninstance : " << efkMana<< endl;
 
 		scene->SetDebugString(wss.str());
 	}

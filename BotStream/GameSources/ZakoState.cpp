@@ -639,9 +639,9 @@ namespace basecross {
 		auto pos = m_enemyZako->GetPosition();
 		auto isLand = m_enemyZako->GetLand();//着地しているかのフラグ
 
-		if (pos.y <= 10.0)
+		if (pos.y <= 10.0f)
 		{
-			m_enemyZako->SetVelocity(Vec3(0, 10.0f, 0));
+			m_enemyZako->SetVelocity(Vec3(0, 5.0f, 0));
 		}
 		else
 		{
@@ -1065,7 +1065,7 @@ namespace basecross {
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 
-		m_enemyZako->ChangeAnim(L"Stand");//ダメージを受けたアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Hit");//ダメージを受けたアニメーションに変更
 	}
 	void EnemyZakoFlyingHitState::Update(float deltaTime)
 	{
@@ -1080,6 +1080,36 @@ namespace basecross {
 
 	}
 	// END------------------------------------
+
+	// やられたときのステート-----------------
+	void EnemyZakoFlyingDieState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+		//やられたときのSE再生
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f);
+		//やられたとき用のアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Down");
+
+	}
+	void EnemyZakoFlyingDieState::Update(float deltaTime)
+	{
+		//アニメーション更新時間
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
+		//時間計測
+		m_timeOfState += deltaTime;
+
+		//一定時間過ぎたら(やられる演出)消える
+		if (m_timeOfState >= m_timeMaxOfState)
+		{
+			m_enemyZako->SetUsed(false);
+		}
+	}
+	void EnemyZakoFlyingDieState::Exit()
+	{
+		//リセット
+		m_timeOfState = 0.0f;
+	}
+	// END -----------------------------------
 
 	//-------------------------------------------------------
 	// 飛ぶザコのステート終端
