@@ -26,6 +26,7 @@ namespace basecross {
 		//同じキー名のステートがあるかどうか探す
 		for (auto& it : _stateTypes) {
 			if (it.first == stateName) {
+				_stateName = stateName;
 				if (_currentState != nullptr) {
 					_currentState->Exit();
 				}
