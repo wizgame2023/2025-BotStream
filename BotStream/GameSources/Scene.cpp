@@ -152,14 +152,21 @@ namespace basecross{
 		app->RegisterTexture(L"PLSP", strTexture);
 
 		//敵のゲージフレーム
-		strTexture = texPath + L"BossGaugeFrame2.png";
-		app->RegisterTexture(L"BossGaugeFrame", strTexture);
+		strTexture = texPath + L"ZakoGaugeFrame.png";
+		app->RegisterTexture(L"ZakoGaugeFrame", strTexture);
 		//敵のHPバー
 		strTexture = texPath + L"BossHPMater2.png";
 		app->RegisterTexture(L"BossHPMater", strTexture);
 		//雑魚敵のHPバー
-		strTexture = texPath + L"BossHPMater3.png";
+		strTexture = texPath + L"ZakoHPMater3.png";
 		app->RegisterTexture(L"ZakoHPMater", strTexture);
+		// ボスのアーマーゲージ
+		strTexture = texPath + L"BossArmor.png";
+		app->RegisterTexture(L"BossArmor", strTexture);
+		// ボスのゲージフレーム
+		strTexture = texPath + L"BossGaugeFrame.png";
+		app->RegisterTexture(L"BossGaugeFrame", strTexture);
+
 
 		// Floor
 		strTexture = texPath + L"FloorTex2.png";
@@ -312,6 +319,10 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"slashHit.efkefc");
 		EffectManager::Instance().RegisterEffect(L"GunHitEfk", efkPath + L"GunHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyHitEfk", efkPath + L"EnemyHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyLongHitEfk", efkPath + L"PlayerGunDamage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"RushEfk", efkPath + L"Rush.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyAttack", efkPath + L"PrayerDamage.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");

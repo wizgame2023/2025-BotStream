@@ -75,6 +75,7 @@ namespace basecross {
 		void ClearBossGaugeUI(bool clear)
 		{
 			m_hitPointSp->OnClear(clear);
+			m_armorPointSp->OnClear(clear);
 			m_gaugeFrameSp->OnClear(clear);
 		}
 
@@ -86,33 +87,6 @@ namespace basecross {
 			if (value > maxValue) return maxValue;
 			return value;
 		}
-
-	};
-
-	class EnemyDamageBill : public BillBoard
-	{
-		vector<uint16_t> m_indices;//インデックス情報
-
-	public:
-		EnemyDamageBill(
-			const shared_ptr<Stage>& StagePtr,
-			shared_ptr<GameObject>& actorPtr,
-			wstring spriteName,
-			int layer = 2,
-			float pushY = 18.0f,
-			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f)
-		) :
-			BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale),
-			m_indices(vector<uint16_t>())
-		{
-		}
-
-		virtual ~EnemyDamageBill() {}
-
-		void ShowDamage(int value, float digitSize/*, BillBoard bill*/);
-
-		virtual void OnCreate()override;
-		virtual void OnUpdate()override;
 
 	};
 }

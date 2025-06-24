@@ -109,7 +109,7 @@ namespace basecross {
 		auto enemyAttackObj = AddGameObject<EnemyCube>(Vec3(-20.0f, -1.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(3.0f, 1.0f, 3.0f), Col4(1.0f, 0.0f, 1.0f, 1.0f));
 
 		//Playerä÷åWÇÃUIê∂ê¨
-		auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+		auto playerUI = AddGameObject<PlayerGaugeUI>(player);
 		SetSharedGameObject(L"PlayerUI", playerUI);
 		//playerUI->SetPLMaxHPSprite(player->GetHPMax());//
 

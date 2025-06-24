@@ -20,6 +20,8 @@ namespace basecross {
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 		float m_deltaScale = 0.0f;
 
+		Effekseer::Handle m_effect;
+
 	public:
 		EnemyZakoStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
@@ -412,11 +414,28 @@ namespace basecross {
 		Vec3   m_chargeDir;       // 突進方向
 		float  m_chargeSpeed = 20.0f;  // 突進速度
 		float  m_chargeTime = 0.0f;   // 経過時間カウント
-		float  m_maxChargeTime = 1.5f; // 突進継続時間（秒）
+		float  m_maxChargeTime = 3.0f; // 突進継続時間（秒）
 
 		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
 		EnemyZakoFlyingChargeState(shared_ptr<GameObject>& obj)
+			: EnemyZakoStateBase(obj) {
+		}
+
+		virtual void Enter() override;
+		virtual void Update(float deltaTime) override;
+		virtual void Exit() override;
+	};
+
+	class EnemyZakoFlyingStanState : public EnemyZakoStateBase
+	{
+	private:
+		//スタン時間計測
+		float m_stunTimeMax;
+		float m_stunTimeCount;
+
+	public:
+		EnemyZakoFlyingStanState(shared_ptr<GameObject>& obj)
 			: EnemyZakoStateBase(obj) {
 		}
 
@@ -438,6 +457,7 @@ namespace basecross {
 			AddState(L"Melee", shared_ptr<EnemyZakoFlyingMeleeState>(new EnemyZakoFlyingMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoFlyingHitState>(new EnemyZakoFlyingHitState(obj)));
 			AddState(L"Charge", shared_ptr<EnemyZakoFlyingChargeState>(new EnemyZakoFlyingChargeState(obj)));
+			AddState(L"Stun", shared_ptr<EnemyZakoFlyingStanState>(new EnemyZakoFlyingStanState(obj)));
 
 			ChangeState(L"Stand");
 		}
