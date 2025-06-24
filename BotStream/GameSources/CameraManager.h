@@ -206,6 +206,11 @@ namespace basecross{
 			m_PauseFlag = onOff;
 		}
 
+		float GetAddAngleNAxis()
+		{
+			return Vec2(m_addAngleXAxis, m_addAngleYAxis).length();
+		}
+
 		//ターゲット対象を渡す関数
 		shared_ptr<Actor> GetTargetObj();
 	};

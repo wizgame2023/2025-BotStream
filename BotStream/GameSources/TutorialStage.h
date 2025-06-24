@@ -29,7 +29,6 @@ namespace basecross {
             Tutorial_ShootFromAfar,
             //殺せ！
             Tutorial_KillAsYouLike
-
         };
         TutorialPhase m_tutorialPhase = Tutorial_Start;
 
@@ -38,10 +37,10 @@ namespace basecross {
 
         //チュートリアル進行状況(0～1)
         float m_progress[2] = {0, 0};
-        const float m_tutorialMoveRequired = .01f;
-        const float m_tutorialCameraRequired = .05f;
+        const float m_tutorialMoveRequired = .0001f;
+        const float m_tutorialCameraRequired = .001f;
 
-        bool m_nextTutorial = false;
+        const float m_tutorialEvadeRequired = .001f;
 
         //チュートリアルの進行状況を監視
         void UpdateTutorialPhase();
@@ -142,8 +141,8 @@ namespace basecross {
     class TutorialDone : public TutorialSpriteBase {
 
         //元画像の1/5
-        float m_width = 248.2;
-        float m_height = 27.4f;
+        float m_width = 43.4f;
+        float m_height = 11.6f;
 
         weak_ptr<TutorialSpriteBase> m_parent;
 
@@ -158,8 +157,12 @@ namespace basecross {
         //初期化
         virtual void OnCreate() override;
 
-        void OnTutorialCompleted() {
+        void OnTutorialCompleted(bool active) {
+            m_drawComp->SetDrawActive(active);
+        }
 
+        bool GetDrawActive() {
+            return m_drawComp->GetDrawActive();
         }
     };
 
@@ -198,8 +201,17 @@ namespace basecross {
             m_percentage = percent;
 
             if (m_percentage >= 1.0f) {
-                m_done.lock()->OnTutorialCompleted();
+                m_done.lock()->OnTutorialCompleted(true);
             }
+            else {
+                m_done.lock()->OnTutorialCompleted(false);
+            }
+        }
+
+        //子オブジェクトも含めて表示/非表示
+        void SetDrawActive(bool active) {
+            m_drawComp->SetDrawActive(active);
+            m_done.lock()->SetDrawActive(active);
         }
     };
 
@@ -256,6 +268,17 @@ namespace basecross {
             default:
                 break;
             }
+        }
+
+        void SetPercent(float perc) {
+            m_bar.lock()->SetPercentage(perc);
+        }
+
+        //子オブジェクトも含めて表示/非表示
+        void SetDrawActive(bool active) {
+            m_drawComp->SetDrawActive(active);
+            m_bar.lock()->SetDrawActive(active);
+            m_desc.lock()->SetDrawActive(active);
         }
     };
 
@@ -328,6 +351,10 @@ namespace basecross {
         }
         bool GetChangeColorDone() {
             return m_changeColorDone;
+        }
+
+        bool IsInvisible() {
+            return m_isInvisible;
         }
 
         //移動処理開始

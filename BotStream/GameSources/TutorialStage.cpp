@@ -31,8 +31,8 @@ namespace basecross {
         auto ui = AddGameObject<TutorialDialog>(L"Tuto_txt1", Vec2(0, 50), Col4(1, 1, 1, 0));
         SetSharedGameObject(L"TutorialDialog", ui);
 
-        m_bar[0] = AddGameObject<TutorialProgressFrame>(L"Tuto_frame", Vec3(200, 200, 0));
-        m_bar[1] = AddGameObject<TutorialProgressFrame>(L"Tuto_frame", Vec3(200, 250, 0));
+        m_bar[0] = AddGameObject<TutorialProgressFrame>(L"Tuto_frame", Vec3(200, 250, 0));
+        m_bar[1] = AddGameObject<TutorialProgressFrame>(L"Tuto_frame", Vec3(200, 200, 0));
 
     }
 
@@ -46,13 +46,33 @@ namespace basecross {
             ChangeTutorialPhase(Tutorial_MoveAndCamera);
             break;
         case Tutorial_MoveAndCamera:
-            {
-                Vec3 move = m_player.lock()->GetVelocity();
-                move.y = 0;
-                m_progress[0] += move.length() * m_tutorialMoveRequired;
-                auto camera = dynamic_pointer_cast<CameraManager>(GetSharedGameObject<CameraManager>(L"CameraManager"));
+        {
+            m_bar[0].lock()->SetDrawActive(ui->IsInvisible());
+            m_bar[1].lock()->SetDrawActive(ui->IsInvisible());
+
+            Vec3 move = m_player.lock()->GetVelocity();
+            move.y = 0;
+            m_progress[0] += move.length() * m_tutorialMoveRequired;
+            auto camera = dynamic_pointer_cast<CameraManager>(GetSharedGameObject<CameraManager>(L"CameraManager"));
+            m_progress[1] += camera->GetAddAngleNAxis() * m_tutorialCameraRequired;
+
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+            m_bar[1].lock()->SetPercent(m_progress[1]);
+
+            if (m_progress[0] >= 1.0f && m_progress[1] >= 1.0f) {
+                ChangeTutorialPhase(Tutorial_Evade);
             }
+        }
             break;
+        case Tutorial_Evade:
+        {
+            m_bar[0].lock()->SetDrawActive(ui->IsInvisible());
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            if (m_progress[0] >= 1.0f) {
+                ChangeTutorialPhase(Tutorial_KeepRunning);
+            }
+        }
         default:
             break;
         }
@@ -65,6 +85,16 @@ namespace basecross {
             m_bar[0].lock()->ChangeDescription(1);
             m_bar[1].lock()->ChangeDescription(2);
             break;
+        case Tutorial_Evade:
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+            m_progress[0] = 0;
+            m_bar[0].lock()->SetDrawActive(true);
+            m_bar[1].lock()->SetDrawActive(false);
+
+            m_bar[0].lock()->ChangeDescription(3);
         }
     }
 
@@ -97,9 +127,10 @@ namespace basecross {
         UpdateGamePhase();
         EffectManager::Instance().InterfaceUpdate();
 
+        ResetDeltaScaleToDefault();
+        
         switch (m_gamePhase) {
         case GPhase_Playing:
-            ResetDeltaScaleToDefault();
             UpdateTutorialPhase();
             break;
         }
@@ -193,7 +224,7 @@ namespace basecross {
 
         GetComponent<Transform>()->SetParent(m_parent.lock());
 
-        m_addPos = Vec3(95, 6, 0);
+        m_addPos = Vec3(96, 6, 0);
 
         m_drawComp = AddComponent<PCTSpriteDraw>(m_vertices, indices);
         m_drawComp->SetDiffuse(color);
@@ -205,6 +236,7 @@ namespace basecross {
 
         SetPosition(m_addPos);
 
+        m_done = GetStage()->AddGameObject<TutorialDone>(L"Tuto_ok", GetThis<TutorialSpriteBase>());
     }
 
     void TutorialProgress::OnUpdate() {
@@ -221,6 +253,10 @@ namespace basecross {
                 //Œ¸‚é‚±‚Æ‚Í‚È‚¢‚¾‚ë‚¤‚¯‚Çˆê‰ž
                 float plus = m_percentageDisplay < m_percentage ? speed : -speed;
                 m_percentageDisplay += plus;
+            }
+            
+            if (m_percentageDisplay > 1.0f) {
+                m_percentageDisplay = 1.0f;
             }
 
             m_vertices[1].position = Vec3((m_width * m_percentageDisplay), m_height, 0.0f);
@@ -249,12 +285,12 @@ namespace basecross {
 
         GetComponent<Transform>()->SetParent(m_parent.lock());
 
-        m_addPos = Vec3(50, 50, 0);
+        m_addPos = Vec3(26.3f, -2.8, 0);
 
         m_drawComp = AddComponent<PCTSpriteDraw>(m_vertices, indices);
         m_drawComp->SetDiffuse(color);
         m_drawComp->SetTextureResource(m_resKey);
-        m_drawComp->SetDrawActive(true);
+        m_drawComp->SetDrawActive(false);
         m_drawComp->SetSamplerState(SamplerState::LinearWrap);
         SetDrawLayer(2);
         SetAlphaActive(true);
@@ -335,6 +371,8 @@ namespace basecross {
         float b = Lerp::CalculateLerp(m_originColor.z, m_targetColor.z, 0, m_color_arriveTime, m_color_elapsedTime, m_color_lerpRate);
         float a = Lerp::CalculateLerp(m_originColor.w, m_targetColor.w, 0, m_color_arriveTime, m_color_elapsedTime, m_color_lerpRate);
 
+        m_isInvisible = a == 0 ? true : false;
+
         m_drawComp->SetDiffuse(Col4(r, g, b, a));
     }
 
@@ -388,7 +426,6 @@ namespace basecross {
                 wave->SetActorPause(false);
                 SetMovePos(Vec2(0, -50), 1, Lerp::rate::EaseOut);
                 SetColorChange(Col4(1, 1, 1, 0), .5, Lerp::rate::Linear);
-                m_isInvisible = true;
             }
         }
     }
