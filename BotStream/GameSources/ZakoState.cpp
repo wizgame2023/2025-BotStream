@@ -519,10 +519,11 @@ namespace basecross {
 		auto HPNow = m_enemyZako->GetHPCurrent();
 
 		//アニメーションをダメージを受けたものにする
-		m_enemyZako->ChangeAnim(L"Hit");
-
+		m_enemyZako->ChangeAnim(L"Hit",true);
 		//攻撃を受けたのでヒットバックする
 		m_enemyZako->HitBack();
+
+
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 	}
@@ -530,6 +531,7 @@ namespace basecross {
 	{
 		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
+
 
 		//遠距離タイプの雑魚敵か確認する
 		auto enemyShotType = dynamic_pointer_cast<EnemyZakoLong>(_obj.lock());
