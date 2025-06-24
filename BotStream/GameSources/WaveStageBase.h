@@ -248,4 +248,24 @@ namespace basecross {
 
     };
 
+    // END ======================================================
+
+    // ==========================================================
+    // WaveStageBase3‚Ìæ“ª
+    // ==========================================================
+
+    class WaveStage3 : public WaveStageBase
+    {
+    private:
+
+    public:
+        virtual void OnCreate()override;
+        virtual void OnUpdate()override;
+        //Wave‚ªŸ‚ÉˆÚ‚Á‚½‚Æ‚«‚ÉŒÄ‚Ño‚³‚ê‚é
+        virtual void WaveInitialize();
+
+    };
+
+    // END ======================================================
+
 }
