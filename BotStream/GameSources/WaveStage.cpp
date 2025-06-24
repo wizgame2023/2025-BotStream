@@ -808,6 +808,7 @@ namespace basecross {
         ptrColl->SetFixed(true);
 
         auto ptrDraw = AddComponent<PNTStaticDraw>();
+        ptrDraw->SetTextureResource(L"DoorTex");
         ptrDraw->SetMeshResource(L"DEFAULT_CUBE");
         AddTag(L"CameraObstacles");
         AddTag(L"Terrain");
@@ -861,7 +862,7 @@ namespace basecross {
 
         if (m_IsFadeOutFlag == true)
         {
-            m_Color += 0.01;
+            m_Color += 0.02;
         }
 
         if (m_Color >= 1)

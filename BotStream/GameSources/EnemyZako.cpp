@@ -140,7 +140,7 @@ namespace basecross {
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		//位置更新
-		SpeedLimit(3.0f); //スピードリミット
+		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
 	}
 

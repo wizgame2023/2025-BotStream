@@ -34,31 +34,55 @@ namespace basecross {
 
     }
 
-    void WaveStageBase::SetActorPause(bool isPause) {
+    void WaveStageBase::SetActorPause(bool isPause,bool andCamera) {
         m_isPaused = isPause;
 
         EffectManager::Instance().PauseAllEffects(isPause);
 
         auto objVec = GetGameObjectVec();
-        for (auto obj : objVec)
-        {
-            auto actor = dynamic_pointer_cast<Actor>(obj);
-            auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
-            auto parts = dynamic_pointer_cast<Parts>(obj);
 
-            if (actor)
-            {
-                actor->SetPause(isPause);
-            }
-            if (cameraManager)
-            {
-                cameraManager->SetPause(isPause);
-            }
-            if (parts)
-            {
-                parts->SetPause(isPause);
-            }
-        }
+		//andCameraがオンならカメラも動かない処理にする,オフならActorのみ
+		if (andCamera)
+		{
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+				auto parts = dynamic_pointer_cast<Parts>(obj);
+
+				if (actor)
+				{
+					actor->SetPause(isPause);
+				}
+				if (cameraManager)
+				{
+					cameraManager->SetPause(isPause);
+				}
+				if (parts)
+				{
+					parts->SetPause(isPause);
+				}
+			}
+		}
+		else if (!andCamera)
+		{
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+				auto parts = dynamic_pointer_cast<Parts>(obj);
+
+				if (actor)
+				{
+					actor->SetPause(isPause);
+				}
+				if (parts)
+				{
+					parts->SetPause(isPause);
+				}
+			}
+		}
+
     }
 
     void WaveStageBase::CreateManagerObjects() {

@@ -26,7 +26,9 @@ namespace basecross {
 		EnemyEffect_Sphere,
 		EnemyEffect_SphereEnd,
 		EnemyEffect_Spin,
-		EnemyEffect_Wave
+		EnemyEffect_Wave,
+		EnemyEffect_Rush,
+		EnemyEffect_Attack
 	};
 
 	class Actor : public ObjectMove
@@ -98,8 +100,6 @@ namespace basecross {
 
 		//摩擦
 		void Friction();
-		//速度制限
-		void SpeedLimit(float multiply);
 		//重力
 		void Gravity();
 
@@ -162,6 +162,9 @@ namespace basecross {
 
 		void OnCreate() override;
 		void OnUpdate() override;
+
+		//速度制限
+		void SpeedLimit(float multiply);
 
 		//エフェクトを出す処理
 		virtual Effekseer::Handle AddEffect(int addEffect);
