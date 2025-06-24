@@ -65,13 +65,19 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToWaveStage1")
 		{
 			m_stageNum = 1;
-			ResetActiveStage<WaveStageBase>();
+			ResetActiveStage<StageFirst>();
 		}
-
+		
 		if (event->m_MsgStr == L"ToWaveStage2")
 		{
 			m_stageNum = 2;
-			ResetActiveStage<WaveStage2>();
+			ResetActiveStage<StageSecond>();
+		}
+
+		if (event->m_MsgStr == L"ToWaveStage3")
+		{
+			m_stageNum = 3;
+			ResetActiveStage<StageThird>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {
