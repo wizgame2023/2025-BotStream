@@ -952,7 +952,7 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 
-		m_SEManager->Start(L"DamageVoiceSE");
+		m_SEManager->Start(L"DamageSE",false,0.3f);
 		auto hitInfo = m_player->GetHitInfo();
 		auto HPNow = m_player->GetHP();
 		m_player->HitBack();
