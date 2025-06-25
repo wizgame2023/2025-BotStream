@@ -33,7 +33,6 @@ namespace basecross
 		*/
 		virtual ~EffectManager()
 		{
-			Release();
 		}
 	public:
 		//----------------------------------------------------------------------------------
