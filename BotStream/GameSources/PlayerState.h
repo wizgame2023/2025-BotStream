@@ -355,7 +355,7 @@ namespace basecross {
 	private:
 
 		float m_countTimeOfState = 0.0f;
-		float m_maxTimeOfState = 1.1f;
+		float m_maxTimeOfState = 1.1f * 0.8f;
 
 	public:
 		PlayerAttackExEndState(shared_ptr<GameObject>& obj):

@@ -862,9 +862,11 @@ namespace basecross {
 	{
 		PlayerStateBase::Update(deltaTime);
 
-		m_countTimeOfState += deltaTime;
+		auto mag = 1.25f;
+
+		m_countTimeOfState += deltaTime * mag;
 		//アニメーション更新
-		m_player->SetAddTimeAnimation(1.0f*deltaTime);
+		m_player->SetAddTimeAnimation(1.0f * deltaTime * mag);
 
 		//このステートは回避できる
 		Dodge(m_dodgeFlag);
