@@ -31,8 +31,11 @@ namespace basecross {
 		{
 			enemyVariation.push_back(EVar_Projectile);
 		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Aerial);
+		}
 
-		enemyVariation.push_back(EVar_Aerial);
 
 
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
@@ -108,7 +111,7 @@ namespace basecross {
 
 		return ret;
 	}
-
+	
 	//GamePhase‚Ì•ÏX GamePhase‚Ìó‘Ô‚É‚æ‚Á‚ÄŠÔ‚ª~‚Ü‚é‚©•Ï‚í‚é
 	void StageFirst::UpdateGamePhase() {
 		switch (m_gamePhase) {

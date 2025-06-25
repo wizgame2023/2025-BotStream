@@ -241,6 +241,12 @@ namespace basecross {
 			m_addTimeAnimation = addTimeAnimation;
 		}
 
+		//ジャスト回避しているかのゲッタ
+		bool GetDodge()
+		{
+			return m_jastDodge;
+		}
+
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 
 		void OnDamaged()override;
@@ -260,6 +266,8 @@ namespace basecross {
 		float m_AngleYAxis = 0.0f;//y軸の角度
 		float m_angleXAxis = 0.0f;//x軸の角度
 		float m_canMoveDistance = 0.0f;//移動できる長さ
+
+		Handle m_gunLine;
 
 		//攻撃しているアクター
 		int m_actorType;

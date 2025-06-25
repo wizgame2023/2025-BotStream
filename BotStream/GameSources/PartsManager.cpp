@@ -22,6 +22,9 @@ namespace basecross {
 	//パーツドロップ処理
 	void PartsManager::PartsDrop(Vec3 dropPos)
 	{
+		// 空中に浮かんでいる敵からドロップしても手に入るようにする
+		dropPos.y = 1.0f;
+
 		float par = rand() % 100;
 		int drop = rand() % 3;
 		auto stage = GetStage();

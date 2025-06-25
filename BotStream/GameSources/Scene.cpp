@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 			
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<TitleStage> ();
 
 		}
 
@@ -62,9 +62,22 @@ namespace basecross{
 
 		// ここは後にWaveStageに変更する
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
-		if (event->m_MsgStr == L"ToWaveStage")
+		if (event->m_MsgStr == L"ToWaveStage1")
 		{
+			m_stageNum = 1;
 			ResetActiveStage<StageFirst>();
+		}
+		
+		if (event->m_MsgStr == L"ToWaveStage2")
+		{
+			m_stageNum = 2;
+			ResetActiveStage<StageSecond>();
+		}
+
+		if (event->m_MsgStr == L"ToWaveStage3")
+		{
+			m_stageNum = 3;
+			ResetActiveStage<StageThird>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {
@@ -234,6 +247,47 @@ namespace basecross{
 		//射撃用テクスチャ
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
+		
+		//Tutorial
+		strTexture = texPath + L"Tutorial/Tutorial_progressbar.png";
+		app->RegisterTexture(L"Tuto_bar", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progressframe.png";
+		app->RegisterTexture(L"Tuto_frame", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progressdone.png";
+		app->RegisterTexture(L"Tuto_ok", strTexture);
+
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt1.png";
+		app->RegisterTexture(L"Tuto_barTxt1", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt2.png";
+		app->RegisterTexture(L"Tuto_barTxt2", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt3.png";
+		app->RegisterTexture(L"Tuto_barTxt3", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt4.png";
+		app->RegisterTexture(L"Tuto_barTxt4", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt5.png";
+		app->RegisterTexture(L"Tuto_barTxt5", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt6.png";
+		app->RegisterTexture(L"Tuto_barTxt6", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt7.png";
+		app->RegisterTexture(L"Tuto_barTxt7", strTexture);
+
+		strTexture = texPath + L"Tutorial/Tutorial1.png";
+		app->RegisterTexture(L"Tuto_txt1", strTexture);
+		/*strTexture = texPath + L"Tutorial/Tutorial_txt2.png";
+		app->RegisterTexture(L"Tuto_txt2", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt3.png";
+		app->RegisterTexture(L"Tuto_txt3", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt4.png";
+		app->RegisterTexture(L"Tuto_txt4", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt5.png";
+		app->RegisterTexture(L"Tuto_txt5", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt6.png";
+		app->RegisterTexture(L"Tuto_txt6", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt7.png";
+		app->RegisterTexture(L"Tuto_txt7", strTexture);*/
+
+		strTexture = texPath + L"Tutorial/Tutorial1.png";
+		app->RegisterTexture(L"Tuto_dialog1", strTexture);
 
 		// その他ゲーム中テクスチャ
 		strTexture = texPath + L"Shock_wave_ring001.png";
@@ -323,6 +377,7 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"EnemyLongHitEfk", efkPath + L"PlayerGunDamage.efkefc");
 		EffectManager::Instance().RegisterEffect(L"RushEfk", efkPath + L"Rush.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnemyAttack", efkPath + L"PrayerDamage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"GunLine", efkPath + L"GunLine.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");

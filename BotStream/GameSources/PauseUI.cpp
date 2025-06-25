@@ -55,6 +55,8 @@ namespace basecross {
 			m_pauseAudioFlag = false;
 			m_mainSelect = 0;     // メニューインデックス 0 からスタート
 			m_selectFlag = false; // デッドゾーンフラグクリア
+			//アクタークラスを一時停止
+			MoveSwitchActor();
 		}
 
 		// --- 定数定義 ------------------------------------
@@ -68,16 +70,12 @@ namespace basecross {
 			//全てのUIを非表示にする
 			AllUIClear(true);
 
-			//アクタークラスを一時停止から復活させる
-			MoveSwitchActor(m_pauseFlag);
 		}
 		// --- Pause ON → 必要要素だけ表示 -------------
 		else
 		{
 			// いったん全隠し
 			AllUIClear(true);    
-			// アクターを一時停止
-			MoveSwitchActor(true);
 
 			// 常に表示するもの
 			// 背景
@@ -213,6 +211,8 @@ namespace basecross {
 					case 0: 
 						// 再開
 						m_pauseFlag = false;
+						// アクターを一時停止
+						MoveSwitchActor();
 						break;
 
 					case 1: 
@@ -450,8 +450,9 @@ namespace basecross {
 	}
 
 	//Actorを一時停止させたり動かしたりする処理(ポーズ状態)
-	void PauseSprite::MoveSwitchActor(bool OnOff)
+	void PauseSprite::MoveSwitchActor()
 	{
+		bool OnOff = m_pauseFlag;
 		auto stage = GetWaveStage(false);
 		if (stage) {
 			stage->SetActorPause(OnOff);

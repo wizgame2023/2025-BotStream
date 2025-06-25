@@ -1,6 +1,6 @@
 /*!
 @file CameraManager.h
-@brief ƒJƒƒ‰‚ÌŠÇ—
+@brief ã‚«ãƒ¡ãƒ©ã®ç®¡ç†
 */
 
 #pragma once
@@ -9,12 +9,12 @@
 #include "Player.h"
 
 namespace basecross{
-	//ƒ^[ƒQƒbƒgŒó•â‚Ìƒf[ƒ^
+	//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå€™è£œã®ãƒ‡ãƒ¼ã‚¿
 	class targetsDeta
 	{
 	public:
-		float lockOnAngle;//ƒvƒŒƒCƒ„[‚©‚çŒ©‚Äƒ^[ƒQƒbƒg‚Ì‚¢‚é•ûŒü
-		int leftOrRight;//‰E‚©¶‚Ç‚¿‚ç‚É‚¢‚é‚Ì‚©@false‚ª¶true‚ª‰E
+		float lockOnAngle;//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰è¦‹ã¦ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã„ã‚‹æ–¹å‘
+		int leftOrRight;//å³ã‹å·¦ã©ã¡ã‚‰ã«ã„ã‚‹ã®ã‹ã€€falseãŒå·¦trueãŒå³
 
 		targetsDeta(float lockOnAngle, int leftOrRight) :
 			lockOnAngle(lockOnAngle),
@@ -32,73 +32,73 @@ namespace basecross{
 	class CameraManager : public MyGameObject
 	{
 	private:
-		weak_ptr<Camera> m_stageCamera;		  //ƒXƒe[ƒWã‚ÌƒJƒƒ‰
-		shared_ptr<Camera> m_lockStageCamera; //ƒƒbƒN‚Å‚«‚½ƒXƒe[ƒWã‚ÌƒJƒƒ‰
+		weak_ptr<Camera> m_stageCamera;		  //ã‚¹ãƒ†ãƒ¼ã‚¸ä¸Šã®ã‚«ãƒ¡ãƒ©
+		shared_ptr<Camera> m_lockStageCamera; //ãƒ­ãƒƒã‚¯ã§ããŸã‚¹ãƒ†ãƒ¼ã‚¸ä¸Šã®ã‚«ãƒ¡ãƒ©
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
 		shared_ptr<Stage> m_stage;
 		shared_ptr<Sprite> m_spriteAttack = nullptr;
 		float m_delta;
 
-		//ƒXƒe[ƒgƒ}ƒVƒ“—pƒƒ“ƒo•Ï”
+		//ã‚¹ãƒ†ãƒ¼ãƒˆãƒã‚·ãƒ³ç”¨ãƒ¡ãƒ³ãƒå¤‰æ•°
 		shared_ptr<StateMachineBase> m_stateMashine = nullptr;
 
-		CONTROLER_STATE m_controler;//ƒRƒ“ƒgƒ[ƒ‰[
-		Vec2 m_contrloerVec;		//ƒRƒ“ƒgƒ[ƒ‰[‚Ì‰EƒXƒeƒBƒbƒN“ü—Í
+		CONTROLER_STATE m_controler;//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼
+		Vec2 m_contrloerVec;		//ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®å³ã‚¹ãƒ†ã‚£ãƒƒã‚¯å…¥åŠ›
 
-		float m_cameraAngleY;		//Player‚©‚çŒ©‚ÄƒJƒƒ‰‚Ì‚¢‚éŠp“xY²
-		float m_cameraAngleX;		//Player‚©‚çŒ©‚ÄƒJƒƒ‰‚Ì‚¢‚éŠp“xX²
-		float m_range;				//Player‚©‚ç‚Ç‚Ì‚­‚ç‚¢—£‚ê‚é‚©
-		float m_targetRange;		//ƒƒbƒNƒIƒ“‚Ì”ÍˆÍ
-		float m_speedXAxis;			//x²‚Ì‰ñ“]ƒXƒs[ƒh
-		float m_speedYAxis;			//y²‚Ì‰ñ“]ƒXƒs[ƒh
-		float m_addAngleXAxis;		//X²‚Ì’Ç‰Á‰ñ“]“x
-		float m_addAngleYAxis;		//Y²‚Ì’Ç‰Á‰ñ“]“x
-		float m_gunShiftLength;		//‰“‹——£ƒXƒe[ƒg—p‚ÌƒvƒŒƒCƒ„[‚©‚ç‚¸‚ê‚½’·‚³
+		float m_cameraAngleY;		//Playerã‹ã‚‰è¦‹ã¦ã‚«ãƒ¡ãƒ©ã®ã„ã‚‹è§’åº¦Yè»¸
+		float m_cameraAngleX;		//Playerã‹ã‚‰è¦‹ã¦ã‚«ãƒ¡ãƒ©ã®ã„ã‚‹è§’åº¦Xè»¸
+		float m_range;				//Playerã‹ã‚‰ã©ã®ãã‚‰ã„é›¢ã‚Œã‚‹ã‹
+		float m_targetRange;		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®ç¯„å›²
+		float m_speedXAxis;			//xè»¸ã®å›è»¢ã‚¹ãƒ”ãƒ¼ãƒ‰
+		float m_speedYAxis;			//yè»¸ã®å›è»¢ã‚¹ãƒ”ãƒ¼ãƒ‰
+		float m_addAngleXAxis;		//Xè»¸ã®è¿½åŠ å›è»¢åº¦
+		float m_addAngleYAxis;		//Yè»¸ã®è¿½åŠ å›è»¢åº¦
+		float m_gunShiftLength;		//é è·é›¢ã‚¹ãƒ†ãƒ¼ãƒˆç”¨ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰ãšã‚ŒãŸé•·ã•
 
-		Vec3 m_pushPos = Vec3(5.0f, 10.0f, 5.0f);		//ƒJƒƒ‰‚ªƒvƒŒƒCƒ„[‚©‚ç—£‚ê‚éˆÊ’u
-		Vec3 m_pushAtPos = Vec3(-5.0f, -5.0f, -5.0f);	//ƒJƒƒ‰‚Ì’‹“_‚Ì‚¸‚ç‚·ˆÊ’u
+		Vec3 m_pushPos = Vec3(5.0f, 10.0f, 5.0f);		//ã‚«ãƒ¡ãƒ©ãŒãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‹ã‚‰é›¢ã‚Œã‚‹ä½ç½®
+		Vec3 m_pushAtPos = Vec3(-5.0f, -5.0f, -5.0f);	//ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ã®ãšã‚‰ã™ä½ç½®
 		bool m_pushStart = true;
 
 
 
-		//ƒXƒvƒ‰ƒCƒg
-		shared_ptr<Sprite> m_spriteAiming = nullptr;//ËŒ‚—p‚ÌƒNƒƒXƒwƒA‚ÌƒXƒvƒ‰ƒCƒg
+		//ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
+		shared_ptr<Sprite> m_spriteAiming = nullptr;//å°„æ’ƒç”¨ã®ã‚¯ãƒ­ã‚¹ãƒ˜ã‚¢ã®ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 
 
 		shared_ptr<CameraRayCast> m_cameraRayCast;
-		Vec3 m_playerPos;//ƒvƒŒƒCƒ„[ƒ|ƒWƒVƒ‡ƒ“
-		Vec3 m_cameraPos;//ƒJƒƒ‰ƒ|ƒWƒVƒ‡ƒ“
+		Vec3 m_playerPos;//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒã‚¸ã‚·ãƒ§ãƒ³
+		Vec3 m_cameraPos;//ã‚«ãƒ¡ãƒ©ãƒã‚¸ã‚·ãƒ§ãƒ³
 
-		bool m_movePlayerAngleFlag; //ƒvƒŒƒCƒ„[‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü‚É‰ñ“]‚·‚é‚©‚Ìƒtƒ‰ƒO
-		float m_targetAngleY;	    //ƒ^[ƒQƒbƒg‚ğŒ©‚é‚½‚ß‚ÉŒü‚­Šp“x(Y²)
-		float m_targetDis;			//LockOnTarget‚Ì‹——£ƒfƒoƒbƒN—p
+		bool m_movePlayerAngleFlag; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ã„ã¦ã„ã‚‹æ–¹å‘ã«å›è»¢ã™ã‚‹ã‹ã®ãƒ•ãƒ©ã‚°
+		float m_targetAngleY;	    //ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã‚’è¦‹ã‚‹ãŸã‚ã«å‘ãè§’åº¦(Yè»¸)
+		float m_targetDis;			//LockOnTargetã®è·é›¢ãƒ‡ãƒãƒƒã‚¯ç”¨
 
-		//SE—p
-		shared_ptr<SoundItem> m_SE = nullptr;			  //Ä¶‚µ‚Ä‚¢‚éSE
-		shared_ptr<XAudio2Manager> m_SEManager = nullptr; //SE‚È‚Ç‚ğÄ¶‚·‚é‚½‚ß‚Ìƒ}ƒl[ƒWƒƒ
+		//SEç”¨
+		shared_ptr<SoundItem> m_SE = nullptr;			  //å†ç”Ÿã—ã¦ã„ã‚‹SE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr; //SEãªã©ã‚’å†ç”Ÿã™ã‚‹ãŸã‚ã®ãƒãƒãƒ¼ã‚¸ãƒ£
 
-		//ƒƒbƒNƒIƒ“‚Ìˆ—////////////////////////////////////////////////////////////
-		vector<shared_ptr<EnemyBase>> m_targets;//ƒ^[ƒQƒbƒgŒó•â
-		vector<Vec3> m_targetsPos;				//LockOnCan‚ÌPos‚ğ•Û‘¶‚·‚é”z—ñ
-		shared_ptr<EnemyBase> m_targetObj;		//ƒ^[ƒQƒbƒg‘ÎÛ
-		bool m_lockOnFlag;						//ƒƒbƒNƒIƒ“‚Å‚«‚é‚©‚Å‚«‚È‚¢‚©‚Ì•Ï”
-		bool m_lockOnUse;						//ƒƒbƒNƒIƒ“‚·‚é‚©‚µ‚È‚¢‚©‚Ì•Ï”
-		bool m_lockOnChangeFlag;				//ƒƒbƒNƒIƒ“‚ğ•Ï‚¦‚½‚©‚Ìƒtƒ‰ƒO
-		int m_lockOnNum;						//LockOnTarget‚ğŒˆ‚ß‚é‚½‚ß‚Ì•Ï”
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®å‡¦ç†////////////////////////////////////////////////////////////
+		vector<shared_ptr<EnemyBase>> m_targets;//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå€™è£œ
+		vector<Vec3> m_targetsPos;				//LockOnCanã®Posã‚’ä¿å­˜ã™ã‚‹é…åˆ—
+		shared_ptr<EnemyBase> m_targetObj;		//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡
+		bool m_lockOnFlag;						//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã§ãã‚‹ã‹ã§ããªã„ã‹ã®å¤‰æ•°
+		bool m_lockOnUse;						//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã™ã‚‹ã‹ã—ãªã„ã‹ã®å¤‰æ•°
+		bool m_lockOnChangeFlag;				//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã‚’å¤‰ãˆãŸã‹ã®ãƒ•ãƒ©ã‚°
+		int m_lockOnNum;						//LockOnTargetã‚’æ±ºã‚ã‚‹ãŸã‚ã®å¤‰æ•°
 
-		bool m_stickFlag;						//ƒXƒeƒBƒbƒN‚ğŒX‚¯‚é“ü—Í‚ğó‚¯æ‚é‚©‚Ìƒtƒ‰ƒO
+		bool m_stickFlag;						//ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã‚’å‚¾ã‘ã‚‹å…¥åŠ›ã‚’å—ã‘å–ã‚‹ã‹ã®ãƒ•ãƒ©ã‚°
 
-		vector<targetsDeta> m_targesDeta;		//LockOnTarget‚Ìƒf[ƒ^‚ª“ü‚Á‚½”z—ñ
-		vector<float> m_lockOnAngle;			//LockOnCan‚ªPlayer‚É‚Æ‚Á‚Ä‚Ç‚Ì•ûŒü‚É‚¢‚é‚Ì‚©‚Ì•Ï”
+		vector<targetsDeta> m_targesDeta;		//LockOnTargetã®ãƒ‡ãƒ¼ã‚¿ãŒå…¥ã£ãŸé…åˆ—
+		vector<float> m_lockOnAngle;			//LockOnCanãŒPlayerã«ã¨ã£ã¦ã©ã®æ–¹å‘ã«ã„ã‚‹ã®ã‹ã®å¤‰æ•°
 		/////////////////////////////////////////////////////////////////////////////
 
-		float m_meleeRange;	//‹ßÚí“¬‚Ì”ÍˆÍ
-		bool m_meleeFlag;	//‹ßÚí“¬‚µ‚Ä‚¢‚¢‚©‚Ìƒtƒ‰ƒO	
+		float m_meleeRange;	//è¿‘æ¥æˆ¦é—˜ã®ç¯„å›²
+		bool m_meleeFlag;	//è¿‘æ¥æˆ¦é—˜ã—ã¦ã„ã„ã‹ã®ãƒ•ãƒ©ã‚°	
 
-		bool m_PauseFlag;	//ƒ|[ƒY‚Ìƒtƒ‰ƒO
+		bool m_PauseFlag;	//ãƒãƒ¼ã‚ºã®ãƒ•ãƒ©ã‚°
 
 		
-		//‰E‚©¶‚©‚»‚ê‚Æ‚à^‚ñ’†‚©
+		//å³ã‹å·¦ã‹ãã‚Œã¨ã‚‚çœŸã‚“ä¸­ã‹
 		enum LeftOrRight
 		{
 			Middle,
@@ -111,60 +111,60 @@ namespace basecross{
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
-		void OnCreate()override;//ì¬
-		void OnUpdate()override;//XV
+		void OnCreate()override;//ä½œæˆ
+		void OnUpdate()override;//æ›´æ–°
 
-		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ƒƒbƒNƒIƒ“‹@”\
-		void MovePlayerAngle(float playerAngle);									//Player‚Ì”w’†‚ğŒ©‚¦‚éŠp“x‚É‚·‚é
-		void MoveLockAt(Vec3 targetPos);											//’‹“_‚ÌˆÚ“®ˆ—//‚±‚±‚ğì‹Æ‚·‚é
-		bool MoveAngle(float targetAngle,int XorY);									//‰ñ“]“x‚ÌˆÚ“®ˆ—
-		void AdjustmentAngle();														//Šp“x‚Ì’²®
+		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ãƒ­ãƒƒã‚¯ã‚ªãƒ³æ©Ÿèƒ½
+		void MovePlayerAngle(float playerAngle);									//Playerã®èƒŒä¸­ã‚’è¦‹ãˆã‚‹è§’åº¦ã«ã™ã‚‹
+		void MoveLockAt(Vec3 targetPos);											//æ³¨è¦–ç‚¹ã®ç§»å‹•å‡¦ç†//ã“ã“ã‚’ä½œæ¥­ã™ã‚‹
+		bool MoveAngle(float targetAngle,int XorY);									//å›è»¢åº¦ã®ç§»å‹•å‡¦ç†
+		void AdjustmentAngle();														//è§’åº¦ã®èª¿æ•´
 		
-		void UpdateTargesDeta(Vec3 playerPos);					//LockOnCan‚Ìƒf[ƒ^‚ğXV‚·‚éŠÖ”
-		void ChangeLockOn(int leftOrRight,float targetAngle);	//LockOnTarget‚ğ•ÏX‚·‚éˆ—
+		void UpdateTargesDeta(Vec3 playerPos);					//LockOnCanã®ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°ã™ã‚‹é–¢æ•°
+		void ChangeLockOn(int leftOrRight,float targetAngle);	//LockOnTargetã‚’å¤‰æ›´ã™ã‚‹å‡¦ç†
 
-		//LockOnCan‚ğŒˆ‚ß‚éŠÖ”
+		//LockOnCanã‚’æ±ºã‚ã‚‹é–¢æ•°
 		void LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec, Vec3 playerPos);
-		//ƒƒbƒNƒIƒ“‚Ì‰ğœ
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã®è§£é™¤
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
-		//ƒJƒƒ‰‚ÌX²‰ñ“]‚Ì§ŒÀ
+		//ã‚«ãƒ¡ãƒ©ã®Xè»¸å›è»¢ã®åˆ¶é™
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//ƒJƒƒ‰‚Ìƒ|ƒWƒVƒ‡ƒ“‚ÌXV
-		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//Šµ«•t‚«‚Ì‰ñ“]ˆ—
+		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//ã‚«ãƒ¡ãƒ©ã®ãƒã‚¸ã‚·ãƒ§ãƒ³ã®æ›´æ–°
+		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//æ…£æ€§ä»˜ãã®å›è»¢å‡¦ç†
 
-		//ƒJƒƒ‰‚Ì‘€ì‚ğ‚·‚éˆ—
+		//ã‚«ãƒ¡ãƒ©ã®æ“ä½œã‚’ã™ã‚‹å‡¦ç†
 		void CameraControlNomalMode();
 		void CameraControlShotMode();
 		void CameraControlTransitionMode();
 		void CameraControlStartMovieMode();
 
-		//Œ»İ’n‚©‚ç–Ú“I’n‚Ü‚Å‚ÌˆÚ“®ˆ—
+		//ç¾åœ¨åœ°ã‹ã‚‰ç›®çš„åœ°ã¾ã§ã®ç§»å‹•å‡¦ç†
 		float MoveToDestination(float nowOnePos,float destination, float speed = 20.0f);
 
-		//ƒXƒe[ƒg•ÏXˆ— ˆø”‚É“ü‚ê‚½ƒXƒe[ƒg‚É•ÏX‚·‚é
+		//ã‚¹ãƒ†ãƒ¼ãƒˆå¤‰æ›´å‡¦ç† å¼•æ•°ã«å…¥ã‚ŒãŸã‚¹ãƒ†ãƒ¼ãƒˆã«å¤‰æ›´ã™ã‚‹
 		void ChangeState(wstring stateName);
 		
-		//‹ß‹——£UŒ‚‚ğ‚·‚é‚©‚Ìˆ—‚ÌƒQƒbƒ^[
+		//è¿‘è·é›¢æ”»æ’ƒã‚’ã™ã‚‹ã‹ã®å‡¦ç†ã®ã‚²ãƒƒã‚¿ãƒ¼
 		bool GetMeleeFlag();
 
-		//ƒ^[ƒQƒbƒg‘ÎÛ‚Æ‚Ì‹——£‚ğ“n‚·
+		//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã¨ã®è·é›¢ã‚’æ¸¡ã™
 		float GetTargetDis();
 
-		//ƒ|[ƒYˆ—‚ÌƒIƒ“ƒIƒt
+		//ãƒãƒ¼ã‚ºå‡¦ç†ã®ã‚ªãƒ³ã‚ªãƒ•
 		void PoseSwitch(bool onOff);
 
-		//‹ß‰“‚Ç‚¿‚ç‚ÌUŒ‚‚ğ‚·‚é‚©‚Ìˆ—
+		//è¿‘é ã©ã¡ã‚‰ã®æ”»æ’ƒã‚’ã™ã‚‹ã‹ã®å‡¦ç†
 		void MeleeFlagUpdate();
 
-		//ƒƒbƒNƒIƒ“ˆ—
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å‡¦ç†
 		void LockOn(shared_ptr<Player> player);
-		//ƒƒbƒNƒIƒ“‚·‚é“G‚ğŒˆ‚ß‚éˆ—
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã™ã‚‹æ•µã‚’æ±ºã‚ã‚‹å‡¦ç†
 		void SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle);
-		//ƒƒbƒNƒIƒ“‚ğ‰ğœ‚·‚éğŒ
+		//ãƒ­ãƒƒã‚¯ã‚ªãƒ³ã‚’è§£é™¤ã™ã‚‹æ¡ä»¶
 		void ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 
-		//Šp“x‚ÌƒQƒbƒ^ƒZƒbƒ^
-		//‘æˆêˆø”@X²‚©Y²‚Ç‚¿‚ç‚Ì²‚ÌŠp“x‚ğæ‚é‚©
+		//è§’åº¦ã®ã‚²ãƒƒã‚¿ã‚»ãƒƒã‚¿
+		//ç¬¬ä¸€å¼•æ•°ã€€Xè»¸ã‹Yè»¸ã©ã¡ã‚‰ã®è»¸ã®è§’åº¦ã‚’å–ã‚‹ã‹
 		float GetAngle(wstring XorY)
 		{
 			if (XorY == L"X")
@@ -178,7 +178,7 @@ namespace basecross{
 
 			return 0;
 		}
-		//‘æˆêˆø”@X²‚©Y²‚Ç‚¿‚ç‚Ì²‚ÌŠp“x‚ğæ‚é‚© ‘æ“ñˆø” ‚Ç‚ÌŠp“x‚ÉŒü‚­‚©
+		//ç¬¬ä¸€å¼•æ•°ã€€Xè»¸ã‹Yè»¸ã©ã¡ã‚‰ã®è»¸ã®è§’åº¦ã‚’å–ã‚‹ã‹ ç¬¬äºŒå¼•æ•° ã©ã®è§’åº¦ã«å‘ãã‹
 		void SetAngle(wstring XorY,float angle)
 		{
 			if (XorY == L"X")
@@ -191,7 +191,7 @@ namespace basecross{
 			}
 		}
 
-		//ƒJƒƒ‰‚ÌAtƒQƒbƒ^
+		//ã‚«ãƒ¡ãƒ©ã®Atã‚²ãƒƒã‚¿
 		Vec3 GetCameraAt()
 		{
 			return m_lockStageCamera->GetAt();
@@ -201,7 +201,7 @@ namespace basecross{
 			m_lockStageCamera->SetAt(setAt);
 		}
 
-		//ƒJƒƒ‰‚ÌEyeƒZƒbƒ^ƒQƒbƒ^
+		//ã‚«ãƒ¡ãƒ©ã®Eyeã‚»ãƒƒã‚¿ã‚²ãƒƒã‚¿
 		Vec3 GetCameraEye()
 		{
 			return m_lockStageCamera->GetEye();
@@ -211,7 +211,7 @@ namespace basecross{
 			m_lockStageCamera->SetEye(setEye);
 		}
 
-		//pushStart‚ÌƒQƒbƒ^ƒZƒbƒ^
+		//pushStartã®ã‚²ãƒƒã‚¿ã‚»ãƒƒã‚¿
 		bool GetPushStart()
 		{
 			return m_pushStart;
@@ -221,7 +221,7 @@ namespace basecross{
 			m_pushStart = onOff;
 		}
 
-		//ƒ|[ƒYƒtƒ‰ƒO‚ÌƒQƒbƒ^ƒZƒbƒ^
+		//ãƒãƒ¼ã‚ºãƒ•ãƒ©ã‚°ã®ã‚²ãƒƒã‚¿ã‚»ãƒƒã‚¿
 		bool GetPose()
 		{
 			return m_PauseFlag;
@@ -231,7 +231,7 @@ namespace basecross{
 			m_PauseFlag = onOff;
 		}
 
-		//pushPos‚ÌƒQƒbƒ^ƒZƒbƒ^
+		//pushPosã®ã‚²ãƒƒã‚¿ã‚»ãƒƒã‚¿
 		Vec3 GetPushPos()
 		{
 			return m_pushPos;
@@ -241,24 +241,23 @@ namespace basecross{
 			m_pushPos = pushPos;
 		}
 
-		//AddAngle‚Ì”’l‚ğó‚¯æ‚é x‚ªx²,y‚ªy²
-		Vec2 GetAddAngleNAxis()
+		float GetAddAngleNAxis()
 		{
-			return Vec2(m_addAngleXAxis, m_addAngleYAxis);
+			return Vec2(m_addAngleXAxis, m_addAngleYAxis).length();
 		}
 
-		//ƒ^[ƒQƒbƒg‘ÎÛ‚ğ“n‚·ŠÖ”
+		//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆå¯¾è±¡ã‚’æ¸¡ã™é–¢æ•°
 		shared_ptr<Actor> GetTargetObj();
 	};
 
-	//ƒJƒƒ‰‚ÌƒƒbƒNƒIƒ“”ÍˆÍ
+	//ã‚«ãƒ¡ãƒ©ã®ãƒ­ãƒƒã‚¯ã‚ªãƒ³ç¯„å›²
 	class LockOnRange : public ObjectMove
 	{
 	private:
-		Vec3 m_pos;//ˆÊ’u
-		Vec3 m_rot;//‰ñ“]
-		Vec3 m_scale;//‘å‚«‚³
-		float m_range;//ƒƒbƒNƒIƒ“Ë’ö
+		Vec3 m_pos;//ä½ç½®
+		Vec3 m_rot;//å›è»¢
+		Vec3 m_scale;//å¤§ãã•
+		float m_range;//ãƒ­ãƒƒã‚¯ã‚ªãƒ³å°„ç¨‹
 
 		shared_ptr<PNTStaticDraw> m_ptrDraw;
 		shared_ptr<Transform> m_trans;
@@ -274,47 +273,47 @@ namespace basecross{
 	class LockOnLook : public ObjectMove
 	{
 	private:
-		//Vec3 m_pos;//ˆÊ’u
-		Vec3 m_rot;//‰ñ“]
-		Vec3 m_scale;//‘å‚«‚³
-		Vec3 m_pushPos;//’Ç‰ÁÀ•W
-		Col4 m_color;//F
+		//Vec3 m_pos;//ä½ç½®
+		Vec3 m_rot;//å›è»¢
+		Vec3 m_scale;//å¤§ãã•
+		Vec3 m_pushPos;//è¿½åŠ åº§æ¨™
+		Col4 m_color;//è‰²
 
-		weak_ptr<Actor> m_parentObj;//’ÇÕ‘ÎÛ
+		weak_ptr<Actor> m_parentObj;//è¿½è·¡å¯¾è±¡
 		shared_ptr<Transform> m_trans;
 	public:
 		LockOnLook(const shared_ptr<Stage>& stagePtr, Vec3 rot, Vec3 scale,weak_ptr<Actor> parenatObj,Vec3 pushPos = Vec3(0.0f,0.0f,0.0f));
 		~LockOnLook();
-		void OnCreate()override;//ì¬
-		void OnUpdate()override;//XV
+		void OnCreate()override;//ä½œæˆ
+		void OnUpdate()override;//æ›´æ–°
 	};
 
 
-	//ƒfƒoƒbƒN—p‚Ì‚½‚¾‚ÌlŠp‚¢‚â‚Â
+	//ãƒ‡ãƒãƒƒã‚¯ç”¨ã®ãŸã ã®å››è§’ã„ã‚„ã¤
 	class Cube : public ObjectNotMove
 	{
 	private:
-		Vec3 m_pos;//ˆÊ’u
-		Vec3 m_rot;//‰ñ“]
-		Vec3 m_scale;//‘å‚«‚³
-		Col4 m_color;//F
+		Vec3 m_pos;//ä½ç½®
+		Vec3 m_rot;//å›è»¢
+		Vec3 m_scale;//å¤§ãã•
+		Col4 m_color;//è‰²
 	public:
 		Cube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		~Cube();
-		void OnCreate()override;//ì¬
+		void OnCreate()override;//ä½œæˆ
 		void OnUpdate()override;
 	};
 
-	//ƒfƒoƒbƒN—p‚Ì‚½‚¾‚ÌlŠp‚¢‚â‚Â
+	//ãƒ‡ãƒãƒƒã‚¯ç”¨ã®ãŸã ã®å››è§’ã„ã‚„ã¤
 	class EnemyCube : public Actor
 	{
 	private:
-		Col4 m_color;//F
+		Col4 m_color;//è‰²
 	public:
 		EnemyCube(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		~EnemyCube();
-		void OnCreate()override;//ì¬
-		void OnUpdate()override;//XV
+		void OnCreate()override;//ä½œæˆ
+		void OnUpdate()override;//æ›´æ–°
 	};
 
 

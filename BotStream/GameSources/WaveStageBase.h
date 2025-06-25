@@ -100,6 +100,8 @@ namespace basecross {
 
         //マネージャ、UIの類を生成する
         virtual void CreateManagerObjects();
+        //EnemyManagerを生成
+        virtual void CreateEnemyManager();
         //Waveが次に移ったときに呼び出される
         virtual void WaveInitialize();
         //プレイヤーの位置を強制的に変える
@@ -234,5 +236,42 @@ namespace basecross {
         virtual ~Ceiling();
         virtual void OnCreate() override;
     };
+
+
+    // ==========================================================
+    // WaveStageBase2の先頭
+    // ==========================================================
+
+    //class WaveStage2 : public WaveStageBase
+    //{
+    //private:
+
+    //public:
+    //    virtual void OnCreate()override;
+    //    virtual void OnUpdate()override;
+    //    //Waveが次に移ったときに呼び出される
+    //    virtual void WaveInitialize();
+
+    //};
+
+    // END ======================================================
+
+    // ==========================================================
+    // WaveStageBase3の先頭
+    // ==========================================================
+
+    class WaveStage3 : public WaveStageBase
+    {
+    private:
+
+    public:
+        virtual void OnCreate()override;
+        virtual void OnUpdate()override;
+        //Waveが次に移ったときに呼び出される
+        virtual void WaveInitialize();
+
+    };
+
+    // END ======================================================
 
 }
