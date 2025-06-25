@@ -584,8 +584,9 @@ namespace basecross {
 
 		//一定時間過ぎたら(やられる演出)消える
 		if (m_timeOfState >= m_timeMaxOfState)
-		{		
+		{
 			m_enemyZako->SetUsed(false);
+			m_enemyZako->ChangeState(L"Stand");
 		}
 	}
 	void EnemyZakoDieState::Exit()

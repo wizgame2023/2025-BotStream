@@ -66,8 +66,15 @@ namespace basecross {
             break;
         case Tutorial_Evade:
         {
+            float delta = App::GetApp()->GetElapsedTime();
             m_bar[0].lock()->SetDrawActive(ui->IsInvisible());
             m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            if (m_enemyMgr.lock()->GetEnemyVec(true).size() < m_enemyNum) {
+                m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            }
+            float add = m_player.lock()->GetDodge() ? m_tutorialEvadeRequired * delta : 0.0f;
+            m_progress[0] += add;
 
             if (m_progress[0] >= 1.0f) {
                 ChangeTutorialPhase(Tutorial_KeepRunning);
@@ -86,15 +93,22 @@ namespace basecross {
             m_bar[1].lock()->ChangeDescription(2);
             break;
         case Tutorial_Evade:
-            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
             m_progress[0] = 0;
             m_bar[0].lock()->SetDrawActive(true);
             m_bar[1].lock()->SetDrawActive(false);
 
             m_bar[0].lock()->ChangeDescription(3);
+
+            
+            break;
+        case Tutorial_KeepRunning:
+            break;
         }
     }
 

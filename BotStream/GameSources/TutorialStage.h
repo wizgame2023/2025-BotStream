@@ -33,14 +33,16 @@ namespace basecross {
         TutorialPhase m_tutorialPhase = Tutorial_Start;
 
         //UI
+        weak_ptr<TutorialDialog> m_dialog;
         weak_ptr<TutorialProgressFrame> m_bar[2];
 
         //チュートリアル進行状況(0～1)
         float m_progress[2] = {0, 0};
         const float m_tutorialMoveRequired = .0001f;
-        const float m_tutorialCameraRequired = .001f;
+        const float m_tutorialCameraRequired = .002f;
+        const int m_enemyNum = 5;
 
-        const float m_tutorialEvadeRequired = .001f;
+        const float m_tutorialEvadeRequired = .5f;
 
         //チュートリアルの進行状況を監視
         void UpdateTutorialPhase();

@@ -65,7 +65,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToWaveStage1")
 		{
 			m_stageNum = 1;
-			ResetActiveStage<StageFirst>();
+			ResetActiveStage<TutorialStage>();
 		}
 		
 		if (event->m_MsgStr == L"ToWaveStage2")
