@@ -844,10 +844,45 @@ namespace basecross {
 			auto stage = m_player->GetStage();
 			m_timeOfAttack = 0.0f;//リセット
 
+			m_player->ChangeState(L"AttackExEnd");
+		}
+	}
+	//=========================================================================================================>
+
+	//回転攻撃が終わった時のモーション用のステート=========================================================================>
+	void PlayerAttackExEndState::Enter()
+	{
+		PlayerStateBase::Enter();
+
+		//回転攻撃が終わった後モーションを再生
+		m_player->ChangeAnim(L"AttackExEnd");
+	}
+
+	void PlayerAttackExEndState::Update(float deltaTime)
+	{
+		PlayerStateBase::Update(deltaTime);
+
+		auto mag = 1.25f;
+
+		m_countTimeOfState += deltaTime * mag;
+		//アニメーション更新
+		m_player->SetAddTimeAnimation(1.0f * deltaTime * mag);
+
+		//このステートは回避できる
+		Dodge(m_dodgeFlag);
+
+		//モーションが終わったら歩きステートに戻る
+		if (m_countTimeOfState >= m_maxTimeOfState)
+		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
 	}
 	//=========================================================================================================>
+
+	void PlayerAttackExEndState::Exit()
+	{
+		m_countTimeOfState = 0.0f;
+	}
 
 	//必殺技===================================================================================================>
 	void PlayerAttackSpecialState::Enter()
@@ -952,7 +987,7 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 
-		m_SEManager->Start(L"DamageVoiceSE");
+		m_SEManager->Start(L"DamageSE",false,0.3f);
 		auto hitInfo = m_player->GetHitInfo();
 		auto HPNow = m_player->GetHP();
 		m_player->HitBack();
