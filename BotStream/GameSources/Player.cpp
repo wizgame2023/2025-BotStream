@@ -50,7 +50,7 @@ namespace basecross {
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
 		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 0, 1, true, 60.0f);//立ち状態
+		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);//立ち状態
 		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
 		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
@@ -70,6 +70,7 @@ namespace basecross {
 
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
+		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
 		//影をつける（シャドウマップを描画する）
@@ -81,7 +82,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
@@ -221,7 +222,7 @@ namespace basecross {
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
 
-		DebugLog();//デバックログ
+		//DebugLog();//デバックログ
 		//めり込み防止処理
 		//ImmersedInCheck();
 	}
