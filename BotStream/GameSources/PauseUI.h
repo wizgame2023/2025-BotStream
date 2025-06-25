@@ -69,7 +69,7 @@ namespace basecross {
 		void AllUIClear(bool clear);
 
 		//Actor‚ğ~‚ß‚éˆ—
-		void MoveSwitchActor(bool OnOff);
+		void MoveSwitchActor();
 
 		template <typename T>
 		T clamp(T value, T minValue, T maxValue)
