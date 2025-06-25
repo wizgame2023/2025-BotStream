@@ -121,9 +121,6 @@ namespace basecross {
 
 	class EnemyZakoFlying : public EnemyZako
 	{
-	private:
-		void OnDamaged() override;
-
 	public:
 		enum EnemyZakoFlyingAttackType
 		{
@@ -138,47 +135,9 @@ namespace basecross {
 		}
 		~EnemyZakoFlying() {}
 
-		//受けた攻撃の情報を渡すゲッター
-		HitInfo EnemyZakoFlying::GetHitInfo()
-		{
-			return m_getHitInfo;
-		}
-
 		void OnCreate() override;
 		void OnUpdate() override;
-		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
 
-		//ビルボードの処理
-		void UpdateHPBer();
-
-		//攻撃のクールタイム
-		void TimeOfAttackCool();
-
-		//攻撃のタイプのゲッタ
-		int GetAttackType()
-		{
-			return m_AttackType;
-		}
-
-		//攻撃フラグのゲッタセッタ
-		bool GetAttackFlag()
-		{
-			return m_attackFlag;
-		}
-		void SetAttackFlag(bool attackFlag)
-		{
-			m_attackFlag = attackFlag;
-		}
-
-		//アニメーションの追加時間のゲッタセッタ
-		float GetAddTimeAnimation()
-		{
-			return m_addTimeAnimation;
-		}
-		void SetAddTimeAnimation(float addTimeAnimation)
-		{
-			m_addTimeAnimation = addTimeAnimation;
-		}
 	};
 
 }

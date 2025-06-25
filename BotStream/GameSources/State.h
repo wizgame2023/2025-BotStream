@@ -23,6 +23,7 @@ namespace basecross {
 		unordered_map<wstring, shared_ptr<StateBase>> _stateTypes;
 		//現在のステート
 		shared_ptr<StateBase> _currentState;
+		wstring _stateName;
 		//前のステート
 		shared_ptr<StateBase> _prevState;
 
@@ -35,6 +36,10 @@ namespace basecross {
 		~StateMachineBase() {}
 
 		bool ChangeState(wstring stateName);
+
+		wstring GetStateName() {
+			return _stateName;
+		}
 
 		void Update(float deltatime);
 	};

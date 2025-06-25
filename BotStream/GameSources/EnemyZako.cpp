@@ -84,7 +84,7 @@ namespace basecross {
 
 		//頭上にHPバーを表示させる		
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 	}
 
@@ -140,7 +140,7 @@ namespace basecross {
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		//位置更新
-		SpeedLimit(3.0f); //スピードリミット
+		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
 	}
 
@@ -234,6 +234,7 @@ namespace basecross {
 					ChangeState(L"Stun");
 					AddEffect(EnemyEffect_Stun);
 					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+					m_stun = 0;
 				}
 				else
 				{
@@ -334,7 +335,7 @@ namespace basecross {
 		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 	}
@@ -394,12 +395,14 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Stand", 0, 1, 60.0f);
 		ptrDraw->AddAnimation(L"Walk", 126, 49, 60.0f);
 		ptrDraw->AddAnimation(L"Charge", 0, 125, 60.0f);
-		ptrDraw->AddAnimation(L"Down", 637, 88, 60.0f);
-
+		ptrDraw->AddAnimation(L"Down", 637, 88, false, 60.0f);
+		ptrDraw->AddAnimation(L"Hit", 637, 25, false, 60.0f);
+		ptrDraw->AddAnimation(L"Stan", 637, 88, false, 60.0f);
+	
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
-		ptrColl->SetDrawActive(true);//デバック用
+		ptrColl->SetDrawActive(false);//デバック用
 
 		AddTag(L"Enemy");
 		AddTag(L"EnemyZako");
@@ -408,14 +411,14 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
 		m_state = shared_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
-		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"BossGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
+		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"BossHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
 
@@ -431,6 +434,28 @@ namespace basecross {
 		{
 			return;
 		}
+		if (!m_beforUsed)
+		{
+			if (m_used)
+			{
+				m_HPCurrent = m_HPMax;
+				m_attackFlag = false;
+				m_timeCountOfAttackCool = 3.0f;
+				//初期ステートに戻す
+				ChangeState(L"Stand");
+			}
+		}
+		if (m_beforUsed)
+		{
+			if (!m_used)
+			{
+				auto stage = GetStage();
+				auto pos = GetComponent<Transform>()->GetPosition();
+				stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(pos);
+			}
+		}
+		//現在の使用状況と見比べて変わっていないか見る
+		m_beforUsed = m_used;
 
 		EnemyBase::OnUpdate();
 
@@ -470,67 +495,6 @@ namespace basecross {
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 
 		GetComponent<Transform>()->SetPosition((m_velocity * _delta) + GetComponent<Transform>()->GetPosition());
-	}
-
-	//HPバーの処理
-	void EnemyZakoFlying::UpdateHPBer()
-	{
-		//ビルボードの処理
-		if (!m_used)
-		{
-			m_HPFrame->SetScale(Vec3(0.0f));
-			m_HPBer->SetScale(Vec3(0.0f));
-		}
-		if (m_used)
-		{
-			m_HPFrame->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-			m_HPBer->SetScale(Vec3(2.0f, 0.5f, 5.0f));
-
-			//HPの割合によってゲージが減る
-			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
-			m_HPBer->SetPercent(HPPercent);
-
-		}
-
-
-	}
-
-	//攻撃のクールタイム
-	void EnemyZakoFlying::TimeOfAttackCool()
-	{
-		//攻撃のクールタイム
-		if (!m_attackFlag)
-		{
-			m_timeCountOfAttackCool += _delta;
-			//クールタイム過ぎたら攻撃できるようになる
-			if (m_timeCountOfAttackCool >= m_timeOfAttackCool)
-			{
-				m_timeCountOfAttackCool = 0.0f;//リセット
-				m_attackFlag = true;
-			}
-		}
-	}
-
-	//コリジョン判定
-	void EnemyZakoFlying::OnCollisionEnter(shared_ptr<GameObject>& Other)
-	{
-		DetectBeingAttacked(Other);
-	}
-
-	//ダメージを受けた際の処理
-	void EnemyZakoFlying::OnDamaged()
-	{
-		////攻撃時はノックバックしないようにする(実験)(強すぎるので別の方向性で強くする)
-		//if (!FindTag(L"AttackNow"))
-		//{
-		//	m_state->ChangeState(L"Hit");
-		//}
-		//else if (FindTag(L"AttackNow"))
-		//{
-		//	m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage);
-		//}
-
-		m_state->ChangeState(L"Hit");
 	}
 
 }

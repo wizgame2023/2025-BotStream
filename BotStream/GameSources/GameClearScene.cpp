@@ -29,6 +29,9 @@ namespace basecross {
 	{
 		CreateViewLight();
 		CreateSprite();
+		m_scene = App::GetApp()->GetScene<Scene>();
+		m_stageNum = m_scene.lock()->GetStageNum();
+		m_strStage = L"ToWaveStage" + to_wstring(m_stageNum);
 	}
 
 	void GameClear::OnUpdate()
@@ -101,7 +104,7 @@ namespace basecross {
 			{
 			// 次のステージ
 			case 0:
-				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage");
+				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), m_strStage);
 				break;
 			// セレクトステージ
 			case 1:

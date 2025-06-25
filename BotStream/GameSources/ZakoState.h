@@ -102,7 +102,7 @@ namespace basecross {
 		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
 		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
 
-		float m_timeOfAttackAdd = 1.2f;//攻撃判定の発生時間
+		float m_timeOfAttackAdd = 0.7f;//攻撃判定の発生時間
 
 		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
@@ -414,7 +414,7 @@ namespace basecross {
 		Vec3   m_chargeDir;       // 突進方向
 		float  m_chargeSpeed = 20.0f;  // 突進速度
 		float  m_chargeTime = 0.0f;   // 経過時間カウント
-		float  m_maxChargeTime = 1.5f; // 突進継続時間（秒）
+		float  m_maxChargeTime = 3.0f; // 突進継続時間（秒）
 
 		bool m_Attack = true;//攻撃判定を出したかのフラグ
 	public:
@@ -425,6 +425,43 @@ namespace basecross {
 		virtual void Enter() override;
 		virtual void Update(float deltaTime) override;
 		virtual void Exit() override;
+	};
+
+	class EnemyZakoFlyingStanState : public EnemyZakoStateBase
+	{
+	private:
+		//スタン時間計測
+		float m_stunTimeMax;
+		float m_stunTimeCount;
+
+	public:
+		EnemyZakoFlyingStanState(shared_ptr<GameObject>& obj)
+			: EnemyZakoStateBase(obj) {
+		}
+
+		virtual void Enter() override;
+		virtual void Update(float deltaTime) override;
+		virtual void Exit() override;
+	};
+
+	//やられたときの雑魚敵
+	class EnemyZakoFlyingDieState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfState = 0.0f;//ステートが始まってからの時間経過を測る変数
+		float m_timeMaxOfState = 1.8f;//ステートでいられる上限時間の保存用変数
+
+	public:
+		EnemyZakoFlyingDieState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
 	};
 
 	// 飛ぶ敵のステートマシン
@@ -440,6 +477,8 @@ namespace basecross {
 			AddState(L"Melee", shared_ptr<EnemyZakoFlyingMeleeState>(new EnemyZakoFlyingMeleeState(obj)));
 			AddState(L"Hit", shared_ptr<EnemyZakoFlyingHitState>(new EnemyZakoFlyingHitState(obj)));
 			AddState(L"Charge", shared_ptr<EnemyZakoFlyingChargeState>(new EnemyZakoFlyingChargeState(obj)));
+			AddState(L"Stun", shared_ptr<EnemyZakoFlyingStanState>(new EnemyZakoFlyingStanState(obj)));
+			AddState(L"Die", shared_ptr<EnemyZakoFlyingDieState>(new EnemyZakoFlyingDieState(obj)));
 
 			ChangeState(L"Stand");
 		}

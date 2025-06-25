@@ -30,8 +30,18 @@ namespace basecross {
 		trans->SetPosition(m_pos);
 		trans->SetRotation(m_rot);
 		trans->SetScale(m_scale);
+
+		Mat4x4 spanMat;
+		spanMat.affineTransformation(
+			Vec3(0.5f, 0.5f, 0.5f),
+			Vec3(0.0f, 0.0f, 0.0f),
+			Vec3(0.0f, XMConvertToRadians(0.0f), 0.0f),
+			Vec3(0.0f, 0.0f, 0.0f)
+		);
+
 		auto ptrDraw = AddComponent<BcPNTStaticDraw>();
 		ptrDraw->SetDiffuse(Col4(1, 1, 1, 1));
+		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
 		//パーツタイプによって見た目が変わる
 		switch (m_partsStatus.partsType)

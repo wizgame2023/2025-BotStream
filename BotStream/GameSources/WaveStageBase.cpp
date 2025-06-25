@@ -34,31 +34,55 @@ namespace basecross {
 
     }
 
-    void WaveStageBase::SetActorPause(bool isPause) {
+    void WaveStageBase::SetActorPause(bool isPause,bool andCamera) {
         m_isPaused = isPause;
 
         EffectManager::Instance().PauseAllEffects(isPause);
 
         auto objVec = GetGameObjectVec();
-        for (auto obj : objVec)
-        {
-            auto actor = dynamic_pointer_cast<Actor>(obj);
-            auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
-            auto parts = dynamic_pointer_cast<Parts>(obj);
 
-            if (actor)
-            {
-                actor->SetPause(isPause);
-            }
-            if (cameraManager)
-            {
-                cameraManager->SetPause(isPause);
-            }
-            if (parts)
-            {
-                parts->SetPause(isPause);
-            }
-        }
+		//andCameraがオンならカメラも動かない処理にする,オフならActorのみ
+		if (andCamera)
+		{
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+				auto parts = dynamic_pointer_cast<Parts>(obj);
+
+				if (actor)
+				{
+					actor->SetPause(isPause);
+				}
+				if (cameraManager)
+				{
+					cameraManager->SetPause(isPause);
+				}
+				if (parts)
+				{
+					parts->SetPause(isPause);
+				}
+			}
+		}
+		else if (!andCamera)
+		{
+			for (auto obj : objVec)
+			{
+				auto actor = dynamic_pointer_cast<Actor>(obj);
+				auto cameraManager = dynamic_pointer_cast<CameraManager>(obj);
+				auto parts = dynamic_pointer_cast<Parts>(obj);
+
+				if (actor)
+				{
+					actor->SetPause(isPause);
+				}
+				if (parts)
+				{
+					parts->SetPause(isPause);
+				}
+			}
+		}
+
     }
 
     void WaveStageBase::CreateManagerObjects() {
@@ -88,7 +112,7 @@ namespace basecross {
         m_sndMgr = AddGameObject<SoundManager>();
         SetSharedGameObject(L"SoundManager", m_sndMgr.lock());
         GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(3);
-        GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
+        //GetSharedGameObject<SoundManager>(L"SoundManager")->PlaySE(13);
 
         auto colController = AddGameObject<StageCollisionController>();
         colController->SetCollisionSwhich(true);
@@ -99,8 +123,14 @@ namespace basecross {
 
         // 戦闘用UI
         AddGameObject<PlayerWeaponUI>();
-        auto playerUI = AddGameObject<PlayerGaugeUI>(100);
+        auto playerUI = AddGameObject<PlayerGaugeUI>(m_player.lock());
         SetSharedGameObject(L"PlayerUI", playerUI);
+
+		// 数字の位置,大きさ
+		Vec2 digitPos(300.0f, -260.0f);
+		constexpr float digitSize = 25.0f;
+		// プレイヤーの弾のUI
+		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos,digitSize);
 
 		// ボスゲージ
 		m_bossGauge = AddGameObject<BossGaugeUI>(
@@ -110,6 +140,28 @@ namespace basecross {
 		SetSharedGameObject(L"BossUI", m_bossGauge);
 
     }
+
+	//EnemyManagerとボスの初期設定
+	void WaveStageBase::CreateEnemyManager() {
+
+		vector<EnemyVariation> enemyVariation;
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Normal);
+		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Projectile);
+		}
+
+		enemyVariation.push_back(EVar_Aerial);
+
+		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
+		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
+
+		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		SetSharedGameObject(L"Boss", m_boss.lock());
+	}
 
     void WaveStageBase::OnCreate()
     {
@@ -124,34 +176,17 @@ namespace basecross {
         CreateCeiling();
         CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
 
-        //Enemyマネージャのテスト
-        vector<EnemyVariation> enemyVariation;
-        for (int i = 0; i <= 10; i++)
-        {
-            enemyVariation.push_back(EVar_Normal);
-        }
-        for (int i = 0; i <= 10; i++)
-        {
-            enemyVariation.push_back(EVar_Projectile);
-        }
-
-        enemyVariation.push_back(EVar_Aerial);
-
-        m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
-        SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
-
-        m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-        SetSharedGameObject(L"Boss", m_boss.lock());
+		CreateEnemyManager();
 
         //wave1敵
         m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-        //auto flyingEnemy = AddGameObject<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f), true);
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+        //m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
         CreateManagerObjects();
 
@@ -217,9 +252,9 @@ namespace basecross {
 			// ------- 1 -> 2 -------------------------------------------------------------
 		case 1:
 			//プレイヤーの位置を初期化
-			//SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			//m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -240,12 +275,12 @@ namespace basecross {
 
 			// ------- 2 -> 3 -------------------------------------------------------------
 		case 2:
-			//m_bossGauge->ClearBossGaugeUI(false);
+			m_bossGauge->ClearBossGaugeUI(false);
 
 			////プレイヤーの位置を初期化
-			//SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			//m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
+			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
 
 			//GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
 			//GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
@@ -533,5 +568,305 @@ namespace basecross {
 		}
 	}
 
+	//// ========================================================
+	//// WaveStage2先頭
+	//// ========================================================
+	//void WaveStage2::OnCreate()
+	//{
+	//	auto& app = App::GetApp();
+	//	m_scene = app->GetScene<Scene>();
+
+	//	//ビューとライトの作成
+	//	CreateViewLight();
+
+	//	CreateFloor();
+	//	CreateWall();
+	//	CreateCeiling();
+	//	CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
+
+	//	//Enemyマネージャのテスト
+	//	vector<EnemyVariation> enemyVariation;
+	//	for (int i = 0; i <= 10; i++)
+	//	{
+	//		enemyVariation.push_back(EVar_Normal);
+	//	}
+	//	for (int i = 0; i <= 10; i++)
+	//	{
+	//		enemyVariation.push_back(EVar_Projectile);
+	//	}
+	//	for (int i = 0; i <= 10; i++)
+	//	{
+	//		enemyVariation.push_back(EVar_Aerial);
+	//	}
+
+	//	m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
+	//	SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
+
+	//	m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+	//	SetSharedGameObject(L"Boss", m_boss.lock());
+
+	//	//wave1敵
+	//	// 床のポジション Vec3(0.0f, -3.0f, -260.0f), 大きさ Vec3(120.0f, 3.0f, 120.0f)
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-5.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//	//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+	//	CreateManagerObjects();
+
+	//	m_gamePhase = GamePhase::GPhase_Start;
+
+	//}
+
+	//void WaveStage2::OnUpdate()
+	//{
+	//	auto& app = App::GetApp();
+	//	auto KeyState = app->GetInputDevice().GetKeyState();
+	//	auto pad = app->GetInputDevice().GetControlerVec()[0];
+
+	//	ResetDeltaScaleToDefault();
+	//	UpdateGamePhase();
+
+	//	EffectManager::Instance().InterfaceUpdate();
+
+	//	if (ConsiderGoToNextWave())
+	//	{
+	//		m_fadeout.lock()->SetFadeOutFlag(true);
+	//	}
+	//	if (m_fadeout.lock()->GetBlackFlag())
+	//	{
+	//		m_nextWaveFlag = true;
+	//	}
+	//	if (m_nextWaveFlag)
+	//	{
+	//		m_fadeout.lock()->SetFadeInFlag(true);
+	//		m_nextWaveFlag = false;
+
+	//		WaveInitialize();
+	//	}
+
+	//	if (m_waveCurrent == m_waveMax && ConsiderGameClear() && m_onceFlag == false)
+	//	{
+	//		m_sndMgr.lock()->StopBGM();
+	//		m_onceFlag = true;
+	//		m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
+	//	}
+
+	//	if (ConsiderGameOver() && m_onceFlag == false)
+	//	{
+	//		m_sndMgr.lock()->StopBGM();
+	//		m_onceFlag = true;
+	//		m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+	//	}
+
+	//}
+
+
+	////Waveが切り替わる際に行う処理
+	//void WaveStage2::WaveInitialize() {
+	//	switch (m_waveCurrent) {
+
+	//		// ------- 1 -> 2 -------------------------------------------------------------
+	//	case 1:
+	//		//プレイヤーの位置を初期化
+	//		SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+
+	//		m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+	//		////m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		////m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		////m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		////m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+	//		// ここの同じ座標のやつを消すとなぜか生成されない
+	//		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+	//		//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f,))
+
+	//		break;
+	//		// ----------------------------------------------------------------------------
+
+	//		// ------- 2 -> 3 -------------------------------------------------------------
+	//	case 2:
+	//		m_bossGauge->ClearBossGaugeUI(false);
+
+	//		////プレイヤーの位置を初期化
+	//		SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+
+	//		m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
+
+	//		//GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+	//		//GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
+
+	//		break;
+	//		// ----------------------------------------------------------------------------
+	//	}
+
+	//	m_waveCurrent++;
+	//}
+	//// END =========================================================
+
+	// ========================================================
+	// WaveStage3先頭
+	// ========================================================
+	void WaveStage3::OnCreate()
+	{
+		auto& app = App::GetApp();
+		m_scene = app->GetScene<Scene>();
+
+		//ビューとライトの作成
+		CreateViewLight();
+
+		CreateFloor();
+		CreateWall();
+		CreateCeiling();
+		CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
+
+		//Enemyマネージャのテスト
+		vector<EnemyVariation> enemyVariation;
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Normal);
+		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Projectile);
+		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Aerial);
+		}
+
+		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
+		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
+
+		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		SetSharedGameObject(L"Boss", m_boss.lock());
+
+		//wave1敵
+		// 床のポジション Vec3(0.0f, -3.0f, -260.0f), 大きさ Vec3(120.0f, 3.0f, 120.0f)
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-5.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+		CreateManagerObjects();
+
+		m_gamePhase = GamePhase::GPhase_Start;
+
+	}
+
+	void WaveStage3::OnUpdate()
+	{
+		auto& app = App::GetApp();
+		auto KeyState = app->GetInputDevice().GetKeyState();
+		auto pad = app->GetInputDevice().GetControlerVec()[0];
+
+		ResetDeltaScaleToDefault();
+		UpdateGamePhase();
+
+		EffectManager::Instance().InterfaceUpdate();
+
+		if (ConsiderGoToNextWave())
+		{
+			m_fadeout.lock()->SetFadeOutFlag(true);
+		}
+		if (m_fadeout.lock()->GetBlackFlag())
+		{
+			m_nextWaveFlag = true;
+		}
+		if (m_nextWaveFlag)
+		{
+			m_fadeout.lock()->SetFadeInFlag(true);
+			m_nextWaveFlag = false;
+
+			WaveInitialize();
+		}
+
+		if (m_waveCurrent == m_waveMax && ConsiderGameClear() && m_onceFlag == false)
+		{
+			m_sndMgr.lock()->StopBGM();
+			m_onceFlag = true;
+			m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
+		}
+
+		if (ConsiderGameOver() && m_onceFlag == false)
+		{
+			m_sndMgr.lock()->StopBGM();
+			m_onceFlag = true;
+			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+		}
+
+	}
+
+
+	//Waveが切り替わる際に行う処理
+	void WaveStage3::WaveInitialize() {
+		switch (m_waveCurrent) {
+
+			// ------- 1 -> 2 -------------------------------------------------------------
+		case 1:
+			//プレイヤーの位置を初期化
+			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+
+			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+			////m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			////m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			////m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			////m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+
+			// ここの同じ座標のやつを消すとなぜか生成されない
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f,))
+
+			break;
+			// ----------------------------------------------------------------------------
+
+			// ------- 2 -> 3 -------------------------------------------------------------
+		case 2:
+			m_bossGauge->ClearBossGaugeUI(false);
+
+			////プレイヤーの位置を初期化
+			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
+
+			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
+
+			//GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
+			//GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
+
+			break;
+			// ----------------------------------------------------------------------------
+		}
+
+		m_waveCurrent++;
+	}
 
 }

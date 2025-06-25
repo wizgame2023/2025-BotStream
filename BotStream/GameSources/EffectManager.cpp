@@ -26,10 +26,10 @@ namespace basecross
 		auto pID3D11DeviceContext = dev->GetD3DDeviceContext();
 
 		// 描画用インスタンスの生成
-		m_renderer = Renderer::Create(pDx11Device, pID3D11DeviceContext, 2000);
+		m_renderer = Renderer::Create(pDx11Device, pID3D11DeviceContext, 3000);
 		
 		// エフェクト管理用インスタンスの生成
-		m_manager = Manager::Create(2000);
+		m_manager = Manager::Create(3000);
 
 		// 描画用インスタンスから描画機能を設定
 		m_manager->SetSpriteRenderer(m_renderer->CreateSpriteRenderer());
@@ -235,4 +235,13 @@ namespace basecross
 		return Handle(-10000);
 	}
 
+	void EffectManager::Release()
+	{
+		m_manager->Release();
+	}
+
+	int32_t EffectManager::GetTotalInstanceCount()
+	{
+		return m_manager->GetTotalInstanceCount();
+	}
 }

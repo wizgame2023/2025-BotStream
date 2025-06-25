@@ -22,12 +22,12 @@ namespace basecross {
 		//雑魚敵のタイプによって攻撃の方法が変わる
 		//遠距離
 		m_timeOfShot += deltaTime;
-		if (attackType == m_enemyZako->Zako_Long && isLand)
+		if (attackType == m_enemyZako->Zako_Long)
 		{
 			m_enemyZako->ChangeState(L"PreparationforLong");//軸合わせから始まる
 		}
 		//近距離
-		if (attackType == m_enemyZako->Zako_Melee && isLand)
+		if (attackType == m_enemyZako->Zako_Melee)
 		{
 			if (m_enemyZako->GetAttackFlag())//攻撃フラグが立ってなかったら攻撃動作はできない
 			{
@@ -97,6 +97,9 @@ namespace basecross {
 		{
 			m_enemyZako->ChangeState(L"Stand");
 		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(1.0f);
 	}
 	void EnemyZakoEscapeState::Exit()
 	{
@@ -215,6 +218,8 @@ namespace basecross {
 			m_enemyZako->ChangeState(L"Charge");//突進ステートに遷移
 		}
 
+		//スピード制限
+		m_enemyZako->SpeedLimit(3.0f);
 
 		////移動中なのでそれに合わせたアニメーション
 		//m_enemyZako->ChangeAnim(L"Walk");
@@ -309,6 +314,9 @@ namespace basecross {
 			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
 			m_Attack = false;//攻撃判定が複数発生させないようにする
 		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(5.0f);
 	}
 	void EnemyZakoChargeState::Exit()
 	{
@@ -370,6 +378,9 @@ namespace basecross {
 				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 			}
 		}
+
+		//スピードリミット
+		m_enemyZako->SpeedLimit(2.5f);
 	}
 	void EnemyZakoPreparationforMeleeState::Exit()
 	{
@@ -384,10 +395,14 @@ namespace basecross {
 		if (playerdist > 30.0f)//中
 		{
 			m_speed = 300.0f;
+			//スピード制限
+			m_enemyZako->SpeedLimit(5.0f);
 		}
 		else//近い
 		{
 			m_speed = 200.0f;
+			//スピード制限
+			m_enemyZako->SpeedLimit(3.0f);
 		}
 	}
 
@@ -415,10 +430,11 @@ namespace basecross {
 			m_enemyZako->ChangeAnim(L"Walk");
 
 			//進む距離を決める
-			m_speed = 3.0f;
+			m_speed = 1.0f;
 			auto move = m_enemyZako->GetForward() * m_speed;
 
-			m_enemyZako->SetVelocity(move);
+			//スピードを加える
+			m_enemyZako->AddVelocity(move);
 			//アニメーション更新時間設定
 			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
 		}
@@ -447,6 +463,9 @@ namespace basecross {
 				m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
 			}
 		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(2.0f);
 	}
 	void EnemyZakoPreparationforLongState::Exit()
 	{
@@ -511,10 +530,11 @@ namespace basecross {
 		auto HPNow = m_enemyZako->GetHPCurrent();
 
 		//アニメーションをダメージを受けたものにする
-		m_enemyZako->ChangeAnim(L"Hit");
-
+		m_enemyZako->ChangeAnim(L"Hit",true);
 		//攻撃を受けたのでヒットバックする
 		m_enemyZako->HitBack();
+
+
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 	}
@@ -522,6 +542,7 @@ namespace basecross {
 	{
 		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
+
 
 		//遠距離タイプの雑魚敵か確認する
 		auto enemyShotType = dynamic_pointer_cast<EnemyZakoLong>(_obj.lock());
@@ -618,9 +639,9 @@ namespace basecross {
 		auto pos = m_enemyZako->GetPosition();
 		auto isLand = m_enemyZako->GetLand();//着地しているかのフラグ
 
-		if (pos.y <= 10.0)
+		if (pos.y <= 10.0f)
 		{
-			m_enemyZako->SetVelocity(Vec3(0, 10.0f, 0));
+			m_enemyZako->SetVelocity(Vec3(0, 5.0f, 0));
 		}
 		else
 		{
@@ -740,6 +761,7 @@ namespace basecross {
 	void EnemyZakoFlyingChargeState::Enter()
 	{
 		m_chargeTime = 0.0f;
+		m_maxChargeTime = 2.0f;
 		// プレイヤーの方向ベクトルをキャッシュ
 		Vec3 toPlayer = m_enemyZako->GetPlayerDistInVec3();
 		toPlayer.normalize();
@@ -760,7 +782,7 @@ namespace basecross {
 		m_chargeTime += deltaTime;
 
 		////攻撃判定の生成
-		if (m_chargeTime <= m_maxChargeTime)
+		if (m_chargeTime <= m_maxChargeTime && m_Attack)
 		{
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
@@ -770,10 +792,12 @@ namespace basecross {
 			tmp.Type = AttackType::Enemy;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
-			m_enemyZako->GetAttackPtr()->SetPos(Vec3(2, 1, 0));
+			m_enemyZako->GetAttackPtr()->SetPos(Vec3(0, 0, 0));
 			auto AttackPtr = m_enemyZako->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
+			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(5.0f, 3.0f, 5.0f));
 			AttackPtr->SetCollScale(1.0f);
+			// 攻撃の持続時間
+			AttackPtr->ActivateCollision(m_maxChargeTime - 0.1f);
 
 			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
 			m_Attack = false;//攻撃判定が複数発生させないようにする
@@ -788,7 +812,6 @@ namespace basecross {
 		// →時間制限を超える or 壁・プレイヤーへの衝突を検知したら止める
 		if (m_chargeTime >= m_maxChargeTime || (m_enemyZako->GetAttackPtr()->GetMoveContact() && m_Attack))
 		{
-
 			m_enemyZako->SetVelocity(Vec3(0, 0, 0));      // 移動停止
 			m_enemyZako->ChangeState(L"Stand");         // 次のステートへ
 		}
@@ -798,6 +821,7 @@ namespace basecross {
 	void EnemyZakoFlyingChargeState::Exit()
 	{
 		m_Attack = true;
+		m_enemyZako->SetAttackFlag(false);
 		m_enemyZako->SetVelocity(Vec3(0, 0, 0));
 	}
 	// END----------------------------------------------
@@ -841,9 +865,9 @@ namespace basecross {
 			tmp.Type = AttackType::Enemy;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
-			m_enemyZako->GetAttackPtr()->SetPos(Vec3(2, 1, 0));
+			m_enemyZako->GetAttackPtr()->SetPos(Vec3(0, 0, 0));
 			auto AttackPtr = m_enemyZako->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
+			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(5.0f, 3.0f, 5.0f));
 			AttackPtr->SetCollScale(1.0f);
 
 			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
@@ -994,7 +1018,44 @@ namespace basecross {
 	}
 	// END-----------------------------------
 
-	//ダメージを受けたとき-------------------
+	// スタンしたときのステート---------------
+	void EnemyZakoFlyingStanState::Enter()
+	{
+		m_stunTimeMax = 4.0f;
+		m_enemyZako->ChangeAnim(L"Down");//ダメージを受けたアニメーションに変更
+	}
+	void EnemyZakoFlyingStanState::Update(float deltaTime)
+	{
+		// 地面についていなければ
+		if (!m_enemyZako->GetLand() && m_stunTimeCount > 0.8f)
+		{
+			// 地面についていなければy座標をゆっくり下げる
+			m_enemyZako->SetVelocity(Vec3(0, -10.0f, 0));
+		}
+		// 地面についているなら
+		else
+		{
+			// 加速度を0にして、地面にくっつける
+			m_enemyZako->SetVelocity(Vec3(0, 0, 0));
+		}
+
+		m_stunTimeCount += deltaTime;
+		// 一定時間たったら浮遊してStandステートに戻る
+		if (m_stunTimeCount > m_stunTimeMax)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime);
+	}
+	void EnemyZakoFlyingStanState::Exit()
+	{
+		m_stunTimeCount = 0.0f;
+	}
+	// END------------------------------------
+
+	//ダメージを受けたとき--------------------
 	void EnemyZakoFlyingHitState::Enter()
 	{
 		auto hitInfo = m_enemyZako->GetHitInfo();
@@ -1004,7 +1065,7 @@ namespace basecross {
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 
-		m_enemyZako->ChangeAnim(L"Stand");//ダメージを受けたアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Hit");//ダメージを受けたアニメーションに変更
 	}
 	void EnemyZakoFlyingHitState::Update(float deltaTime)
 	{
@@ -1019,6 +1080,36 @@ namespace basecross {
 
 	}
 	// END------------------------------------
+
+	// やられたときのステート-----------------
+	void EnemyZakoFlyingDieState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+		//やられたときのSE再生
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f);
+		//やられたとき用のアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Down");
+
+	}
+	void EnemyZakoFlyingDieState::Update(float deltaTime)
+	{
+		//アニメーション更新時間
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
+		//時間計測
+		m_timeOfState += deltaTime;
+
+		//一定時間過ぎたら(やられる演出)消える
+		if (m_timeOfState >= m_timeMaxOfState)
+		{
+			m_enemyZako->SetUsed(false);
+		}
+	}
+	void EnemyZakoFlyingDieState::Exit()
+	{
+		//リセット
+		m_timeOfState = 0.0f;
+	}
+	// END -----------------------------------
 
 	//-------------------------------------------------------
 	// 飛ぶザコのステート終端

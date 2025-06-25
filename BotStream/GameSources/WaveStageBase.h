@@ -73,6 +73,7 @@ namespace basecross {
 
         bool m_onceFlag = false;
 
+
         shared_ptr<BossGaugeUI> m_bossGauge;
 
         void ShowFPS() {
@@ -99,6 +100,8 @@ namespace basecross {
 
         //マネージャ、UIの類を生成する
         virtual void CreateManagerObjects();
+        //EnemyManagerを生成
+        virtual void CreateEnemyManager();
         //Waveが次に移ったときに呼び出される
         virtual void WaveInitialize();
         //プレイヤーの位置を強制的に変える
@@ -128,6 +131,9 @@ namespace basecross {
         GamePhase GetCurrentGamePhase() {
             return m_gamePhase;
         }
+        void SetGamePhase(GamePhase gamePhase){
+            m_gamePhase = gamePhase;
+        }
 
         int GetNowWaveNum() {
             return m_waveCurrent;
@@ -146,7 +152,7 @@ namespace basecross {
             m_deltaScaleCount = counttime;
         }
 
-        void SetActorPause(bool isPause);
+        void SetActorPause(bool isPause,bool andCamera = true);
 
         bool GetActorPause() {
             return m_isPaused;
@@ -230,5 +236,42 @@ namespace basecross {
         virtual ~Ceiling();
         virtual void OnCreate() override;
     };
+
+
+    // ==========================================================
+    // WaveStageBase2の先頭
+    // ==========================================================
+
+    //class WaveStage2 : public WaveStageBase
+    //{
+    //private:
+
+    //public:
+    //    virtual void OnCreate()override;
+    //    virtual void OnUpdate()override;
+    //    //Waveが次に移ったときに呼び出される
+    //    virtual void WaveInitialize();
+
+    //};
+
+    // END ======================================================
+
+    // ==========================================================
+    // WaveStageBase3の先頭
+    // ==========================================================
+
+    class WaveStage3 : public WaveStageBase
+    {
+    private:
+
+    public:
+        virtual void OnCreate()override;
+        virtual void OnUpdate()override;
+        //Waveが次に移ったときに呼び出される
+        virtual void WaveInitialize();
+
+    };
+
+    // END ======================================================
 
 }
