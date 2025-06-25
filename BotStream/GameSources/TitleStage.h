@@ -17,7 +17,7 @@ namespace basecross {
 		shared_ptr<SoundItem> m_BGM;
 
 		Vec3 m_selectPos;
-
+		float m_time = 0;
 	public:
 		//\’z‚Æ”jŠü
 		TitleStage() :Stage() {}
