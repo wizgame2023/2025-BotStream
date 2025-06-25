@@ -100,6 +100,8 @@ namespace basecross {
 
         //マネージャ、UIの類を生成する
         virtual void CreateManagerObjects();
+        //EnemyManagerを生成
+        virtual void CreateEnemyManager();
         //Waveが次に移ったときに呼び出される
         virtual void WaveInitialize();
         //プレイヤーの位置を強制的に変える

@@ -141,6 +141,28 @@ namespace basecross {
 
     }
 
+	//EnemyManagerとボスの初期設定
+	void WaveStageBase::CreateEnemyManager() {
+
+		vector<EnemyVariation> enemyVariation;
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Normal);
+		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Projectile);
+		}
+
+		enemyVariation.push_back(EVar_Aerial);
+
+		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
+		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
+
+		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+		SetSharedGameObject(L"Boss", m_boss.lock());
+	}
+
     void WaveStageBase::OnCreate()
     {
         auto& app = App::GetApp();
@@ -154,24 +176,7 @@ namespace basecross {
         CreateCeiling();
         CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
 
-        //Enemyマネージャのテスト
-        vector<EnemyVariation> enemyVariation;
-        for (int i = 0; i <= 10; i++)
-        {
-            enemyVariation.push_back(EVar_Normal);
-        }
-        for (int i = 0; i <= 10; i++)
-        {
-            enemyVariation.push_back(EVar_Projectile);
-        }
-
-        enemyVariation.push_back(EVar_Aerial);
-
-        m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
-        SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
-
-        m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-        SetSharedGameObject(L"Boss", m_boss.lock());
+		CreateEnemyManager();
 
         //wave1敵
         m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
