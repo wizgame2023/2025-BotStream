@@ -510,6 +510,7 @@ namespace basecross {
 		tmp.HitVel_Air = Vec3(-8, 20, 0);
 		tmp.HitTime_Stand = 1.5f;
 		tmp.HitTime_Air = 1.0f;
+		tmp.HitEffect = L"EnemyLongHitEfk";
 
 		DefAttack(5, tmp);
 		GetAttackPtr()->SetCollScale(.5f);
@@ -575,6 +576,7 @@ namespace basecross {
 		tmp.HitVel_Air = Vec3(velX, m_hitBeamVel, 0);
 		tmp.HitTime_Stand = 1.2f;
 		tmp.HitTime_Air = 1.2f;
+		tmp.HitEffect = L"EnemyLongHitEfk";
 
 		DefAttack(5.0f, tmp);
 		GetAttackPtr()->SetCollScale(4.0f);
@@ -616,6 +618,7 @@ namespace basecross {
 		tmp.HitVel_Air = Vec3(-6, 3, 0);
 		tmp.HitTime_Stand = .4f;
 		tmp.HitTime_Air = .4f;
+		tmp.HitEffect = L"EnemyLongHitEfk";
 
 		DefAttack(100.0f, tmp);
 		GetAttackPtr()->GetComponent<Transform>()->SetScale(Vec3(.5f));

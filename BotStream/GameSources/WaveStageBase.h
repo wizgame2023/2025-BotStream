@@ -73,6 +73,7 @@ namespace basecross {
 
         bool m_onceFlag = false;
 
+
         shared_ptr<BossGaugeUI> m_bossGauge;
 
         void ShowFPS() {
@@ -130,6 +131,9 @@ namespace basecross {
         GamePhase GetCurrentGamePhase() {
             return m_gamePhase;
         }
+        void SetGamePhase(GamePhase gamePhase){
+            m_gamePhase = gamePhase;
+        }
 
         int GetNowWaveNum() {
             return m_waveCurrent;
@@ -148,7 +152,7 @@ namespace basecross {
             m_deltaScaleCount = counttime;
         }
 
-        void SetActorPause(bool isPause);
+        void SetActorPause(bool isPause,bool andCamera = true);
 
         bool GetActorPause() {
             return m_isPaused;
@@ -232,5 +236,42 @@ namespace basecross {
         virtual ~Ceiling();
         virtual void OnCreate() override;
     };
+
+
+    // ==========================================================
+    // WaveStageBase2‚Ìæ“ª
+    // ==========================================================
+
+    //class WaveStage2 : public WaveStageBase
+    //{
+    //private:
+
+    //public:
+    //    virtual void OnCreate()override;
+    //    virtual void OnUpdate()override;
+    //    //Wave‚ªŸ‚ÉˆÚ‚Á‚½‚Æ‚«‚ÉŒÄ‚Ño‚³‚ê‚é
+    //    virtual void WaveInitialize();
+
+    //};
+
+    // END ======================================================
+
+    // ==========================================================
+    // WaveStageBase3‚Ìæ“ª
+    // ==========================================================
+
+    class WaveStage3 : public WaveStageBase
+    {
+    private:
+
+    public:
+        virtual void OnCreate()override;
+        virtual void OnUpdate()override;
+        //Wave‚ªŸ‚ÉˆÚ‚Á‚½‚Æ‚«‚ÉŒÄ‚Ño‚³‚ê‚é
+        virtual void WaveInitialize();
+
+    };
+
+    // END ======================================================
 
 }

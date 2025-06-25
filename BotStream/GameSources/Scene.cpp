@@ -37,7 +37,7 @@ namespace basecross{
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 			
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<TitleStage> ();
 
 		}
 
@@ -62,9 +62,22 @@ namespace basecross{
 
 		// ここは後にWaveStageに変更する
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
-		if (event->m_MsgStr == L"ToWaveStage")
+		if (event->m_MsgStr == L"ToWaveStage1")
 		{
-			ResetActiveStage<TutorialStage>();
+			m_stageNum = 1;
+			ResetActiveStage<StageFirst>();
+		}
+		
+		if (event->m_MsgStr == L"ToWaveStage2")
+		{
+			m_stageNum = 2;
+			ResetActiveStage<StageSecond>();
+		}
+
+		if (event->m_MsgStr == L"ToWaveStage3")
+		{
+			m_stageNum = 3;
+			ResetActiveStage<StageThird>();
 		}
 
 		if (event->m_MsgStr == L"ToGameOver") {
@@ -107,6 +120,8 @@ namespace basecross{
 		app->RegisterTexture(L"Fadeout", strTexture);
 		strTexture = texPath + L"SlowSpeite.png";
 		app->RegisterTexture(L"SlowTex", strTexture);
+		strTexture = texPath + L"Door.png";
+		app->RegisterTexture(L"DoorTex", strTexture);
 
 		// title
 		strTexture = texPath + L"TitleBack.png";
@@ -358,6 +373,11 @@ namespace basecross{
 		EffectManager::Instance().RegisterEffect(L"Damage", efkPath + L"damage.efkefc");
 		EffectManager::Instance().RegisterEffect(L"SlashHitEfk", efkPath + L"slashHit.efkefc");
 		EffectManager::Instance().RegisterEffect(L"GunHitEfk", efkPath + L"GunHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyHitEfk", efkPath + L"EnemyHit.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyLongHitEfk", efkPath + L"PlayerGunDamage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"RushEfk", efkPath + L"Rush.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemyAttack", efkPath + L"PrayerDamage.efkefc");
+		EffectManager::Instance().RegisterEffect(L"GunLine", efkPath + L"GunLine.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
@@ -398,7 +418,10 @@ namespace basecross{
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
-		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav"); 
+		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
+		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
+		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
+
 		// パーツ入手
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
 		// ジャスト回避

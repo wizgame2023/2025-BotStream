@@ -140,7 +140,7 @@ namespace basecross {
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		//位置更新
-		SpeedLimit(3.0f); //スピードリミット
+		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
 	}
 
@@ -396,8 +396,9 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Walk", 126, 49, 60.0f);
 		ptrDraw->AddAnimation(L"Charge", 0, 125, 60.0f);
 		ptrDraw->AddAnimation(L"Down", 637, 88, false, 60.0f);
+		ptrDraw->AddAnimation(L"Hit", 637, 25, false, 60.0f);
 		ptrDraw->AddAnimation(L"Stan", 637, 88, false, 60.0f);
-
+	
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>();//コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
@@ -410,7 +411,7 @@ namespace basecross {
 
 		//接地判定の設定
 		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(7.0f, 7.0f, 7.0f));
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
@@ -433,6 +434,28 @@ namespace basecross {
 		{
 			return;
 		}
+		if (!m_beforUsed)
+		{
+			if (m_used)
+			{
+				m_HPCurrent = m_HPMax;
+				m_attackFlag = false;
+				m_timeCountOfAttackCool = 3.0f;
+				//初期ステートに戻す
+				ChangeState(L"Stand");
+			}
+		}
+		if (m_beforUsed)
+		{
+			if (!m_used)
+			{
+				auto stage = GetStage();
+				auto pos = GetComponent<Transform>()->GetPosition();
+				stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(pos);
+			}
+		}
+		//現在の使用状況と見比べて変わっていないか見る
+		m_beforUsed = m_used;
 
 		EnemyBase::OnUpdate();
 

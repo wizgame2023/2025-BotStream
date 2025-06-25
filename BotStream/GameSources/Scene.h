@@ -12,6 +12,7 @@ namespace basecross{
 	///	ゲームシーン
 	//--------------------------------------------------------------------------------------
 	class Scene : public SceneBase{
+		int m_stageNum = 1;
 	public:
 		//--------------------------------------------------------------------------------------
 		/*!
@@ -43,6 +44,11 @@ namespace basecross{
 		//ゲームに必要な物のパスを渡す
 		void GameResourses();
 
+		// ステージ数を取得する
+		int GetStageNum()
+		{
+			return m_stageNum;
+		}
 	};
 
 }

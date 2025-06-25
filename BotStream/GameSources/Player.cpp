@@ -180,8 +180,6 @@ namespace basecross {
 		}
 		//-------------------------------------------------------------
 		
-		//デバック用文字列
-		//DebugLog();
 
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
@@ -685,6 +683,7 @@ namespace basecross {
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
+		auto efkMana = EffectManager::Instance().GetTotalInstanceCount();
 		auto testVel = (m_velocity * _delta);
 		auto pos = GetPosition();
 		wss /* << L"デバッグ用文字列 "*/
@@ -696,7 +695,8 @@ namespace basecross {
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
 			<<L"\nDeltaTime" << _delta
 			<<L"\nDeltaScale" << deltaScale
-			<< L"\nAngle : " << GetAngle() << endl;
+			<< L"\nAngle : " << GetAngle()
+			<< L"\ninstance : " << efkMana<< endl;
 
 		scene->SetDebugString(wss.str());
 	}
@@ -717,14 +717,14 @@ namespace basecross {
 		////テストで撃つ場所にキューブを生成してみる
 		//GetStage()->AddGameObject<Cube>(m_pos, m_rot, Vec3(1.0f, 1.0f, 1.0f));
 
-		//ドローメッシュの設定
-		auto ptrDraw = AddComponent<PNTStaticDraw>();
-		ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
-		ptrDraw->SetDiffuse(Col4(0.24f, 0.7f, 0.43f, 1.0f));
-		ptrDraw->SetOwnShadowActive(false);//影は消す
-		ptrDraw->SetDrawActive(true);
-		ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
-		ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+		////ドローメッシュの設定
+		//auto ptrDraw = AddComponent<PNTStaticDraw>();
+		//ptrDraw->SetMeshResource(L"DEFAULT_SPHERE");
+		//ptrDraw->SetDiffuse(Col4(0.24f, 0.7f, 0.43f, 1.0f));
+		//ptrDraw->SetOwnShadowActive(false);//影は消す
+		//ptrDraw->SetDrawActive(true);
+		//ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
+		//ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
 		//原点オブジェクトが消えていたら自分も消える
 		auto originLock = m_originObj.lock();
@@ -767,11 +767,13 @@ namespace basecross {
 		case ActorName_Player:
 			tmp.Type = AttackType::Player;//攻撃のタイプはプレイヤー	
 			tmp.Damage = 5 + player->GetEquippedParts().addAttack;//ダメージ
+			tmp.HitEffect = L"GunHitEfk";
 
 			break;
 		case ActorName_Enemy:
 			tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
 			tmp.Damage = 5;//ダメージ
+			tmp.HitEffect = L"EnemyLongHitEfk";
 			break;
 		default:
 			break;
@@ -782,7 +784,6 @@ namespace basecross {
 		tmp.HitVel_Stand = Vec3(-5, 5, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 0.1f;//のけぞり時間
 		tmp.InvincibleOnHit = true;
-		tmp.HitEffect = L"GunHitEfk";
 
 		//tmp.PauseTime = 5.0f;
 		//tmp.ForceRecover = true;
@@ -791,6 +792,19 @@ namespace basecross {
 		AttackPtr->SetCollScale(1.0f);
 
 		DefAttack(5.0f, tmp);
+
+		// エフェクト生成
+		//AddEffect(PlayerEffect_Shot);
+		m_gunLine = EfkPlaying(L"GunLine", m_AngleYAxis + XMConvertToRadians(90.0f), Vec3(cos(m_angleXAxis) * sin(m_AngleYAxis),
+			cos(m_AngleYAxis),
+			sin(m_angleXAxis) * sin(m_AngleYAxis)),
+			Col4(0.22f, 1.0f, 0.48f, 1.0f));
+
+		//クォータニオン回転
+		Quat Qt = Quat(0.0f, sin((m_AngleYAxis + XMConvertToRadians(90.0f)) / 2), 0.0f, cos((m_AngleYAxis + XMConvertToRadians(90.0f)) / 2));
+		//Qt *= Quat(sin((m_angleXAxis + XMConvertToRadians(90.0f)) / 2), 0.0f, 0.0f, cos((m_angleXAxis + XMConvertToRadians(90.0f)) / 2));
+		//EffectManager::Instance().SetRotationFromQuaternion(m_gunLine, Quat(0.0f, sin((m_AngleYAxis+XMConvertToRadians(90.0f)) / 2), 0.0f, cos((m_AngleYAxis + XMConvertToRadians(90.0f)) / 2)));
+		EffectManager::Instance().SetRotationFromQuaternion(m_gunLine,Qt);
 
 	}
 
@@ -801,6 +815,9 @@ namespace basecross {
 		{
 			return;
 		}
+
+		//エフェクト(弾を追いかけさせる)
+		EffectManager::Instance().SetPosition(m_gunLine, GetPosition());
 
 		Actor::OnUpdate();
 

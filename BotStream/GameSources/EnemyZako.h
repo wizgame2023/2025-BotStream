@@ -135,40 +135,9 @@ namespace basecross {
 		}
 		~EnemyZakoFlying() {}
 
-		//受けた攻撃の情報を渡すゲッター
-		HitInfo EnemyZakoFlying::GetHitInfo()
-		{
-			return m_getHitInfo;
-		}
-
 		void OnCreate() override;
 		void OnUpdate() override;
 
-		//攻撃のタイプのゲッタ
-		int GetAttackType()
-		{
-			return m_AttackType;
-		}
-
-		//攻撃フラグのゲッタセッタ
-		bool GetAttackFlag()
-		{
-			return m_attackFlag;
-		}
-		void SetAttackFlag(bool attackFlag)
-		{
-			m_attackFlag = attackFlag;
-		}
-
-		//アニメーションの追加時間のゲッタセッタ
-		float GetAddTimeAnimation()
-		{
-			return m_addTimeAnimation;
-		}
-		void SetAddTimeAnimation(float addTimeAnimation)
-		{
-			m_addTimeAnimation = addTimeAnimation;
-		}
 	};
 
 }

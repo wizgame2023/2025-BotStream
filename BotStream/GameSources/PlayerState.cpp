@@ -476,7 +476,7 @@ namespace basecross {
 			//ダメージ
 			tmp.Damage = 10 + m_plusAttack;
 			//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
-			tmp.HitVel_Stand = Vec3(-2, 1, 0);
+			tmp.HitVel_Stand = Vec3(-2, 8, 0);
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
 			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
@@ -578,10 +578,10 @@ namespace basecross {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.Damage = 12 + (m_plusAttack / 2);
-			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
+			tmp.HitVel_Stand = Vec3(-2, 8, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 3, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(3.0f, 5.0f, 5.0f);//横長の当たり判定
 			AttackPtr->SetCollScale(1.0f);
@@ -596,10 +596,10 @@ namespace basecross {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.Damage = 12 + (m_plusAttack / 2);
-			tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
+			tmp.HitVel_Stand = Vec3(-2, 8, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 3, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(6.0f, 5.0f, 2.0f);//縦長の当たり判定
 			AttackPtr->SetCollScale(1.0f);
@@ -699,10 +699,10 @@ namespace basecross {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.Damage = 18 + (m_plusAttack / 2);
-			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
+			tmp.HitVel_Stand = Vec3(-10, 8, 3);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 3, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(5.0f, 5.0f, 7.0f);
 			AttackPtr->SetCollScale(1.0f);
@@ -720,7 +720,7 @@ namespace basecross {
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
-			m_player->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			m_player->GetAttackPtr()->SetPos(Vec3(3, 8, 0));
 			auto AttackPtr = m_player->GetAttackPtr();
 			AttackPtr->GetComponent<Transform>()->SetScale(5.0f, 5.0f, 7.0f);
 			AttackPtr->SetCollScale(1.0f);
@@ -820,7 +820,7 @@ namespace basecross {
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.Damage = 25 + m_plusAttack;
-			tmp.HitVel_Stand = Vec3(-20, 5, 0);//ヒットバック距離
+			tmp.HitVel_Stand = Vec3(-20, 10, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする
 			m_player->DefAttack(.5f, tmp);
@@ -1005,15 +1005,16 @@ namespace basecross {
 		auto gamePhase = m_player->GetWaveStage(true)->GetCurrentGamePhase();
 		if (gamePhase == WaveStageBase::GamePhase::GPhase_Playing)
 		{
-			m_player->ChangeState(L"Stand");
+			m_player->ChangeState(L"PlayerWalk");
 		}
 
-		//ムービー用コントローラー取得
-		auto RT_movieController = m_player->GetStage()->GetSharedGameObject<RT_MovieController>(L"RT_MovieController");
 		
 		//地面に着地したらこのステートの処理は終了
-		if (m_player->GetLand())
+		if (m_player->GetPosition().y <= 1.0f)
 		{
+			//ムービー用コントローラー取得
+			auto RT_movieController = m_player->GetStage()->GetSharedGameObject<RT_MovieController>(L"MovieController");
+
 			RT_movieController->SetPlayerEnd(true);
 		}
 	}

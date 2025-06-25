@@ -22,10 +22,14 @@ namespace basecross {
 	//パーツドロップ処理
 	void PartsManager::PartsDrop(Vec3 dropPos)
 	{
+		// 空中に浮かんでいる敵からドロップしても手に入るようにする
+		dropPos.y = 1.0f;
+
 		float par = rand() % 100;
 		int drop = rand() % 3;
 		auto stage = GetStage();
 		//par = 10;//テスト用に絶対生成する
+		//drop = 0;
 		//35%ぐらいの確率でパーツドロップ
 		if (par > 0 && par <= 15)
 		{
@@ -33,15 +37,15 @@ namespace basecross {
 			{
 			case 0:
 				//戦闘用パッチ
-				stage->AddGameObject<PartsBattlePatch>(dropPos,Vec3(0.0f,0.0f,0.0f),Vec3(1.0f,1.0f,1.0f));
+				stage->AddGameObject<PartsBattlePatch>(dropPos,Vec3(0.0f,0.0f,0.0f),Vec3(2.0f,2.0f,2.0f));
 				break;
 			case 1:
 				//試作パーツ
-				stage->AddGameObject<HeadParts>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+				stage->AddGameObject<HeadParts>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
 				break;
 			case 2:
 				//高性能モーター
-				stage->AddGameObject<PartsHiMoter>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
+				stage->AddGameObject<PartsHiMoter>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
 				break;
 			default:
 				break;
