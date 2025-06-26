@@ -273,21 +273,16 @@ namespace basecross{
 
 		strTexture = texPath + L"Tutorial/Tutorial1.png";
 		app->RegisterTexture(L"Tuto_txt1", strTexture);
-		/*strTexture = texPath + L"Tutorial/Tutorial_txt2.png";
+		strTexture = texPath + L"Tutorial/Tutorial2.png";
 		app->RegisterTexture(L"Tuto_txt2", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt3.png";
+		strTexture = texPath + L"Tutorial/Tutorial3.png";
 		app->RegisterTexture(L"Tuto_txt3", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt4.png";
+		strTexture = texPath + L"Tutorial/Tutorial4.png";
 		app->RegisterTexture(L"Tuto_txt4", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt5.png";
+		strTexture = texPath + L"Tutorial/Tutorial5.png";
 		app->RegisterTexture(L"Tuto_txt5", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt6.png";
+		strTexture = texPath + L"Tutorial/Tutorial6.png";
 		app->RegisterTexture(L"Tuto_txt6", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt7.png";
-		app->RegisterTexture(L"Tuto_txt7", strTexture);*/
-
-		strTexture = texPath + L"Tutorial/Tutorial1.png";
-		app->RegisterTexture(L"Tuto_dialog1", strTexture);
 
 		// その他ゲーム中テクスチャ
 		strTexture = texPath + L"Shock_wave_ring001.png";

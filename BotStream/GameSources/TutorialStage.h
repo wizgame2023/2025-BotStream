@@ -11,7 +11,7 @@ namespace basecross {
     class TutorialProgress;
     class TutorialDone;
     class TutorialDescription;
-
+    class TutorialDialog;
 
     class TutorialStage : public WaveStageBase {
     protected:
@@ -28,7 +28,9 @@ namespace basecross {
             //遠隔攻撃
             Tutorial_ShootFromAfar,
             //殺せ！
-            Tutorial_KillAsYouLike
+            Tutorial_KillAsYouLike,
+            //クリア
+            Tutorial_Cleared
         };
         TutorialPhase m_tutorialPhase = Tutorial_Start;
 
@@ -38,16 +40,24 @@ namespace basecross {
 
         //チュートリアル進行状況(0～1)
         float m_progress[2] = {0, 0};
-        const float m_tutorialMoveRequired = .0001f;
-        const float m_tutorialCameraRequired = .002f;
+        const float m_tutorialMoveRequired = .05f;
+        const float m_tutorialCameraRequired = .1f;
         const int m_enemyNum = 5;
 
         const float m_tutorialEvadeRequired = .5f;
+        const float m_tutorialDashRequired = .25f;
+        const float m_tutorialAttackRequired = .1f;
+        const float m_tutorialAttackRequiredEx = .35f;
+        const float m_tutorialShotRequired = .25f;
 
         //チュートリアルの進行状況を監視
         void UpdateTutorialPhase();
         //次のチュートリアルに移行
         void ChangeTutorialPhase(TutorialPhase phase);
+
+        bool ConsiderGameClear() override;
+
+        void DisplayDialog(wstring key, shared_ptr<TutorialDialog> ui);
 
         void UpdateGamePhase() override;
     public:
@@ -244,7 +254,6 @@ namespace basecross {
         virtual void OnCreate() override;
 
         void ChangeDescription(int num) {
-
             switch (num) {
             case 1:
                 m_desc.lock()->ChangeResource(L"Tuto_barTxt1", Vec2(87.2f, 21.4f));
@@ -346,6 +355,11 @@ namespace basecross {
         //初期化
         virtual void OnCreate() override;
         virtual void OnUpdate() override;
+
+        void SetResource(wstring key) {
+            m_resKey = key;
+            m_drawComp->SetTextureResource(m_resKey);
+        }
 
         //移動が完了したらtrueが返る
         bool GetMoveDone() {
