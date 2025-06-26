@@ -36,8 +36,6 @@ namespace basecross {
 			enemyVariation.push_back(EVar_Aerial);
 		}
 
-
-
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
 
@@ -132,8 +130,6 @@ namespace basecross {
 			break;
 		case GPhase_CutScene:
 
-			//ムービー中はPlayerや敵が動かないようにステージをポーズ状態にする
-			SetActorPause(true, false);
 			break;
 		}
 
@@ -257,22 +253,6 @@ namespace basecross {
 			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}
 
-
-		//フェーズの状態によって処理が変わる
-		if (m_gamePhase == GPhase_Start)
-		{
-			//アクターがUpdeta出来なくする
-			//SetActorPause(true);
-			m_deltaScaleCount = 1.0f; // deltaScaleを元に戻らないようにする
-			m_deltaScale = 0.0f;
-		}
-		if (m_gamePhase == GPhase_Playing)
-		{
-			m_deltaScale = 1.0f;
-			m_deltaScaleCount = 0.0f; // deltaScaleを元に戻らないようにする
-			
-			//SetActorPause(false);
-		}
 	}
 
 	//ドアを動かす処理

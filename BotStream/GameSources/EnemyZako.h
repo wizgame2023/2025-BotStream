@@ -54,10 +54,15 @@ namespace basecross {
 
 		void OnCreate() override;
 		void OnUpdate() override;
+
+		// 初期化処理
+		void Initialize();
+
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;
 		void OnDestroy()override;
 
-		//ダメージビルボード
+
+		// ダメージビルボード
 		void CreateDamageBill(
 			shared_ptr<GameObject> actorPtr,
 			int damage,
