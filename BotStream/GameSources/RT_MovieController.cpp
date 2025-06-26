@@ -70,6 +70,9 @@ namespace basecross {
 			// ムービーをしなくなったため
 			m_startMovie = Movie_None;
 			m_cameraEnd = false;
+
+			//ポーズ状態解除
+			waveStage->SetActorPause(false, false);
 		}
 		//==========================================================================
 
@@ -156,6 +159,9 @@ namespace basecross {
 	void RT_MovieController::BossMovie()
 	{
 		auto waveStage = GetWaveStage(true);
+
+		//ムービー中はPlayerや敵が動かないようにステージをポーズ状態にする
+		waveStage->SetActorPause(true, false);
 
 		//カットシーンフェーズに移行
 		waveStage->SetGamePhase(waveStage->GPhase_CutScene);
