@@ -100,11 +100,8 @@ namespace basecross {
 		{
 			if (m_used)
 			{
-				m_HPCurrent = m_HPMax;
-				m_attackFlag = false;
-				m_timeCountOfAttackCool = 3.0f;
-				//初期ステートに戻す
-				ChangeState(L"Stand");
+				// 初期化
+				Initialize();
 			}
 		}
 		if (m_beforUsed)
@@ -144,6 +141,16 @@ namespace basecross {
 		UpdatePosition();
 	}
 
+	//初期化処理
+	void EnemyZako::Initialize()
+	{
+		m_HPCurrent = m_HPMax;
+		m_attackFlag = false;
+		m_timeCountOfAttackCool = 3.0f;
+		//初期ステートに戻す
+		ChangeState(L"Stand");
+	}
+
 	void EnemyZako::CreateDamageBill(shared_ptr<GameObject> actorPtr, int damage, float pushY, float scale, float displayTime)
 	{
 		string dmgStr = to_string(damage);                    // 受け取ったダメージの文字数(30であれば「3」と「0」で2文字)
@@ -157,7 +164,7 @@ namespace basecross {
 
 			auto damageBill = GetStage()->AddGameObject<DamageBill>(
 				actorPtr,                    // 各ビルボードは敵にくっつける
-				L"Numbers",                  // テクスチャ名
+				L"DamageNumbers",                  // テクスチャ名
 				3,                           // レイヤー
 				pushY,                       // Y軸オフセット
 				Vec3(scale),				 // サイズ

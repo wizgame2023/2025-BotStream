@@ -349,6 +349,30 @@ namespace basecross {
 		void NextState()override;
 	};
 
+	//回転攻撃が終わった後用のステート
+	class PlayerAttackExEndState :public PlayerStateBase
+	{
+	private:
+
+		float m_countTimeOfState = 0.0f;
+		float m_maxTimeOfState = 1.1f * 0.8f;
+
+	public:
+		PlayerAttackExEndState(shared_ptr<GameObject>& obj):
+			PlayerStateBase(obj)
+		{
+
+		}
+		~PlayerAttackExEndState()
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
+
 	//攻撃ステート(必殺技)
 	class PlayerAttackSpecialState :public PlayerStateBase
 	{
@@ -477,6 +501,7 @@ namespace basecross {
 			AddState(L"AttackSpecial", shared_ptr<PlayerAttackSpecialState>(new PlayerAttackSpecialState(obj)));
 			AddState(L"Hit", shared_ptr<PlayerHitState>(new PlayerHitState(obj)));
 			AddState(L"StartMovie", shared_ptr<PlayerStartMovieState>(new PlayerStartMovieState(obj)));
+			AddState(L"AttackExEnd", shared_ptr<PlayerAttackExEndState>(new PlayerAttackExEndState(obj)));
 
 
 			//最初のステートはWalkここからいろんなステートに変更する イーブイみたいなもの

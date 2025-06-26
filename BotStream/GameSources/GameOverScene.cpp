@@ -27,7 +27,6 @@ namespace basecross {
 
 	void GameOver::OnCreate()
 	{
-		//EffectManager::Instance().Release();
 		CreateViewLight();
 		CreateSprite();
 		m_scene = App::GetApp()->GetScene<Scene>();

@@ -212,6 +212,8 @@ namespace basecross{
 		app->RegisterTexture(L"Texts", strTexture);
 		strTexture = texPath + L"Numbers.png";
 		app->RegisterTexture(L"Numbers", strTexture);
+		strTexture = texPath + L"DamageNumber.png";
+		app->RegisterTexture(L"DamageNumbers", strTexture);
 		strTexture = texPath + L"Questions.png";
 		app->RegisterTexture(L"Questions", strTexture);
 		strTexture = texPath + L"Answer.png";
@@ -418,6 +420,7 @@ namespace basecross{
 		app->RegisterWav(L"Reload", SoundPath + L"Reload.wav");
 		app->RegisterWav(L"CantShotSE", SoundPath + L"CantShot.wav");
 		app->RegisterWav(L"DamageVoiceSE", SoundPath + L"DamageVoice.wav");
+		app->RegisterWav(L"DamageSE", SoundPath + L"DamageSE.wav");
 		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
