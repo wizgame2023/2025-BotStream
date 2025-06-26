@@ -93,6 +93,15 @@ namespace basecross {
 			m_selectOnceFlag = true;
 		}
 
+		//==========================================================================================================
+		// チュートリアルにジャンプ(仮)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_START || keybord.m_bPressedKeyTbl[VK_TAB]) && !m_stageFlag)
+		{
+			ptrMana->Stop(m_BGM);
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
+		}
+		//==========================================================================================================
+		
 		// Aボタンかエンターキーで選択
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
 		{

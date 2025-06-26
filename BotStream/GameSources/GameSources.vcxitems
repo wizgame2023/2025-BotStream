@@ -52,6 +52,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSato.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSecond.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageSelect.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageThird.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StageTuboi.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)State.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EnemyManager.h" />
@@ -99,6 +100,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSato.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSecond.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageSelect.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StageThird.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StageTuboi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)State.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)TitleStage.cpp" />
