@@ -100,11 +100,8 @@ namespace basecross {
 		{
 			if (m_used)
 			{
-				m_HPCurrent = m_HPMax;
-				m_attackFlag = false;
-				m_timeCountOfAttackCool = 3.0f;
-				//初期ステートに戻す
-				ChangeState(L"Stand");
+				// 初期化
+				Initialize();
 			}
 		}
 		if (m_beforUsed)
@@ -142,6 +139,16 @@ namespace basecross {
 		//位置更新
 		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
+	}
+
+	//初期化処理
+	void EnemyZako::Initialize()
+	{
+		m_HPCurrent = m_HPMax;
+		m_attackFlag = false;
+		m_timeCountOfAttackCool = 3.0f;
+		//初期ステートに戻す
+		ChangeState(L"Stand");
 	}
 
 	void EnemyZako::CreateDamageBill(shared_ptr<GameObject> actorPtr, int damage, float pushY, float scale, float displayTime)
