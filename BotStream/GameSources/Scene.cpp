@@ -60,12 +60,17 @@ namespace basecross{
 
 		}
 
+		if (event->m_MsgStr == L"Tutorial")
+		{
+			m_stageNum = 1;
+			ResetActiveStage<TutorialStage>();
+		}
 		// ここは後にWaveStageに変更する
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage1")
 		{
 			m_stageNum = 1;
-			ResetActiveStage<TutorialStage>();
+			ResetActiveStage<StageFirst>();
 		}
 		
 		if (event->m_MsgStr == L"ToWaveStage2")
