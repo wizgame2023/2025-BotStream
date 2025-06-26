@@ -207,6 +207,8 @@ namespace basecross{
 		app->RegisterTexture(L"Texts", strTexture);
 		strTexture = texPath + L"Numbers.png";
 		app->RegisterTexture(L"Numbers", strTexture);
+		strTexture = texPath + L"DamageNumber.png";
+		app->RegisterTexture(L"DamageNumbers", strTexture);
 		strTexture = texPath + L"Questions.png";
 		app->RegisterTexture(L"Questions", strTexture);
 		strTexture = texPath + L"Answer.png";
@@ -247,6 +249,47 @@ namespace basecross{
 		//射撃用テクスチャ
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
+		
+		//Tutorial
+		strTexture = texPath + L"Tutorial/Tutorial_progressbar.png";
+		app->RegisterTexture(L"Tuto_bar", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progressframe.png";
+		app->RegisterTexture(L"Tuto_frame", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progressdone.png";
+		app->RegisterTexture(L"Tuto_ok", strTexture);
+
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt1.png";
+		app->RegisterTexture(L"Tuto_barTxt1", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt2.png";
+		app->RegisterTexture(L"Tuto_barTxt2", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt3.png";
+		app->RegisterTexture(L"Tuto_barTxt3", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt4.png";
+		app->RegisterTexture(L"Tuto_barTxt4", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt5.png";
+		app->RegisterTexture(L"Tuto_barTxt5", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt6.png";
+		app->RegisterTexture(L"Tuto_barTxt6", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_progresstxt7.png";
+		app->RegisterTexture(L"Tuto_barTxt7", strTexture);
+
+		strTexture = texPath + L"Tutorial/Tutorial1.png";
+		app->RegisterTexture(L"Tuto_txt1", strTexture);
+		/*strTexture = texPath + L"Tutorial/Tutorial_txt2.png";
+		app->RegisterTexture(L"Tuto_txt2", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt3.png";
+		app->RegisterTexture(L"Tuto_txt3", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt4.png";
+		app->RegisterTexture(L"Tuto_txt4", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt5.png";
+		app->RegisterTexture(L"Tuto_txt5", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt6.png";
+		app->RegisterTexture(L"Tuto_txt6", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial_txt7.png";
+		app->RegisterTexture(L"Tuto_txt7", strTexture);*/
+
+		strTexture = texPath + L"Tutorial/Tutorial1.png";
+		app->RegisterTexture(L"Tuto_dialog1", strTexture);
 
 		// その他ゲーム中テクスチャ
 		strTexture = texPath + L"Shock_wave_ring001.png";

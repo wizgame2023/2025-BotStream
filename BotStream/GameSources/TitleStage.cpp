@@ -37,10 +37,17 @@ namespace basecross {
 	{
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
-
+		auto delta = App::GetApp()->GetElapsedTime();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
-		//m_titleSprite->SetColor(Col4(1.0f,1.0f,1.0f,sinf()))
+		m_time += delta;
+
+		if (sinf(m_time) < 0.0f)
+		{
+			m_time = 0;
+		}
+		
+		m_textSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, sinf(m_time)));
 
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
