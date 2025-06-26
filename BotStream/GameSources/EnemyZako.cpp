@@ -157,7 +157,7 @@ namespace basecross {
 
 			auto damageBill = GetStage()->AddGameObject<DamageBill>(
 				actorPtr,                    // 各ビルボードは敵にくっつける
-				L"Numbers",                  // テクスチャ名
+				L"DamageNumbers",                  // テクスチャ名
 				3,                           // レイヤー
 				pushY,                       // Y軸オフセット
 				Vec3(scale),				 // サイズ
