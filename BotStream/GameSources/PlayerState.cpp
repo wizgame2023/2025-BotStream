@@ -1045,7 +1045,7 @@ namespace basecross {
 
 		
 		//地面に着地したらこのステートの処理は終了
-		if (m_player->GetPosition().y <= 1.0f)
+		if (m_player->GetLand())
 		{
 			//ムービー用コントローラー取得
 			auto RT_movieController = m_player->GetStage()->GetSharedGameObject<RT_MovieController>(L"MovieController");

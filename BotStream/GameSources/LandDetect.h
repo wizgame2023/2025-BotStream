@@ -12,8 +12,10 @@ namespace basecross{
 	{
 		shared_ptr<CollisionSphere> m_collision;
 		//‹ó’†”»’è‚É‚È‚é‚Ü‚Å‚ÌƒJƒEƒ“ƒg
-		float m_CollideCount = 0;
-		float m_CollideCountMax = .05f;
+		//float m_CollideCount = 0;
+		int m_CollideCount = 0;
+		//float m_CollideCountMax = .05f;
+		int m_CollideCountMax = 5;
 		Vec3 m_bindPos = Vec3(0, -.5f, 0);
 		float m_defaultRadius = .1f;
 		

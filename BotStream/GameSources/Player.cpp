@@ -85,8 +85,9 @@ namespace basecross {
 		ptrColl->SetDrawActive(false);
 
 		//接地判定
-		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
+		m_LandDetect->SetBindPos(Vec3(0, -1.8f, 0));
+		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -127,6 +128,7 @@ namespace basecross {
 			}
 
 		}
+		m_pos = GetPosition();
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
@@ -222,7 +224,7 @@ namespace basecross {
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
 
-		//DebugLog();//デバックログ
+		DebugLog();//デバックログ
 		//めり込み防止処理
 		//ImmersedInCheck();
 	}
@@ -697,7 +699,9 @@ namespace basecross {
 			<<L"\nDeltaTime" << _delta
 			<<L"\nDeltaScale" << deltaScale
 			<< L"\nAngle : " << GetAngle()
-			<< L"\ninstance : " << efkMana<< endl;
+			<< L"\ninstance : " << efkMana
+			//<< L"\nLandDetect : "<<m_LandDetect
+			<< endl;
 
 		scene->SetDebugString(wss.str());
 	}
