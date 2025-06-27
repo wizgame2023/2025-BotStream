@@ -31,6 +31,8 @@ namespace basecross {
 		shared_ptr<SoundItem> m_SE = nullptr;				// 再生しているSE
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;	// SEなどを再生するためのマネージャ
 
+		float m_SEVol; // SEのボリュームの全体の大きさ
+
 		//移動についての処理
 		void Walk(int state, bool onOff);
 		//回避についての処理

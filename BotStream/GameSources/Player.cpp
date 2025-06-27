@@ -96,9 +96,8 @@ namespace basecross {
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
 		m_JastDodgeSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 		
-		//最初に流れる音
-		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
-
+		//最初に流れる音SE
+		PlaySnd(L"StartVoiceSE", 0.9f, 0);
 	}
 
 	void Player::OnUpdate()
@@ -114,6 +113,7 @@ namespace basecross {
 
 		//親クラス処理
 		Actor::OnUpdate();
+		auto testVol = GetSEVol();
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
@@ -288,7 +288,7 @@ namespace basecross {
 			//時間経過したら球を補充させる
 			if (m_reloadTimeCount >= reloadTime)
 			{
-				m_SE = m_SEManager->Start(L"Reload", 0, 0.9f);//リロードSE
+				m_SE = m_SEManager->Start(L"Reload", 0, 0.9f * m_SEVol);//リロードSE
 				m_reloadTimeCount = 0.0f;//リセット
 				m_bulletNum = m_bulletNumMax;
 			}
@@ -647,7 +647,8 @@ namespace basecross {
 			if (attack->GetHitInfo().Type == AttackType::Enemy)
 			{
 				m_jastDodge = true;
-				m_SEManager->Start(L"JastDodgeSE", 0, 2.0f);
+				// SE再生
+				PlaySnd(L"JastDodgeSE", 2.0f, 0);
 				m_timeOfJastDodgeCount = 0.0f;
 			}
 		}
