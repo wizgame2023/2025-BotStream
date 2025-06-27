@@ -46,17 +46,21 @@ namespace basecross {
 
 		}
 
-		// ポーズ中じゃない時にスタートボタンを押すとポーズになる
-		if (!m_pauseFlag &&
-			(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
-				keybord.m_bPressedKeyTbl[VK_SPACE]))
+		// 本当にポーズしてもいいかのフラグ
+		if (m_reallyPauseFlag)
 		{
-			m_pauseFlag = true;
-			m_pauseAudioFlag = false;
-			m_mainSelect = 0;     // メニューインデックス 0 からスタート
-			m_selectFlag = false; // デッドゾーンフラグクリア
-			//アクタークラスを一時停止
-			MoveSwitchActor();
+			// ポーズ中じゃない時にスタートボタンを押すとポーズになる
+			if (!m_pauseFlag &&
+				(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
+					keybord.m_bPressedKeyTbl[VK_SPACE]))
+			{
+				m_pauseFlag = true;
+				m_pauseAudioFlag = false;
+				m_mainSelect = 0;     // メニューインデックス 0 からスタート
+				m_selectFlag = false; // デッドゾーンフラグクリア
+				//アクタークラスを一時停止
+				MoveSwitchActor();
+			}
 		}
 
 		// --- 定数定義 ------------------------------------

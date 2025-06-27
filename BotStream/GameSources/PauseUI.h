@@ -45,6 +45,9 @@ namespace basecross {
 		int m_mainSelect = 0;	// 選択しているところの実数値
 		bool m_audioFlag = false;
 
+		// 本当にポーズをしていいのかのフラグ
+		bool m_reallyPauseFlag = true;
+
 		// メインの選択しているところのポジション
 		Vec3 m_selectPos;
 
@@ -87,6 +90,15 @@ namespace basecross {
 		float GetAudioMax(int BGMorSE)
 		{
 			return m_audioMax[BGMorSE];
+		}
+
+		// 本当にポーズをしていいのかのフラグを設定
+		void SetReallyPauseFlag(bool flag)
+		{
+			if (m_reallyPauseFlag != flag)
+			{
+				m_reallyPauseFlag = flag;
+			}
 		}
 	};
 
