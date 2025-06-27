@@ -96,13 +96,11 @@ namespace basecross {
 			AddGameObject<TestBill>(
 				actorPtr,
 				L"Numbers",
-				2,
-				18.0f,
-				Vec3(3.0f, 3.0f, 3.0f),
-				Col4(1.0f, 1.0f, 1.0f, 1.0f),
-				0.0f
+				1,
+				1.5f,
+				Vec3(2.0f),
+				Col4(1.0f,1.0f,1.0f,0.5f)
 			);
-
 			// ボスゲージ
 			//m_bossGaugeUI = AddGameObject<BossGaugeUI>();
 
