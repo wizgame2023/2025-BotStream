@@ -25,7 +25,7 @@ namespace basecross {
         CreateManagerObjects();
 
         m_gamePhase = GamePhase::GPhase_Start;
-
+        m_waveMax = 1;
         m_tutorialPhase = Tutorial_Start;
 
         m_dialog = AddGameObject<TutorialDialog>(L"Tuto_txt1", Vec2(0, 50), Col4(1, 1, 1, 0));
@@ -113,7 +113,7 @@ namespace basecross {
                 ChangeTutorialPhase(Tutorial_ShootFromAfar);
             }
         }
-        break;
+            break;
         case Tutorial_ShootFromAfar:
         {
             m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
@@ -137,21 +137,32 @@ namespace basecross {
         }
             break;
         case Tutorial_KillAsYouLike:
-            m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
+        {
+            bool drawActive = m_dialog.lock()->IsInvisible();
+            m_bar[0].lock()->SetDrawActive(drawActive);
             m_bar[0].lock()->SetPercent(m_progress[0]);
 
-            m_progress[0] += 1.0f / (m_enemyMgr.lock()->GetEnemyVec(true).size() + 1);
+            float enemyNum = static_cast<float>(m_enemyMgr.lock()->GetEnemyVec(true).size());
+            m_progress[0] = 1.0f - (enemyNum / m_enemyNumFinalPhase);
             if (m_progress[0] >= 1.0f) {
                 ChangeTutorialPhase(Tutorial_Cleared);
             }
+        }
+            break;
+        case Tutorial_Cleared:
+        {
+            bool drawActive = m_dialog.lock()->IsInvisible();
+            m_bar[0].lock()->SetDrawActive(drawActive);
+            m_bar[0].lock()->SetPercent(m_progress[0]);
 
+        }
+            break;
         default:
             break;
         }
     }
 
     void TutorialStage::ChangeTutorialPhase(TutorialPhase phase) {
-        m_tutorialPhase = phase;
         switch (phase) {
         case Tutorial_MoveAndCamera:
             m_bar[0].lock()->ChangeDescription(1);
@@ -200,16 +211,19 @@ namespace basecross {
             m_bar[0].lock()->ChangeDescription(7);
 
             const int currentEnemyNum = m_enemyMgr.lock()->GetEnemyVec(true).size();
-            for (int i = currentEnemyNum; i < m_enemyNum; i++) {
-                m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            for (int i = currentEnemyNum; i < m_enemyNumFinalPhase; i++) {
+                m_enemyMgr.lock()->InstEnemy<EnemyZako>(m_enemySpawnPos[i], Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
             }
 
             DisplayDialog(L"Tuto_txt6", m_dialog.lock());
         }
             break;
         case Tutorial_Cleared:
+            m_progress[0] = 1;
             break;
         }
+
+        m_tutorialPhase = phase;
     }
 
     //GamePhase�̕ύX
@@ -290,7 +304,7 @@ namespace basecross {
 
     bool TutorialStage::ConsiderGameClear() {
         bool ret = false;
-        ret |= m_tutorialPhase == Tutorial_Cleared;
+        ret |= (m_tutorialPhase == Tutorial_Cleared);
 
         return ret;
     }
