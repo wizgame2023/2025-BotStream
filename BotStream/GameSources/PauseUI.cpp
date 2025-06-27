@@ -15,13 +15,13 @@ namespace basecross {
 		auto stage = GetStage();
 		CreateSprite();
 
-		//BGM,SEのボリュームの初期化(他のステージで設定している可能性があるため)
-		auto scene = App::GetApp()->GetScene<Scene>();
-		m_audioMax[0] = scene->GetBGMVolume();
-		m_audioMax[1] = scene->GetSEVolume();
+		////BGM,SEのボリュームの初期化したい！(他のステージで設定している可能性があるため)
+		//auto scene = App::GetApp()->GetScene<Scene>();
+		//m_audioMax[0] = scene->GetBGMVolume();
+		//m_audioMax[1] = scene->GetSEVolume();
 
-		m_audioMaxSetCol[0] = m_audioMax[0] * 10;
-		m_audioMaxSetCol[1] = m_audioMax[1] * 10;
+		//m_audioMaxSetCol[0] = m_audioMax[0] * 10;
+		//m_audioMaxSetCol[1] = m_audioMax[1] * 10;
 	}
 	//更新
 	void PauseSprite::OnUpdate()
