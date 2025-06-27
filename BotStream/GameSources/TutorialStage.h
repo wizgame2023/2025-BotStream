@@ -40,9 +40,18 @@ namespace basecross {
 
         //チュートリアル進行状況(0～1)
         float m_progress[2] = {0, 0};
-        const float m_tutorialMoveRequired = .05f;
-        const float m_tutorialCameraRequired = .1f;
+        const float m_tutorialMoveRequired = .025f;
+        const float m_tutorialCameraRequired = .2f;
         const int m_enemyNum = 5;
+        const int m_enemyNumFinalPhase = 8;
+        Vec3 m_enemySpawnPos[8] = { Vec3(0.0f, 10.0f, -245.0f),
+        Vec3(15.0f, 10.0f, -250.0f),
+        Vec3(20.0f, 10.0f, -265.0f),
+        Vec3(15.0f, 10.0f, -280.0f),
+        Vec3(0.0f, 10.0f, -285.0f),
+        Vec3(-15.0f, 10.0f, -285.0f),
+        Vec3(-20.0f, 10.0f, -265.0f),
+        Vec3(-15.0f, 10.0f, -250.0f) };
 
         const float m_tutorialEvadeRequired = .5f;
         const float m_tutorialDashRequired = .25f;
@@ -60,6 +69,7 @@ namespace basecross {
         void DisplayDialog(wstring key, shared_ptr<TutorialDialog> ui);
 
         void UpdateGamePhase() override;
+
     public:
         //構築と破棄
         TutorialStage() : WaveStageBase() {}
