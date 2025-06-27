@@ -24,7 +24,23 @@ namespace basecross {
 
 	void SoundManager::OnUpdate()
 	{
+		//設定で決めたBGM,SEのボリュームをセットする
+		auto pauseSprite = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI");
+		if (pauseSprite)
+		{
+			m_BGMVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[0]);
+			m_SEVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[1]);
 
+			//シーンに現在の全体BGM.SEのボリュームをセットする
+			auto scene = App::GetApp()->GetScene<Scene>();
+			scene->SetBGMVolume(m_BGMVol);
+			scene->SetSEVolume(m_SEVol);
+		}
+
+		//m_ptrSound->Stop(m_BGM);
+		m_BGM->m_SourceVoice->SetVolume(1.0f * m_BGMVol);
+		
+		//GetStage()->GetSharedGameObject<PauseSprite>(L"PauseSprite");
 		//m_BGMVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetBGMVol();
 		//m_SEVol = GetStage()->GetSharedGameObject<MyGameObject>(L"MyGameObject")->GetSEVol();
 
