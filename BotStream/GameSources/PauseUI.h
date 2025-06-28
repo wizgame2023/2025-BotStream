@@ -20,6 +20,7 @@ namespace basecross {
 
 		// オーディオ設定画面
 		shared_ptr<Sprite> m_speaker[2];	// スピーカーの図
+		shared_ptr<Sprite> m_cross[2];	// ×の図
 		shared_ptr<Sprite> m_BGMMater[10];	// BGMのメーター
 		shared_ptr<Sprite> m_SEMater[10];	// SEのメーター
 		shared_ptr<Sprite> m_audioSelect[2];	// オーディオ設定の選択しているところ

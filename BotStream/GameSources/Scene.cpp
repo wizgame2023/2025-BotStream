@@ -206,6 +206,8 @@ namespace basecross{
 		app->RegisterTexture(L"AudioMater", strTexture);
 		strTexture = texPath + L"AudioOther.png";
 		app->RegisterTexture(L"AudioOther", strTexture);
+		strTexture = texPath + (L"Cross.png");
+		app->RegisterTexture(L"Cross", strTexture);
 
 		// TextSprite
 		strTexture = texPath + L"Texts.png";

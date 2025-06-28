@@ -216,15 +216,26 @@ namespace basecross {
 				}
 				// オーディオの最大値が 0 の場合は選択しているところを見えなくする
 				// 代わりにスピーカーの所に×を表示
-				if (m_audioMax[idx] == 0.0f)
+				if (m_audioMax[0] == 0.0f)
 				{
-					m_audioSelect[idx]->OnClear(true);
+					m_audioSelect[0]->OnClear(true);
+					m_cross[0]->OnClear(false);
 				}
 				else
 				{
-					m_audioSelect[idx]->OnClear(false);
+					m_audioSelect[0]->OnClear(false);
+					m_cross[0]->OnClear(true);
 				}
-
+				if (m_audioMax[1] == 0.0f)
+				{
+					m_audioSelect[1]->OnClear(true);
+					m_cross[1]->OnClear(false);
+				}
+				else
+				{
+					m_audioSelect[1]->OnClear(false);
+					m_cross[1]->OnClear(true);
+				}
 			}
 
 
@@ -459,6 +470,20 @@ namespace basecross {
 			m_speaker[i]->SetDrawLayer(layerTop + 2);
 			m_speaker[i]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 1.0f));
 			m_speaker[i]->OnClear(true);
+		}
+
+		// ×の図形
+		for (int i = 0; i < 2; i++)
+		{
+			auto speakerPos = m_speaker[i]->GetPosition();
+			auto audioPos = i ? SEPos : BGMPos;
+			m_cross[i] = m_stage->AddGameObject<Sprite>(
+				L"Cross",
+				Vec2(30, 80),
+				Vec3(speakerPos) + Vec3(50.0f, 0.0f, 0.0f)
+			);
+			m_cross[i]->SetDrawLayer(layerTop + 2);
+			m_cross[i]->OnClear(true);
 		}
 
 		// 選択してるところ(音量)
