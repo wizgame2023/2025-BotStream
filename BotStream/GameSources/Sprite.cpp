@@ -62,14 +62,14 @@ namespace basecross {
 
 	void Sprite::OnClear(bool OnOff)
 	{
-		m_Clear = OnOff;
+		m_clear = OnOff;
 		if (OnOff == true)//オンなら
 		{
 			SetDrawActive(false);
 		}
 		if (OnOff == false)//オフなら
 		{
-			SetDrawActive(true);//透明でなかった時の色に戻る
+			SetDrawActive(true);
 		}
 	}
 
