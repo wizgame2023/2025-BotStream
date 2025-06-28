@@ -87,7 +87,7 @@ namespace basecross {
 
 			//パーツ入手SE再生
 			auto m_SEManager = App::GetApp()->GetXAudio2Manager();
-			m_SEManager->Start(L"GetPartsSE", 0, 0.4f);
+			m_SEManager->Start(L"GetPartsSE", 0, 0.4f * m_SEVol);
 
 			//プレイヤーに装備した合計のステータス値を渡す
 			player->SetEquippedParts(allParts);

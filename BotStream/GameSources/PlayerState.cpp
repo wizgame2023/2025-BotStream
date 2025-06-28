@@ -22,6 +22,9 @@ namespace basecross {
 		m_attackFlag = m_player->GetAttackFlag();
 		m_dodgeFlag = m_player->GetDodgeFlag();
 		m_walkFlag = m_player->GetAttackFlag();
+
+		// SEのボリュームを受け取る
+		m_SEVol = m_player->GetSEVol();
 	}
 	void PlayerStateBase::Update(float deltaTime)
 	{
@@ -30,6 +33,9 @@ namespace basecross {
 		//コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
+
+		// SEのボリュームを受け取る
+		m_SEVol = m_player->GetSEVol();
 
 		//カメラマネージャ取得
 		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
@@ -162,7 +168,7 @@ namespace basecross {
 				}
 				if (BulletNumNow <= 0)
 				{
-					m_SEManager->Start(L"CantShotSE", 0, 0.9f);
+					m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
 				}
 			}
 
@@ -196,7 +202,7 @@ namespace basecross {
 		}
 
 		//回避SE
-		m_SEManager->Start(L"Dash", 0, 0.9f);
+		m_SEManager->Start(L"Dash", 0, 0.9f * m_SEVol);
 		//回避アニメーション
 		m_player->ChangeAnim(L"Dodge");
 		//回避エフェクト
@@ -258,7 +264,7 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 		//ダッシュ用SEを再生
-		m_SE = m_SEManager->Start(L"Landing", XAUDIO2_LOOP_INFINITE, 0.9f);
+		m_SE = m_SEManager->Start(L"Landing", XAUDIO2_LOOP_INFINITE, 0.9f * m_SEVol);
 		//ダッシュ用エフェクトを再生
 		m_effect = m_player->AddEffect(PlayerEffect_Dash);
 	}
@@ -267,6 +273,13 @@ namespace basecross {
 	{
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
+
+		//ダッシュ用SEの音量の更新
+		auto SEVoice = m_SE->m_SourceVoice;
+		if (SEVoice)
+		{
+			SEVoice->SetVolume(0.9f * m_SEVol);
+		}
 
 		//エフェクト追従処理
 		Vec3 playerPos = m_player->GetPosition();
@@ -361,7 +374,7 @@ namespace basecross {
 				}
 				if (BulletNumNow <= 0)
 				{
-					m_SEManager->Start(L"CantShotSE", 0, 0.9f);
+					m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
 				}
 			}
 
@@ -411,7 +424,7 @@ namespace basecross {
 		PlayerAttackBaseState::Enter();
 
 		//SE再生
-		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);
+		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f * m_SEVol);
 
 		//Attack1アニメーションに変更
 		m_player->ChangeAnim(L"Attack1");
@@ -517,7 +530,7 @@ namespace basecross {
 	void PlayerAttack2State::Enter()
 	{
 		PlayerAttackBaseState::Enter();
-		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f);//SE再生
+		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f * m_SEVol);//SE再生
 
 		//Attack2アニメーションに変更
 		m_player->ChangeAnim(L"Attack2");	
@@ -637,7 +650,7 @@ namespace basecross {
 	void PlayerAttack3State::Enter()
 	{
 		PlayerAttackBaseState::Enter();
-		m_SE = m_SEManager->Start(L"Attack2", 0, 0.9f);//SE再生
+		m_SE = m_SEManager->Start(L"Attack2", 0, 0.9f * m_SEVol);//SE再生
 
 		//Attack3アニメーションに変更
 		m_player->ChangeAnim(L"Attack3");
@@ -752,7 +765,7 @@ namespace basecross {
 	void PlayerAttackExState::Enter()
 	{
 		PlayerAttackBaseState::Enter();
-		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f);//SE再生
+		m_SE = m_SEManager->Start(L"Attack3", 0, 0.9f * m_SEVol);//SE再生
 
 		//AttackExアニメーションに変更
 		m_player->ChangeAnim(L"AttackEx");
@@ -944,7 +957,7 @@ namespace basecross {
 		//球を出す
 		auto stage = m_player->GetStage();
 		auto playerPos = m_player->GetPosition();
-		m_SEManager->Start(L"HandGun", 0, 0.9f);//銃SE再生
+		m_SEManager->Start(L"HandGun", 0, 0.9f * m_SEVol);//銃SE再生
 		auto bullet = stage->AddGameObject<Bullet>(playerPos+Vec3(0.0f,2.0f,0.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 60.0f, m_player, 100.0f);
 
 		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
@@ -987,7 +1000,7 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 
-		m_SEManager->Start(L"DamageSE",false,0.3f);
+		m_SEManager->Start(L"DamageSE",false,0.3f * m_SEVol);
 		auto hitInfo = m_player->GetHitInfo();
 		auto HPNow = m_player->GetHP();
 		m_player->HitBack();

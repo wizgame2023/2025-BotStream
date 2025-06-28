@@ -37,6 +37,14 @@ namespace basecross {
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
+		//BGMのボリュームの更新
+		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
+		auto BGMVoice = m_BGM->m_SourceVoice;
+		if (BGMVoice)
+		{
+			BGMVoice->SetVolume(BGMVol);
+		}
+
 		float time = 0;
 
 		// デッドゾーン

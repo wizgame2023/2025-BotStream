@@ -41,14 +41,20 @@ namespace basecross {
 
 	void MyGameObject::OnCreate()
 	{
-		m_BGMVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[0]);
-		m_SEVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(m_audioMax[1]);
+		auto scene = App::GetApp()->GetScene<Scene>();
 
+		//BGM.SEのボリュームを取得する
+		m_BGMVol = scene->GetBGMVolume();
+		m_SEVol = scene->GetSEVolume();
 	}
 
 	void MyGameObject::OnUpdate()
 	{
+		auto scene = App::GetApp()->GetScene<Scene>();
 
+		//BGM.SEのボリュームを取得する
+		m_BGMVol = scene->GetBGMVolume();
+		m_SEVol = scene->GetSEVolume();
 	}
 
 	float MyGameObject::GetBGMVol()
