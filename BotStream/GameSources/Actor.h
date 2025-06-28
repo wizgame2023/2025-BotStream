@@ -285,7 +285,7 @@ namespace basecross {
 
 		//SE‚ÌÄ¶
 		void PlaySnd(wstring sndname, float volume, float loopcount) {
-			m_SE = m_SEManager->Start(sndname, loopcount, volume);
+			m_SE = m_SEManager->Start(sndname, loopcount, volume * m_SEVol);
 		}
 
 		//SE‚Ì’âŽ~

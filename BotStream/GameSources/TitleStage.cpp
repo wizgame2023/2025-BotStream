@@ -49,6 +49,14 @@ namespace basecross {
 		
 		m_textSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, sinf(m_time)));
 
+		//BGMのボリュームの更新
+		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
+		auto BGMVoice = m_BGM->m_SourceVoice;
+		if (BGMVoice)
+		{
+			BGMVoice->SetVolume(BGMVol);
+		}
+
 		// Aボタンかエンターキーで決定
 		if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 		{

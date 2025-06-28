@@ -62,7 +62,7 @@ namespace basecross {
 		m_doors.push_back(doorRight);
 
 		// マネージャー系生成
-		CreateManagerObjects();		
+		CreateManagerObjects();
 		
 		//ムービコントローラー作成
 		if (!m_player.lock()) return;

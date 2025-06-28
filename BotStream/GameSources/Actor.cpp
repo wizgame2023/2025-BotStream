@@ -22,6 +22,8 @@ namespace basecross {
 	}
 
 	void Actor::OnCreate() {
+		MyGameObject::OnCreate();
+
 		auto stage = GetStage();
 
 		//Actorグループに登録する
@@ -45,6 +47,8 @@ namespace basecross {
 		{
 			return;
 		}
+
+		MyGameObject::OnUpdate();
 
 		//deltatimeの更新
 		_delta = App::GetApp()->GetElapsedTime();
