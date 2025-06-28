@@ -584,7 +584,9 @@ namespace basecross {
 
 		//一定時間過ぎたら(やられる演出)消える
 		if (m_timeOfState >= m_timeMaxOfState)
-		{		
+		{
+			//初期化
+			m_enemyZako->Initialize();
 			m_enemyZako->SetUsed(false);
 		}
 	}
@@ -592,6 +594,7 @@ namespace basecross {
 	{
 		//リセット
 		m_timeOfState = 0.0f;
+
 	}
 
 

@@ -47,6 +47,9 @@ namespace basecross{
 		void ChangeState(wstring stateName) {
 			m_state->ChangeState(stateName);
 		}
+		wstring GetStateName() {
+			return m_state->GetStateName();
+		}
 
 		void OnCreate() override;
 		void OnUpdate() override;

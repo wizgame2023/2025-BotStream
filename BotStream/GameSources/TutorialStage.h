@@ -11,7 +11,7 @@ namespace basecross {
     class TutorialProgress;
     class TutorialDone;
     class TutorialDescription;
-
+    class TutorialDialog;
 
     class TutorialStage : public WaveStageBase {
     protected:
@@ -28,26 +28,48 @@ namespace basecross {
             //遠隔攻撃
             Tutorial_ShootFromAfar,
             //殺せ！
-            Tutorial_KillAsYouLike
+            Tutorial_KillAsYouLike,
+            //クリア
+            Tutorial_Cleared
         };
         TutorialPhase m_tutorialPhase = Tutorial_Start;
 
         //UI
+        weak_ptr<TutorialDialog> m_dialog;
         weak_ptr<TutorialProgressFrame> m_bar[2];
 
         //チュートリアル進行状況(0～1)
         float m_progress[2] = {0, 0};
-        const float m_tutorialMoveRequired = .0001f;
-        const float m_tutorialCameraRequired = .001f;
+        const float m_tutorialMoveRequired = .025f;
+        const float m_tutorialCameraRequired = .2f;
+        const int m_enemyNum = 5;
+        const int m_enemyNumFinalPhase = 8;
+        Vec3 m_enemySpawnPos[8] = { Vec3(0.0f, 10.0f, -245.0f),
+        Vec3(15.0f, 10.0f, -250.0f),
+        Vec3(20.0f, 10.0f, -265.0f),
+        Vec3(15.0f, 10.0f, -280.0f),
+        Vec3(0.0f, 10.0f, -285.0f),
+        Vec3(-15.0f, 10.0f, -285.0f),
+        Vec3(-20.0f, 10.0f, -265.0f),
+        Vec3(-15.0f, 10.0f, -250.0f) };
 
-        const float m_tutorialEvadeRequired = .001f;
+        const float m_tutorialEvadeRequired = .5f;
+        const float m_tutorialDashRequired = .25f;
+        const float m_tutorialAttackRequired = .1f;
+        const float m_tutorialAttackRequiredEx = .35f;
+        const float m_tutorialShotRequired = .25f;
 
         //チュートリアルの進行状況を監視
         void UpdateTutorialPhase();
         //次のチュートリアルに移行
         void ChangeTutorialPhase(TutorialPhase phase);
 
+        bool ConsiderGameClear() override;
+
+        void DisplayDialog(wstring key, shared_ptr<TutorialDialog> ui);
+
         void UpdateGamePhase() override;
+
     public:
         //構築と破棄
         TutorialStage() : WaveStageBase() {}
@@ -242,7 +264,6 @@ namespace basecross {
         virtual void OnCreate() override;
 
         void ChangeDescription(int num) {
-
             switch (num) {
             case 1:
                 m_desc.lock()->ChangeResource(L"Tuto_barTxt1", Vec2(87.2f, 21.4f));
@@ -344,6 +365,11 @@ namespace basecross {
         //初期化
         virtual void OnCreate() override;
         virtual void OnUpdate() override;
+
+        void SetResource(wstring key) {
+            m_resKey = key;
+            m_drawComp->SetTextureResource(m_resKey);
+        }
 
         //移動が完了したらtrueが返る
         bool GetMoveDone() {
