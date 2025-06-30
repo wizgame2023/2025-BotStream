@@ -14,7 +14,7 @@ namespace basecross {
 		//ステータス初期化
 		m_HPMax = 130.0f;
 		m_HPCurrent = m_HPMax;
-		m_armorMax = 10.0f;
+		m_armorMax = 30.0f;
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 10.0f;
 		m_armorRecover = 0.0f;
@@ -289,20 +289,32 @@ namespace basecross {
 		float scale = 0.7f;
 		float displayTime = 0.5f;
 
+		bool isArmorBreak = m_armor > 0;
+
+		m_armor -= CalculateDamage(m_getHitInfo.Damage);
+
 		//hpがあるならダメージ処理する
 		if (m_HPCurrent > 0)
 		{
 			//アーマーがあるかないかでダメージ時処理が変わる
 			if (m_armor <= 0)
 			{
+				//アーマー耐久値がなくなったら
+				if (isArmorBreak)
+				{
+					AddEffect(EnemyZakoEffect_ArmorBreak);
+					//PlaySnd(L"ZakoArmorBreak", 1.0f, 0);
+					m_SEManager->Start(L"ZakoArmorBreak", false, 1.0f * m_SEVol);
+				}
+
 				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
 				m_state->ChangeState(L"Hit");
 			}
 			else
 			{
-				m_armor -= CalculateDamage(m_getHitInfo.Damage);
 				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
 				m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
+				//m_armorFlash = m_armorFlashMax;
 				//m_armorFlash = m_armorFlashMax;
 				//HPがなくなったらやられるステート移行
 				if (m_HPCurrent <= 0)
