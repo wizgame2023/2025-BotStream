@@ -16,8 +16,14 @@ namespace basecross {
 		shared_ptr<Sprite> m_textSprite;
 		shared_ptr<Sprite> m_stagePhoto[6];
 		shared_ptr<SoundItem> m_BGM;
+		shared_ptr<SoundItem> m_SE;
 
 		shared_ptr<Sprite> m_stageNum[3];
+
+		shared_ptr<XAudio2Manager> m_BGMManager = nullptr;	// BGMを再生するためのマネージャ
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;	// SEなどを再生するためのマネージャ
+
+		weak_ptr<Scene> m_scene;
 
 		Vec3 m_selectPos;
 
@@ -33,6 +39,10 @@ namespace basecross {
 
 		float m_time = 0.0f;
 
+		// BGMのボリューム
+		float m_BGMVol;
+		// SEのボリューム
+		float m_SEVol;
 	public:
 		//構築と破棄
 		StageSelect() :Stage() {}

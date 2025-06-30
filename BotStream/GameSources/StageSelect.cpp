@@ -25,6 +25,12 @@ namespace basecross {
 
 	void StageSelect::OnCreate()
 	{
+		m_scene = App::GetApp()->GetScene<Scene>();
+		m_BGMManager = App::GetApp()->GetXAudio2Manager();
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		m_BGMVol = m_scene.lock()->GetBGMVolume();
+		m_SEVol = m_scene.lock()->GetSEVolume();
+
 		CreateViewLight();
 		CreateSprite();
 		CreateBGM();
@@ -35,7 +41,6 @@ namespace basecross {
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto delta = App::GetApp()->GetElapsedTime();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
-		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
 		//BGMのボリュームの更新
 		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
@@ -91,6 +96,7 @@ namespace basecross {
 		// 左に倒すとステージが切り替わる(-側)
 		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum && !m_stageFlag)
 		{
+
 			// 前のステージ番号の色を戻す
 			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
 			// ステージ番号を更新
@@ -105,7 +111,7 @@ namespace basecross {
 		// チュートリアルにジャンプ(仮)
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_START || keybord.m_bPressedKeyTbl[VK_TAB]) && !m_stageFlag)
 		{
-			ptrMana->Stop(m_BGM);
+			m_BGMManager->Stop(m_BGM);
 			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
 		}
 		//==========================================================================================================
@@ -191,7 +197,7 @@ namespace basecross {
 		// Aボタンかエンターキーで最終決定
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && !m_selectOnceFlag)
 		{
-			ptrMana->Stop(m_BGM);
+			m_BGMManager->Stop(m_BGM);
 			switch (m_selectStageNum)
 			{
 			case 0:
@@ -210,10 +216,7 @@ namespace basecross {
 
 	void StageSelect::CreateBGM()
 	{
-		auto ptrMana = App::GetApp()->GetXAudio2Manager();
-		m_BGM = ptrMana->Start(L"SelectStage", XAUDIO2_LOOP_INFINITE, 1.0f);
-
-
+		m_BGM = m_BGMManager->Start(L"SelectStage", XAUDIO2_LOOP_INFINITE, m_BGMVol);
 	}
 
 	void StageSelect::CreateSprite()
