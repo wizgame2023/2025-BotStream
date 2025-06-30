@@ -335,6 +335,10 @@ namespace basecross {
 	}
 	void EnemyZakoChargeState::Exit()
 	{
+		//突進エフェクトを消す
+		EffectManager::Instance().StopEffect(m_effect);
+
+		//リセット
 		m_playerdistance = 0.0f;
 		m_enemyZako->SetAttackFlag(false);//攻撃が終わったのでクールタイムを入れる
 	}
