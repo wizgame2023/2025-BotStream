@@ -55,6 +55,7 @@
 #include "TutorialStage.h"
 #include "StageFirst.h"
 #include "StageSecond.h"
+#include "StageThird.h"
 
 #include "StageAbe.h"
 #include "StageSanpei.h"

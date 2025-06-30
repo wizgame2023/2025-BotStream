@@ -247,6 +247,8 @@ namespace basecross {
 		// チュートリアルキャンセル
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag && m_tutorialFlag)
 		{
+			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+
 			m_stageFlag = false;
 
 			// 他のステージを表示
