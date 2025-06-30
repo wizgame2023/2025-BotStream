@@ -44,7 +44,6 @@ namespace basecross {
 			WaveStage->SetDeltaScale(1.0f);
 			// ステージのフェーズをPlaying(プレイ状態)にする
 			WaveStage->SetGamePhase(WaveStageBase::GamePhase::GPhase_Playing);
-
 		}
 		//===================================================================================
 
@@ -143,6 +142,10 @@ namespace basecross {
 	// ステージ開始時のムービー
 	void RT_MovieController::StartMovie()
 	{
+		auto waveStage = GetWaveStage(true);
+		//カットシーンフェーズに移行
+		waveStage->SetGamePhase(waveStage->GPhase_CutScene);
+
 		auto castCameraManager = m_cameraManager.lock();
 		auto castPlayer = m_player.lock();
 
