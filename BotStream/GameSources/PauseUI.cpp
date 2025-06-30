@@ -255,6 +255,9 @@ namespace basecross {
 						break;
 
 					case 1: 
+						//シーン移行した際にエフェクトが消えるようにするために、一時停止処理を解除
+						EffectManager::Instance().PauseAllEffects(false);
+
 						// ステージセレクトへ遷移
 						PostEvent(0.0f,
 							GetThis<ObjectInterface>(),
