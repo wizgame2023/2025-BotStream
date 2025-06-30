@@ -296,7 +296,10 @@ namespace basecross {
 		void OnCreate()override;
 		void OnUpdate()override;
 
+		void OnDestroy()override;
+
 		void OnCollisionEnter(shared_ptr<GameObject>& obj)override;
+		void OnCollisionExcute(shared_ptr<GameObject>& obj)override;
 
 		//攻撃しているアクターを指定する
 		void SetAttackActor(int actorName);
