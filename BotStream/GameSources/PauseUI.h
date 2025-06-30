@@ -20,6 +20,7 @@ namespace basecross {
 
 		// オーディオ設定画面
 		shared_ptr<Sprite> m_speaker[2];	// スピーカーの図
+		shared_ptr<Sprite> m_cross[2];	// ×の図
 		shared_ptr<Sprite> m_BGMMater[10];	// BGMのメーター
 		shared_ptr<Sprite> m_SEMater[10];	// SEのメーター
 		shared_ptr<Sprite> m_audioSelect[2];	// オーディオ設定の選択しているところ
@@ -38,6 +39,8 @@ namespace basecross {
 		bool m_pauseFlag = false;		// ポーズのフラグ
 		bool m_pauseAudioFlag = false;	// オーディオ設定のフラグ
 		// -------------------------------------------------
+
+		shared_ptr<Scene> m_scene;
 
 		float m_audioMax[2] = { 1.0f , 1.0f };	// 音量の実数値(0:BGM 1:SE)
 		int m_audioMaxSetCol[2] = { 10, 10 };	// 音量の色変えるためだけに存在するもの

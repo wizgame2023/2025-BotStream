@@ -146,7 +146,7 @@ namespace basecross {
 		for (auto& v : m_vertices) {
 			VertexPositionColorTexture nv;
 			nv.position = v.position;
-			nv.color = Col4(1.0f, 1.0f, 1.0f, 1.0f);
+			nv.color = Col4(m_color);
 			nv.textureCoordinate = v.textureCoordinate;
 			new_vertices.push_back(nv);
 		}
@@ -158,6 +158,7 @@ namespace basecross {
 		auto DrawComp = GetComponent<PCTStaticDraw>();
 		DrawComp->SetMeshResource(m_SquareMeshResource);
 		DrawComp->SetTextureResource(m_textureName);
+		DrawComp->SetDiffuse(m_color);
 		SetAlphaActive(true);
 	}
 	
@@ -200,6 +201,8 @@ namespace basecross {
 
 		m_time += App::GetApp()->GetElapsedTime();
 
+		m_color.w = 1.0f - m_time;
+
 		auto actorPtr = m_actor.lock();
 		// Žó‚¯Žæ‚Á‚½ƒAƒNƒ^‚ÌTransform‚ðŽæ“¾
 		auto actorTrans = actorPtr->GetComponent<Transform>();
@@ -226,6 +229,7 @@ namespace basecross {
 
 		auto draw = GetComponent<PCTStaticDraw>();
 		draw->SetTextureResource(m_textureName);
+		draw->SetDiffuse(m_color);
 	}
 
 	//------------------------------------------------
