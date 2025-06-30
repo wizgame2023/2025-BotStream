@@ -261,7 +261,7 @@ namespace basecross {
 		EnemyZakoStateBase::Enter();
 		
 		//スピードを決める
-		m_speed = 500.0f;
+		m_speed = 300.0f;
 
 		//まず、プレイヤーとの距離を計算して、どれくらい突進するか決める
 		m_playerdistance = (m_enemyZako->GetPlayerDist() * 1.2f);
@@ -275,7 +275,9 @@ namespace basecross {
 		m_SE = m_SEManager->Start(L"EnemyZako_Charge", 0, 0.4f * m_SEVol);
 
 		m_effect = m_enemyZako->AddEffect(EnemyEffect_Rush);
-		
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(5.0f);
 	}
 	void EnemyZakoChargeState::Update(float deltaTime)
 	{
@@ -330,8 +332,11 @@ namespace basecross {
 			m_Attack = false;//攻撃判定が複数発生させないようにする
 		}
 
+		//進む距離を決める
+		auto move = (m_enemyZako->GetForward() * (m_speed * deltaTime));
+
 		//スピード制限
-		m_enemyZako->SpeedLimit(5.0f);
+		m_enemyZako->SpeedLimit(10.0f);
 	}
 	void EnemyZakoChargeState::Exit()
 	{
@@ -402,8 +407,6 @@ namespace basecross {
 			}
 		}
 
-		//スピードリミット
-		m_enemyZako->SpeedLimit(2.5f);
 	}
 	void EnemyZakoPreparationforMeleeState::Exit()
 	{
@@ -419,7 +422,7 @@ namespace basecross {
 		{
 			m_speed = 300.0f;
 			//スピード制限
-			m_enemyZako->SpeedLimit(5.0f);
+			m_enemyZako->SpeedLimit(3.5f);
 		}
 		else//近い
 		{
@@ -620,10 +623,18 @@ namespace basecross {
 		//一定時間過ぎたら(やられる演出)消える
 		if (m_timeOfState >= m_timeMaxOfState)
 		{
+			m_enemyZako->SetPosition(Vec3(999));
+		}
+
+		if (m_timeOfState >= (m_timeMaxOfState + 0.5f))
+		{
 			//初期化
 			m_enemyZako->Initialize();
 			m_enemyZako->SetUsed(false);
 		}
+
+
+
 	}
 	void EnemyZakoDieState::Exit()
 	{
