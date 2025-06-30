@@ -427,10 +427,9 @@ namespace basecross {
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
 
-		app->RegisterWav(L"TestAudioSE1", SoundPath + L"TestAudio1.wav");
-		app->RegisterWav(L"TestAudioSE2", SoundPath + L"TestAudio2.wav");
-		app->RegisterWav(L"TestAudioSE3", SoundPath + L"TestAudio3.wav");
-		app->RegisterWav(L"TestAudioSE4", SoundPath + L"TestAudio4.wav");
+		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
+		app->RegisterWav(L"SelectionSE", SoundPath + L"SelectionSE.wav");
+		app->RegisterWav(L"SelectionCancelSE", SoundPath + L"SelectionCancelSE.wav");
 
 		// パーツ入手
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");

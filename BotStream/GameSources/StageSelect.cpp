@@ -82,6 +82,8 @@ namespace basecross {
 		// 上に倒すとステージが切り替わる(+側)
 		if (ret.y >= dead && !m_selectOnceFlag2 && !m_stageFlag && m_tutorialFlag)
 		{
+			m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+
 			// ステージ番号を更新
 			m_selectStageNum = 0;
 
@@ -97,6 +99,8 @@ namespace basecross {
 		// 下に倒すとステージが切り替わる(-側)
 		else if (ret.y <= -dead && !m_selectOnceFlag2 && !m_stageFlag && !m_tutorialFlag)
 		{
+			m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+
 			// ステージ番号を更新
 			m_selectStageNum = 3;
 
@@ -123,7 +127,7 @@ namespace basecross {
 			// 右に倒すとステージが切り替わる(+側)
 			if (ret.x >= dead && !m_selectOnceFlag1 && m_selectStageNum < stageMaxNum && !m_stageFlag)
 			{
-
+				m_SE = m_SEManager->Start(L"StageSelectSE", 0);
 				// 前のステージ番号の色を戻す
 				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
 				// ステージ番号を更新
@@ -136,6 +140,7 @@ namespace basecross {
 			// 左に倒すとステージが切り替わる(-側)
 			else if (ret.x <= -dead && !m_selectOnceFlag1 && m_selectStageNum > stageMinNum && !m_stageFlag)
 			{
+				m_SE = m_SEManager->Start(L"StageSelectSE", 0);
 
 				// 前のステージ番号の色を戻す
 				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
@@ -169,6 +174,8 @@ namespace basecross {
 		// Aボタンかエンターキーで選択
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
 		{
+			m_SE = m_SEManager->Start(L"SelectionSE", 0);
+
 			m_stageFlag = true;
 			m_selectOnceFlag1 = true;
 
@@ -214,6 +221,8 @@ namespace basecross {
 		// Bボタンかスペースキーで戻る
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag && !m_tutorialFlag)
 		{
+			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+
 			m_stageFlag = false;
 			m_selectOnceFlag1 = true;
 			// ステージ番号の表示
