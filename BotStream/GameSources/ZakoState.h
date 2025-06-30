@@ -16,9 +16,11 @@ namespace basecross {
 	protected:
 		shared_ptr<EnemyZako> m_enemyZako;
 
-		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
-		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
+		shared_ptr<SoundItem> m_SE = nullptr;				// 再生しているSE
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;	// SEなどを再生するためのマネージャ
 		float m_deltaScale = 0.0f;
+
+		float m_SEVol; // SEのボリュームの全体の大きさ
 
 		Effekseer::Handle m_effect;
 
@@ -32,10 +34,17 @@ namespace basecross {
 
 		virtual void Enter() 
 		{
-			//SEマネージャー取得
+			// SEマネージャー取得
 			m_SEManager = App::GetApp()->GetXAudio2Manager();
+
+			// SEのボリューム取得
+			m_SEVol = App::GetApp()->GetScene<Scene>()->GetSEVolume();
 		}
-		virtual void Update(float deltatime) {}
+		virtual void Update(float deltatime) 
+		{
+			// SEのボリューム取得
+			m_SEVol = App::GetApp()->GetScene<Scene>()->GetSEVolume();
+		}
 		virtual void Exit() {}
 	};
 

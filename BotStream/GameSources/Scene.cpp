@@ -206,6 +206,8 @@ namespace basecross{
 		app->RegisterTexture(L"AudioMater", strTexture);
 		strTexture = texPath + L"AudioOther.png";
 		app->RegisterTexture(L"AudioOther", strTexture);
+		strTexture = texPath + (L"Cross.png");
+		app->RegisterTexture(L"Cross", strTexture);
 
 		// TextSprite
 		strTexture = texPath + L"Texts.png";
@@ -401,6 +403,7 @@ namespace basecross{
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
+		app->RegisterWav(L"ZakoArmorBreak", SoundPath + L"ZakoArmorBreak.wav");
 		app->RegisterWav(L"Enemy_Slash", SoundPath + L"Enemy_Slash.wav");
 		app->RegisterWav(L"Enemy_Spin", SoundPath + L"Enemy_Spin.wav");
 		app->RegisterWav(L"Enemy_SpinFinish", SoundPath + L"Enemy_SpinFinish.wav");

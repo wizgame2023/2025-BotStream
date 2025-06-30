@@ -11,10 +11,14 @@ namespace basecross {
 	//何もないときのステート
 	void EnemyZakoStandState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		m_enemyZako->ChangeAnim(L"Stand");//立つアニメーションに変更
 	}
 	void EnemyZakoStandState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 		auto attackType = m_enemyZako->GetAttackType();
 
@@ -65,10 +69,13 @@ namespace basecross {
 	//プレイヤーから距離を取るステート
 	void EnemyZakoEscapeState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
 
 	}
 	void EnemyZakoEscapeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		m_deltaScale = m_enemyZako->GetWaveStage(false)->GetDeltaScale();
 
 		//Playerの方向に回転する
@@ -124,6 +131,8 @@ namespace basecross {
 	}
 	void EnemyZakoMeleeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 
 		m_timeOfAttack += deltaTime;
@@ -159,7 +168,7 @@ namespace basecross {
 			m_Attack = false;//攻撃判定が複数発生させないようにする
 
 			//攻撃用SE再生
-			m_SE = m_SEManager->Start(L"Enemy_Slash", 0, 0.4f);
+			m_SE = m_SEManager->Start(L"Enemy_Slash", 0, 0.4f * m_SEVol);
 
 			m_effect = m_enemyZako->AddEffect(EnemyEffect_Attack);
 
@@ -183,12 +192,16 @@ namespace basecross {
 	//突進の準備ステート(Playerのいる方向に回転する)
 	void EnemyZakoPreparationforChargeState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		//後ろに進む距離とスピードを決める(初期化)
 		m_backDistance = 10.0f;//後ろに進む距離
 		m_speed = 200.0f;
 	}
 	void EnemyZakoPreparationforChargeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		m_deltaScale = m_enemyZako->GetWaveStage(false)->GetDeltaScale();
 
 		//Playerの方向に回転する
@@ -259,13 +272,15 @@ namespace basecross {
 
 		m_enemyZako->ChangeAnim(L"Walk");
 		//SE再生
-		m_SE = m_SEManager->Start(L"EnemyZako_Charge", 0, 0.4f);
+		m_SE = m_SEManager->Start(L"EnemyZako_Charge", 0, 0.4f * m_SEVol);
 
 		m_effect = m_enemyZako->AddEffect(EnemyEffect_Rush);
 		
 	}
 	void EnemyZakoChargeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		m_deltaScale = m_enemyZako->GetWaveStage(false)->GetDeltaScale();
 
 		Vec3 enemyPos = m_enemyZako->GetPosition();
@@ -320,6 +335,10 @@ namespace basecross {
 	}
 	void EnemyZakoChargeState::Exit()
 	{
+		//突進エフェクトを消す
+		EffectManager::Instance().StopEffect(m_effect);
+
+		//リセット
 		m_playerdistance = 0.0f;
 		m_enemyZako->SetAttackFlag(false);//攻撃が終わったのでクールタイムを入れる
 	}
@@ -328,6 +347,8 @@ namespace basecross {
 	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
 	void EnemyZakoPreparationforMeleeState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 
 		//初期のプレイヤーとの距離によって足の速さを変える
@@ -336,6 +357,8 @@ namespace basecross {
 	}
 	void EnemyZakoPreparationforMeleeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		//プレイヤとの距離によってスピードを変える
 		SppedChange();
 
@@ -410,12 +433,16 @@ namespace basecross {
 	//球を打つ直前の準備ステート
 	void EnemyZakoPreparationforLongState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		//弾を発射する時間を決める4~5秒の間で発射する
 		float minTime = 5.0f;
 		m_timeMaxOfShot = (rand() % 10) * 0.1f + minTime;
 	}
 	void EnemyZakoPreparationforLongState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 
 		//Playerの方向に回転する
@@ -481,10 +508,12 @@ namespace basecross {
 		//撃つアニメーションに変更
 		m_enemyZako->ChangeAnim(L"Shot");
 		//SE再生
-		m_SE = m_SEManager->Start(L"EnemyZako_Shot", 0, 0.4f);
+		m_SE = m_SEManager->Start(L"EnemyZako_Shot", 0, 0.4f * m_SEVol);
 	}
 	void EnemyZakoShotState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 
 		//目標となる角度取得
@@ -526,6 +555,8 @@ namespace basecross {
 	//ダメージを受けたステート
 	void EnemyZakoHitState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		auto hitInfo = m_enemyZako->GetHitInfo();
 		auto HPNow = m_enemyZako->GetHPCurrent();
 
@@ -540,6 +571,8 @@ namespace basecross {
 	}
 	void EnemyZakoHitState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
 
@@ -570,13 +603,15 @@ namespace basecross {
 	{
 		EnemyZakoStateBase::Enter();
 		//やられたときのSE再生
-		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f);
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f * m_SEVol);
 		//やられたとき用のアニメーションに変更
 		m_enemyZako->ChangeAnim(L"Down");	
 
 	}
 	void EnemyZakoDieState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		//アニメーション更新時間
 		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
 		//時間計測
@@ -601,12 +636,16 @@ namespace basecross {
 	//スタン処理(雑魚敵) ===================================
 	void EnemyZakoStanState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		//スタンアニメーション再生
 		m_enemyZako->ChangeAnim(L"Stan");
 	}
 	
 	void EnemyZakoStanState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		m_stunTimeCount += deltaTime;
 
 		//一定時間過ぎたらステート変更する
@@ -633,10 +672,14 @@ namespace basecross {
 	//何もないときのステート
 	void EnemyZakoFlyingStandState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		m_enemyZako->ChangeAnim(L"Stand");//立つアニメーションに変更
 	}
 	void EnemyZakoFlyingStandState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 		auto attackType = m_enemyZako->GetAttackType();
 		auto pos = m_enemyZako->GetPosition();
@@ -674,6 +717,8 @@ namespace basecross {
 	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
 	void EnemyZakoFlyingPreparationforMeleeState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 
 		//初期のプレイヤーとの距離によって足の速さを変える
@@ -686,6 +731,8 @@ namespace basecross {
 	}
 	void EnemyZakoFlyingPreparationforMeleeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		//プレイヤとの距離によってスピードを変える
 		SpeedChange();
 
@@ -763,6 +810,8 @@ namespace basecross {
 	// 突進攻撃をするときのステート---------------------
 	void EnemyZakoFlyingChargeState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		m_chargeTime = 0.0f;
 		m_maxChargeTime = 2.0f;
 		// プレイヤーの方向ベクトルをキャッシュ
@@ -777,7 +826,8 @@ namespace basecross {
 
 	void EnemyZakoFlyingChargeState::Update(float deltaTime)
 	{
-		
+		EnemyZakoStateBase::Update(deltaTime);
+
 		// 1) 突進移動
 		Vec3 v = m_chargeDir * m_chargeSpeed;
 
@@ -832,6 +882,8 @@ namespace basecross {
 	//接近戦をするときのステート----------------------
 	void EnemyZakoFlyingMeleeState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		auto LandFlag = m_enemyZako->GetLand();
 		auto testVector = m_enemyZako->GetVelocity();
 
@@ -845,6 +897,8 @@ namespace basecross {
 
 	void EnemyZakoFlyingMeleeState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 
 		m_timeOfAttack += deltaTime;
@@ -917,10 +971,12 @@ namespace basecross {
 	// 遠距離の直前の軸合わせの時のステート-----
 	void EnemyZakoFlyingAlignmentState::Enter()
 	{
-
+		EnemyZakoStateBase::Enter();
 	}
 	void EnemyZakoFlyingAlignmentState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 
 		//Playerの方向に回転する
@@ -987,6 +1043,8 @@ namespace basecross {
 	// 攻撃をするときのステート(遠距離)-----
 	void EnemyZakoFlyingShotState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		auto stage = m_enemyZako->GetStage();
 		auto posEnemy = m_enemyZako->GetPosition();
 		//弾生成
@@ -998,6 +1056,8 @@ namespace basecross {
 
 	void EnemyZakoFlyingShotState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		auto stage = m_enemyZako->GetStage();
 
 		////目標となる角度取得
@@ -1024,11 +1084,15 @@ namespace basecross {
 	// スタンしたときのステート---------------
 	void EnemyZakoFlyingStanState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		m_stunTimeMax = 4.0f;
 		m_enemyZako->ChangeAnim(L"Down");//ダメージを受けたアニメーションに変更
 	}
 	void EnemyZakoFlyingStanState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		// 地面についていなければ
 		if (!m_enemyZako->GetLand() && m_stunTimeCount > 0.8f)
 		{
@@ -1061,6 +1125,8 @@ namespace basecross {
 	//ダメージを受けたとき--------------------
 	void EnemyZakoFlyingHitState::Enter()
 	{
+		EnemyZakoStateBase::Enter();
+
 		auto hitInfo = m_enemyZako->GetHitInfo();
 		auto HPNow = m_enemyZako->GetHPCurrent();
 		//攻撃を受けたのでヒットバックする
@@ -1072,6 +1138,8 @@ namespace basecross {
 	}
 	void EnemyZakoFlyingHitState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		//一定時間たったらStandステートに戻る
 		m_enemyZako->HitBackStandBehavior();
 
@@ -1089,13 +1157,15 @@ namespace basecross {
 	{
 		EnemyZakoStateBase::Enter();
 		//やられたときのSE再生
-		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f);
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f * m_SEVol);
 		//やられたとき用のアニメーションに変更
 		m_enemyZako->ChangeAnim(L"Down");
 
 	}
 	void EnemyZakoFlyingDieState::Update(float deltaTime)
 	{
+		EnemyZakoStateBase::Update(deltaTime);
+
 		//アニメーション更新時間
 		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
 		//時間計測

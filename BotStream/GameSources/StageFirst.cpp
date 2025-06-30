@@ -62,7 +62,7 @@ namespace basecross {
 		m_doors.push_back(doorRight);
 
 		// マネージャー系生成
-		CreateManagerObjects();		
+		CreateManagerObjects();
 		
 		//ムービコントローラー作成
 		if (!m_player.lock()) return;
@@ -243,7 +243,7 @@ namespace basecross {
 			m_sndMgr.lock()->StopBGM();
 			m_onceFlag = true;
 			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
-			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
+			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
 		}
 
 		//ゲームクリア処理
