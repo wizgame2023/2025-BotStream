@@ -17,7 +17,7 @@ namespace basecross {
 		Vec2 m_size;//画像の大きさ
 		shared_ptr<PCTSpriteDraw> m_drawComp;//ドローコンポーネント
 
-		bool m_Clear;//透明にするかしないかの変数
+		bool m_clear;//透明にするかしないかの変数
 		bool m_updateFlag;//アップデートするかしないかの変数
 
 		//vector<VertexPositionColorTexture> m_vertices;
@@ -39,6 +39,7 @@ namespace basecross {
 		virtual void OnCreate()override;//作成
 
 		virtual void OnClear(bool OnOff);//透明になる関数
+		bool IsClear() { return m_clear; }//透明かどうかのゲッター
 
 		void SetColor(Col4 coler);//セッター
 		void SetTexture(wstring Texture);//セッター

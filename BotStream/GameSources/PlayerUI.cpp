@@ -110,7 +110,7 @@ namespace basecross {
 		for (int i = 0; i < 3; ++i)
 		{
 			auto digit = m_stage->AddGameObject<Sprite>(
-				L"Numbers",
+				L"DamageNumbers",
 				Vec2(m_digitSize, m_digitSize),
 				Vec3(m_digitPos.x + i * m_digitSize, m_digitPos.y, 0.0f)
 			);

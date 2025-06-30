@@ -13,16 +13,17 @@ namespace basecross {
 	void PauseSprite::OnCreate()
 	{
 		auto stage = GetStage();
-		CreateSprite();
-
 		////BGM,SEのボリュームの初期化したい！(他のステージで設定している可能性があるため)
-		//auto scene = App::GetApp()->GetScene<Scene>();
-		//m_audioMax[0] = scene->GetBGMVolume();
-		//m_audioMax[1] = scene->GetSEVolume();
+		auto scene = App::GetApp()->GetScene<Scene>();
+		m_audioMax[0] = scene->GetBGMVolume();
+		m_audioMax[1] = scene->GetSEVolume();
 
-		//m_audioMaxSetCol[0] = m_audioMax[0] * 10;
-		//m_audioMaxSetCol[1] = m_audioMax[1] * 10;
+		m_audioMaxSetCol[0] = m_audioMax[0] * 10;
+		m_audioMaxSetCol[1] = m_audioMax[1] * 10;
+
+		CreateSprite();
 	}
+
 	//更新
 	void PauseSprite::OnUpdate()
 	{
@@ -57,17 +58,21 @@ namespace basecross {
 
 		}
 
-		// ポーズ中じゃない時にスタートボタンを押すとポーズになる
-		if (!m_pauseFlag &&
-			(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
-				keybord.m_bPressedKeyTbl[VK_SPACE]))
+		// 本当にポーズしてもいいかのフラグ
+		if (m_reallyPauseFlag)
 		{
-			m_pauseFlag = true;
-			m_pauseAudioFlag = false;
-			m_mainSelect = 0;     // メニューインデックス 0 からスタート
-			m_selectFlag = false; // デッドゾーンフラグクリア
-			//アクタークラスを一時停止
-			MoveSwitchActor();
+			// ポーズ中じゃない時にスタートボタンを押すとポーズになる
+			if (!m_pauseFlag &&
+				(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
+					keybord.m_bPressedKeyTbl[VK_SPACE]))
+			{
+				m_pauseFlag = true;
+				m_pauseAudioFlag = false;
+				m_mainSelect = 0;     // メニューインデックス 0 からスタート
+				m_selectFlag = false; // デッドゾーンフラグクリア
+				//アクタークラスを一時停止
+				MoveSwitchActor();
+			}
 		}
 
 		// --- 定数定義 ------------------------------------
@@ -174,7 +179,7 @@ namespace basecross {
 					m_audioSelectFlag = false;
 
 				// まず現在の調整対象を int idx に
-				int idx = m_audioFlag ? true : false;// false=BGM, true=SE
+				int idx = m_audioFlag ? true : false;// 0=BGM, 1=SE
 
 				// 右に倒したら +0.1f
 				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
@@ -194,19 +199,42 @@ namespace basecross {
 					m_audioSelectFlag = true;
 				}
 				// スティックを左に倒したら -0.1f
-				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.1f) 
+				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f) 
 				{
 					auto selectPos = m_audioSelect[idx]->GetPosition();
 					m_audioSelect[idx]->SetPosition({ selectPos.x - change, selectPos.y, selectPos.z });
 					m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
 					m_audioMaxSetCol[idx]--;
 
+					// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
 					if (idx == 0)
 						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor({ 1,1,1,1 });
 					else
 						m_SEMater[m_audioMaxSetCol[idx]]->SetColor({ 1,1,1,1 });
 
 					m_audioSelectFlag = true;
+				}
+				// オーディオの最大値が 0 の場合は選択しているところを見えなくする
+				// 代わりにスピーカーの所に×を表示
+				if (m_audioMax[0] == 0.0f)
+				{
+					m_audioSelect[0]->OnClear(true);
+					m_cross[0]->OnClear(false);
+				}
+				else
+				{
+					m_audioSelect[0]->OnClear(false);
+					m_cross[0]->OnClear(true);
+				}
+				if (m_audioMax[1] == 0.0f)
+				{
+					m_audioSelect[1]->OnClear(true);
+					m_cross[1]->OnClear(false);
+				}
+				else
+				{
+					m_audioSelect[1]->OnClear(false);
+					m_cross[1]->OnClear(true);
 				}
 			}
 
@@ -400,6 +428,13 @@ namespace basecross {
 			m_BGMMater[i]->SetUVRect(Vec2(0.5f, 0.0f), Vec2(0.75f, 1.0f));
 			m_BGMMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
 		}
+		// BGMのメーターの色を設定(現在選ばれているところより右を白にする)
+		int nowBGMMax = m_audioMax[0] * 10 - 1;
+		if (nowBGMMax != 9) nowBGMMax += 1;
+		for (int i = nowBGMMax; i < 10; i++)
+		{
+			m_BGMMater[i]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
 
 		// SEのメーター
 		for (int i = 0; i < 10; i++)
@@ -416,6 +451,12 @@ namespace basecross {
 			m_SEMater[i]->SetUVRect(Vec2(0.5f, 0.0f), Vec2(0.75f, 1.0f));
 			m_SEMater[i]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1.0f));
 		}
+		int nowSEMax = m_audioMax[1] * 10 - 1;
+		if (nowSEMax != 9) nowSEMax += 1;
+		for (int i = nowSEMax; i < 10; i++)
+		{
+			m_SEMater[i]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
 
 		// スピーカーの図形
 		for (int i = 0; i < 2; i++)
@@ -431,11 +472,32 @@ namespace basecross {
 			m_speaker[i]->OnClear(true);
 		}
 
-		// 選択してるところ
+		// ×の図形
 		for (int i = 0; i < 2; i++)
 		{
-			auto bgmMax = m_BGMMater[9]->GetPosition();
-			auto seMax = m_SEMater[9]->GetPosition();
+			auto speakerPos = m_speaker[i]->GetPosition();
+			auto audioPos = i ? SEPos : BGMPos;
+			m_cross[i] = m_stage->AddGameObject<Sprite>(
+				L"Cross",
+				Vec2(30, 80),
+				Vec3(speakerPos) + Vec3(50.0f, 0.0f, 0.0f)
+			);
+			m_cross[i]->SetDrawLayer(layerTop + 2);
+			m_cross[i]->OnClear(true);
+		}
+
+		// 選択してるところ(音量)
+		for (int i = 0; i < 2; i++)
+		{
+			int nowBGMMax = m_audioMax[0] * 10 - 1,
+				nowSEMax = m_audioMax[1] * 10 - 1;
+
+			// こうしないとずれる
+			if (nowBGMMax != 9) nowBGMMax += 1;
+			if (nowSEMax != 9) nowSEMax += 1; 
+
+			auto bgmMax = m_BGMMater[nowBGMMax]->GetPosition();
+			auto seMax = m_SEMater[nowSEMax]->GetPosition();
 			auto audioPos = i ? seMax : bgmMax;
 			m_audioSelect[i] = m_stage->AddGameObject<Sprite>(
 				L"AudioOther",

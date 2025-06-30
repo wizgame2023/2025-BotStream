@@ -137,6 +137,9 @@ namespace basecross {
 		void OnUpdate()override;//更新
 
 		void ChangeState(wstring stateName);//ステート変更
+		wstring GetStateName() {
+			return m_stateMachine->GetStateName();
+		}
 		//void AddEffect(int addEffect)override;//エフェクトを出す処理
 
 		//プレイヤーの移動処理

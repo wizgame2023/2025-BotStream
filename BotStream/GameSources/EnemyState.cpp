@@ -275,8 +275,9 @@ namespace basecross {
 			tmp.HitOnce = true;
 			tmp.Type = AttackType::Enemy;
 			tmp.Damage = 1;
-			tmp.HitVel_Stand = Vec3(-8, 3, 0);
+			tmp.HitVel_Stand = Vec3(-16, 8, 0);
 			tmp.HitTime_Stand = 1.2f;
+			tmp.HitVel_Air = Vec3(-16, 4, 0);
 			tmp.HitEffect = L"EnemyHitEfk";
 
 			boss->DefAttack(.1f, tmp);
@@ -311,7 +312,8 @@ namespace basecross {
 		tmp.HitOnce = true;
 		tmp.Type = AttackType::Enemy;
 		tmp.Damage = 10;
-		tmp.HitVel_Stand = Vec3(-30, 30, 0);
+		tmp.HitVel_Stand = Vec3(-40, 30, 0);
+		tmp.HitVel_Air = Vec3(-40, 20, 0);
 		tmp.HitTime_Stand = 1.5f;
 		boss->DefAttack(.1f, tmp);
 		boss->GetAttackPtr()->SetCollScale(10.0f);
