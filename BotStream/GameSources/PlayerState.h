@@ -166,7 +166,7 @@ namespace basecross {
 
 		virtual void Enter();
 		virtual void Update(float deltaTime) {};
-		virtual void Exit() {};
+		virtual void Exit();
 
 		//UŒ‚ƒRƒŠƒWƒ‡ƒ“”­¶
 		virtual void AttackCollisionOccurs() {};

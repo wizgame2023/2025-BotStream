@@ -198,6 +198,17 @@ namespace basecross {
 		}
 	}
 
+	//削除時処理
+	void Actor::OnDestroy()
+	{
+		////エフェクト削除
+		//auto effectManager = EffectManager::Instance().GetTotalInstanceCount();
+
+		//if (effectManager > 0)
+		//{
+		//	EffectManager::Instance().StopEffect(m_effect);
+		//}
+	}
 
 	//向いている方向のゲッター
 	float Actor::GetAngle()
@@ -214,74 +225,72 @@ namespace basecross {
 	//エフェクトを出す処理
 	Effekseer::Handle Actor::AddEffect(int addEffect)
 	{
-		Handle ret = -1;
-
 		Vec3 fwd = GetForward();
 		float angle = -atan2(fwd.z, fwd.x) + XM_PIDIV2;
 		switch (addEffect)
 		{
 		case PlayerEffect_Attack1:
-			//ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
-			ret = EfkPlaying(L"Slash01Efk", GetAngle() + XM_PI + XM_PIDIV2, Vec3(0, 1, 0));
+			//m_effect = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"Slash01Efk", GetAngle() + XM_PI + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Attack2:
-			//ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-			ret = EfkPlaying(L"Slash02Efk", GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			//m_effect = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
+			m_effect = EfkPlaying(L"Slash02Efk", GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
 			break;
 		case PlayerEffect_Attack3:
-			//ret = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
-			ret = EfkPlaying(L"Slash03Efk", GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			//m_effect = EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
+			m_effect = EfkPlaying(L"Slash03Efk", GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
 			break;
 		case PlayerEffect_AttackEx:
-			//ret = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
-			ret = EfkPlaying(L"Slash04Efk", GetAngle(), Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			//m_effect = EfkPlaying(L"SpinAttack", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			m_effect = EfkPlaying(L"Slash04Efk", GetAngle(), Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
 			break;
 		case PlayerEffect_Dodge:
-			ret = EfkPlaying(L"Dodge", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
+			m_effect = EfkPlaying(L"Dodge", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 2.0f, 0.0f));
 			break;
 		case PlayerEffect_Dash:
-			ret = EfkPlaying(L"Dash", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 0.0f));
+			m_effect = EfkPlaying(L"Dash", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 0.0f));
 			break;
 		case PlayerEffect_DashRipple:
-			ret = EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
 			break;
 		case PlayerEffect_Beam:
-			ret = EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Stun:
-			ret = EfkPlaying(L"Stun", angle, Vec3(0, 1, 0), Vec3(4), Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"Stun", angle, Vec3(0, 1, 0), Vec3(4), Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_ArmorBreak:
-			ret = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(2.5f, 2.5f, 2.5f));
+			m_effect = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(2.5f, 2.5f, 2.5f));
 			break;
 		case EnemyEffect_Beam:
-			ret = EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"Beam", angle, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Sphere:
-			ret = EfkPlaying(L"EnergySphere", angle, Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"EnergySphere", angle, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_SphereEnd:
-			ret = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0));
+			m_effect = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0));
 			break;
 		case EnemyEffect_Wave:
-			ret = EfkPlaying(L"EnemyWave", angle, Vec3(0, 1, 0), Vec3(1), Vec3(10.0f * fwd.x, -2.7f, 10.0f * fwd.z));
+			m_effect = EfkPlaying(L"EnemyWave", angle, Vec3(0, 1, 0), Vec3(1), Vec3(10.0f * fwd.x, -2.7f, 10.0f * fwd.z));
 			break;
 		case EnemyEffect_Spin:
-			ret = EfkPlaying(L"Landing", angle, Vec3(0, 1, 0), Vec3(8), Vec3(0, -2.7f, 0));
+			m_effect = EfkPlaying(L"Landing", angle, Vec3(0, 1, 0), Vec3(8), Vec3(0, -2.7f, 0));
 			break;
 		case EnemyEffect_Rush:
-			ret = EfkPlaying(L"RushEfk", angle, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 0.5f), Vec3(0.0f, 1.0f, 0.0f));
+			m_effect = EfkPlaying(L"RushEfk", angle, Vec3(0, 1, 0), Col4(1.0f, 1.0f, 1.0f, 0.5f), Vec3(0.0f, 1.0f, 0.0f));
 			break;
 		case EnemyEffect_Attack:
-			ret = EfkPlaying(L"EnemyAttack", angle, Vec3(0, 1, 0), Vec3(1.5f, 1.5f, 1.5f), Vec3(0.0f, -1.5f, 0.0f));
+			m_effect = EfkPlaying(L"EnemyAttack", angle, Vec3(0, 1, 0), Vec3(1.5f, 1.5f, 1.5f), Vec3(0.0f, -1.5f, 0.0f));
 			break;
 		case EnemyZakoEffect_ArmorBreak:
-			ret = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f));
+			m_effect = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f));
 			break;
 		default:
 			break;
 		}
-		return ret;
+		return m_effect;
 	}
 
 	// エフェクトのプレイ(大きさを変えることが出来る)

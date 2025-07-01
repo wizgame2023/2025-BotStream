@@ -21,6 +21,12 @@ namespace basecross {
 	
 	void CameraStateBase::Update(float deltaTime)
 	{
+		//近接戦闘していいかのフラグを受け取る
+		m_meleeFlag = m_cameraManager->GetMeleeFlag();
+		//現在どの攻撃をしているか受け取る
+		m_gunNow = m_cameraManager->GetGunNow();
+		m_meleeNow = m_cameraManager->GetMeleeNow();
+
 		//コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
@@ -66,9 +72,12 @@ namespace basecross {
 		m_cameraManager->InertialRotation();
 
 		//もし,LBボタンを押していたら銃ステートに移行する
-		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		if (!m_meleeNow)
 		{
-			m_cameraManager->ChangeState(L"Gun");
+			if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+			{
+				m_cameraManager->ChangeState(L"Gun");
+			}
 		}
 
 		//右スティックを押したら、移動ステートに移行する
