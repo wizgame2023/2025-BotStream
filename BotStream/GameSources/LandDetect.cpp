@@ -32,6 +32,7 @@ namespace basecross {
 
 		//デバッグ
 		m_collision->SetDrawActive(true);
+		//m_collision->SetDrawActive(false);
 	}
 
 	void LandDetect::OnUpdate() {
