@@ -256,6 +256,8 @@ namespace basecross {
 		//射撃用テクスチャ
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
+		strTexture = texPath + L"BulletUI.png";
+		app->RegisterTexture(L"BulletUI", strTexture);
 
 		//Tutorial
 		strTexture = texPath + L"Tutorial/Tutorial_progressbar.png";

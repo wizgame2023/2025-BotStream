@@ -106,6 +106,12 @@ namespace basecross {
 	{
 		m_stage = GetStage();
 
+		m_bulletSprite = m_stage->AddGameObject<Sprite>(
+			L"BulletUI", // テクスチャ名
+			Vec2(m_digitSize, m_digitSize),     // サイズ
+			Vec3(m_digitPos.x - 23.0f, m_digitPos.y + 2.0f, 0)  // 表示位置
+		);
+
 		//弾数関係------------------------------------------------------------
 		for (int i = 0; i < 3; ++i)
 		{

@@ -127,10 +127,10 @@ namespace basecross {
         SetSharedGameObject(L"PlayerUI", playerUI);
 
 		// 数字の位置,大きさ
-		Vec2 digitPos(300.0f, -260.0f);
+		Vec2 digitPos(310.0f, -260.0f);
 		constexpr float digitSize = 25.0f;
 		// プレイヤーの弾のUI
-		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos,digitSize);
+		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos, digitSize);
 
 		// ボスゲージ
 		m_bossGauge = AddGameObject<BossGaugeUI>(
