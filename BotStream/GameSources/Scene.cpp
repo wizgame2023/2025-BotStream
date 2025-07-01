@@ -62,7 +62,7 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"Tutorial")
 		{
-			m_stageNum = 1;
+			m_stageNum = 0;
 			ResetActiveStage<TutorialStage>();
 		}
 		// ここは後にWaveStageに変更する

@@ -32,7 +32,14 @@ namespace basecross {
 		m_scene = App::GetApp()->GetScene<Scene>();
 		m_stageNum = m_scene.lock()->GetStageNum();
 		m_strStage = L"ToWaveStage";
-		m_strStage += to_wstring(m_stageNum);
+		if (m_stageNum != 0)
+		{
+			m_strStage += to_wstring(m_stageNum);
+		}
+		else
+		{
+			m_strStage = L"Tutorial";
+		}
 	}
 
 	void GameOver::OnUpdate()
