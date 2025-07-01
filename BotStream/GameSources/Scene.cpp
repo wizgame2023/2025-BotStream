@@ -62,7 +62,7 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"Tutorial")
 		{
-			m_stageNum = 1;
+			m_stageNum = 0;
 			ResetActiveStage<TutorialStage>();
 		}
 		// ここは後にWaveStageに変更する
@@ -256,6 +256,8 @@ namespace basecross {
 		//射撃用テクスチャ
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
+		strTexture = texPath + L"BulletUI.png";
+		app->RegisterTexture(L"BulletUI", strTexture);
 
 		//Tutorial
 		strTexture = texPath + L"Tutorial/Tutorial_progressbar.png";
