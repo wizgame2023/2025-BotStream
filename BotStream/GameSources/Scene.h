@@ -13,6 +13,10 @@ namespace basecross{
 	//--------------------------------------------------------------------------------------
 	class Scene : public SceneBase{
 		int m_stageNum = 1;
+
+		// BGM.SEの音量
+		float m_BGMVolume = 1.0f;
+		float m_SEVolume = 1.0f;
 	public:
 		//--------------------------------------------------------------------------------------
 		/*!
@@ -48,7 +52,28 @@ namespace basecross{
 		int GetStageNum()
 		{
 			return m_stageNum;
+		}	
+		
+		//BGM.SEのボリュームのゲッタ
+		float GetBGMVolume()
+		{
+			return m_BGMVolume;
 		}
+		float GetSEVolume()
+		{
+			return m_SEVolume;
+		}
+
+		//BGM.SEのボリュームをセットする
+		void SetBGMVolume(float BGMVolume)
+		{
+			m_BGMVolume = BGMVolume;
+		}
+		void SetSEVolume(float SEVolume)
+		{
+			m_SEVolume = SEVolume;
+		}
+
 	};
 
 }

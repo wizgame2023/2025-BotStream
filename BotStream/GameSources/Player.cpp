@@ -85,8 +85,9 @@ namespace basecross {
 		ptrColl->SetDrawActive(false);
 
 		//接地判定
-		m_LandDetect->SetBindPos(Vec3(0, -2.4f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(5.0f, 5.0f, 5.0f));
+		m_LandDetect->SetBindPos(Vec3(0, -1.8f, 0));
+		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -95,9 +96,8 @@ namespace basecross {
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
 		m_JastDodgeSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 		
-		//最初に流れる音
-		m_SEManager->Start(L"StartVoiceSE", 0, 0.9f);
-
+		//最初に流れる音SE
+		PlaySnd(L"StartVoiceSE", 0.9f, 0);
 	}
 
 	void Player::OnUpdate()
@@ -113,6 +113,7 @@ namespace basecross {
 
 		//親クラス処理
 		Actor::OnUpdate();
+		auto testVol = GetSEVol();
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
@@ -127,6 +128,7 @@ namespace basecross {
 			}
 
 		}
+		m_pos = GetPosition();
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
@@ -222,7 +224,7 @@ namespace basecross {
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
 
-		//DebugLog();//デバックログ
+		DebugLog();//デバックログ
 		//めり込み防止処理
 		//ImmersedInCheck();
 	}
@@ -286,7 +288,7 @@ namespace basecross {
 			//時間経過したら球を補充させる
 			if (m_reloadTimeCount >= reloadTime)
 			{
-				m_SE = m_SEManager->Start(L"Reload", 0, 0.9f);//リロードSE
+				m_SE = m_SEManager->Start(L"Reload", 0, 0.9f * m_SEVol);//リロードSE
 				m_reloadTimeCount = 0.0f;//リセット
 				m_bulletNum = m_bulletNumMax;
 			}
@@ -645,7 +647,8 @@ namespace basecross {
 			if (attack->GetHitInfo().Type == AttackType::Enemy)
 			{
 				m_jastDodge = true;
-				m_SEManager->Start(L"JastDodgeSE", 0, 2.0f);
+				// SE再生
+				PlaySnd(L"JastDodgeSE", 2.0f, 0);
 				m_timeOfJastDodgeCount = 0.0f;
 			}
 		}
@@ -697,7 +700,9 @@ namespace basecross {
 			<<L"\nDeltaTime" << _delta
 			<<L"\nDeltaScale" << deltaScale
 			<< L"\nAngle : " << GetAngle()
-			<< L"\ninstance : " << efkMana<< endl;
+			<< L"\ninstance : " << efkMana
+			//<< L"\nLandDetect : "<<m_LandDetect
+			<< endl;
 
 		scene->SetDebugString(wss.str());
 	}
@@ -726,6 +731,11 @@ namespace basecross {
 		//ptrDraw->SetDrawActive(true);
 		//ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		//ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
+
+		//当たり判定
+		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::None);
+		ptrColl->SetDrawActive(false);
 
 		//原点オブジェクトが消えていたら自分も消える
 		auto originLock = m_originObj.lock();
@@ -859,18 +869,54 @@ namespace basecross {
 		}
 	}
 
+	//削除時処理
+	void Bullet::OnDestroy()
+	{
+		EffectManager::Instance().StopEffect(m_gunLine);
+	}
+
 	//当たり判定
 	void Bullet::OnCollisionEnter(shared_ptr<GameObject>& obj)
 	{
-		auto a = 0;
-		//敵や障害物に弾が当たったら消える
-		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
-		if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
+		//auto a = 0;
+		////敵や障害物に弾が当たったら消える
+		//auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
+		//if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
+		//{
+		//	GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+		//	GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+		//	GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		//	EffectManager::Instance().StopEffect(m_gunLine);
+		//}
+	}
+
+	void Bullet::OnCollisionExcute(shared_ptr<GameObject>& obj)
+	{
+		// 発射しているオブジェクトが誰か確認する
+		auto player = dynamic_pointer_cast<Player>(m_originObj.lock());
+		auto enemy = dynamic_pointer_cast<EnemyZako>(m_originObj.lock());
+
+		if (player)
 		{
-			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
-			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
-			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
+			{
+				GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+				GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+				GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+				EffectManager::Instance().StopEffect(m_gunLine);
+			}
 		}
+		if (enemy)
+		{
+			if (obj->FindTag(L"Player") || obj->FindTag(L"Terrain"))
+			{
+				GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+				GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+				GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+				EffectManager::Instance().StopEffect(m_gunLine);
+			}
+		}
+
 	}
 
 	//攻撃をしているのは誰か決める処理

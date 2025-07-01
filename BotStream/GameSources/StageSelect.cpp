@@ -25,6 +25,12 @@ namespace basecross {
 
 	void StageSelect::OnCreate()
 	{
+		m_scene = App::GetApp()->GetScene<Scene>();
+		m_BGMManager = App::GetApp()->GetXAudio2Manager();
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
+		m_BGMVol = m_scene.lock()->GetBGMVolume();
+		m_SEVol = m_scene.lock()->GetSEVolume();
+
 		CreateViewLight();
 		CreateSprite();
 		CreateBGM();
@@ -35,12 +41,19 @@ namespace basecross {
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto delta = App::GetApp()->GetElapsedTime();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
-		auto ptrMana = App::GetApp()->GetXAudio2Manager();
+
+		//BGMのボリュームの更新
+		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
+		auto BGMVoice = m_BGM->m_SourceVoice;
+		if (BGMVoice)
+		{
+			BGMVoice->SetVolume(BGMVol);
+		}
 
 		float time = 0;
 
 		// デッドゾーン
-		constexpr float dead = 0.3f;
+		constexpr float dead = 0.6f;
 		// ステージの最大数
 		constexpr int stageMaxNum = 2;
 		constexpr int stageMinNum = 0;
@@ -63,83 +76,161 @@ namespace basecross {
 				ret.x = 1;
 		}
 
-		// 左右いずれかのデッドゾーン復帰でフラグクリア
-		if (fabs(ret.x) < dead)
-			m_selectOnceFlag = false;
+		if (fabs(ret.y) < dead)
+			m_selectOnceFlag2 = false;
 
-		// 右に倒すとステージが切り替わる(+側)
-		if (ret.x >= dead && !m_selectOnceFlag && m_selectStageNum < stageMaxNum && !m_stageFlag)
+		// 上に倒すとステージが切り替わる(+側)
+		if (ret.y >= dead && !m_selectOnceFlag2 && !m_stageFlag && m_tutorialFlag)
 		{
+			m_SE = m_SEManager->Start(L"StageSelectSE", 0);
 
-			// 前のステージ番号の色を戻す
-			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
 			// ステージ番号を更新
-			m_selectStageNum += 1;
+			m_selectStageNum = 0;
+
+			// チュートリアルを白に戻して、stage1に移動
+			m_tutorialSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+
 			// ステージ番号の色を変更
 			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
 
-			m_selectOnceFlag = true;
+			m_selectOnceFlag2 = true;
+			m_tutorialFlag = false;
 		}
-		// 左に倒すとステージが切り替わる(-側)
-		else if (ret.x <= -dead && !m_selectOnceFlag && m_selectStageNum > stageMinNum && !m_stageFlag)
+		// 下に倒すとステージが切り替わる(-側)
+		else if (ret.y <= -dead && !m_selectOnceFlag2 && !m_stageFlag && !m_tutorialFlag)
 		{
-			// 前のステージ番号の色を戻す
-			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
-			// ステージ番号を更新
-			m_selectStageNum -= 1;
-			// ステージ番号の色を変更
-			m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
+			m_SE = m_SEManager->Start(L"StageSelectSE", 0);
 
-			m_selectOnceFlag = true;
+			// ステージ番号を更新
+			m_selectStageNum = 3;
+
+			// チュートリアル以外のステージ番号の色を戻す
+			for (int i = 0; i < 3; i++)
+			{
+				m_stageNum[i]->SetColor(Col4(1, 1, 1, 1));
+			}
+
+			// ステージ番号の色を変更
+			m_tutorialSprite->SetColor(Col4(1, 1, 0, 1));
+
+			m_selectOnceFlag2 = true;
+			m_tutorialFlag = true;
 		}
+
+
+		if (!m_tutorialFlag)
+		{
+			// 左右いずれかのデッドゾーン復帰でフラグクリア
+			if (fabs(ret.x) < dead)
+				m_selectOnceFlag1 = false;
+
+			// 右に倒すとステージが切り替わる(+側)
+			if (ret.x >= dead && !m_selectOnceFlag1 && m_selectStageNum < stageMaxNum && !m_stageFlag)
+			{
+				m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+				// 前のステージ番号の色を戻す
+				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
+				// ステージ番号を更新
+				m_selectStageNum += 1;
+				// ステージ番号の色を変更
+				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
+
+				m_selectOnceFlag1 = true;
+			}
+			// 左に倒すとステージが切り替わる(-側)
+			else if (ret.x <= -dead && !m_selectOnceFlag1 && m_selectStageNum > stageMinNum && !m_stageFlag)
+			{
+				m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+
+				// 前のステージ番号の色を戻す
+				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
+				// ステージ番号を更新
+				m_selectStageNum -= 1;
+				// ステージ番号の色を変更
+				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 0, 1));
+
+				m_selectOnceFlag1 = true;
+			}
+		}
+
 
 		//==========================================================================================================
 		// チュートリアルにジャンプ(仮)
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_START || keybord.m_bPressedKeyTbl[VK_TAB]) && !m_stageFlag)
-		{
-			ptrMana->Stop(m_BGM);
-			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
-		}
+		//if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_START || keybord.m_bPressedKeyTbl[VK_TAB]) && !m_stageFlag)
+		//{
+		//	m_BGMManager->Stop(m_BGM);
+		//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
+		//}
 		//==========================================================================================================
 		
+		// チュートリアル用の最終決定(贅沢だね)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && m_tutorialFlag && m_tutorialOnceFlag)
+		{
+			m_BGMManager->Stop(m_BGM);
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
+		}
+
+
 		// Aボタンかエンターキーで選択
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
 		{
+			m_SE = m_SEManager->Start(L"SelectionSE", 0);
+
 			m_stageFlag = true;
-			m_selectOnceFlag = true;
+			m_selectOnceFlag1 = true;
 
-			// 選択したステージの写真を表示
-			for (int i = m_selectStageNum * 2; i < (m_selectStageNum * 2) + 2; i++)
+			// 選択したステージの写真を表示(チュートリアルは写真なし)
+			if (m_selectStageNum != 3)
 			{
-				m_stagePhoto[i]->OnClear(false);
+				m_tutorialSprite->OnClear(true);
+				for (int i = m_selectStageNum * 2; i < (m_selectStageNum * 2) + 2; i++)
+				{
+					m_stagePhoto[i]->OnClear(false);
+				}
+
+				// 他のステージを非表示
+				for (int i = 0; i < 3; i++)
+				{
+					m_stageNum[i]->OnClear(true);
+				}
+				// 選択したステージを移動、拡大
+				m_stageNum[m_selectStageNum]->SetPosition(Vec3(-250, 0, 0));
+				m_stageNum[m_selectStageNum]->SetScale(Vec3(2.0f, 2.0f, 1.0f));
+				m_stageNum[m_selectStageNum]->OnClear(false);
+
+				m_time = 0;
 			}
-			
 
-			// 他のステージを非表示
-			for (int i = 0; i < 3; i++)
+			if (m_selectStageNum == 3)
 			{
-				if (i != m_selectStageNum)
+				m_stageFlag = true;
+				m_tutorialOnceFlag = true;
+				auto pos = m_tutorialSprite->GetPosition();
+				// 文字を大きくして表示
+				m_tutorialSprite->SetScale(Vec3(1.5f, 1.5f, 1.0f));
+				m_tutorialSprite->SetPosition(pos + Vec3(0.0f, 200.0f, 0.0f));
+
+				// 他のステージを非表示
+				for (int i = 0; i < 3; i++)
 				{
 					m_stageNum[i]->OnClear(true);
 				}
 			}
-			// 選択したステージを移動、拡大
-			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-250, 0, 0));
-			m_stageNum[m_selectStageNum]->SetScale(Vec3(2.0f, 2.0f, 1.0f));
-
-			m_time = 0;
 		}
 
 		// Bボタンかスペースキーで戻る
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag && !m_tutorialFlag)
 		{
+			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+
 			m_stageFlag = false;
-			m_selectOnceFlag = true;
+			m_selectOnceFlag1 = true;
 			// ステージ番号の表示
 			for (int i = 0; i < 3; i++)
 			{
 				m_stageNum[i]->OnClear(false);
 			}
+			m_tutorialSprite->OnClear(false);
 
 			// 選択したステージを戻す
 			m_stageNum[m_selectStageNum]->SetPosition(Vec3(-300 + (m_selectStageNum * 300), 100, 0));
@@ -153,9 +244,28 @@ namespace basecross {
 
 
 		}
+		// チュートリアルキャンセル
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag && m_tutorialFlag)
+		{
+			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+
+			m_stageFlag = false;
+
+			// 他のステージを表示
+			for (int i = 0; i < 3; i++)
+			{
+				m_stageNum[i]->OnClear(false);
+			}
+
+			// チュートリアルの文字を小さくして元の位置へ
+			m_tutorialSprite->SetScale(Vec3(1.0f, 1.0f, 1.0f));
+			auto pos = m_tutorialSprite->GetPosition();
+			m_tutorialSprite->SetPosition(pos + Vec3(0.0f, -200.0f, 0.0f));
+
+		}
 
 		// ステージ選択中に写真を透明不透明をゆっくり切り替える
-		if (m_stageFlag)
+		if (m_stageFlag && !m_tutorialFlag)
 		{
 			if (m_time < 1.2f && !m_timeFlag)
 			{
@@ -181,9 +291,9 @@ namespace basecross {
 		}
 
 		// Aボタンかエンターキーで最終決定
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && !m_selectOnceFlag)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && !m_selectOnceFlag1 && !m_tutorialFlag)
 		{
-			ptrMana->Stop(m_BGM);
+			m_BGMManager->Stop(m_BGM);
 			switch (m_selectStageNum)
 			{
 			case 0:
@@ -195,6 +305,11 @@ namespace basecross {
 			case 2:
 				PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToWaveStage3");
 				break;
+
+			//なんか反応しないので他に書く
+			//case 3:
+			//	PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
+			//	break;
 			}
 		}
 
@@ -202,10 +317,7 @@ namespace basecross {
 
 	void StageSelect::CreateBGM()
 	{
-		auto ptrMana = App::GetApp()->GetXAudio2Manager();
-		m_BGM = ptrMana->Start(L"SelectStage", XAUDIO2_LOOP_INFINITE, 1.0f);
-
-
+		m_BGM = m_BGMManager->Start(L"SelectStage", XAUDIO2_LOOP_INFINITE, m_BGMVol);
 	}
 
 	void StageSelect::CreateSprite()
@@ -247,6 +359,15 @@ namespace basecross {
 
 		}
 		m_stageNum[0]->SetColor(Col4(1, 1, 0, 1));
+
+		auto stageTwoPos = m_stageNum[1]->GetPosition();
+
+		m_tutorialSprite = AddGameObject<Sprite>(
+			L"Texts",
+			Vec2(300, 150),
+			stageTwoPos + Vec3(0, -300, 0)
+		);
+		m_tutorialSprite->SetUVRect(Vec2(0.5f, 0.0f), Vec2(1.0f, 0.333f));
 
 		Vec3 photoPos(300, 100, 0);
 

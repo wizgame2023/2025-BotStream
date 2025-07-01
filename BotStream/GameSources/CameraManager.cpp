@@ -908,7 +908,7 @@ namespace basecross {
 
 				m_lockOnUse = true;//ロックオン使用
 				m_targetObj->AddTag(L"LockOnTarget");
-				m_SEManager->Start(L"LockOnSE", 0, 0.9f);//ロックオン用SE再生
+				m_SEManager->Start(L"LockOnSE", 0, 0.9f * m_SEVol);//ロックオン用SE再生
 			}
 			else if (m_lockOnFlag && m_lockOnUse)
 			{

@@ -93,6 +93,14 @@ namespace basecross {
 
 			AddGameObject<Block>(Vec3(10.0f,3.0f,10.0f),Vec3(0.0f,1.4f,0.0f));
 
+			AddGameObject<TestBill>(
+				actorPtr,
+				L"Numbers",
+				1,
+				1.5f,
+				Vec3(2.0f),
+				Col4(1.0f,1.0f,1.0f,0.5f)
+			);
 			// ボスゲージ
 			//m_bossGaugeUI = AddGameObject<BossGaugeUI>();
 
@@ -525,7 +533,8 @@ namespace basecross {
 
 		if (keybord.m_bPushKeyTbl[VK_RIGHT])
 		{
-			m_bossGaugeUI->ClearBossGaugeUI(false);
+			//m_bossGaugeUI->ClearBossGaugeUI(false);
+			//m_pauseSprite->SetReallyPauseFlag(false);
 		}
 
 
