@@ -103,6 +103,7 @@ namespace basecross {
 
 		shared_ptr<Stage> m_stage;
 		weak_ptr<Player> m_player;
+		shared_ptr<Sprite> m_bulletSprite;
 
 		// ’e”
 		int m_bulletNum = 90;
