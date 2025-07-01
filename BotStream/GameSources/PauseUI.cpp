@@ -181,42 +181,55 @@ namespace basecross {
 				// まず現在の調整対象を int idx に
 				int idx = m_audioFlag ? true : false;// 0=BGM, 1=SE
 
+				auto selectPos = m_audioSelect[idx]->GetPosition();
 				// 右に倒したら +0.1f
 				if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
 				{
-					auto selectPos = m_audioSelect[idx]->GetPosition();
 					m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
 					m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
 
+					// 音量が0.999f以上になったら1.0fにする
+					if (m_audioMax[idx] >= 0.999f)
+					{
+						m_audioMax[idx] = 1.0f;
+						m_audioMaxSetCol[idx] = 10;
+					}
+
 					// メーター色も idx に応じて更新
 					if (idx == 0)
-						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor({ 0.59f,0.98f,0.59f,1 });
+						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
 					else
-						m_SEMater[m_audioMaxSetCol[idx]]->SetColor({ 0.59f,0.98f,0.59f,1 });
+						m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
 					
 					m_audioMaxSetCol[idx]++;
 
 					m_audioSelectFlag = true;
 				}
 				// スティックを左に倒したら -0.1f
-				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f) 
+				else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f && selectPos.x > -50.0f) 
 				{
-					auto selectPos = m_audioSelect[idx]->GetPosition();
 					m_audioSelect[idx]->SetPosition({ selectPos.x - change, selectPos.y, selectPos.z });
 					m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
 					m_audioMaxSetCol[idx]--;
 
+					// 音量が0.001f以下になったら0にする
+					if (m_audioMax[idx] <= 0.001f)
+					{
+						m_audioMax[idx] = 0.0f;
+						m_audioMaxSetCol[idx] = 0;
+					}
+
 					// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
 					if (idx == 0)
-						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor({ 1,1,1,1 });
+						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 					else
-						m_SEMater[m_audioMaxSetCol[idx]]->SetColor({ 1,1,1,1 });
+						m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 
 					m_audioSelectFlag = true;
 				}
 				// オーディオの最大値が 0 の場合は選択しているところを見えなくする
 				// 代わりにスピーカーの所に×を表示
-				if (m_audioMax[0] == 0.0f)
+				if (m_audioMax[0] <= 0.0f)
 				{
 					m_audioSelect[0]->OnClear(true);
 					m_cross[0]->OnClear(false);
@@ -226,7 +239,7 @@ namespace basecross {
 					m_audioSelect[0]->OnClear(false);
 					m_cross[0]->OnClear(true);
 				}
-				if (m_audioMax[1] == 0.0f)
+				if (m_audioMax[1] <= 0.0f)
 				{
 					m_audioSelect[1]->OnClear(true);
 					m_cross[1]->OnClear(false);
@@ -315,6 +328,7 @@ namespace basecross {
 		{
 			m_BGMMater[i]->OnClear(clear);
 			m_SEMater[i]->OnClear(clear);
+			m_cross[i]->OnClear(clear);
 		}
 	}
 
@@ -496,11 +510,21 @@ namespace basecross {
 				nowSEMax = m_audioMax[1] * 10 - 1;
 
 			// こうしないとずれる
-			if (nowBGMMax != 9) nowBGMMax += 1;
-			if (nowSEMax != 9) nowSEMax += 1; 
-
+			if (nowBGMMax < 9)
+			{
+				nowBGMMax += 1;
+			}
+			if (nowSEMax < 9)
+			{
+				nowSEMax += 1;
+			}
 			auto bgmMax = m_BGMMater[nowBGMMax]->GetPosition();
 			auto seMax = m_SEMater[nowSEMax]->GetPosition();
+
+			// 最大値が0ならば、選択位置は×の位置にする
+			if (nowBGMMax == 0)	bgmMax = m_cross[0]->GetPosition();
+			if (nowSEMax == 0)	seMax = m_cross[1]->GetPosition();
+
 			auto audioPos = i ? seMax : bgmMax;
 			m_audioSelect[i] = m_stage->AddGameObject<Sprite>(
 				L"AudioOther",
@@ -522,7 +546,6 @@ namespace basecross {
 			m_selectPos);        // 表示位置
 		m_selectSprite->OnClear(true);
 		m_selectSprite->SetDrawLayer(layerTop + 3);
-
 	}
 
 	//Actorを一時停止させたり動かしたりする処理(ポーズ状態)

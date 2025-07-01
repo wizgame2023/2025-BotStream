@@ -136,6 +136,28 @@ namespace basecross{
 			return ret;
 		}
 
+		/// <summary>
+		/// HPの量を変える(ステージ毎の差異を出すため)
+		/// </summary>
+		/// <param name="max">HP値</param>
+		void ChangeHPMax(int max) {
+			m_HPMax = max;
+			m_HPCurrent = max;
+		}
+		/// <summary>
+		/// アーマー量を変える(ステージ毎の差異を出すため)
+		/// </summary>
+		/// <param name="max">アーマー耐久値</param>
+		void ChangeArmorMax(float max) {
+			m_armorMax = max;
+			m_armor = max;
+		}
+		void ChangeArmorMax(float max, float recovertime) {
+			m_armorMax = max;
+			m_armor = max;
+			m_armorRecoverTime = recovertime;
+		}
+
 		void OnCreate() override;
 		void OnUpdate() override;
 		virtual void OnCollisionEnter(shared_ptr<GameObject>& Other) override;

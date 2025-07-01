@@ -53,7 +53,7 @@ namespace basecross {
         Vec3(-20.0f, 10.0f, -265.0f),
         Vec3(-15.0f, 10.0f, -250.0f) };
 
-        const float m_tutorialEvadeRequired = .5f;
+        const float m_tutorialEvadeRequired = .55f;
         const float m_tutorialDashRequired = .25f;
         const float m_tutorialAttackRequired = .1f;
         const float m_tutorialAttackRequiredEx = .35f;

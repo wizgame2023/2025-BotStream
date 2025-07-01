@@ -224,7 +224,7 @@ namespace basecross {
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
 
-		DebugLog();//デバックログ
+		//DebugLog();//デバックログ
 		//めり込み防止処理
 		//ImmersedInCheck();
 	}
