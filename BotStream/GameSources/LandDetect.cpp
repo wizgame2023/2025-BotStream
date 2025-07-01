@@ -31,8 +31,8 @@ namespace basecross {
 		GetComponent<Transform>()->SetPosition(m_bindPos);
 
 		//デバッグ
-		m_collision->SetDrawActive(true);
-		//m_collision->SetDrawActive(false);
+		//m_collision->SetDrawActive(true);
+		m_collision->SetDrawActive(false);
 	}
 
 	void LandDetect::OnUpdate() {
