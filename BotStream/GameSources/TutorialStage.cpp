@@ -290,7 +290,7 @@ namespace basecross {
         {
             m_sndMgr.lock()->StopBGM();
             m_onceFlag = true;
-            m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
+            m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToStageSelect");
         }
 
         if (ConsiderGameOver() && m_onceFlag == false)
