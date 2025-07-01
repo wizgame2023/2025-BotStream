@@ -137,6 +137,9 @@ namespace basecross {
 		void OnUpdate()override;//更新
 
 		void ChangeState(wstring stateName);//ステート変更
+		wstring GetStateName() {
+			return m_stateMachine->GetStateName();
+		}
 		//void AddEffect(int addEffect)override;//エフェクトを出す処理
 
 		//プレイヤーの移動処理
@@ -293,7 +296,10 @@ namespace basecross {
 		void OnCreate()override;
 		void OnUpdate()override;
 
+		void OnDestroy()override;
+
 		void OnCollisionEnter(shared_ptr<GameObject>& obj)override;
+		void OnCollisionExcute(shared_ptr<GameObject>& obj)override;
 
 		//攻撃しているアクターを指定する
 		void SetAttackActor(int actorName);

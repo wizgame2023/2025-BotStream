@@ -25,11 +25,10 @@ namespace basecross {
         CreateManagerObjects();
 
         m_gamePhase = GamePhase::GPhase_Start;
-
+        m_waveMax = 1;
         m_tutorialPhase = Tutorial_Start;
 
-        auto ui = AddGameObject<TutorialDialog>(L"Tuto_txt1", Vec2(0, 50), Col4(1, 1, 1, 0));
-        SetSharedGameObject(L"TutorialDialog", ui);
+        m_dialog = AddGameObject<TutorialDialog>(L"Tuto_txt1", Vec2(0, 50), Col4(1, 1, 1, 0));
 
         m_bar[0] = AddGameObject<TutorialProgressFrame>(L"Tuto_frame", Vec3(200, 250, 0));
         m_bar[1] = AddGameObject<TutorialProgressFrame>(L"Tuto_frame", Vec3(200, 200, 0));
@@ -37,24 +36,23 @@ namespace basecross {
     }
 
     void TutorialStage::UpdateTutorialPhase() {
-        auto ui = GetSharedGameObject<TutorialDialog>(L"TutorialDialog");
+        auto delta = App::GetApp()->GetElapsedTime();
         switch (m_tutorialPhase) 
         {
         case Tutorial_Start:
-            ui->SetMovePos(Vec2(0, 0), .5f, Lerp::rate::EaseOut);
-            ui->SetColorChange(Col4(1, 1, 1, 1), .5f, Lerp::rate::Linear);
+            DisplayDialog(L"Tuto_txt1", m_dialog.lock());
             ChangeTutorialPhase(Tutorial_MoveAndCamera);
             break;
         case Tutorial_MoveAndCamera:
         {
-            m_bar[0].lock()->SetDrawActive(ui->IsInvisible());
-            m_bar[1].lock()->SetDrawActive(ui->IsInvisible());
+            m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
+            m_bar[1].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
 
             Vec3 move = m_player.lock()->GetVelocity();
             move.y = 0;
-            m_progress[0] += move.length() * m_tutorialMoveRequired;
+            m_progress[0] += move.length() * m_tutorialMoveRequired * delta;
             auto camera = dynamic_pointer_cast<CameraManager>(GetSharedGameObject<CameraManager>(L"CameraManager"));
-            m_progress[1] += camera->GetAddAngleNAxis() * m_tutorialCameraRequired;
+            m_progress[1] += camera->GetAddAngleNAxis() * m_tutorialCameraRequired * delta;
 
             m_bar[0].lock()->SetPercent(m_progress[0]);
             m_bar[1].lock()->SetPercent(m_progress[1]);
@@ -66,36 +64,166 @@ namespace basecross {
             break;
         case Tutorial_Evade:
         {
-            m_bar[0].lock()->SetDrawActive(ui->IsInvisible());
+            m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
             m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            float add = m_player.lock()->GetDodge() ? m_tutorialEvadeRequired * delta : 0;
+            m_progress[0] += add;
+
+            if (m_enemyMgr.lock()->GetEnemyVec(true).size() < m_enemyNum) {
+                m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            }
 
             if (m_progress[0] >= 1.0f) {
                 ChangeTutorialPhase(Tutorial_KeepRunning);
             }
         }
+            break;
+        case Tutorial_KeepRunning:
+        {
+            m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            float add = (m_player.lock()->GetStateName() == L"Dash") ? m_tutorialDashRequired * delta : 0;
+            m_progress[0] += add;
+
+            if (m_progress[0] >= 1.0f) {
+                ChangeTutorialPhase(Tutorial_HitTheCombos);
+            }
+        }
+            break;
+        case Tutorial_HitTheCombos:
+        {
+            m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            wstring stateName = m_player.lock()->GetStateName();
+            if (stateName == L"Attack1" || stateName == L"Attack2" || stateName == L"Attack3") {
+                m_progress[0] += m_tutorialAttackRequired * delta;
+            }
+            else if (stateName == L"AttackEx") {
+                m_progress[0] += m_tutorialAttackRequiredEx * delta;
+            }
+
+            if (m_enemyMgr.lock()->GetEnemyVec(true).size() < m_enemyNum) {
+                m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            }
+
+            if (m_progress[0] >= 1.0f) {
+                ChangeTutorialPhase(Tutorial_ShootFromAfar);
+            }
+        }
+            break;
+        case Tutorial_ShootFromAfar:
+        {
+            m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            vector<shared_ptr<EnemyBase>> enemyVec = m_enemyMgr.lock()->GetEnemyVec(true);
+            for (auto& e : enemyVec) {
+                wstring stateName = e->GetStateName();
+                if (stateName == L"Stun") {
+                    m_progress[0] += m_tutorialAttackRequired * delta;
+                }
+            }
+
+            if (m_enemyMgr.lock()->GetEnemyVec(true).size() < m_enemyNum) {
+                m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            }
+
+            if (m_progress[0] >= 1.0f) {
+                ChangeTutorialPhase(Tutorial_KillAsYouLike);
+            }
+        }
+            break;
+        case Tutorial_KillAsYouLike:
+        {
+            bool drawActive = m_dialog.lock()->IsInvisible();
+            m_bar[0].lock()->SetDrawActive(drawActive);
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+
+            float enemyNum = static_cast<float>(m_enemyMgr.lock()->GetEnemyVec(true).size());
+            m_progress[0] = 1.0f - (enemyNum / m_enemyNumFinalPhase);
+            if (m_progress[0] >= 1.0f) {
+                ChangeTutorialPhase(Tutorial_Cleared);
+            }
+        }
+            break;
+        case Tutorial_Cleared:
+        {
+            bool drawActive = m_dialog.lock()->IsInvisible();
+            m_bar[0].lock()->SetDrawActive(drawActive);
+            m_bar[0].lock()->SetPercent(m_progress[0]);
+
+        }
+            break;
         default:
             break;
         }
     }
 
     void TutorialStage::ChangeTutorialPhase(TutorialPhase phase) {
-        m_tutorialPhase = phase;
         switch (phase) {
         case Tutorial_MoveAndCamera:
             m_bar[0].lock()->ChangeDescription(1);
             m_bar[1].lock()->ChangeDescription(2);
             break;
         case Tutorial_Evade:
-            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-10.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(10.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
             m_progress[0] = 0;
             m_bar[0].lock()->SetDrawActive(true);
             m_bar[1].lock()->SetDrawActive(false);
 
             m_bar[0].lock()->ChangeDescription(3);
+
+            DisplayDialog(L"Tuto_txt2", m_dialog.lock());
+            break;
+        case Tutorial_KeepRunning:
+            m_progress[0] = 0;
+            m_bar[0].lock()->SetDrawActive(true);
+            m_bar[0].lock()->ChangeDescription(4);
+
+            DisplayDialog(L"Tuto_txt3", m_dialog.lock());
+            break;
+        case Tutorial_HitTheCombos:
+            m_progress[0] = 0;
+            m_bar[0].lock()->SetDrawActive(true);
+            m_bar[0].lock()->ChangeDescription(5);
+
+            DisplayDialog(L"Tuto_txt4", m_dialog.lock());
+            break;
+        case Tutorial_ShootFromAfar:
+            m_progress[0] = 0;
+            m_bar[0].lock()->SetDrawActive(true);
+            m_bar[0].lock()->ChangeDescription(6);
+
+            DisplayDialog(L"Tuto_txt5", m_dialog.lock());
+            break;
+        case Tutorial_KillAsYouLike:
+        {
+            m_progress[0] = 0;
+            m_bar[0].lock()->SetDrawActive(true);
+            m_bar[0].lock()->ChangeDescription(7);
+
+            const int currentEnemyNum = m_enemyMgr.lock()->GetEnemyVec(true).size();
+            for (int i = currentEnemyNum; i < m_enemyNumFinalPhase; i++) {
+                m_enemyMgr.lock()->InstEnemy<EnemyZako>(m_enemySpawnPos[i], Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+            }
+
+            DisplayDialog(L"Tuto_txt6", m_dialog.lock());
         }
+            break;
+        case Tutorial_Cleared:
+            m_progress[0] = 1;
+            break;
+        }
+
+        m_tutorialPhase = phase;
     }
 
     //GamePhaseの変更
@@ -116,6 +244,13 @@ namespace basecross {
                 m_gamePhase = GPhase_GameOver;
             }
         }
+    }
+
+    void TutorialStage::DisplayDialog(wstring key, shared_ptr<TutorialDialog> ui) {
+        SetActorPause(true);
+        ui->SetResource(key);
+        ui->SetMovePos(Vec2(0, 0), .5f, Lerp::rate::EaseOut);
+        ui->SetColorChange(Col4(1, 1, 1, 1), .5f, Lerp::rate::Linear);
     }
 
     void TutorialStage::OnUpdate()
@@ -167,6 +302,12 @@ namespace basecross {
 
     }
 
+    bool TutorialStage::ConsiderGameClear() {
+        bool ret = false;
+        ret |= (m_tutorialPhase == Tutorial_Cleared);
+
+        return ret;
+    }
     //=============================================================================
     // ゲージフレーム
     //=============================================================================

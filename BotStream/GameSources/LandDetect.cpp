@@ -31,13 +31,14 @@ namespace basecross {
 		GetComponent<Transform>()->SetPosition(m_bindPos);
 
 		//デバッグ
-		m_collision->SetDrawActive(false);
+		m_collision->SetDrawActive(true);
 	}
 
 	void LandDetect::OnUpdate() {
 		//離陸カウント
 		if (m_isLand == true) {
-			m_CollideCount -= App::GetApp()->GetElapsedTime();
+			//m_CollideCount -= App::GetApp()->GetElapsedTime();
+			m_CollideCount--;
 			if (m_CollideCount <= 0) {
 				//しばらく判定が取れなかったら離陸
 				m_isLand = false;
@@ -46,7 +47,6 @@ namespace basecross {
 	}
 
 	void LandDetect::OnCollisionEnter(shared_ptr<GameObject>& Other) {
-
 	}
 	
 	void LandDetect::OnCollisionExcute(shared_ptr<GameObject>& Other) {

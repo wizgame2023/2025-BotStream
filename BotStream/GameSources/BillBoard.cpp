@@ -146,7 +146,7 @@ namespace basecross {
 		for (auto& v : m_vertices) {
 			VertexPositionColorTexture nv;
 			nv.position = v.position;
-			nv.color = Col4(1.0f, 1.0f, 1.0f, 1.0f);
+			nv.color = Col4(m_color);
 			nv.textureCoordinate = v.textureCoordinate;
 			new_vertices.push_back(nv);
 		}
@@ -158,8 +158,8 @@ namespace basecross {
 		auto DrawComp = GetComponent<PCTStaticDraw>();
 		DrawComp->SetMeshResource(m_SquareMeshResource);
 		DrawComp->SetTextureResource(m_textureName);
-
-
+		DrawComp->SetDiffuse(m_color);
+		SetAlphaActive(true);
 	}
 	
 	void BillBoard::RemoveBill()
@@ -201,6 +201,8 @@ namespace basecross {
 
 		m_time += App::GetApp()->GetElapsedTime();
 
+		m_color.w = 1.0f - m_time;
+
 		auto actorPtr = m_actor.lock();
 		// Žó‚¯Žæ‚Á‚½ƒAƒNƒ^‚ÌTransform‚ðŽæ“¾
 		auto actorTrans = actorPtr->GetComponent<Transform>();
@@ -227,6 +229,7 @@ namespace basecross {
 
 		auto draw = GetComponent<PCTStaticDraw>();
 		draw->SetTextureResource(m_textureName);
+		draw->SetDiffuse(m_color);
 	}
 
 	//------------------------------------------------
@@ -279,6 +282,60 @@ namespace basecross {
 		trans->SetQuaternion(qt);
 	}
 
+	void TestBill::OnCreate()
+	{
+		auto PtrTransform = GetComponent<Transform>();
+		if (!m_actor.expired()) {
+			auto SeekPtr = m_actor.lock();
+			auto SeekTransPtr = SeekPtr->GetComponent<Transform>();
+			auto Pos = SeekTransPtr->GetPosition();
+			Pos.y += m_pushY;
+			PtrTransform->SetPosition(Pos);
+			PtrTransform->SetScale(m_scale);
+			PtrTransform->SetQuaternion(SeekTransPtr->GetQuaternion());
+
+			MeshUtill::CreateSquare(1.0f, m_vertices, m_indices);
+
+			SetBillUV(Vec2(0.0f, 0.0f), Vec2(1.0f, 1.0f));
+
+			vector<VertexPositionColorTexture> new_vertices;
+			for (auto& v : m_vertices) {
+				VertexPositionColorTexture nv;
+				nv.position = v.position;
+				nv.color = Col4(m_color);
+				nv.textureCoordinate = v.textureCoordinate;
+				new_vertices.push_back(nv);
+			}
+
+			m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, m_indices, true);
+
+			auto DrawComp = AddComponent<PCTStaticDraw>();
+			DrawComp->SetMeshResource(m_SquareMeshResource);
+			DrawComp->SetTextureResource(m_textureName);
+			DrawComp->SetDiffuse(m_color);
+
+			SetAlphaActive(true);
+			SetDrawLayer(m_layer);
+		}
+
+	}
+
+	void TestBill::OnUpdate()
+	{
+
+	}
+
+	void TestBill::SetBillUV(Vec2 topLeft, Vec2 botRight)
+	{
+		m_vertices[0].textureCoordinate = Vec2(topLeft);
+
+		m_vertices[1].textureCoordinate = Vec2(botRight.x, topLeft.y);
+
+		m_vertices[2].textureCoordinate = Vec2(topLeft.x, botRight.y);
+
+		m_vertices[3].textureCoordinate = Vec2(botRight);
+
+	}
 }
 
 //end basecross

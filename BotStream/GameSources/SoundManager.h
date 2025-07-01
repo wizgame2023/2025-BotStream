@@ -16,8 +16,8 @@ namespace basecross {
 		shared_ptr<SoundItem> m_SE;
 
 
-		float m_BGMVol;
-		float m_SEVol;
+		float m_BGMVol = 1.0f;
+		float m_SEVol = 1.0f;
 
 		float m_audioMax[2];
 

@@ -37,6 +37,14 @@ namespace basecross {
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 		auto ptrMana = App::GetApp()->GetXAudio2Manager();
 
+		//BGMのボリュームの更新
+		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
+		auto BGMVoice = m_BGM->m_SourceVoice;
+		if (BGMVoice)
+		{
+			BGMVoice->SetVolume(BGMVol);
+		}
+
 		float time = 0;
 
 		// デッドゾーン
@@ -93,6 +101,15 @@ namespace basecross {
 			m_selectOnceFlag = true;
 		}
 
+		//==========================================================================================================
+		// チュートリアルにジャンプ(仮)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_START || keybord.m_bPressedKeyTbl[VK_TAB]) && !m_stageFlag)
+		{
+			ptrMana->Stop(m_BGM);
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"Tutorial");
+		}
+		//==========================================================================================================
+		
 		// Aボタンかエンターキーで選択
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
 		{

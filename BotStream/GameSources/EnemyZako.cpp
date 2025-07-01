@@ -11,8 +11,13 @@ namespace basecross {
 	{
 		Actor::OnCreate();
 
-		m_HPMax = 40.0f;
+		//ステータス初期化
+		m_HPMax = 130.0f;
 		m_HPCurrent = m_HPMax;
+		m_armorMax = 30.0f;
+		m_armor = m_armorMax;
+		m_armorRecoverTime = 10.0f;
+		m_armorRecover = 0.0f;
 
 		//Transform設定
 		m_trans = GetComponent<Transform>();
@@ -75,8 +80,9 @@ namespace basecross {
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
 		//接地判定の設定
-		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
+		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
+		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
@@ -100,11 +106,8 @@ namespace basecross {
 		{
 			if (m_used)
 			{
-				m_HPCurrent = m_HPMax;
-				m_attackFlag = false;
-				m_timeCountOfAttackCool = 3.0f;
-				//初期ステートに戻す
-				ChangeState(L"Stand");
+				// 初期化
+				Initialize();
 			}
 		}
 		if (m_beforUsed)
@@ -118,6 +121,17 @@ namespace basecross {
 		}
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
+
+		////アーマー回復
+		//if (m_armorMax != 0 && m_armor <= 0) 
+		//{
+		//	m_armorRecoverCountTime += _delta;
+		//	if (m_armorRecoverTime <= m_armorRecoverCountTime) 
+		//	{
+		//		m_armor = m_armorMax;
+		//		m_armorRecoverCountTime = 0;
+		//	}
+		//}
 
 		EnemyBase::OnUpdate();
 
@@ -142,6 +156,16 @@ namespace basecross {
 		//位置更新
 		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
+	}
+
+	//初期化処理
+	void EnemyZako::Initialize()
+	{
+		m_HPCurrent = m_HPMax;
+		m_attackFlag = false;
+		m_timeCountOfAttackCool = 3.0f;
+		//初期ステートに戻す
+		ChangeState(L"Stand");
 	}
 
 	void EnemyZako::CreateDamageBill(shared_ptr<GameObject> actorPtr, int damage, float pushY, float scale, float displayTime)
@@ -265,11 +289,39 @@ namespace basecross {
 		float scale = 0.7f;
 		float displayTime = 0.5f;
 
+		bool isArmorBreak = m_armor > 0;
+
+		m_armor -= CalculateDamage(m_getHitInfo.Damage);
+
 		//hpがあるならダメージ処理する
 		if (m_HPCurrent > 0)
 		{
-			CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
-			m_state->ChangeState(L"Hit");
+			//アーマーがあるかないかでダメージ時処理が変わる
+			if (m_armor <= 0)
+			{
+				//アーマー耐久値がなくなったら
+				if (isArmorBreak)
+				{
+					AddEffect(EnemyZakoEffect_ArmorBreak);
+					//PlaySnd(L"ZakoArmorBreak", 1.0f, 0);
+					m_SEManager->Start(L"ZakoArmorBreak", false, 1.0f * m_SEVol);
+				}
+
+				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
+				m_state->ChangeState(L"Hit");
+			}
+			else
+			{
+				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
+				m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
+				//m_armorFlash = m_armorFlashMax;
+				//m_armorFlash = m_armorFlashMax;
+				//HPがなくなったらやられるステート移行
+				if (m_HPCurrent <= 0)
+				{
+					m_state->ChangeState(L"Die");
+				}
+			}
 		}
 	}
 
@@ -279,7 +331,7 @@ namespace basecross {
 		Actor::OnCreate();
 
 		//いったん雑魚敵のHPは50とする
-		m_HPMax = 25.0f;
+		m_HPMax = 50.0f;
 		m_HPCurrent = m_HPMax;
 
 		//Transform設定
@@ -328,7 +380,8 @@ namespace basecross {
 		m_player = GetStage()->GetSharedGameObject<Player>(L"Player");
 
 		//接地判定の設定
-		m_LandDetect->SetBindPos(Vec3(0, -2.5f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -2.0f, 0));
+		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 
 		//ステートマシン生成

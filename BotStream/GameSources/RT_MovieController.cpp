@@ -44,7 +44,6 @@ namespace basecross {
 			WaveStage->SetDeltaScale(1.0f);
 			// ステージのフェーズをPlaying(プレイ状態)にする
 			WaveStage->SetGamePhase(WaveStageBase::GamePhase::GPhase_Playing);
-
 		}
 		//===================================================================================
 
@@ -70,6 +69,9 @@ namespace basecross {
 			// ムービーをしなくなったため
 			m_startMovie = Movie_None;
 			m_cameraEnd = false;
+
+			//ポーズ状態解除
+			waveStage->SetActorPause(false, false);
 		}
 		//==========================================================================
 
@@ -140,6 +142,10 @@ namespace basecross {
 	// ステージ開始時のムービー
 	void RT_MovieController::StartMovie()
 	{
+		auto waveStage = GetWaveStage(true);
+		//カットシーンフェーズに移行
+		waveStage->SetGamePhase(waveStage->GPhase_CutScene);
+
 		auto castCameraManager = m_cameraManager.lock();
 		auto castPlayer = m_player.lock();
 
@@ -156,6 +162,9 @@ namespace basecross {
 	void RT_MovieController::BossMovie()
 	{
 		auto waveStage = GetWaveStage(true);
+
+		//ムービー中はPlayerや敵が動かないようにステージをポーズ状態にする
+		waveStage->SetActorPause(true, false);
 
 		//カットシーンフェーズに移行
 		waveStage->SetGamePhase(waveStage->GPhase_CutScene);

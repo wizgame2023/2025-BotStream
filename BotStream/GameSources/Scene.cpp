@@ -60,6 +60,11 @@ namespace basecross{
 
 		}
 
+		if (event->m_MsgStr == L"Tutorial")
+		{
+			m_stageNum = 1;
+			ResetActiveStage<TutorialStage>();
+		}
 		// ここは後にWaveStageに変更する
 		// (現在:2025/04/19/23:19時点ではシーン遷移が出来ないため応急処置としてStageSanpeiに遷移するものとします)
 		if (event->m_MsgStr == L"ToWaveStage1")
@@ -201,6 +206,8 @@ namespace basecross{
 		app->RegisterTexture(L"AudioMater", strTexture);
 		strTexture = texPath + L"AudioOther.png";
 		app->RegisterTexture(L"AudioOther", strTexture);
+		strTexture = texPath + (L"Cross.png");
+		app->RegisterTexture(L"Cross", strTexture);
 
 		// TextSprite
 		strTexture = texPath + L"Texts.png";
@@ -275,21 +282,16 @@ namespace basecross{
 
 		strTexture = texPath + L"Tutorial/Tutorial1.png";
 		app->RegisterTexture(L"Tuto_txt1", strTexture);
-		/*strTexture = texPath + L"Tutorial/Tutorial_txt2.png";
+		strTexture = texPath + L"Tutorial/Tutorial2.png";
 		app->RegisterTexture(L"Tuto_txt2", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt3.png";
+		strTexture = texPath + L"Tutorial/Tutorial3.png";
 		app->RegisterTexture(L"Tuto_txt3", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt4.png";
+		strTexture = texPath + L"Tutorial/Tutorial4.png";
 		app->RegisterTexture(L"Tuto_txt4", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt5.png";
+		strTexture = texPath + L"Tutorial/Tutorial5.png";
 		app->RegisterTexture(L"Tuto_txt5", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt6.png";
+		strTexture = texPath + L"Tutorial/Tutorial6.png";
 		app->RegisterTexture(L"Tuto_txt6", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial_txt7.png";
-		app->RegisterTexture(L"Tuto_txt7", strTexture);*/
-
-		strTexture = texPath + L"Tutorial/Tutorial1.png";
-		app->RegisterTexture(L"Tuto_dialog1", strTexture);
 
 		// その他ゲーム中テクスチャ
 		strTexture = texPath + L"Shock_wave_ring001.png";
@@ -401,6 +403,7 @@ namespace basecross{
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
 
 		app->RegisterWav(L"ArmorBreak", SoundPath + L"ArmorBreak.wav");
+		app->RegisterWav(L"ZakoArmorBreak", SoundPath + L"ZakoArmorBreak.wav");
 		app->RegisterWav(L"Enemy_Slash", SoundPath + L"Enemy_Slash.wav");
 		app->RegisterWav(L"Enemy_Spin", SoundPath + L"Enemy_Spin.wav");
 		app->RegisterWav(L"Enemy_SpinFinish", SoundPath + L"Enemy_SpinFinish.wav");
