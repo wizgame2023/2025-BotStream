@@ -49,7 +49,7 @@ namespace basecross {
 		//コリジョン作成
 		auto ptrColl = AddComponent<CollisionObb>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::None);
-		ptrColl->SetDrawActive(true);
+		ptrColl->SetDrawActive(false);
 	}
 
 	void DarkObj::OnUpdate()
