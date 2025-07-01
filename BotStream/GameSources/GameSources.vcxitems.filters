@@ -180,7 +180,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)RT_MovieController.h">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)StageThird.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StageThird.h">
+      <Filter>Stage\WaveStage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)CameraManager.cpp">
