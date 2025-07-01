@@ -277,6 +277,8 @@ namespace basecross {
 	//íœŽžˆ—
 	void EnemyZako::OnDestroy()
 	{
+		Actor::OnDestroy();
+
 		auto stage = GetStage();
 		stage->GetSharedGameObject<PartsManager>(L"PartsManager")->PartsDrop(m_pos);
 	}

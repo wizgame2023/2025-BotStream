@@ -220,6 +220,12 @@ namespace basecross
 		}
 	}
 
+	void EffectManager::StopAllEffect()
+	{
+		m_manager->StopAllEffects();
+	}
+
+
 	void EffectManager::PauseAllEffects(const bool pause)
 	{
 		m_manager->SetPausedToAllEffects(pause);

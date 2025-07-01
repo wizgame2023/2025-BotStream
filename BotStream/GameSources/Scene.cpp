@@ -34,6 +34,9 @@ namespace basecross {
 	}
 
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
+		// すべてのエフェクトを止める
+		EffectManager::Instance().StopAllEffect();
+
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
@@ -430,6 +433,7 @@ namespace basecross {
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
 
+		app->RegisterWav(L"ArmorDefenseSE", SoundPath + L"ArmorDefenseSE.wav");
 		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
 		app->RegisterWav(L"SelectionSE", SoundPath + L"SelectionSE.wav");
 		app->RegisterWav(L"SelectionCancelSE", SoundPath + L"SelectionCancelSE.wav");
