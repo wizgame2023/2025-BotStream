@@ -93,7 +93,9 @@ namespace basecross{
 		/////////////////////////////////////////////////////////////////////////////
 
 		float m_meleeRange;	//近接戦闘の範囲
-		bool m_meleeFlag;	//近接戦闘していいかのフラグ	
+		bool m_meleeFlag;	//近接戦闘していいかのフラグ
+		bool m_meleeNow;	//攻撃をしているフラグ
+		bool m_gunNow;		//遠距離攻撃をしているフラグ
 
 		bool m_PauseFlag;	//ポーズのフラグ
 
@@ -144,8 +146,9 @@ namespace basecross{
 		//ステート変更処理 引数に入れたステートに変更する
 		void ChangeState(wstring stateName);
 		
-		//近距離攻撃をするかの処理のゲッター
+		//近距離攻撃をするかの処理のゲッターセッタ
 		bool GetMeleeFlag();
+		void SetMeleeFlag(bool onOff);
 
 		//ターゲット対象との距離を渡す
 		float GetTargetDis();
@@ -244,6 +247,24 @@ namespace basecross{
 		float GetAddAngleNAxis()
 		{
 			return Vec2(m_addAngleXAxis, m_addAngleYAxis).length();
+		}
+
+		//何の攻撃をしているかのセッタ
+		void SetMeleeNow(bool onOff)
+		{
+			m_meleeNow = onOff;
+		}
+		void SetGunNow(bool onOff)
+		{
+			m_gunNow = onOff;
+		}
+		bool GetMeleeNow()
+		{
+			return m_meleeNow;
+		}
+		bool GetGunNow()
+		{
+			return m_gunNow;
 		}
 
 		//ターゲット対象を渡す関数
