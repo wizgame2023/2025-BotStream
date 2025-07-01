@@ -44,7 +44,7 @@ namespace basecross {
 			Vec3(0.7f, 0.35f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -1.5f, 0.0f)
+			Vec3(0.0f, -1.37f, 0.0f)
 		);
 
 		//ドローメッシュの設定
