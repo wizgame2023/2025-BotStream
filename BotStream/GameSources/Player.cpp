@@ -732,6 +732,11 @@ namespace basecross {
 		//ptrDraw->SetEmissive(Col4(0.24f, 0.7f, 0.43f, 1.0f)); // 自己発光カラー（ライティングによる陰影を消す効果がある）
 		//ptrDraw->SetOwnShadowActive(true); // 影の映り込みを反映させる
 
+		//当たり判定
+		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
+		ptrColl->SetAfterCollision(AfterCollision::None);
+		ptrColl->SetDrawActive(false);
+
 		//原点オブジェクトが消えていたら自分も消える
 		auto originLock = m_originObj.lock();
 		if (!originLock)
@@ -864,18 +869,54 @@ namespace basecross {
 		}
 	}
 
+	//削除時処理
+	void Bullet::OnDestroy()
+	{
+		EffectManager::Instance().StopEffect(m_gunLine);
+	}
+
 	//当たり判定
 	void Bullet::OnCollisionEnter(shared_ptr<GameObject>& obj)
 	{
-		auto a = 0;
-		//敵や障害物に弾が当たったら消える
-		auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
-		if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
+		//auto a = 0;
+		////敵や障害物に弾が当たったら消える
+		//auto enemy = dynamic_pointer_cast<EnemyBase>(obj);
+		//if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
+		//{
+		//	GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+		//	GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+		//	GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+		//	EffectManager::Instance().StopEffect(m_gunLine);
+		//}
+	}
+
+	void Bullet::OnCollisionExcute(shared_ptr<GameObject>& obj)
+	{
+		// 発射しているオブジェクトが誰か確認する
+		auto player = dynamic_pointer_cast<Player>(m_originObj.lock());
+		auto enemy = dynamic_pointer_cast<EnemyZako>(m_originObj.lock());
+
+		if (player)
 		{
-			GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
-			GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
-			GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+			if (obj->FindTag(L"Enemy") || obj->FindTag(L"Terrain"))
+			{
+				GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+				GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+				GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+				EffectManager::Instance().StopEffect(m_gunLine);
+			}
 		}
+		if (enemy)
+		{
+			if (obj->FindTag(L"Player") || obj->FindTag(L"Terrain"))
+			{
+				GetStage()->RemoveGameObject<Bullet>(GetThis<Bullet>());
+				GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
+				GetStage()->RemoveGameObject<AttackCollision>(m_AttackCol);
+				EffectManager::Instance().StopEffect(m_gunLine);
+			}
+		}
+
 	}
 
 	//攻撃をしているのは誰か決める処理

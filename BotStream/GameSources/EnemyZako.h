@@ -19,13 +19,6 @@ namespace basecross {
 		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
 		int m_AttackType = Zako_Melee;
 
-		//アーマー
-		float m_armaorMax = 1.0f;
-		float m_armaor = 1.0f;
-		float m_armorRecoverCountTime = 0;
-		float m_armorRecoverTime = 6.0f;
-
-
 		//アニメーションの更新時間
 		float m_addTimeAnimation = 0.0f;
 
