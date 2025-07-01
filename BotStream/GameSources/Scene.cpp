@@ -7,12 +7,12 @@
 #include "stdafx.h"
 #include "Project.h"
 
-namespace basecross{
+namespace basecross {
 
 	//--------------------------------------------------------------------------------------
 	///	ゲームシーン
 	//--------------------------------------------------------------------------------------
-	void Scene::OnCreate(){
+	void Scene::OnCreate() {
 		try {
 			EffectManager::Instance().CreateEfkInterface();
 			//クリアする色を設定
@@ -36,8 +36,8 @@ namespace basecross{
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
-			
-			ResetActiveStage<TitleStage> ();
+
+			ResetActiveStage<TitleStage>();
 
 		}
 
@@ -53,7 +53,7 @@ namespace basecross{
 			ResetActiveStage<StageSelect>();
 
 		}
-		
+
 		if (event->m_MsgStr == L"ToPersonalityStage")
 		{
 			ResetActiveStage<StageSato>();
@@ -62,7 +62,7 @@ namespace basecross{
 
 		if (event->m_MsgStr == L"Tutorial")
 		{
-			m_stageNum = 1;
+			m_stageNum = 0;
 			ResetActiveStage<TutorialStage>();
 		}
 		// ここは後にWaveStageに変更する
@@ -72,7 +72,7 @@ namespace basecross{
 			m_stageNum = 1;
 			ResetActiveStage<StageFirst>();
 		}
-		
+
 		if (event->m_MsgStr == L"ToWaveStage2")
 		{
 			m_stageNum = 2;
@@ -196,7 +196,7 @@ namespace basecross{
 
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
-		
+
 		// PauseSprite
 		strTexture = texPath + L"PauseBack.png";
 		app->RegisterTexture(L"PauseBack", strTexture);
@@ -248,7 +248,7 @@ namespace basecross{
 		strTexture = texPath + L"gear.png";
 		app->RegisterTexture(L"PartsTEX", strTexture);
 
-		
+
 		//ターゲット範囲用テクスチャ
 		strTexture = texPath + L"Bar.png";
 		app->RegisterTexture(L"BarTex", strTexture);
@@ -256,7 +256,7 @@ namespace basecross{
 		//射撃用テクスチャ
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
-		
+
 		//Tutorial
 		strTexture = texPath + L"Tutorial/Tutorial_progressbar.png";
 		app->RegisterTexture(L"Tuto_bar", strTexture);
@@ -427,6 +427,10 @@ namespace basecross{
 		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
+
+		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
+		app->RegisterWav(L"SelectionSE", SoundPath + L"SelectionSE.wav");
+		app->RegisterWav(L"SelectionCancelSE", SoundPath + L"SelectionCancelSE.wav");
 
 		// パーツ入手
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");

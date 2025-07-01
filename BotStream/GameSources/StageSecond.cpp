@@ -8,14 +8,14 @@
 
 namespace basecross {
 	// ========================================================
-	// StageSecondæ“ª
+	// StageSecondå…ˆé ­
 	// ========================================================
 	void StageSecond::OnCreate()
 	{
 		auto& app = App::GetApp();
 		m_scene = app->GetScene<Scene>();
 
-		//ƒrƒ…[‚Æƒ‰ƒCƒg‚Ìì¬
+		//ãƒ“ãƒ¥ãƒ¼ã¨ãƒ©ã‚¤ãƒˆã®ä½œæˆ
 		CreateViewLight();
 
 		CreateFloor();
@@ -23,7 +23,7 @@ namespace basecross {
 		CreateCeiling();
 		CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
 
-		//Enemyƒ}ƒl[ƒWƒƒ‚ÌƒeƒXƒg
+		//Enemyãƒãƒãƒ¼ã‚¸ãƒ£ã®ãƒ†ã‚¹ãƒˆ
 		vector<EnemyVariation> enemyVariation;
 		for (int i = 0; i <= 10; i++)
 		{
@@ -43,12 +43,14 @@ namespace basecross {
 
 		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 		SetSharedGameObject(L"Boss", m_boss.lock());
+		dynamic_pointer_cast<BossFirst>(m_boss.lock())->ChangeHPMax(800);
+		dynamic_pointer_cast<BossFirst>(m_boss.lock())->ChangeArmorMax(300.0f, 8.0f);
 
-		//wave1“G
-		// °‚Ìƒ|ƒWƒVƒ‡ƒ“ Vec3(0.0f, -3.0f, -260.0f), ‘å‚«‚³ Vec3(120.0f, 3.0f, 120.0f)
+		//wave1æ•µ
+		// åºŠã®ãƒã‚¸ã‚·ãƒ§ãƒ³ Vec3(0.0f, -3.0f, -260.0f), å¤§ãã• Vec3(120.0f, 3.0f, 120.0f)
 		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		//m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		//m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-5.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -57,11 +59,11 @@ namespace basecross {
 		//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
 		
-		//Ÿ‚ÌWave‚És‚­‚½‚ß‚ÌˆÃˆÅ¶¬
+		//æ¬¡ã®Waveã«è¡ŒããŸã‚ã®æš—é—‡ç”Ÿæˆ
 		auto darkObj = AddGameObject<DarkObj>(Vec3(-0.0f, 3.0f, -200.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(10.0f, 10.0f, 10.0f));
 		m_darkObjs.push_back(darkObj);
 
-		//Wave1‚ÌƒhƒA¶¬
+		//Wave1ã®ãƒ‰ã‚¢ç”Ÿæˆ
 		auto doorLeft = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-2.5f, 3.0f, -200.5f));
 		m_doors.push_back(doorLeft);
 		auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, -200.5f));
@@ -69,12 +71,12 @@ namespace basecross {
 
 		CreateManagerObjects();
 
-		//ƒ€[ƒrƒRƒ“ƒgƒ[ƒ‰[ì¬
+		//ãƒ ãƒ¼ãƒ“ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ä½œæˆ
 		if (!m_player.lock()) return;
 		m_movieController = AddGameObject<RT_MovieController>(m_player.lock(), GetSharedGameObject<CameraManager>(L"CameraManager"));
 		SetSharedGameObject(L"MovieController", m_movieController);
 
-		//ƒXƒe[ƒWŠJn‚Ìƒ€[ƒrŠJn
+		//ã‚¹ãƒ†ãƒ¼ã‚¸é–‹å§‹æ™‚ã®ãƒ ãƒ¼ãƒ“é–‹å§‹
 		m_movieController->StartMovie();
 
 		m_gamePhase = GamePhase::GPhase_Start;
@@ -96,9 +98,9 @@ namespace basecross {
 
 		if (ConsiderGoToNextWave())
 		{
-			// ƒhƒA‚ğ“®‚©‚·
+			// ãƒ‰ã‚¢ã‚’å‹•ã‹ã™
 			DoorsMove(m_waveCurrent);
-			// ˆÃˆÅ‚Ì—LŒø‰»
+			// æš—é—‡ã®æœ‰åŠ¹åŒ–
 			ActivateDark(m_waveCurrent);
 		}
 		if (m_fadeout.lock()->GetBlackFlag())
@@ -125,30 +127,30 @@ namespace basecross {
 		{
 			m_sndMgr.lock()->StopBGM();
 			m_onceFlag = true;
-			m_fadeout.lock()->SetFadeOutFlag(true);// ƒuƒ‰ƒbƒNƒAƒEƒg
+			m_fadeout.lock()->SetFadeOutFlag(true);// ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆ
 			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
 		}
 
-		//ƒQ[ƒ€ƒNƒŠƒAˆ—
+		//ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢å‡¦ç†
 		if (m_gameClearFlag)
 		{
-			m_fadeout.lock()->SetFadeOutFlag(true);// ƒuƒ‰ƒbƒNƒAƒEƒg
+			m_fadeout.lock()->SetFadeOutFlag(true);// ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆ
 			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}
 
 
-		//ƒtƒF[ƒY‚Ìó‘Ô‚É‚æ‚Á‚Äˆ—‚ª•Ï‚í‚é
+		//ãƒ•ã‚§ãƒ¼ã‚ºã®çŠ¶æ…‹ã«ã‚ˆã£ã¦å‡¦ç†ãŒå¤‰ã‚ã‚‹
 		if (m_gamePhase == GPhase_Start)
 		{
-			//ƒAƒNƒ^[‚ªUpdetao—ˆ‚È‚­‚·‚é
+			//ã‚¢ã‚¯ã‚¿ãƒ¼ãŒUpdetaå‡ºæ¥ãªãã™ã‚‹
 			//SetActorPause(true);
-			m_deltaScaleCount = 1.0f; // deltaScale‚ğŒ³‚É–ß‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+			m_deltaScaleCount = 1.0f; // deltaScaleã‚’å…ƒã«æˆ»ã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹
 			m_deltaScale = 0.0f;
 		}
 		if (m_gamePhase == GPhase_Playing)
 		{
 			m_deltaScale = 1.0f;
-			m_deltaScaleCount = 0.0f; // deltaScale‚ğŒ³‚É–ß‚ç‚È‚¢‚æ‚¤‚É‚·‚é
+			m_deltaScaleCount = 0.0f; // deltaScaleã‚’å…ƒã«æˆ»ã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹
 
 			//SetActorPause(false);
 		}
@@ -156,19 +158,19 @@ namespace basecross {
 	}
 
 
-	//Wave‚ªØ‚è‘Ö‚í‚éÛ‚És‚¤ˆ—
+	//WaveãŒåˆ‡ã‚Šæ›¿ã‚ã‚‹éš›ã«è¡Œã†å‡¦ç†
 	void StageSecond::WaveInitialize() {
 		switch (m_waveCurrent) {
 			// ------- 1 -> 2 -------------------------------------------------------------
 		case 1:
 		{
-			//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğ‰Šú‰»
+			//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’åˆæœŸåŒ–
 			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
 			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -178,18 +180,15 @@ namespace basecross {
 			////m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			////m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
-			// ‚±‚±‚Ì“¯‚¶À•W‚Ì‚â‚Â‚ğÁ‚·‚Æ‚È‚º‚©¶¬‚³‚ê‚È‚¢
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f,))
 
-			//Ÿ‚ÌWave‚És‚­‚½‚ß‚ÌˆÃˆÅ¶¬
+			//æ¬¡ã®Waveã«è¡ŒããŸã‚ã®æš—é—‡ç”Ÿæˆ
 			auto darkObj = AddGameObject<DarkObj>(Vec3(-0.0f, 3.0f, 60.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(10.0f, 10.0f, 10.0f));
 			m_darkObjs.push_back(darkObj);
 
-			//Wave1‚ÌƒhƒA¶¬
+			//Wave1ã®ãƒ‰ã‚¢ç”Ÿæˆ
 			auto doorLeft = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-2.5f, 3.0f, 59.5f));
 			m_doors.push_back(doorLeft);
 			auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, 59.5f));
@@ -205,7 +204,7 @@ namespace basecross {
 		{
 			m_bossGauge->ClearBossGaugeUI(false);
 
-			////ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğ‰Šú‰»
+			////ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’åˆæœŸåŒ–
 			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
 			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
@@ -213,232 +212,7 @@ namespace basecross {
 			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
 			GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
 
-			//ƒ{ƒXƒ€[ƒr[Ä¶
-			m_movieController->BossMovie();
-
-			break;
-		}
-			// ----------------------------------------------------------------------------
-		}
-
-		m_waveCurrent++;
-	}
-	// END =========================================================
-
-	// =============================================================
-	// 
-	// =============================================================
-	void StageThird::OnCreate()
-	{
-		auto& app = App::GetApp();
-		m_scene = app->GetScene<Scene>();
-
-		//ƒrƒ…[‚Æƒ‰ƒCƒg‚Ìì¬
-		CreateViewLight();
-
-		CreateFloor();
-		CreateWall();
-		CreateCeiling();
-		CreatePlayer(Vec3(0.0f, 3.0f, -305.0f), Vec3(0.0f, 5.0f, 0.0f), Vec3(1.0f, 2.0f, 1.0f));
-
-		//Enemyƒ}ƒl[ƒWƒƒ‚ÌƒeƒXƒg
-		vector<EnemyVariation> enemyVariation;
-		for (int i = 0; i <= 10; i++)
-		{
-			enemyVariation.push_back(EVar_Normal);
-		}
-		for (int i = 0; i <= 10; i++)
-		{
-			enemyVariation.push_back(EVar_Projectile);
-		}
-		for (int i = 0; i <= 10; i++)
-		{
-			enemyVariation.push_back(EVar_Aerial);
-		}
-
-		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
-		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
-
-		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
-		SetSharedGameObject(L"Boss", m_boss.lock());
-
-		//wave1“G
-		// °‚Ìƒ|ƒWƒVƒ‡ƒ“ Vec3(0.0f, -3.0f, -260.0f), ‘å‚«‚³ Vec3(120.0f, 3.0f, 120.0f)
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-5.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(0.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-
-		
-		//Ÿ‚ÌWave‚És‚­‚½‚ß‚ÌˆÃˆÅ¶¬
-		auto darkObj = AddGameObject<DarkObj>(Vec3(-0.0f, 3.0f, -200.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(10.0f, 10.0f, 10.0f));
-		m_darkObjs.push_back(darkObj);
-
-		//Wave1‚ÌƒhƒA¶¬
-		auto doorLeft = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-2.5f, 3.0f, -200.5f));
-		m_doors.push_back(doorLeft);
-		auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, -200.5f));
-		m_doors.push_back(doorRight);
-
-		CreateManagerObjects();
-
-		//ƒ€[ƒrƒRƒ“ƒgƒ[ƒ‰[ì¬
-		if (!m_player.lock()) return;
-		m_movieController = AddGameObject<RT_MovieController>(m_player.lock(), GetSharedGameObject<CameraManager>(L"CameraManager"));
-		SetSharedGameObject(L"MovieController", m_movieController);
-
-		//ƒXƒe[ƒWŠJn‚Ìƒ€[ƒrŠJn
-		m_movieController->StartMovie();
-
-		m_gamePhase = GamePhase::GPhase_Start;
-
-	}
-
-	void StageThird::OnUpdate()
-	{
-		//WaveStageBase::OnUpdate();
-
-		auto& app = App::GetApp();
-		auto KeyState = app->GetInputDevice().GetKeyState();
-		auto pad = app->GetInputDevice().GetControlerVec()[0];
-
-		ResetDeltaScaleToDefault();
-		UpdateGamePhase();
-
-		EffectManager::Instance().InterfaceUpdate();
-
-		if (ConsiderGoToNextWave())
-		{
-			// ƒhƒA‚ğ“®‚©‚·
-			DoorsMove(m_waveCurrent);
-			// ˆÃˆÅ‚Ì—LŒø‰»
-			ActivateDark(m_waveCurrent);
-		}
-		if (m_fadeout.lock()->GetBlackFlag())
-		{
-			m_nextWaveFlag = true;
-		}
-		if (m_nextWaveFlag)
-		{
-			m_fadeout.lock()->SetFadeInFlag(true);
-			m_nextWaveFlag = false;
-
-			WaveInitialize();
-		}
-
-		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_onceFlag == false)
-		{
-			m_movieController->BossDieMovie();
-
-			m_sndMgr.lock()->StopBGM();
-			m_onceFlag = true;
-		}
-
-		if (ConsiderGameOver() && m_onceFlag == false)
-		{
-			m_sndMgr.lock()->StopBGM();
-			m_onceFlag = true;
-			m_fadeout.lock()->SetFadeOutFlag(true);// ƒuƒ‰ƒbƒNƒAƒEƒg
-			m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");
-		}
-
-		//ƒQ[ƒ€ƒNƒŠƒAˆ—
-		if (m_gameClearFlag)
-		{
-			m_fadeout.lock()->SetFadeOutFlag(true);// ƒuƒ‰ƒbƒNƒAƒEƒg
-			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
-		}
-
-
-		//ƒtƒF[ƒY‚Ìó‘Ô‚É‚æ‚Á‚Äˆ—‚ª•Ï‚í‚é
-		if (m_gamePhase == GPhase_Start)
-		{
-			//ƒAƒNƒ^[‚ªUpdetao—ˆ‚È‚­‚·‚é
-			//SetActorPause(true);
-			m_deltaScaleCount = 1.0f; // deltaScale‚ğŒ³‚É–ß‚ç‚È‚¢‚æ‚¤‚É‚·‚é
-			m_deltaScale = 0.0f;
-		}
-		if (m_gamePhase == GPhase_Playing)
-		{
-			m_deltaScale = 1.0f;
-			m_deltaScaleCount = 0.0f; // deltaScale‚ğŒ³‚É–ß‚ç‚È‚¢‚æ‚¤‚É‚·‚é
-
-			//SetActorPause(false);
-		}
-
-	}
-
-
-	//Wave‚ªØ‚è‘Ö‚í‚éÛ‚És‚¤ˆ—
-	void StageThird::WaveInitialize() {
-		switch (m_waveCurrent) {
-			// ------- 1 -> 2 -------------------------------------------------------------
-		case 1:
-		{
-			//ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğ‰Šú‰»
-			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
-
-			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, -5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 2.0f, 15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-
-			////m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			////m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			////m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f,2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			////m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-
-			// ‚±‚±‚Ì“¯‚¶À•W‚Ì‚â‚Â‚ª‚È‚¢‚Æ‚È‚º‚©¶¬‚³‚ê‚È‚¢
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(10.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(15.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(20.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(25.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-10.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			//m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f,))
-			
-			//Ÿ‚ÌWave‚És‚­‚½‚ß‚ÌˆÃˆÅ¶¬
-			auto darkObj = AddGameObject<DarkObj>(Vec3(-0.0f, 3.0f, 60.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(10.0f, 10.0f, 10.0f));
-			m_darkObjs.push_back(darkObj);
-
-			//Wave1‚ÌƒhƒA¶¬
-			auto doorLeft = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-2.5f, 3.0f, 59.5f));
-			m_doors.push_back(doorLeft);
-			auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, 59.5f));
-			m_doors.push_back(doorRight);
-
-
-			break;
-		}
-			// ----------------------------------------------------------------------------
-
-			// ------- 2 -> 3 -------------------------------------------------------------
-		case 2:
-		{
-			m_bossGauge->ClearBossGaugeUI(false);
-
-			////ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğ‰Šú‰»
-			SetPlayerTransform(Vec3(0.0f, 3.0f, 195.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
-
-			m_enemyMgr.lock()->InstBoss(dynamic_pointer_cast<EnemyBase>(m_boss.lock()));
-
-			GetSharedGameObject<SoundManager>(L"SoundManager")->StopBGM();
-			GetSharedGameObject<SoundManager>(L"SoundManager")->PlayBGM(4);
-
-			//ƒ{ƒXƒ€[ƒr[Ä¶
+			//ãƒœã‚¹ãƒ ãƒ¼ãƒ“ãƒ¼å†ç”Ÿ
 			m_movieController->BossMovie();
 
 			break;

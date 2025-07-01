@@ -50,9 +50,9 @@ namespace basecross {
 
             Vec3 move = m_player.lock()->GetVelocity();
             move.y = 0;
-            m_progress[0] += move.length() * m_tutorialMoveRequired * delta;
+            m_progress[0] += m_isPaused ? 0 : move.length() * m_tutorialMoveRequired * delta;
             auto camera = dynamic_pointer_cast<CameraManager>(GetSharedGameObject<CameraManager>(L"CameraManager"));
-            m_progress[1] += camera->GetAddAngleNAxis() * m_tutorialCameraRequired * delta;
+            m_progress[1] += m_isPaused ? 0 : camera->GetAddAngleNAxis() * m_tutorialCameraRequired * delta;
 
             m_bar[0].lock()->SetPercent(m_progress[0]);
             m_bar[1].lock()->SetPercent(m_progress[1]);
@@ -67,8 +67,9 @@ namespace basecross {
             m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
             m_bar[0].lock()->SetPercent(m_progress[0]);
 
-            float add = m_player.lock()->GetDodge() ? m_tutorialEvadeRequired * delta : 0;
-            m_progress[0] += add;
+            if (m_player.lock()->GetDodge()) {
+                m_progress[0] += m_isPaused ? 0 : m_tutorialEvadeRequired * delta;
+            }
 
             if (m_enemyMgr.lock()->GetEnemyVec(true).size() < m_enemyNum) {
                 m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(0.0f, 10.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
@@ -83,9 +84,9 @@ namespace basecross {
         {
             m_bar[0].lock()->SetDrawActive(m_dialog.lock()->IsInvisible());
             m_bar[0].lock()->SetPercent(m_progress[0]);
-
-            float add = (m_player.lock()->GetStateName() == L"Dash") ? m_tutorialDashRequired * delta : 0;
-            m_progress[0] += add;
+            if (m_player.lock()->GetStateName() == L"Dash") {
+                m_progress[0] += m_isPaused ? 0 : m_tutorialDashRequired * delta;
+            }
 
             if (m_progress[0] >= 1.0f) {
                 ChangeTutorialPhase(Tutorial_HitTheCombos);
@@ -99,10 +100,10 @@ namespace basecross {
 
             wstring stateName = m_player.lock()->GetStateName();
             if (stateName == L"Attack1" || stateName == L"Attack2" || stateName == L"Attack3") {
-                m_progress[0] += m_tutorialAttackRequired * delta;
+                m_progress[0] += m_isPaused ? 0 : m_tutorialAttackRequired * delta;
             }
             else if (stateName == L"AttackEx") {
-                m_progress[0] += m_tutorialAttackRequiredEx * delta;
+                m_progress[0] += m_isPaused ? 0 : m_tutorialAttackRequiredEx * delta;
             }
 
             if (m_enemyMgr.lock()->GetEnemyVec(true).size() < m_enemyNum) {
@@ -123,7 +124,7 @@ namespace basecross {
             for (auto& e : enemyVec) {
                 wstring stateName = e->GetStateName();
                 if (stateName == L"Stun") {
-                    m_progress[0] += m_tutorialAttackRequired * delta;
+                    m_progress[0] += m_isPaused ? 0 : m_tutorialAttackRequired* delta;
                 }
             }
 
@@ -290,7 +291,7 @@ namespace basecross {
         {
             m_sndMgr.lock()->StopBGM();
             m_onceFlag = true;
-            m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
+            m_scene.lock()->PostEvent(3.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToStageSelect");
         }
 
         if (ConsiderGameOver() && m_onceFlag == false)
