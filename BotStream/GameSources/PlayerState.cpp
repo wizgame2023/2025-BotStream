@@ -44,6 +44,20 @@ namespace basecross {
 		m_dodgeFlag = m_player->GetDodgeFlag();
 		//接近戦していいかのフラグ受け取る
 		m_meleeFlag = cameraManager->GetMeleeFlag();
+
+		//接近戦していいかのフラグを管理する
+		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		{
+			m_meleeFlag = false;
+			m_player->SetMeleeFlag(false);
+		}
+		else if (!(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER))
+		{
+			m_meleeFlag = true;
+			m_player->SetMeleeFlag(true);
+			//m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager")->SetGunNow(true);
+
+		}
 	};
 	//ターゲット対象との距離を取得する
 	float PlayerStateBase::GetTargetDistance()
@@ -82,6 +96,11 @@ namespace basecross {
 
 		//何もなければ立ち止まるアニメーション
 		m_player->ChangeAnim(L"Idle");
+
+		////現在攻撃していないことを渡す
+		//m_player->SetMeleeNow(false);
+		//m_player->SetGunNow(false);
+
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
@@ -105,9 +124,13 @@ namespace basecross {
 		{
 			m_player->ChangeAnim(L"Walk_Gun");
 		}
-		else
+		else if(m_meleeFlag)
 		{
 			m_player->ChangeAnim(L"Idle");
+		}
+		else if (!m_meleeFlag)
+		{
+			m_player->ChangeAnim(L"Shot_Gun");
 		}
 
 		// 歩きステートのアニメーション再生
@@ -193,6 +216,10 @@ namespace basecross {
 	void PlayerDodgeState::Enter()
 	{
 		PlayerStateBase::Enter();
+
+		//現在攻撃していないことを渡す
+		m_player->SetMeleeNow(false);
+		m_player->SetGunNow(false);
 
 		//回避する瞬間にスティックを傾けていたらその方向に進む
 		auto m_stickL = Vec3(m_controller.fThumbLX,0,m_controller.fThumbLY);
@@ -402,6 +429,15 @@ namespace basecross {
 		PlayerStateBase::Enter();
 		//プラスする攻撃力を入れる
 		m_plusAttack = m_player->GetEquippedParts().addAttack;
+
+		//現在接近戦していることを渡す
+		m_player->SetMeleeNow(true);
+	}
+
+	void PlayerAttackBaseState::Exit()
+	{
+		//現在接近戦終えたことを渡す
+		m_player->SetMeleeNow(false);
 	}
 
 	//次の攻撃発生フラグ処理
@@ -469,7 +505,9 @@ namespace basecross {
 	}
 
 	void PlayerAttack1State::Exit()
-	{
+	{	
+		PlayerAttackBaseState::Exit();
+
 		auto stage = m_player->GetStage();
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
@@ -575,6 +613,8 @@ namespace basecross {
 
 	void PlayerAttack2State::Exit()
 	{
+		PlayerAttackBaseState::Exit();
+
 		auto stage = m_player->GetStage();
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
@@ -696,6 +736,8 @@ namespace basecross {
 
 	void PlayerAttack3State::Exit()
 	{
+		PlayerAttackBaseState::Exit();
+
 		auto stage = m_player->GetStage();
 		m_timeOfAttack = 0.0f;//リセット
 		m_nestAttackFlag = false;
@@ -816,6 +858,8 @@ namespace basecross {
 
 	void PlayerAttackExState::Exit()
 	{
+		PlayerAttackBaseState::Exit();
+
 		auto stage = m_player->GetStage();
 		m_timeOfAttack = 0.0f;//リセット
 		AttackCollisionFlag = true;//リセット
@@ -953,6 +997,9 @@ namespace basecross {
 	void PlayerAttackLongState::Enter()
 	{
 		PlayerStateBase::Enter();
+
+		//遠距離攻撃をしていることを渡す
+		m_player->SetGunNow(true);
 
 		//球を出す
 		auto stage = m_player->GetStage();

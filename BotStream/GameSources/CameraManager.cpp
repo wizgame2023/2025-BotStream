@@ -207,24 +207,25 @@ namespace basecross {
 		//CameraPosUpdate();
 
 
-		////デバック用
-		//wstringstream wss(L"");
-		//auto scene = App::GetApp()->GetScene<Scene>();
+		//デバック用
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
 
-		////ロックオン対象との距離を計算
-		//if (m_targetObj)
-		//{
-		//	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-		//	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
-		//}
+		//ロックオン対象との距離を計算
+		if (m_targetObj)
+		{
+			Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+			m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
+		}
 
-		//
+		
 		//wss /* << L"デバッグ用文字列 "*/
 		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
 		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
 		//	<< L"\nターゲット対象の距離: " << m_targetDis
 		//	<< L"\nFPS: " << 1.0f/m_delta
+		//	<< L"\nmelee : "<< m_meleeFlag
 		//	//<< L"\n当たった場所x: " << hitPos.x
 		//	//<< L"\n当たった場所y: " << hitPos.y
 		//	//<< L"\n当たった場所z: " << hitPos.z
@@ -339,7 +340,7 @@ namespace basecross {
 		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 120.0f);
 
 		//銃を使わないフラグ
-		m_meleeFlag = true;
+		//m_meleeFlag = true;
 		//ここはUIを出さない
 		m_spriteAiming->OnClear(true);
 
@@ -370,7 +371,7 @@ namespace basecross {
 		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 16.0f*5);
 
 		//銃使うフラグにした
-		m_meleeFlag = false;
+		//m_meleeFlag = false;
 		//ここはUIを出す
 		m_spriteAiming->OnClear(false);
 
@@ -421,7 +422,7 @@ namespace basecross {
 		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, speed);
 
 		//銃を使わないフラグ
-		m_meleeFlag = true;
+		//m_meleeFlag = true;
 		//ここはUIを出さない
 		m_spriteAiming->OnClear(true);
 
@@ -1010,18 +1011,22 @@ namespace basecross {
 		float meleeRange = 200.0f;
 		if (m_targetDis >= meleeRange)
 		{
-			m_meleeFlag = true;
+			//m_meleeFlag = true;
 		}
 		if (m_targetDis < meleeRange)
 		{
-			m_meleeFlag = false;
+			//m_meleeFlag = false;
 		}
 	}
 
-	//近距離攻撃をするかの処理のゲッター
+	//近距離攻撃をするかの処理のゲッタ
 	bool CameraManager::GetMeleeFlag()
 	{
 		return m_meleeFlag;
+	}
+	void CameraManager::SetMeleeFlag(bool onOff)
+	{
+		m_meleeFlag = onOff;
 	}
 
 

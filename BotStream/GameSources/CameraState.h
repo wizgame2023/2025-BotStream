@@ -25,6 +25,10 @@ namespace basecross {
 
 		shared_ptr<Stage> m_stage;
 
+		bool m_meleeFlag = false;
+		bool m_meleeNow = false;
+		bool m_gunNow = false;
+
 	public:
 		CameraStateBase(shared_ptr<GameObject>& obj) :
 			StateBase(obj),
