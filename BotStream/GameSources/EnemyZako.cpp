@@ -45,7 +45,7 @@ namespace basecross {
 		{
 			ptrDraw->SetMeshResource(L"Enemy_C");
 		}
-		ptrDraw->SetDiffuse(Col4(0.5f));
+		ptrDraw->SetDiffuse(Col4(1.0f));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
@@ -92,6 +92,8 @@ namespace basecross {
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
 		m_HPBer->SetPercent(1.0f);
+
+		SetAlphaActive(true);
 	}
 
 	void EnemyZako::OnUpdate()
@@ -107,7 +109,9 @@ namespace basecross {
 			if (m_used)
 			{
 				// 初期化
-				Initialize();
+				Initialize();	
+				GetComponent<PNTBoneModelDraw>()->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+				GetComponent<Shadowmap>()->SetDrawActive(true);
 			}
 		}
 		if (m_beforUsed)
@@ -353,7 +357,7 @@ namespace basecross {
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
 		ptrDraw->SetMeshResource(L"Enemy_A");
-		ptrDraw->SetDiffuse(Col4(0.5f));
+		ptrDraw->SetDiffuse(Col4(1.0f));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
@@ -498,6 +502,7 @@ namespace basecross {
 				m_timeCountOfAttackCool = 3.0f;
 				//初期ステートに戻す
 				ChangeState(L"Stand");
+				GetComponent<PNTBoneModelDraw>()->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 			}
 		}
 		if (m_beforUsed)
