@@ -25,7 +25,7 @@ namespace basecross {
 
 		shared_ptr<Stage> m_stage;
 
-		bool m_meleeFlag = false;
+		bool m_meleeFlag = true;
 		bool m_meleeNow = false;
 		bool m_gunNow = false;
 

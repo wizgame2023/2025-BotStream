@@ -74,7 +74,7 @@ namespace basecross {
 		//もし,LBボタンを押していたら銃ステートに移行する
 		if (!m_meleeNow)
 		{
-			if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+			if (!m_meleeFlag)
 			{
 				m_cameraManager->ChangeState(L"Gun");
 			}
@@ -101,15 +101,15 @@ namespace basecross {
 	}
 
 	void CameraGunState::Update(float deltaTime)
-	{
+	{	
+		CameraStateBase::Update(deltaTime);
+
 		//もし,LBボタンを押していなかったら通常モードに戻る
-		if (!(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER))
+		if (m_meleeFlag)
 		{
 			m_cameraManager->ChangeState(L"Normal");
 			return;
 		}
-
-		CameraStateBase::Update(deltaTime);
 
 		//カメラの位置更新
 		m_cameraManager->CameraPosUpdate(3.0f, 3.0f, 8.0f);
