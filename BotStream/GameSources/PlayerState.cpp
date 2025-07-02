@@ -6,22 +6,28 @@
 #include "stdafx.h"
 #include "Project.h"
 
-#define AttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
-#define DodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
 
 namespace basecross {
+	#define ControllerAttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
+	#define DodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
+	#define MouseAimButton GetAsyncKeyState(VK_RBUTTON) & 0x8000
+	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_LBUTTON]
+	#define AttackButton ControllerAttackButton || MouseAttackButton
+
 	void PlayerStateBase::Enter()
 	{
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
 
-		//コントローラーを受け取る
+		// コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//Playerがどの行動をしていいかのフラグを受け取る
+		// Playerがどの行動をしていいかのフラグを受け取る
 		m_attackFlag = m_player->GetAttackFlag();
 		m_dodgeFlag = m_player->GetDodgeFlag();
 		m_walkFlag = m_player->GetAttackFlag();
+
+		m_keyState = App::GetApp()->GetInputDevice().GetKeyState();
 
 		// SEのボリュームを受け取る
 		m_SEVol = m_player->GetSEVol();
@@ -30,28 +36,30 @@ namespace basecross {
 	{
 		m_deltaTime = deltaTime;
 
-		//コントローラーを受け取る
+		// コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
+		// キーボード,マウスを受け取る
+		m_keyState = App::GetApp()->GetInputDevice().GetKeyState();
 
 		// SEのボリュームを受け取る
 		m_SEVol = m_player->GetSEVol();
 
-		//カメラマネージャ取得
+		// カメラマネージャ取得
 		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		
-		//回避してよいかフラグを受け取る
+		// 回避してよいかフラグを受け取る
 		m_dodgeFlag = m_player->GetDodgeFlag();
-		//接近戦していいかのフラグ受け取る
+		// 接近戦していいかのフラグ受け取る
 		m_meleeFlag = cameraManager->GetMeleeFlag();
 
-		//接近戦していいかのフラグを管理する
+		// 接近戦していいかのフラグを管理する
 		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
 		{
 			m_meleeFlag = false;
 			m_player->SetMeleeFlag(false);
 		}
-		else if (!(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER))
+		else
 		{
 			m_meleeFlag = true;
 			m_player->SetMeleeFlag(true);
@@ -59,26 +67,26 @@ namespace basecross {
 
 		}
 	};
-	//ターゲット対象との距離を取得する
+	// ターゲット対象との距離を取得する
 	float PlayerStateBase::GetTargetDistance()
 	{
 		return m_targetDistance;
 	}
 
-	//移動についての処理
+	// 移動についての処理
 	void PlayerStateBase::Walk(int state, bool onOff)
 	{
-		//フラグがオフなら移動しない
+		// フラグがオフなら移動しない
 		if (!onOff) return;
 
-		//移動処理
+		// 移動処理
 		m_player->PlayerMove(state);
 	}
 
-	//回避についての処理
+	// 回避についての処理
 	void PlayerStateBase::Dodge(bool onOff)
 	{
-		//フラグがオフなら移動しない
+		// フラグがオフなら移動しない
 		if (!onOff) return;
 
 		// 回避していいフラグ状態だったら回避ステートに変更
@@ -89,12 +97,12 @@ namespace basecross {
 	}
 
 
-	//Playerの歩くモーション
+	// Playerの歩くモーション
 	void PlayerWalkState::Enter()
 	{
 		PlayerStateBase::Enter();
 
-		//何もなければ立ち止まるアニメーション
+		// 何もなければ立ち止まるアニメーション
 		m_player->ChangeAnim(L"Idle");
 
 		////現在攻撃していないことを渡す
@@ -160,6 +168,12 @@ namespace basecross {
 			m_timeOfPushAttackButton += m_deltaTime;
 		}
 		// 攻撃するときの処理(刀か銃にするか)
+		//if()
+		//POINT test;
+		//GetCursorPos(&test);
+
+		//auto m_keyState = App::GetApp()->GetInputDevice().GetKeyState();
+
 		if (AttackButton)
 		{
 			if (m_meleeFlag)
