@@ -540,5 +540,61 @@ namespace basecross {
 			m_num[i]->OnClear(clear);
 		}
 	}
+
+	// --------------------------------------------------------------------------------------
+
+
+	//================================================================
+	// プレイヤーがやばいときに表示する奴
+	//================================================================
+	void PlayerEmergencyUI::OnCreate()
+	{
+		constexpr int layer = 4;
+		// とりあえず赤色で表示
+		Col4 color = { 1.0f, 0.0f, 0.0f, 0.0f };
+
+		// 16:9のはずなんだけどなぁ…0.5625掛けるとちょっと足りない
+		const Vec2 size(1300.0f, 800.0f);
+
+		m_stage = GetStage();
+		m_emergencySprite = m_stage->AddGameObject<Sprite>(
+			L"EmergencyTex",
+			size,
+			Vec3(0, 0, 0),//画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color,
+			layer
+		);
+	}
+
+	void PlayerEmergencyUI::OnUpdate()
+	{
+		auto player = m_player.lock();
+		if (!player)
+		{
+			GetStage()->RemoveGameObject<PlayerEmergencyUI>(GetThis<PlayerEmergencyUI>());
+			return;
+		}
+
+		// プレイヤーの現在のHPと最大値を取得
+		float currentHP = player->GetHPCurrent();
+		float maxHP = player->GetMaxHP();
+
+		// プレイヤーのHPが残り3割以下の時
+		if ((currentHP / maxHP) < 0.3f)
+		{
+			m_time += App::GetApp()->GetElapsedTime() * 2.0f;
+			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, sinf(m_time)));
+			if (sinf(m_time) < 0.0f)
+			{
+				m_time = 0.000001f;
+			}
+		}
+		else
+		{
+			m_time = 0;
+			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, 0.0f)); // 非表示
+		}
+	}
 }
 //end basecross

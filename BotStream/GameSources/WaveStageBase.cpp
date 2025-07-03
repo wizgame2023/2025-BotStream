@@ -132,6 +132,9 @@ namespace basecross {
 		// プレイヤーの弾のUI
 		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos, digitSize);
 
+		// プレイヤーがやばいときのやつ
+		AddGameObject<PlayerEmergencyUI>(m_player.lock());
+
 		// ボスゲージ
 		m_bossGauge = AddGameObject<BossGaugeUI>(
 			m_boss.lock(),
