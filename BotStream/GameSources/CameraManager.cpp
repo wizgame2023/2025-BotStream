@@ -99,9 +99,95 @@ namespace basecross {
 
 		// インプットデバイスオブジェクト
 		InputDevice inputDevice = App::GetApp()->GetInputDevice(); // 様々な入力デバイスを管理しているオブジェクトを取得
-		//コントローラーの取得
+		// コントローラーの取得
 		m_controler = inputDevice.GetControlerVec()[0];
 		m_contrloerVec = Vec2(m_controler.fThumbRX, m_controler.fThumbRY);
+		// キーマウの取得
+		KEYBOARD_STATE keyState = App::GetApp()->GetInputDevice().GetKeyState();
+		
+		// マウスの位置取得
+		GetCursorPos(&m_mouseCurrentPos);
+
+		// マウスの移動ベクトル計算
+		m_mouseMoveVec = Vec2(m_mouseCurrentPos.x - m_mouseBeforPos.x,
+			m_mouseCurrentPos.y - m_mouseBeforPos.y);
+
+		//カーソルが端まで行ったらループさせる
+		int maxPosX = 1500;	int minPosX = 0;
+		int maxPosY = 850;	int minPosY = 0;
+
+		// 移動ループした後は移動量が大きくなるので調整
+		if (m_cursorFlagX)
+		{
+			// 右端から左端へ// 今ここ作業中
+			if (m_mouseMoveVec.x <= -1)
+			{
+				m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
+			}
+			// 左端から右端へ
+			else if (m_mouseMoveVec.x >= +1)
+			{
+				m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
+			}
+
+			m_cursorFlagX = false;
+		}
+
+		if (m_cursorFlagY)
+		{
+			//上端から下端へ
+			if (m_mouseMoveVec.y <= -1)
+			{
+				m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
+			}
+			//下端から上端へ
+			else if (m_mouseMoveVec.y >= 1)
+			{
+				m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
+			}
+
+			m_cursorFlagY = false;
+		}
+
+		//マウス位置更新
+		m_mouseBeforPos = m_mouseCurrentPos;
+
+		// X座標
+		if (m_mouseCurrentPos.x >= maxPosX)
+		{
+			m_mouseCurrentPos.x = minPosX + 1;
+			SetCursorPos(minPosX + 1, m_mouseCurrentPos.y);
+			m_cursorFlagX = true;
+		}
+		if (m_mouseCurrentPos.x <= minPosX)
+		{
+			m_mouseCurrentPos.x = minPosX - 1;
+			SetCursorPos(maxPosX - 1, m_mouseCurrentPos.y);
+			m_cursorFlagX = true;
+		}
+		// Y座標
+		if (m_mouseCurrentPos.y >= maxPosY)
+		{
+			m_mouseCurrentPos.y = minPosY + 1;
+			SetCursorPos(m_mouseCurrentPos.x, minPosY + 1);
+			m_cursorFlagY = true;
+		}
+		if (m_mouseCurrentPos.y <= minPosY)
+		{
+			m_mouseCurrentPos.y = minPosY - 1;
+			SetCursorPos(m_mouseCurrentPos.x, maxPosY - 1);
+			m_cursorFlagY = true;
+		}
+
+
+
+
+		//カーソルの前の位置と見比べてどれくらい移動しているか確認する
+
+
+
+
+		//mousePos = keyState.m_MouseClientPoint;
 
 		////慣性付きの回転処理
 		//InertialRotation();
@@ -219,28 +305,32 @@ namespace basecross {
 		}
 
 		
-		//wss /* << L"デバッグ用文字列 "*/
-		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-		//	<< L"\nターゲット対象の距離: " << m_targetDis
-		//	<< L"\nFPS: " << 1.0f/m_delta
-		//	<< L"\nmelee : "<< m_meleeFlag
-		//	//<< L"\n当たった場所x: " << hitPos.x
-		//	//<< L"\n当たった場所y: " << hitPos.y
-		//	//<< L"\n当たった場所z: " << hitPos.z
-		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-		//	//<<L"\nFPS:"<< 1.0f/delta
-		//	<< endl;
+		wss /* << L"デバッグ用文字列 "*/
+			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+			<< L"\nターゲット対象の距離: " << m_targetDis
+			<< L"\nFPS: " << 1.0f/m_delta
+			<< L"\nmelee : "<< m_meleeFlag
+			<< L"\nMousePos.x : " << m_mouseCurrentPos.x
+			<< L"\nMousePos.y : " << m_mouseCurrentPos.y
+			<< L"\nMouseVec.x : " << m_mouseMoveVec.x
+			<< L"\nMouseVec.y : " << m_mouseMoveVec.y
+			//<< L"\n当たった場所x: " << hitPos.x
+			//<< L"\n当たった場所y: " << hitPos.y
+			//<< L"\n当たった場所z: " << hitPos.z
+			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+			//<<L"\nFPS:"<< 1.0f/delta
+			<< endl;
 
-		//	//if (m_lockOnNum >= 0)
-		//	//{		
-		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-		//	//	float a = targetAngle;
-		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-		//	//}
+			//if (m_lockOnNum >= 0)
+			//{		
+			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+			//	float a = targetAngle;
+			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+			//}
 
-		//scene->SetDebugString(wss.str());
+		scene->SetDebugString(wss.str());
 
 	}
 
@@ -262,59 +352,124 @@ namespace basecross {
 	//カメラの慣性回転の処理
 	void CameraManager::InertialRotation(float decelerationSpeed,float magnificationSpeed)
 	{
-		//Y軸回転
-		if (m_contrloerVec.x != 0.0f)
+		//コントローラーが接続されているときはコントローラーのみで入力
+		if (m_controler.bConnected)
 		{
-			//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
-			m_addAngleYAxis = (m_speedYAxis * m_contrloerVec.x) * decelerationSpeed;
-		}
-		//コントローラーを傾けていなければだんだん移動スピードがなくなる
-		else if(m_contrloerVec.x == 0.0f)
-		{
-			if (m_addAngleYAxis > 0)
+			//Y軸回転
+			if (m_contrloerVec.x != 0.0f)
 			{
-				m_addAngleYAxis -= magnificationSpeed * m_delta;
-				if (m_addAngleYAxis <= 0)
+				//左スティックをX方面に傾けてカメラがPlayerのY軸方向に回転する処理
+				m_addAngleYAxis = (m_speedYAxis * m_contrloerVec.x) * decelerationSpeed;
+			}
+			//コントローラーを傾けていなければだんだん移動スピードがなくなる
+			else if (m_contrloerVec.x == 0.0f)
+			{
+				if (m_addAngleYAxis > 0)
 				{
-					m_addAngleYAxis = 0.0f;
+					m_addAngleYAxis -= magnificationSpeed * m_delta;
+					if (m_addAngleYAxis <= 0)
+					{
+						m_addAngleYAxis = 0.0f;
+					}
+				}
+				else if (m_addAngleYAxis < 0)
+				{
+					m_addAngleYAxis += magnificationSpeed * m_delta;
+					if (m_addAngleYAxis >= 0)
+					{
+						m_addAngleYAxis = 0.0f;
+					}
 				}
 			}
-			else if (m_addAngleYAxis < 0)
+
+			//X軸回転
+			if (m_contrloerVec.y != 0.0f)
 			{
-				m_addAngleYAxis += magnificationSpeed * m_delta;
-				if (m_addAngleYAxis >= 0)
+				//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
+				m_addAngleXAxis = (m_speedXAxis * m_contrloerVec.y) * decelerationSpeed;
+			}
+			//コントローラーを傾けていなければだんだん移動スピードがなくなる
+			else if (m_contrloerVec.y == 0.0f)
+			{
+				if (m_addAngleXAxis > 0)
 				{
-					m_addAngleYAxis = 0.0f;
+					m_addAngleXAxis -= magnificationSpeed / 2 * m_delta;
+					if (m_addAngleXAxis <= 0)
+					{
+						m_addAngleXAxis = 0.0f;
+					}
+				}
+				else if (m_addAngleXAxis < 0)
+				{
+					m_addAngleXAxis += magnificationSpeed / 2 * m_delta;
+					if (m_addAngleXAxis >= 0)
+					{
+						m_addAngleXAxis = 0.0f;
+					}
+				}
+			}
+		}
+		else
+		{
+			//コントローラーが接続されていないときはキーマウで操作できるようにする
+
+			auto speedMouseYAixs = (m_speedYAxis * 0.05f);
+			//Y軸回転
+			if (m_mouseMoveVec.x != 0.0f)
+			{
+				//マウスをX方面移動してカメラがPlayerのY軸方向に回転する処理(-の方が違和感がない動きなのでこうします)
+				m_addAngleYAxis = -((speedMouseYAixs * m_mouseMoveVec.x) * decelerationSpeed);
+			}
+			//コントローラーを傾けていなければだんだん移動スピードがなくなる
+			else if (m_mouseMoveVec.x == 0.0f)
+			{
+				if (m_addAngleYAxis > 0)
+				{
+					m_addAngleYAxis -= magnificationSpeed * m_delta;
+					if (m_addAngleYAxis <= 0)
+					{
+						m_addAngleYAxis = 0.0f;
+					}
+				}
+				else if (m_addAngleYAxis < 0)
+				{
+					m_addAngleYAxis += magnificationSpeed * m_delta;
+					if (m_addAngleYAxis >= 0)
+					{
+						m_addAngleYAxis = 0.0f;
+					}
+				}
+			}
+
+			auto addMouseAngleXAxis = (m_speedXAxis * 0.05f);
+			//X軸回転
+			if (m_mouseMoveVec.y != 0.0f)
+			{
+				//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
+				m_addAngleXAxis = (addMouseAngleXAxis * m_mouseMoveVec.y) * decelerationSpeed;
+			}
+			//コントローラーを傾けていなければだんだん移動スピードがなくなる
+			else if (m_mouseMoveVec.y <= 3.0f)
+			{
+				if (m_addAngleXAxis > 0)
+				{
+					m_addAngleXAxis -= magnificationSpeed / 2 * m_delta;
+					if (m_addAngleXAxis <= 0)
+					{
+						m_addAngleXAxis = 0.0f;
+					}
+				}
+				else if (m_addAngleXAxis < 0)
+				{
+					m_addAngleXAxis += magnificationSpeed / 2 * m_delta;
+					if (m_addAngleXAxis >= 0)
+					{
+						m_addAngleXAxis = 0.0f;
+					}
 				}
 			}
 		}
 
-		//X軸回転
-		if (m_contrloerVec.y != 0.0f)
-		{
-			//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-			m_addAngleXAxis = (m_speedXAxis * m_contrloerVec.y) * decelerationSpeed;
-		}
-		//コントローラーを傾けていなければだんだん移動スピードがなくなる
-		else if (m_contrloerVec.y == 0.0f)
-		{
-			if (m_addAngleXAxis > 0)
-			{
-				m_addAngleXAxis -= magnificationSpeed / 2 * m_delta;
-				if (m_addAngleXAxis <= 0)
-				{
-					m_addAngleXAxis = 0.0f;
-				}
-			}
-			else if (m_addAngleXAxis < 0)
-			{
-				m_addAngleXAxis += magnificationSpeed / 2 * m_delta;
-				if (m_addAngleXAxis >= 0)
-				{
-					m_addAngleXAxis = 0.0f;
-				}
-			}
-		}
 
 		//右スティック入力がされていない方向はスピードが落ちていく
 		float maxAddAngleXAxis = 0.025f;
@@ -474,7 +629,7 @@ namespace basecross {
 	}
 
 	// カメラのポジションを決める関数
-	bool CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght)
+	bool CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght,float cameraSpeed)
 	{
 		auto objVec = m_stage->GetGameObjectVec();
 		m_cameraPos = m_lockStageCamera->GetEye();
@@ -521,7 +676,7 @@ namespace basecross {
 		// カメラの位置と目的地が一緒でなければ移動する
 		if (m_pushPos != CameraPushGoalPos)
 		{
-			auto cameraSpeed = 40.0f;
+			//auto cameraSpeed = 120.0f;
 			m_pushPos += directionVec * cameraSpeed * m_delta;
 		}
 

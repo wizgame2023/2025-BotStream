@@ -45,6 +45,12 @@ namespace basecross{
 		CONTROLER_STATE m_controler;//コントローラー
 		Vec2 m_contrloerVec;		//コントローラーの右スティック入力
 
+		//キーマウ
+		POINT m_mouseCurrentPos; //マウスの現在位置
+		POINT m_mouseBeforPos;	 //マウスの過去位置
+		Vec2 m_mouseMoveVec;	 //マウスの移動ベクトル
+
+
 		float m_cameraAngleY;		//Playerから見てカメラのいる角度Y軸
 		float m_cameraAngleX;		//Playerから見てカメラのいる角度X軸
 		float m_range;				//Playerからどのくらい離れるか
@@ -99,7 +105,10 @@ namespace basecross{
 
 		bool m_PauseFlag;	//ポーズのフラグ
 
-		
+		//カーソルがワープした際のフラグ
+		bool m_cursorFlagX = false; // x座標版
+		bool m_cursorFlagY = false; // y座標版
+
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
 		{
@@ -131,7 +140,7 @@ namespace basecross{
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 		//カメラのX軸回転の制限
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//カメラのポジションの更新
+		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f,float cameraSpeed = 100.0f);//カメラのポジションの更新
 		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
 
 		//カメラの操作をする処理
