@@ -614,8 +614,8 @@ namespace basecross {
 		tmp.HitOnce = true;
 		tmp.Type = AttackType::Enemy;
 		tmp.Damage = 3;
-		tmp.HitVel_Stand = Vec3(-8, 5, 0);
-		tmp.HitVel_Air = Vec3(-6, 3, 0);
+		tmp.HitVel_Stand = Vec3(-24, 5, 0);
+		tmp.HitVel_Air = Vec3(-18, 3, 0);
 		tmp.HitTime_Stand = .4f;
 		tmp.HitTime_Air = .4f;
 		tmp.HitEffect = L"EnemyLongHitEfk";
