@@ -36,6 +36,7 @@ namespace basecross {
 			Zako_Melee,//‹ß‹——£Œ^
 			Zako_Long,//‰“‹——£Œ^
 			Zako_Flying,//‘Ø‹óŒ^
+			Zako_Humanoid,//lŒ^
 		};
 
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee) :
@@ -142,6 +143,23 @@ namespace basecross {
 
 		void OnCreate() override;
 		void OnUpdate() override;
+
+	};
+
+	//lŒ^‚ÌG‹›
+	class EnemyZakoHumanoid : public EnemyZako
+	{
+	public:
+		EnemyZakoHumanoid(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+			EnemyZako(stagePtr, pos, rot, scale, used, Zako_Humanoid)
+		{
+
+		}
+		~EnemyZakoHumanoid() {}
+
+		void OnCreate() override;
+		void OnUpdate() override;
+		void OnDamaged() override;
 
 	};
 

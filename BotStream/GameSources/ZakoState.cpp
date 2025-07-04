@@ -1199,4 +1199,372 @@ namespace basecross {
 	// 飛ぶザコのステート終端
 	//-------------------------------------------------------
 
+
+	//--------------------------------------------
+	// 人型ザコのステート
+	// -------------------------------------------
+
+
+	//何もないときのステート
+	void EnemyZakoHumanoidStandState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+		m_enemyZako->ChangeAnim(L"Idle");//立つアニメーションに変更
+	}
+	void EnemyZakoHumanoidStandState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		auto stage = m_enemyZako->GetStage();
+		auto attackType = m_enemyZako->GetAttackType();
+
+		auto isLand = m_enemyZako->GetLand();//着地しているかのフラグ
+		if (m_enemyZako->GetAttackFlag())//攻撃フラグが立ってなかったら攻撃動作はできない
+		{
+			//ランダムに攻撃する
+			auto par = rand() % 3;
+			switch (par)
+			{
+			case 0:
+				m_enemyZako->ChangeState(L"PreparationforMelee");//接近して攻撃する
+				break;
+			case 1:
+				m_enemyZako->ChangeState(L"PreparationforMelee");//接近して攻撃する
+				break;
+			default:
+				break;
+			}
+		}
+		if (!(m_enemyZako->GetAttackFlag()))//攻撃できる状態でないので逃げる
+		{
+			//逃げるステート
+			m_enemyZako->ChangeState(L"Escape");//接近して攻撃する
+		}
+
+	}
+	void EnemyZakoHumanoidStandState::Exit()
+	{
+		//打つカウントダウンリセット
+		m_timeOfShot = 0.0f;
+	}
+
+	//プレイヤーから距離を取るステート
+	void EnemyZakoHumanoidEscapeState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+	}
+	void EnemyZakoHumanoidEscapeState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		m_deltaScale = m_enemyZako->GetWaveStage(false)->GetDeltaScale();
+
+		//Playerの方向に回転する
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
+
+		float distance = 10.0f;
+		float m_speed = 100.0f;
+		//Playerから一定距離離れる
+		if (m_enemyZako->GetPlayerDist() < distance)
+		{
+			//移動中なのでそれに合わせたアニメーション
+			m_enemyZako->ChangeAnim(L"Walk");
+
+			//進む距離を決める
+			auto move = m_enemyZako->GetForward() * -(m_speed * deltaTime);
+
+			m_enemyZako->AddVelocity(move);
+			//アニメーション更新時間設定
+			m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+		}
+
+		//攻撃できる状態ならこの距離を取る状態をやめる
+		bool attackFlag = m_enemyZako->GetAttackFlag();
+		if (attackFlag)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+
+		//スピード制限
+		m_enemyZako->SpeedLimit(1.0f);
+	}
+	void EnemyZakoHumanoidEscapeState::Exit()
+	{
+
+	}
+
+	//接近戦をするときのステート
+	void EnemyZakoHumanoidMeleeState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+		auto LandFlag = m_enemyZako->GetLand();
+		auto testVector = m_enemyZako->GetVelocity();
+
+		//攻撃っぽいアニメーションにしてみる
+		m_enemyZako->ChangeAnim(L"Attack1");
+		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+
+		//攻撃しているタグ追加
+		m_enemyZako->AddTag(L"AttackNow");
+	}
+	void EnemyZakoHumanoidMeleeState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		auto stage = m_enemyZako->GetStage();
+
+		m_timeOfAttack += deltaTime;
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+
+		//攻撃しているときも少しだけ進んでいる
+		auto m_speed = 1.0f;//足の速さ
+		auto move = m_enemyZako->GetForward() * -(m_speed * 0.8);
+
+		//攻撃判定の生成
+		if (m_timeOfAttack >= m_timeOfAttackAdd && m_Attack)
+		{
+			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.InvincibleOnHit = true;
+			tmp.Damage = 5;
+			tmp.HitVel_Stand = Vec3(-3, 5, 0);
+			tmp.HitTime_Stand = .3f;
+			tmp.Type = AttackType::Enemy;
+			tmp.HitEffect = L"EnemyHitEfk";
+			//tmp.ForceRecover = false;//ノックバックする
+			m_enemyZako->DefAttack(.5f, tmp);
+			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
+			auto AttackPtr = m_enemyZako->GetAttackPtr();
+			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.7f, 3.0f, 3.0f));
+			AttackPtr->SetCollScale(1.0f);
+			AttackPtr->ActivateCollision(0.1f);//攻撃発生時間
+
+			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
+			m_Attack = false;//攻撃判定が複数発生させないようにする
+
+			//攻撃用SE再生
+			m_SE = m_SEManager->Start(L"Enemy_Slash", 0, 0.4f * m_SEVol);
+
+			m_effect = m_enemyZako->AddEffect(EnemyEffect_Attack);
+
+		}
+
+		//一定時間たったら攻撃ステートをやめる
+		if (m_timeOfAttack >= m_timeMaxOfAttack)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+	}
+	void EnemyZakoHumanoidMeleeState::Exit()
+	{
+		m_Attack = true;
+		m_timeOfAttack = 0.0f;
+
+		//攻撃しているタグ削除
+		m_enemyZako->RemoveTag(L"AttackNow");
+	}
+
+	//接近戦をするときの準備ステート(攻撃できる距離になるまで近づく)
+	void EnemyZakoHumanoidPreparationforMeleeState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+		m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
+
+		//初期のプレイヤーとの距離によって足の速さを変える
+		auto playerdist = m_enemyZako->GetPlayerDist();
+		SppedChange();
+
+	}
+	void EnemyZakoHumanoidPreparationforMeleeState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		//プレイヤとの距離によってスピードを変える
+		SppedChange();
+
+		auto stage = m_enemyZako->GetStage();
+		auto meleeRange = 5.0f;//接近攻撃有効範囲
+
+		//Playerの方向に回転する
+		auto PushAngle = XM_PIDIV4 / 4;//回転のずれ
+		m_enemyZako->RotateToPlayer(1.0f, PushAngle);
+
+		auto attackFlag = m_enemyZako->GetAttackFlag();//攻撃フラグを受け取る
+
+		m_deltaScale = m_enemyZako->GetWaveStage(false)->GetDeltaScale();
+
+		//攻撃のクールタイムを過ぎていれば接近そうでなければ離れる
+		if (attackFlag)
+		{
+			//有効範囲まで近づけたら近接攻撃をするそうでなければ、そこまで移動
+			if (m_enemyZako->GetPlayerDist() < meleeRange)
+			{
+				//攻撃のために立ち止まるので立つアニメーションに変更
+				m_enemyZako->ChangeAnim(L"Idle");
+
+				//攻撃フラグがオンなら攻撃できる
+				if (!attackFlag) return;
+				m_enemyZako->ChangeState(L"Melee");
+			}
+			else if (m_enemyZako->GetPlayerDist() >= meleeRange)
+			{
+				//移動中なのでそれに合わせたアニメーション
+				m_enemyZako->ChangeAnim(L"Walk");
+
+				//進む距離を決める
+				auto move = (m_enemyZako->GetForward() * (m_speed * deltaTime));
+
+				m_enemyZako->AddVelocity(move);
+				m_enemyZako->SetSpeedMax(move.length());
+
+				//アニメーション更新時間設定
+				m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+			}
+		}
+
+	}
+	void EnemyZakoHumanoidPreparationforMeleeState::Exit()
+	{
+
+	}
+
+	//プレイヤーとの距離によって脚のスピードを変える処理
+	void EnemyZakoHumanoidPreparationforMeleeState::SppedChange()
+	{
+		//距離によってスピードを変える
+		auto playerdist = m_enemyZako->GetPlayerDist();
+		if (playerdist > 30.0f)//中
+		{
+			m_speed = 300.0f;
+			//スピード制限
+			m_enemyZako->SpeedLimit(3.5f);
+		}
+		else//近い
+		{
+			m_speed = 200.0f;
+			//スピード制限
+			m_enemyZako->SpeedLimit(3.0f);
+		}
+	}
+
+	//ダメージを受けたステート
+	void EnemyZakoHumanoidHitState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+		auto hitInfo = m_enemyZako->GetHitInfo();
+		auto HPNow = m_enemyZako->GetHPCurrent();
+
+		//アニメーションをダメージを受けたものにする
+		m_enemyZako->ChangeAnim(L"Hit", true);
+		//攻撃を受けたのでヒットバックする
+		m_enemyZako->HitBack();
+
+
+		//ダメージ処理
+		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
+	}
+	void EnemyZakoHumanoidHitState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		//一定時間たったらStandステートに戻る
+		m_enemyZako->HitBackStandBehavior();
+
+
+		//アニメーション更新時間設定
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+	}
+	void EnemyZakoHumanoidHitState::Exit()
+	{
+		//アニメーションをリセットして次のステートがまたHitでもアニメーションが流れるようにする
+		m_enemyZako->ChangeAnim(L"Idle");
+	}
+
+	//やられたときのステート
+	void EnemyZakoHumanoidDieState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+		//やられたときのSE再生
+		m_SEManager->Start(L"Enemy_Defeat", 0, 0.4f * m_SEVol);
+		//やられたとき用のアニメーションに変更
+		m_enemyZako->ChangeAnim(L"Down");
+
+	}
+	void EnemyZakoHumanoidDieState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		//アニメーション更新時間
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
+		//時間計測
+		m_timeOfState += deltaTime;
+
+		//一定時間過ぎたら(やられる演出)消える
+		if (m_timeOfState >= m_timeMaxOfState)
+		{
+			m_enemyZako->SetPosition(Vec3(999));
+		}
+
+		if (m_timeOfState >= (m_timeMaxOfState + 0.5f))
+		{
+			//初期化
+			m_enemyZako->Initialize();
+			m_enemyZako->SetUsed(false);
+		}
+
+
+
+	}
+	void EnemyZakoHumanoidDieState::Exit()
+	{
+		//リセット
+		m_timeOfState = 0.0f;
+
+	}
+
+
+	//スタン処理(雑魚敵) ===================================
+	void EnemyZakoHumanoidStanState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+		//スタンアニメーション再生
+		m_enemyZako->ChangeAnim(L"Stan");
+	}
+
+	void EnemyZakoHumanoidStanState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		m_stunTimeCount += deltaTime;
+
+		//一定時間過ぎたらステート変更する
+		if (m_stunTimeCount > m_stunTimeMax)
+		{
+			m_enemyZako->ChangeState(L"Stand");
+		}
+
+		m_enemyZako->SetAddTimeAnimation(deltaTime);
+	}
+
+	void EnemyZakoHumanoidStanState::Exit()
+	{
+		//リセット
+		m_stunTimeCount = 0.0f;
+	}
+	// =====================================================
+
+
+	//-------------------------------------------------------
+	// 人型ザコのステート終端
+	//-------------------------------------------------------
+
 }
