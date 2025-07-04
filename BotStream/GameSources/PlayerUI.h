@@ -267,5 +267,27 @@ namespace basecross {
 		virtual void OnCreate() override;
 		virtual void OnUpdate() override;
 	};
+
+	//==============================================================================
+	// ゲームオーバー時のノイズ
+	//==============================================================================
+	class GameOverNoise : public MyGameObject {
+		shared_ptr<Stage> m_stage;
+
+		shared_ptr<Sprite> m_noiseSprite;
+
+		float m_time = 0;
+
+		int m_frameCount[2] = { 0 };
+
+	public:
+		GameOverNoise(const shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
+		{
+		}
+		virtual ~GameOverNoise() {}
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+	};
 }
 // namespace basecross
