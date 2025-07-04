@@ -50,8 +50,6 @@ namespace basecross {
 			BGMVoice->SetVolume(BGMVol);
 		}
 
-		float time = 0;
-
 		// デッドゾーン
 		constexpr float dead = 0.6f;
 		// ステージの最大数
@@ -283,8 +281,8 @@ namespace basecross {
 			}
 
 			// 交互に透明度を変える
-			float alphaA = m_time;          
-			float alphaB = 1.0f - m_time;
+			float alphaA = 1.0f - m_time;          
+			float alphaB = m_time;
 
 			m_stagePhoto[(m_selectStageNum * 2)]->SetColor(Col4(1, 1, 1, alphaA));
 			m_stagePhoto[(m_selectStageNum * 2) + 1]->SetColor(Col4(1, 1, 1, alphaB));
@@ -383,23 +381,23 @@ namespace basecross {
 		);
 
 		m_stagePhoto[2] = AddGameObject<Sprite>(
-			L"Stage1-1Tex",
+			L"Stage2-1Tex",
 			Vec2(300, 200),
 			photoPos
 		);
 		m_stagePhoto[3] = AddGameObject<Sprite>(
-			L"Stage1-2Tex",
+			L"Stage2-2Tex",
 			Vec2(300, 200),
 			photoPos
 		);
 
 		m_stagePhoto[4] = AddGameObject<Sprite>(
-			L"Stage1-1Tex",
+			L"Stage3-1Tex",
 			Vec2(300, 200),
 			photoPos
 		);
 		m_stagePhoto[5] = AddGameObject<Sprite>(
-			L"Stage1-2Tex",
+			L"Stage3-2Tex",
 			Vec2(300, 200),
 			photoPos
 		);
