@@ -21,6 +21,8 @@ namespace basecross {
 		m_audioMaxSetCol[0] = m_audioMax[0] * 10;
 		m_audioMaxSetCol[1] = m_audioMax[1] * 10;
 
+		m_SEManager = App::GetApp()->GetXAudio2Manager();
+
 		CreateSprite();
 	}
 
@@ -221,9 +223,14 @@ namespace basecross {
 
 					// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
 					if (idx == 0)
+					{
 						m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+					}
 					else
+					{
 						m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+						m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+					}
 
 					m_audioSelectFlag = true;
 				}
