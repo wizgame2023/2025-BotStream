@@ -13,6 +13,7 @@ namespace basecross {
 		void CreateViewLight();
 		shared_ptr<Sprite> m_selectSprite[2];
 		shared_ptr<Sprite> m_fadeInSprite;
+		shared_ptr<Sprite> m_noiseSprite;
 		weak_ptr<Scene> m_scene;
 
 		// ‘I‘ğØ‚è‘Ö‚¦ƒtƒ‰ƒO
@@ -21,6 +22,8 @@ namespace basecross {
 		bool m_fadeInFlag = false;
 
 		int m_select = 0;
+
+		int m_frameCount[2] = { 0 };
 
 		Vec3 m_selectPos;
 		int m_stageNum;

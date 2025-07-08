@@ -627,8 +627,8 @@ namespace basecross {
 		if (alpha <= 1.0f)
 		{
 			m_time += App::GetApp()->GetElapsedTime() * 3.0f;
+			m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
 		}
-		m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
 		// UVの幅
 		constexpr float spriteUV = 1.0f / 3.0f; 
 
@@ -638,8 +638,6 @@ namespace basecross {
 		);
 		
 		m_frameCount[0]++;
-
-
 
 		// 3x3のUVをループ
  		if (m_frameCount[0] > 2)

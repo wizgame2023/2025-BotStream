@@ -70,6 +70,27 @@ namespace basecross {
 
 		}
 
+		// UVの幅
+		constexpr float spriteUV = 1.0f / 3.0f;
+
+		m_noiseSprite->SetUVRect(
+			Vec2(spriteUV * m_frameCount[0], spriteUV * m_frameCount[1]),
+			Vec2(spriteUV * m_frameCount[0] + spriteUV, spriteUV * m_frameCount[1] + spriteUV)
+		);
+
+		m_frameCount[0]++;
+
+		// 3x3のUVをループ
+		if (m_frameCount[0] > 2)
+		{
+			m_frameCount[0] = 0;
+			m_frameCount[1]++;
+			if (m_frameCount[1] > 2)
+			{
+				m_frameCount[1] = 0;
+			}
+		}
+
 		// フェードインが終わるまで操作不能
 		if (!m_fadeInFlag)
 		{
@@ -156,6 +177,18 @@ namespace basecross {
 			Vec3(0, 0, 0)
 		);
 		//m_selectBackSprite->SetColor(Col4(0.49f, 0.49f, 0.49f, 1));
+
+		Col4 color = { 1.0f, 1.0f, 1.0f, 0.1f };
+		const Vec2 size(1300.0f, 800.0f);
+		m_noiseSprite = AddGameObject<Sprite>(
+			L"Noise",
+			size,
+			Vec3(0, 0, 0), //画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color
+		);
+		m_noiseSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.333f));
+		m_time = 1.0f;
 
 		float overSizeX = 1000, overSizeY = overSizeX * 0.175f;
 		auto sprite = AddGameObject<Sprite>(
