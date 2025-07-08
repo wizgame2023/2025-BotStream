@@ -310,12 +310,13 @@ namespace basecross {
 			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
 			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
 			<< L"\nターゲット対象の距離: " << m_targetDis
-			<< L"\nFPS: " << 1.0f/m_delta
-			<< L"\nmelee : "<< m_meleeFlag
+			<< L"\nFPS: " << 1.0f / m_delta
+			<< L"\nmelee : " << m_meleeFlag
 			<< L"\nMousePos.x : " << m_mouseCurrentPos.x
 			<< L"\nMousePos.y : " << m_mouseCurrentPos.y
 			<< L"\nMouseVec.x : " << m_mouseMoveVec.x
 			<< L"\nMouseVec.y : " << m_mouseMoveVec.y
+			<< L"\nNowState : " << ModeState
 			//<< L"\n当たった場所x: " << hitPos.x
 			//<< L"\n当たった場所y: " << hitPos.y
 			//<< L"\n当たった場所z: " << hitPos.z
@@ -418,7 +419,7 @@ namespace basecross {
 			if (m_mouseMoveVec.x != 0.0f)
 			{
 				//マウスをX方面移動してカメラがPlayerのY軸方向に回転する処理(-の方が違和感がない動きなのでこうします)
-				m_addAngleYAxis = -((speedMouseYAixs * m_mouseMoveVec.x) * decelerationSpeed);
+				m_addAngleYAxis = ((speedMouseYAixs * m_mouseMoveVec.x) * decelerationSpeed);
 			}
 			//コントローラーを傾けていなければだんだん移動スピードがなくなる
 			else if (m_mouseMoveVec.x == 0.0f)
@@ -446,7 +447,7 @@ namespace basecross {
 			if (m_mouseMoveVec.y != 0.0f)
 			{
 				//左スティックをY方面に傾けてカメラがPlayerのX軸方向に回転する処理
-				m_addAngleXAxis = (addMouseAngleXAxis * m_mouseMoveVec.y) * decelerationSpeed;
+				m_addAngleXAxis = -(addMouseAngleXAxis * m_mouseMoveVec.y) * decelerationSpeed;
 			}
 			//コントローラーを傾けていなければだんだん移動スピードがなくなる
 			else if (m_mouseMoveVec.y <= 3.0f)
@@ -629,10 +630,11 @@ namespace basecross {
 	}
 
 	// カメラのポジションを決める関数
-	bool CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght,float cameraSpeed)
+	bool CameraManager::CameraPosUpdate(float maxPushPosY,float maxLength,float CameraLenght,float cameraSpeed,int moveMode)
 	{
 		auto objVec = m_stage->GetGameObjectVec();
 		m_cameraPos = m_lockStageCamera->GetEye();
+
 
 		Vec3 hitPos;			// 出力用：レイの交差地点(衝突点)
 		TRIANGLE triangle;		// レイが交差したポリゴンを構成する頂点の座標
@@ -649,37 +651,39 @@ namespace basecross {
 			0.0f,
 			sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * maxLength);
 
-		//m_cameraPos = CameraPushPos;
-
-		// 現在のカメラ位置を取得する
-		//auto cameraEye = m_stageCamera.lock()->GetEye();
-
 		// 現在の位置と目的地の方向ベクトルの計算
 		Vec3 directionVec = CameraPushGoalPos - m_pushPos;	
-		
-		//ある程度カメラの位置が目的地に近かったら目的地にたどり着いたとみなす
-		if (directionVec.length() <= 1.0f)
+
+		// 通常移動モード
+		if (moveMode == NormalMove)
+		{
+			//ある程度カメラの位置が目的地に近かったら目的地にたどり着いたとみなす
+			if (directionVec.length() <= 1.0f)
+			{
+				m_pushPos = CameraPushGoalPos;
+				moveEnd = true; // 移動終了
+			}
+			// ステージ開始時にカメラの移動が始まらないようにする例外処理
+			if (m_pushStart)
+			{
+				m_pushPos = CameraPushGoalPos;
+				m_pushStart = false;
+			}
+
+			// 正規化
+			directionVec = directionVec.normalize();
+
+			// カメラの位置と目的地が一緒でなければ移動する
+			if (m_pushPos != CameraPushGoalPos)
+			{
+				//auto cameraSpeed = 120.0f;
+				m_pushPos += directionVec * cameraSpeed * m_delta;
+			}
+		}
+		else if (DirectMove)
 		{
 			m_pushPos = CameraPushGoalPos;
-			moveEnd = true; // 移動終了
 		}
-		// ステージ開始時にカメラの移動が始まらないようにする例外処理
-		if (m_pushStart)
-		{
-			m_pushPos = CameraPushGoalPos;
-			m_pushStart = false;
-		}
-
-		// 正規化
-		directionVec = directionVec.normalize();
-
-		// カメラの位置と目的地が一緒でなければ移動する
-		if (m_pushPos != CameraPushGoalPos)
-		{
-			//auto cameraSpeed = 120.0f;
-			m_pushPos += directionVec * cameraSpeed * m_delta;
-		}
-
 
 		m_cameraPos = m_playerPos + m_pushPos;
 

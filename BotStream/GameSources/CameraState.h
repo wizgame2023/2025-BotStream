@@ -69,7 +69,6 @@ namespace basecross {
 	};
 	//
 
-
 	//カメラの銃モードのステート
 	class CameraGunState :public CameraStateBase
 	{
@@ -123,6 +122,27 @@ namespace basecross {
 
 		}
 		~CameraNormalToGunState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+
+	};
+
+	//カメラを銃モードから通常モードに切り替えるときの移動ステート
+	class CameraGunToNormalState :public CameraStateBase
+	{
+	private:
+
+	public:
+		CameraGunToNormalState(shared_ptr<GameObject>& obj) :
+			CameraStateBase(obj)
+		{
+
+		}
+		~CameraGunToNormalState()
 		{
 		}
 
@@ -333,6 +353,10 @@ namespace basecross {
 			AddState(L"Normal", shared_ptr<CameraNomalState>(new CameraNomalState(obj)));
 			//銃状態
 			AddState(L"Gun", shared_ptr<CameraGunState>(new CameraGunState(obj)));
+			//通常状態→銃状態
+			AddState(L"NormalToGun", shared_ptr<CameraNormalToGunState>(new CameraNormalToGunState(obj)));
+			//銃状態→通常状態
+			AddState(L"GunToNormal", shared_ptr<CameraGunToNormalState>(new CameraGunToNormalState(obj)));
 			//カメラをプレイヤーの方向に向かう状態
 			AddState(L"Reset", shared_ptr<CameraResetState>(new CameraResetState(obj)));
 			//ムービー用のカメラステート(開始時一段階目)
