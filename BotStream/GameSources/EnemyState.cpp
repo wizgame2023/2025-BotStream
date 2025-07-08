@@ -58,22 +58,35 @@ namespace basecross {
 		auto boss = dynamic_pointer_cast<BossFirst>(_obj.lock());
 		boss->RotateToPlayer(1.0f);
 
-		if (m_time >= m_startAttack * (boss->GetHPCurrent() / boss->GetHPMax()) && 
+		if (m_time >= m_startAttack + (m_startAttackPlus * (boss->GetHPCurrent() / boss->GetHPMax())) &&
 			rnd() % 1000 <= m_startAttackRand) {
 			const float dist = boss->GetPlayerDist();
 
-			if (dist < m_farDist) {
-				//近い！
+			if (dist < m_midDist) {
+				//近い
 				boss->ChangeState(L"Attack");
+
+				//回転
+				if (rnd() % 1000 <= m_spinRand) {
+					boss->ChangeState(L"SpinStart");
+				}
 			}
-			else {
-				//遠い！
+			else if (dist < m_farDist) {
+				//中くらい、間合いを詰める
 				boss->ChangeState(L"Chase");
 			}
+			else {
+				//遠い
+				boss->ChangeState(L"SphereStart");
 
-			//知るか！廻る！
-			if (rnd() % 1000 <= m_spinRand) {
-				boss->ChangeState(L"SpinStart");
+				//必殺ビーム
+				if (boss->IsRecoveredFromArmorBreak() && rnd() % 1000 <= m_beamRand) {
+					boss->ChangeState(L"BeamStart");
+				}
+				if (rnd() % 1000 <= m_chaseRand) {
+					boss->ChangeState(L"Chase");
+				}
+
 			}
 
 			//やっぱ叩くかも…
@@ -81,15 +94,6 @@ namespace basecross {
 				boss->ChangeState(L"SlamStart");
 			}
 
-			//時代は飛び道具でしょ
-			if (rnd() % 1000 <= m_sphereRand) {
-				boss->ChangeState(L"SphereStart");
-			}
-
-			//あーもうキレたわ　終わりだよお前
-			if (boss->IsRecoveredFromArmorBreak()) {
-				boss->ChangeState(L"BeamStart");
-			}
 		}
 	}
 	void BossFirstStandState::Exit() {
@@ -187,8 +191,10 @@ namespace basecross {
 			tmp.HitOnce = true;
 			tmp.Type = AttackType::Enemy;
 			tmp.Damage = 10;
-			tmp.HitVel_Stand = Vec3(-10, 20, 0);
+			tmp.HitVel_Stand = Vec3(-40, 0, 0);
+			tmp.HitVel_Air = Vec3(-40, 20, 0);
 			tmp.HitTime_Stand = 1.2f;
+			tmp.HitTime_Air = 1.2f;
 			tmp.HitEffect = L"EnemyHitEfk";
 
 			boss->DefAttack(.3f, tmp);
@@ -330,7 +336,12 @@ namespace basecross {
 		boss->SetQuaternion(q);
 
 		if (m_time >= m_end) {
-			boss->ChangeState(L"Bonus");
+			if (boss->GetAttackPtr()->GetMoveContact() && App::GetApp()->GetScene<Scene>()->GetStageNum() == 3) {
+				boss->ChangeState(L"BeamStart");
+			}
+			else {
+				boss->ChangeState(L"Bonus");
+			}
 		}
 	}
 	void BossFirstSpinOverState::Exit() {
