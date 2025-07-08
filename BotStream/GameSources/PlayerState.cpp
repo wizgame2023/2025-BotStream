@@ -6,22 +6,41 @@
 #include "stdafx.h"
 #include "Project.h"
 
-#define AttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
-#define DodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
 
 namespace basecross {
+	#define ControllerAttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER	
+	
+	//ダッシュ関係
+	#define MouseDashButton App::GetApp()->GetInputDevice().GetKeyState().m_bPushKeyTbl[VK_SPACE]
+	#define ControllerDashButton m_controller.wButtons & XINPUT_GAMEPAD_A
+	#define DashButton MouseDashButton || ControllerDashButton
+
+	//回避関係
+	#define ControllerDodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
+	#define MouseDodgeButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_SPACE]
+	#define DodgeButton ControllerDodgeButton || MouseDodgeButton
+
+
+	#define MouseAimButton GetAsyncKeyState(VK_RBUTTON) & 0x8000
+	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_LBUTTON]
+	#define MouseGunButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_RBUTTON]
+	#define MouseGunCancellationButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_RBUTTON]
+	#define AttackButton ControllerAttackButton || MouseAttackButton
+
 	void PlayerStateBase::Enter()
 	{
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
 
-		//コントローラーを受け取る
+		// コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
 
-		//Playerがどの行動をしていいかのフラグを受け取る
+		// Playerがどの行動をしていいかのフラグを受け取る
 		m_attackFlag = m_player->GetAttackFlag();
 		m_dodgeFlag = m_player->GetDodgeFlag();
 		m_walkFlag = m_player->GetAttackFlag();
+
+		m_keyState = App::GetApp()->GetInputDevice().GetKeyState();
 
 		// SEのボリュームを受け取る
 		m_SEVol = m_player->GetSEVol();
@@ -30,28 +49,30 @@ namespace basecross {
 	{
 		m_deltaTime = deltaTime;
 
-		//コントローラーを受け取る
+		// コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
+		// キーボード,マウスを受け取る
+		m_keyState = App::GetApp()->GetInputDevice().GetKeyState();
 
 		// SEのボリュームを受け取る
 		m_SEVol = m_player->GetSEVol();
 
-		//カメラマネージャ取得
+		// カメラマネージャ取得
 		auto cameraManager = m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager");
 		
-		//回避してよいかフラグを受け取る
+		// 回避してよいかフラグを受け取る
 		m_dodgeFlag = m_player->GetDodgeFlag();
-		//接近戦していいかのフラグ受け取る
+		// 接近戦していいかのフラグ受け取る
 		m_meleeFlag = cameraManager->GetMeleeFlag();
 
-		//接近戦していいかのフラグを管理する
-		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		// 接近戦していいかのフラグを管理する
+		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunButton)
 		{
 			m_meleeFlag = false;
 			m_player->SetMeleeFlag(false);
 		}
-		else if (!(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER))
+		else if(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunCancellationButton)
 		{
 			m_meleeFlag = true;
 			m_player->SetMeleeFlag(true);
@@ -59,26 +80,26 @@ namespace basecross {
 
 		}
 	};
-	//ターゲット対象との距離を取得する
+	// ターゲット対象との距離を取得する
 	float PlayerStateBase::GetTargetDistance()
 	{
 		return m_targetDistance;
 	}
 
-	//移動についての処理
+	// 移動についての処理
 	void PlayerStateBase::Walk(int state, bool onOff)
 	{
-		//フラグがオフなら移動しない
+		// フラグがオフなら移動しない
 		if (!onOff) return;
 
-		//移動処理
+		// 移動処理
 		m_player->PlayerMove(state);
 	}
 
-	//回避についての処理
+	// 回避についての処理
 	void PlayerStateBase::Dodge(bool onOff)
 	{
-		//フラグがオフなら移動しない
+		// フラグがオフなら移動しない
 		if (!onOff) return;
 
 		// 回避していいフラグ状態だったら回避ステートに変更
@@ -89,12 +110,12 @@ namespace basecross {
 	}
 
 
-	//Playerの歩くモーション
+	// Playerの歩くモーション
 	void PlayerWalkState::Enter()
 	{
 		PlayerStateBase::Enter();
 
-		//何もなければ立ち止まるアニメーション
+		// 何もなければ立ち止まるアニメーション
 		m_player->ChangeAnim(L"Idle");
 
 		////現在攻撃していないことを渡す
@@ -222,7 +243,7 @@ namespace basecross {
 		m_player->SetGunNow(false);
 
 		//回避する瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX,0,m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -260,7 +281,7 @@ namespace basecross {
 		if (!endDodgeFlag)
 		{
 			//ダッシュステートにするか歩くステートにするか
-			if (m_controller.wButtons & XINPUT_GAMEPAD_A)
+			if (DashButton)
 			{
 				m_player->ChangeState(L"Dash");
 			}
@@ -339,8 +360,8 @@ namespace basecross {
 
 
 		//Aボタン離したらorスティックを離したら歩くステートに変更する	
-		Vec3 stickVec = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A || stickVec == Vec3(0.0f))
+		Vec3 stickVec = m_player->GetStickL();
+		if (!DashButton || stickVec == Vec3(0.0f))
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
@@ -466,7 +487,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"Attack1");
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -574,7 +595,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"Attack2");	
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -696,7 +717,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"Attack3");
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -813,7 +834,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"AttackEx");
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);

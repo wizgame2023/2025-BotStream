@@ -408,7 +408,33 @@ namespace basecross {
 		// 入力デバイス取得
 		InputDevice inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
-		m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (m_controller.bConnected)
+		{
+			m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		}
+		if (!m_controller.bConnected)
+		{
+			//リセット
+			m_stickL = Vec3(0.0f, 0, 0.0f);
+
+			auto keyState = App::GetApp()->GetInputDevice().GetKeyState();
+			if (keyState.m_bPushKeyTbl['W'])
+			{
+				m_stickL += Vec3(0.0f, 0, 1.0f);
+			}
+			if (keyState.m_bPushKeyTbl['A'])
+			{
+				m_stickL += Vec3(-1.0f, 0, 0.0f);
+			}
+			if (keyState.m_bPushKeyTbl['S'])
+			{
+				m_stickL += Vec3(0.0f, 0, -1.0f);
+			}
+			if (keyState.m_bPushKeyTbl['D'])
+			{
+				m_stickL += Vec3(1.0f, 0, 0.0f);
+			}
+		}
 		Vec3 totalVec;
 
 		if (playerState == PlayerState_Walk || playerState == PlayerState_Dash)//徒歩、ダッシュ処理

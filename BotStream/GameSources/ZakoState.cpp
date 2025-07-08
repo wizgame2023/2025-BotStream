@@ -623,10 +623,10 @@ namespace basecross {
 		//一定時間過ぎたら(やられる演出)消える
 		if (m_timeOfState >= m_timeMaxOfState)
 		{
-			m_enemyZako->SetPosition(Vec3(999));
+			m_enemyZako->SetDrawActive(false);
 		}
 
-		if (m_timeOfState >= (m_timeMaxOfState + 0.5f))
+		if (m_timeOfState >= (m_timeMaxOfState + 0.1f))
 		{
 			//初期化
 			m_enemyZako->Initialize();
