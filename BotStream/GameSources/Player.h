@@ -195,6 +195,12 @@ namespace basecross {
 		//m_equippedPartsのゲッタ
 		PartsStatus GetEquippedParts();
 
+		// 左スティック＆移動キーの傾きのゲッタ
+		Vec3 Player::GetStickL()
+		{
+			return m_stickL;
+		}
+
 		//現在の球数を受け取る
 		int Player::GetBulletNum()
 		{
