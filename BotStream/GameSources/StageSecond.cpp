@@ -125,6 +125,7 @@ namespace basecross {
 
 		if (ConsiderGameOver() && m_onceFlag == false)
 		{
+			AddGameObject<GameOverNoise>();
 			m_sndMgr.lock()->StopBGM();
 			m_onceFlag = true;
 			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
