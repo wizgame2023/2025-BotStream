@@ -66,7 +66,7 @@ namespace basecross {
 			// ポーズ中じゃない時にスタートボタンを押すとポーズになる
 			if (!m_pauseFlag &&
 				(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
-					keybord.m_bPressedKeyTbl[VK_SPACE]))
+					keybord.m_bPressedKeyTbl[VK_TAB]))
 			{
 				m_pauseFlag = true;
 				m_pauseAudioFlag = false;
