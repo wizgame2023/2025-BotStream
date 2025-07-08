@@ -287,6 +287,9 @@ namespace basecross {
 		case EnemyZakoEffect_ArmorBreak:
 			m_effect = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f));
 			break;
+		case EnemyEffect_Attack2:
+			m_effect = EfkPlaying(L"Slash01Efk", GetAngle(), Vec3(0, 1, 0));
+			break;
 		default:
 			break;
 		}

@@ -564,7 +564,7 @@ namespace basecross {
 		Actor::OnCreate();
 
 		//ステータス初期化
-		m_HPMax = 180.0f;
+		m_HPMax = 200.0f;
 		m_HPCurrent = m_HPMax;
 		m_armorMax = 30.0f;
 		m_armor = m_armorMax;
@@ -601,7 +601,7 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Down", 362, 62, false, 24.0f);
 		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);
 		ptrDraw->AddAnimation(L"Stan", 320, 19, false, 24.0f);
-		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 3.0f);
+		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 5.5f);
 
 		//影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();
@@ -715,7 +715,7 @@ namespace basecross {
 		if (m_HPCurrent > 0)
 		{
 			//アーマーがあるかないかでダメージ時処理が変わる
-			if (m_armor <= 0 && m_attackFlag == false)
+			if (m_armor <= 0 && !FindTag(L"AttackNow"))
 			{
 				//アーマー耐久値がなくなったら
 				if (isArmorBreak)

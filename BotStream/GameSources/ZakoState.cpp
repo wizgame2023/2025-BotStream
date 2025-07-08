@@ -1351,7 +1351,7 @@ namespace basecross {
 			//攻撃用SE再生
 			m_SE = m_SEManager->Start(L"Enemy_Slash", 0, 0.4f * m_SEVol);
 
-			m_effect = m_enemyZako->AddEffect(EnemyEffect_Attack);
+			m_effect = m_enemyZako->AddEffect(EnemyEffect_Attack2);
 
 		}
 
@@ -1539,7 +1539,6 @@ namespace basecross {
 		//スタンアニメーション再生
 		m_enemyZako->ChangeAnim(L"Stan");
 	}
-
 	void EnemyZakoHumanoidStanState::Update(float deltaTime)
 	{
 		EnemyZakoStateBase::Update(deltaTime);
@@ -1554,13 +1553,11 @@ namespace basecross {
 
 		m_enemyZako->SetAddTimeAnimation(deltaTime);
 	}
-
 	void EnemyZakoHumanoidStanState::Exit()
 	{
 		//リセット
 		m_stunTimeCount = 0.0f;
 	}
-	// =====================================================
 
 
 	//-------------------------------------------------------
