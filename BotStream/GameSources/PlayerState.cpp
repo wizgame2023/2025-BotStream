@@ -8,10 +8,23 @@
 
 
 namespace basecross {
-	#define ControllerAttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER
-	#define DodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
+	#define ControllerAttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER	
+	
+	//ダッシュ関係
+	#define MouseDashButton App::GetApp()->GetInputDevice().GetKeyState().m_bPushKeyTbl[VK_SPACE]
+	#define ControllerDashButton m_controller.wButtons & XINPUT_GAMEPAD_A
+	#define DashButton MouseDashButton || ControllerDashButton
+
+	//回避関係
+	#define ControllerDodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
+	#define MouseDodgeButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_SPACE]
+	#define DodgeButton ControllerDodgeButton || MouseDodgeButton
+
+
 	#define MouseAimButton GetAsyncKeyState(VK_RBUTTON) & 0x8000
 	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_LBUTTON]
+	#define MouseGunButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_RBUTTON]
+	#define MouseGunCancellationButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_RBUTTON]
 	#define AttackButton ControllerAttackButton || MouseAttackButton
 
 	void PlayerStateBase::Enter()
@@ -54,12 +67,12 @@ namespace basecross {
 		m_meleeFlag = cameraManager->GetMeleeFlag();
 
 		// 接近戦していいかのフラグを管理する
-		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunButton)
 		{
 			m_meleeFlag = false;
 			m_player->SetMeleeFlag(false);
 		}
-		else
+		else if(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunCancellationButton)
 		{
 			m_meleeFlag = true;
 			m_player->SetMeleeFlag(true);
@@ -168,12 +181,6 @@ namespace basecross {
 			m_timeOfPushAttackButton += m_deltaTime;
 		}
 		// 攻撃するときの処理(刀か銃にするか)
-		//if()
-		//POINT test;
-		//GetCursorPos(&test);
-
-		//auto m_keyState = App::GetApp()->GetInputDevice().GetKeyState();
-
 		if (AttackButton)
 		{
 			if (m_meleeFlag)
@@ -236,7 +243,7 @@ namespace basecross {
 		m_player->SetGunNow(false);
 
 		//回避する瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX,0,m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -274,7 +281,7 @@ namespace basecross {
 		if (!endDodgeFlag)
 		{
 			//ダッシュステートにするか歩くステートにするか
-			if (m_controller.wButtons & XINPUT_GAMEPAD_A)
+			if (DashButton)
 			{
 				m_player->ChangeState(L"Dash");
 			}
@@ -353,8 +360,8 @@ namespace basecross {
 
 
 		//Aボタン離したらorスティックを離したら歩くステートに変更する	
-		Vec3 stickVec = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
-		if (m_controller.wReleasedButtons & XINPUT_GAMEPAD_A || stickVec == Vec3(0.0f))
+		Vec3 stickVec = m_player->GetStickL();
+		if (!DashButton || stickVec == Vec3(0.0f))
 		{
 			m_player->ChangeState(L"PlayerWalk");
 		}
@@ -480,7 +487,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"Attack1");
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -588,7 +595,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"Attack2");	
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -710,7 +717,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"Attack3");
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
@@ -827,7 +834,7 @@ namespace basecross {
 		m_player->ChangeAnim(L"AttackEx");
 
 		//攻撃の瞬間にスティックを傾けていたらその方向に進む
-		auto m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
 			m_player->MoveAngle(m_stickL);
