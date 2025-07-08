@@ -21,6 +21,9 @@ namespace basecross {
 		shared_ptr<Actor> m_targetObj = nullptr; // ロックオン時の対象
 		float m_targetDistance;					 // ターゲット対象との距離
 
+		KEYBOARD_STATE m_keyState; // キーボード(マウス)の入力受け取り
+
+
 		bool m_dodgeFlag = true;	// 回避できるかのフラグ
 		bool m_walkFlag = true;		// 移動できるかのフラグ
 		bool m_attackFlag = true;	// 攻撃できるかのフラグ
