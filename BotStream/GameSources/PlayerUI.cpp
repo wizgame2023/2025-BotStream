@@ -596,5 +596,59 @@ namespace basecross {
 			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, 0.0f)); // 非表示
 		}
 	}
+
+	// --------------------------------------------------------------------------------------
+
+
+	//================================================================
+	// 砂嵐
+	//================================================================
+	void GameOverNoise::OnCreate()
+	{
+		constexpr int layer = 10;
+		Col4 color = { 1.0f, 1.0f, 1.0f, 0.0f };
+		const Vec2 size(1300.0f, 800.0f);
+		m_stage = GetStage();
+		m_noiseSprite = m_stage->AddGameObject<Sprite>(
+			L"Noise",
+			size,
+			Vec3(0, 0, 0), //画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color,
+			layer
+		);
+		m_noiseSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.333f));
+		m_time = 1.0f;
+	}
+
+	void GameOverNoise::OnUpdate()
+	{
+		float alpha = m_noiseSprite->GetColor().w;
+		if (alpha <= 1.0f)
+		{
+			m_time += App::GetApp()->GetElapsedTime() * 3.0f;
+			m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
+		}
+		// UVの幅
+		constexpr float spriteUV = 1.0f / 3.0f; 
+
+		m_noiseSprite->SetUVRect(
+			Vec2(spriteUV * m_frameCount[0], spriteUV * m_frameCount[1]),
+			Vec2(spriteUV * m_frameCount[0] + spriteUV, spriteUV * m_frameCount[1] + spriteUV)
+		);
+		
+		m_frameCount[0]++;
+
+		// 3x3のUVをループ
+ 		if (m_frameCount[0] > 2)
+		{
+			m_frameCount[0] = 0;
+			m_frameCount[1]++;
+			if (m_frameCount[1] > 2)
+			{
+				m_frameCount[1] = 0;
+			}
+		}
+	}
 }
 //end basecross

@@ -40,7 +40,7 @@ namespace basecross {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<GameOver>();
 
 		}
 
@@ -168,6 +168,8 @@ namespace basecross {
 		app->RegisterTexture(L"Stage3-2Tex", strTexture);
 
 		// GameClear / GameOver
+		strTexture = texPath + L"Noise.png";
+		app->RegisterTexture(L"Noise", strTexture);
 		strTexture = texPath + L"GameOverBack.png";
 		app->RegisterTexture(L"GameOverBack", strTexture);
 		strTexture = texPath + L"GameClearBack.png";
