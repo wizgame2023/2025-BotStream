@@ -132,7 +132,6 @@ namespace basecross{
 		//アーマーブレイクから回復したときtrueになる
 		bool IsRecoveredFromArmorBreak() {
 			bool ret = m_isRecoveredFromArmorBreak;
-			m_isRecoveredFromArmorBreak = false;
 			return ret;
 		}
 
