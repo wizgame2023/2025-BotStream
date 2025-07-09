@@ -137,6 +137,38 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// ダッシュ終了ステート
+	class PlayerDashEndState : public PlayerStateBase
+	{
+	private:
+		shared_ptr<Player> m_player;
+
+		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
+
+		////攻撃についての処理
+		//void AttackTransition(bool onOff);
+		//アニメーションの経過時間
+		float m_timeOfAnimation = 0.0f;
+
+
+		//Handle m_effect = NULL;
+	public:
+		PlayerDashEndState(shared_ptr<GameObject>& obj) :
+			PlayerStateBase(obj),
+			m_player(dynamic_pointer_cast<Player>(obj))
+		{
+
+		}
+		~PlayerDashEndState()
+		{
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltaTime);
+		virtual void Exit();
+	};
+
+
 	//攻撃ステートの元となるクラス
 	class PlayerAttackBaseState :public PlayerStateBase
 	{
@@ -498,6 +530,7 @@ namespace basecross {
 			AddState(L"PlayerWalk", shared_ptr<PlayerWalkState>(new PlayerWalkState(obj)));
 			AddState(L"Dodge", shared_ptr<PlayerDodgeState>(new PlayerDodgeState(obj)));
 			AddState(L"Dash", shared_ptr<PlayerDashState>(new PlayerDashState(obj)));
+			AddState(L"DashEnd", shared_ptr<PlayerDashEndState>(new PlayerDashEndState(obj)));
 			AddState(L"Attack1", shared_ptr<PlayerAttack1State>(new PlayerAttack1State(obj)));
 			AddState(L"Attack2", shared_ptr<PlayerAttack2State>(new PlayerAttack2State(obj)));
 			AddState(L"Attack3", shared_ptr<PlayerAttack3State>(new PlayerAttack3State(obj)));
