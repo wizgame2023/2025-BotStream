@@ -214,6 +214,8 @@ namespace basecross {
 		app->RegisterTexture(L"Buttons", strTexture);
 		strTexture = texPath + L"SpaceMouse.png";
 		app->RegisterTexture(L"SpaceMouse", strTexture);
+		strTexture = texPath + L"EnterBackSpace.png";
+		app->RegisterTexture(L"EnterBackSpace", strTexture);
 
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
