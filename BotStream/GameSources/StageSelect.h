@@ -16,6 +16,15 @@ namespace basecross {
 		shared_ptr<Sprite> m_textSprite;
 		shared_ptr<Sprite> m_stagePhoto[6];
 		shared_ptr<Sprite> m_tutorialSprite;
+
+		// Œˆ’è‚ÆƒLƒƒƒ“ƒZƒ‹’B
+		shared_ptr<Sprite> m_AButtonSp;
+		shared_ptr<Sprite> m_BButtonSp;
+		shared_ptr<Sprite> m_enterKeySp;
+		shared_ptr<Sprite> m_backSpaceKeySp;
+		shared_ptr<Sprite> m_textSp[2];
+
+
 		shared_ptr<SoundItem> m_BGM;
 		shared_ptr<SoundItem> m_SE;
 
@@ -59,6 +68,8 @@ namespace basecross {
 
 		void CreateSprite();
 		void CreateBGM();
+
+		void IsContorollerConnect();
 
 		//‰Šú‰»
 		virtual void OnCreate()override;
