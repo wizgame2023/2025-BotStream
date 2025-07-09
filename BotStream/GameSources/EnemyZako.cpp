@@ -18,6 +18,7 @@ namespace basecross {
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 10.0f;
 		m_armorRecover = 0.0f;
+		m_stunMax = 1;
 
 		//Transform設定
 		m_trans = GetComponent<Transform>();
@@ -248,31 +249,10 @@ namespace basecross {
 		//ダメージを受けた後のHPによってステートの遷移を変える
 		m_hitbacktime -= _delta;
 
-		//スタン値追加
-		m_stun += m_getHitInfo.StunDamage;
-
 		//攻撃を受けたときの処理
 		if (m_hitbacktime <= 0) 
 		{
-			if (m_HPCurrent <= 0)
-			{
-				ChangeState(L"Die");
-			}
-			else
-			{
-				//スタン値が一定を過ぎたらスタン状態になる
-				if (m_stun >= m_stunMax)
-				{
-					ChangeState(L"Stun");
-					AddEffect(EnemyEffect_Stun);
-					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
-					m_stun = 0;
-				}
-				else
-				{
-					ChangeState(L"Stand");
-				}
-			}
+			ChangeState(L"Stand");
 		}
 	}
 
@@ -301,6 +281,10 @@ namespace basecross {
 
 		bool isArmorBreak = m_armor > 0;
 
+		//スタン値へのダメージ
+		m_stun += m_getHitInfo.StunDamage;
+		bool isStun = m_stun >= m_stunMax;
+
 		m_armor -= CalculateDamage(m_getHitInfo.Damage);
 
 		//hpがあるならダメージ処理する
@@ -324,14 +308,23 @@ namespace basecross {
 			{
 				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
 				m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
-				//m_armorFlash = m_armorFlashMax;
-				//m_armorFlash = m_armorFlashMax;
-				//HPがなくなったらやられるステート移行
-				if (m_HPCurrent <= 0)
-				{
-					m_state->ChangeState(L"Die");
-				}
 			}
+
+			//スタン時の演出
+			if (isStun) {
+				AddEffect(EnemyEffect_Stun);
+				App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+				m_stun = 0;
+
+				m_state->ChangeState(L"Stun");
+			}
+
+			//やられ処理移行
+			if (m_HPCurrent <= 0)
+			{
+				m_state->ChangeState(L"Die");
+			}
+
 		}
 	}
 

@@ -210,6 +210,8 @@ namespace basecross {
 
 		shared_ptr<Sprite> m_fightSprite[8];
 
+		shared_ptr<Sprite> m_keyboardSprite[4];
+
 	public:
 		// stagePtr: ステージ
 		PlayerWeaponUI(const shared_ptr<Stage>& stagePtr) :
