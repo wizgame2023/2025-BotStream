@@ -113,8 +113,6 @@ namespace basecross {
 
 	void Scene::GameResourses()
 	{
-		bool forKeyboard = true;
-
 		auto& app = App::GetApp();
 
 		auto path = app->GetDataDirWString();
@@ -212,6 +210,8 @@ namespace basecross {
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
 		app->RegisterTexture(L"Buttons", strTexture);
+		strTexture = texPath + L"SpaceMouse.png";
+		app->RegisterTexture(L"SpaceMouse", strTexture);
 
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
@@ -301,37 +301,31 @@ namespace basecross {
 		strTexture = texPath + L"Tutorial/Tutorial_progresstxt7.png";
 		app->RegisterTexture(L"Tuto_barTxt7", strTexture);
 
-		if (forKeyboard) 
-		{
-			strTexture = texPath + L"Tutorial/Tutorial1_key.png";
-			app->RegisterTexture(L"Tuto_txt1", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial2_key.png";
-			app->RegisterTexture(L"Tuto_txt2", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial3_key.png";
-			app->RegisterTexture(L"Tuto_txt3", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial4_key.png";
-			app->RegisterTexture(L"Tuto_txt4", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial5_key.png";
-			app->RegisterTexture(L"Tuto_txt5", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial6_key.png";
-			app->RegisterTexture(L"Tuto_txt6", strTexture);
-		}
-		else 
-		{
+		strTexture = texPath + L"Tutorial/Tutorial1_key.png";
+		app->RegisterTexture(L"Tuto_txt1_key", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial2_key.png";
+		app->RegisterTexture(L"Tuto_txt2_key", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial3_key.png";
+		app->RegisterTexture(L"Tuto_txt3_key", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial4_key.png";
+		app->RegisterTexture(L"Tuto_txt4_key", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial5_key.png";
+		app->RegisterTexture(L"Tuto_txt5_key", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial6_key.png";
+		app->RegisterTexture(L"Tuto_txt6_key", strTexture);
 
-			strTexture = texPath + L"Tutorial/Tutorial1.png";
-			app->RegisterTexture(L"Tuto_txt1", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial2.png";
-			app->RegisterTexture(L"Tuto_txt2", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial3.png";
-			app->RegisterTexture(L"Tuto_txt3", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial4.png";
-			app->RegisterTexture(L"Tuto_txt4", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial5.png";
-			app->RegisterTexture(L"Tuto_txt5", strTexture);
-			strTexture = texPath + L"Tutorial/Tutorial6.png";
-			app->RegisterTexture(L"Tuto_txt6", strTexture);
-		}
+		strTexture = texPath + L"Tutorial/Tutorial1.png";
+		app->RegisterTexture(L"Tuto_txt1", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial2.png";
+		app->RegisterTexture(L"Tuto_txt2", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial3.png";
+		app->RegisterTexture(L"Tuto_txt3", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial4.png";
+		app->RegisterTexture(L"Tuto_txt4", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial5.png";
+		app->RegisterTexture(L"Tuto_txt5", strTexture);
+		strTexture = texPath + L"Tutorial/Tutorial6.png";
+		app->RegisterTexture(L"Tuto_txt6", strTexture);
 
 		// その他ゲーム中テクスチャ
 		strTexture = texPath + L"Shock_wave_ring001.png";

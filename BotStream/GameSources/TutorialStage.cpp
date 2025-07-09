@@ -249,7 +249,12 @@ namespace basecross {
 
     void TutorialStage::DisplayDialog(wstring key, shared_ptr<TutorialDialog> ui) {
         SetActorPause(true);
-        ui->SetResource(key);
+        wstring resKey = key;
+        if (App::GetApp()->GetInputDevice().GetControlerVec()[0].bConnected == false) {
+            resKey += L"_key";
+        }
+        ui->SetResource(resKey);
+
         ui->SetMovePos(Vec2(0, 0), .5f, Lerp::rate::EaseOut);
         ui->SetColorChange(Col4(1, 1, 1, 1), .5f, Lerp::rate::Linear);
     }
