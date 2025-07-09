@@ -90,6 +90,8 @@ namespace basecross {
 		//ポーズフラグがオンならカメラ移動はできない
 		if (m_PauseFlag)
 		{
+			SetCursorPos(850, 450);
+			GetCursorPos(&m_mouseBeforPos);
 			return;
 		}
 
@@ -150,7 +152,9 @@ namespace basecross {
 		}
 
 		//マウス位置更新
-		m_mouseBeforPos = m_mouseCurrentPos;
+		//m_mouseBeforPos = m_mouseCurrentPos;
+		SetCursorPos(850, 450);
+		GetCursorPos(&m_mouseBeforPos);
 
 		// X座標
 		if (m_mouseCurrentPos.x >= maxPosX)

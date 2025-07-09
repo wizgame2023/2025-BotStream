@@ -1,21 +1,19 @@
 
 #include "stdafx.h"
 #include "Project.h"
+#include <chrono>
 
 using namespace basecross;
 
 
-// このコード モジュールに含まれる関数の宣言を転送します:
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
-//定数
-const wchar_t* pClassName = L"EGO";
-const wchar_t* pWndTitle = L"EGO";
-//ウィンドウモードの時の幅と高さ
+const wchar_t* pClassName = L"拳は銃より強し";
+const wchar_t* pWndTitle = L"拳は銃より強し";
 int g_ClientWidth = 1280;
 int g_ClientHeight = 800;
 
-
+BOOL IsMouseCursor = TRUE;
 //--------------------------------------------------------------------------------------
 //
 //  関数: MyRegisterClass()
@@ -59,63 +57,75 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow, bool isFullScreen, int iCli
 {
 
 	HWND hWnd = 0;
-	// ウィンドウの作成
 	if (isFullScreen) {
-		// フルスクリーン
-		//ボーダーレスウインドウを使用
 		iClientWidth = GetSystemMetrics(SM_CXSCREEN);
 		iClientHeight = GetSystemMetrics(SM_CYSCREEN);
 		hWnd = CreateWindow(
-			pClassName,			// 登録されているクラス名
-			pWndTitle,			// ウインドウ名
-			WS_POPUP,			// ウインドウスタイル（ポップアップウインドウを作成）
-			0,					// ウインドウの横方向の位置
-			0,					// ウインドウの縦方向の位置
-			iClientWidth,		// フルスクリーンウインドウの幅
-			iClientHeight,		// フルスクリーンウインドウの高さ
-			nullptr,				// 親ウインドウのハンドル（なし）
-			nullptr,				// メニューや子ウインドウのハンドル
-			hInstance,			// アプリケーションインスタンスのハンドル
-			nullptr				// ウインドウの作成データ
+			pClassName,			
+			pWndTitle,		
+			WS_POPUP,			
+			0,					
+			0,					
+			iClientWidth,		
+			iClientHeight,		
+			nullptr,			
+			nullptr,			
+			hInstance,			
+			nullptr				
 		);
 		if (!hWnd) {
-			//失敗した
-			MessageBox(nullptr, L"ウインドウ作成に失敗しました", L"エラー", MB_OK);
-			return 0;   //エラー終了
+			MessageBox(nullptr, L"", L"", MB_OK);
+			return 0;  
 		}
 	}
 	else {
-		//ウインドウのサイズ調整
 		RECT rc = { 0, 0, iClientWidth, iClientHeight };
 		AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-		//ウインドウの作成
 		hWnd = CreateWindow(
-			pClassName,				// 登録されているクラス名
-			pWndTitle,				// ウインドウ名
-			WS_OVERLAPPEDWINDOW,	// ウインドウスタイル（オーバーラップウインドウを作成）
-			CW_USEDEFAULT,			//位置はWindowsに任せる
-			CW_USEDEFAULT,			//位置はWindowsに任せる
-			rc.right - rc.left,		//幅指定
-			rc.bottom - rc.top,		//高さ指定
-			nullptr,					// 親ウインドウのハンドル（なし）
-			nullptr,					// メニューや子ウインドウのハンドル
-			hInstance,				// アプリケーションインスタンスのハンドル
-			nullptr					// ウインドウの作成データ
+			pClassName,				
+			pWndTitle,				
+			WS_OVERLAPPEDWINDOW,	
+			CW_USEDEFAULT,			
+			CW_USEDEFAULT,			
+			rc.right - rc.left,		
+			rc.bottom - rc.top,		
+			nullptr,				
+			nullptr,				
+			hInstance,				
+			nullptr					
 		);
 		if (!hWnd) {
-			//失敗した
-			MessageBox(nullptr, L"ウインドウ作成に失敗しました", L"エラー", MB_OK);
-			return 0;   //エラー終了
+			MessageBox(nullptr, L"", L"", MB_OK);
+			return 0;  
 		}
 	}
-	ShowCursor(FALSE);
-	//ウインドウの表示
+	ShowCursor(IsMouseCursor);
 	ShowWindow(
-		hWnd,       //取得したウインドウのハンドル
-		nCmdShow    //WinMainに渡されたパラメータ
+		hWnd,      
+		nCmdShow    
 	);
 	UpdateWindow(hWnd);
 	return hWnd;
+}
+
+// フレームレート制御用ヘルパ関数
+// lastTime: 前フレームの終端時刻（呼び出しのたびに更新される）
+// targetMs: 目標フレーム時間 (ms)
+void RegulateFrameRate(std::chrono::high_resolution_clock::time_point& lastTime,double targetMs)
+{
+	using clock = std::chrono::high_resolution_clock;
+	// 現在時刻
+	auto now = clock::now();
+	// 経過時間を ms 単位で取得
+	double elapsed = std::chrono::duration<double, std::milli>(now - lastTime).count();
+	double delay = targetMs - elapsed;
+
+	// 残余時間が1ms以上あれば Sleep
+	if (delay > 1.0) {
+		Sleep(static_cast<DWORD>(delay));
+	}
+	// 次フレーム用に lastTime を更新
+	lastTime = clock::now();
 }
 
 //--------------------------------------------------------------------------------------
@@ -123,13 +133,15 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow, bool isFullScreen, int iCli
 //	用途: メインループ
 //--------------------------------------------------------------------------------------
 int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth, int iClientHeight) {
-	//終了コード
 	int RetCode = 0;
-	//ウインドウ情報。メッセージボックス表示チェックに使用
-	WINDOWINFO WinInfo;
+	WINDOWINFO WinInfo{};
 	ZeroMemory(&WinInfo, sizeof(WinInfo));
-	//例外処理開始
+
+	bool comInitialized = false;
+	bool appCreated = false;
+
 	try {
+<<<<<<< HEAD
 		//COMの初期化
 		//サウンドなどで使用する
 		if (FAILED(::CoInitialize(nullptr))) {
@@ -171,51 +183,112 @@ int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth
 		if (GetWindowInfo(hWnd, &WinInfo)) {
 			//実行失敗した
 			MessageBox(hWnd, e.what_w().c_str(), L"エラー", MB_OK);
+=======
+		// COM 初期化
+		if (SUCCEEDED(::CoInitialize(nullptr))) {
+			comInitialized = true;
+>>>>>>> master
 		}
 		else {
-			//実行失敗した
-			MessageBox(nullptr, e.what_w().c_str(), L"エラー", MB_OK);
+			throw std::exception("CoInitialize failed");
+		}
+
+		// アプリ初期化
+		App::CreateApp(hInstance, hWnd, isFullScreen, iClientWidth, iClientHeight);
+		appCreated = true;
+
+		// シーン生成
+		auto ScenePtr = App::GetApp()->CreateScene<Scene>();
+
+		// 入力監視キーリスト
+		std::vector<DWORD> UseKeyVec = {
+			VK_PRIOR, VK_SPACE, VK_LBUTTON, VK_RBUTTON, VK_TAB,VK_RETURN,
+			VK_LEFT,VK_RIGHT,VK_UP,VK_DOWN,
+			'W','A','S','D',
+		};
+
+		// フレームレート制御準備
+		using clock = std::chrono::high_resolution_clock;
+		const double targetMs = 1000.0 / 60.0; // 60fps
+		timeBeginPeriod(1);                     // Sleep 精度を向上
+		auto lastTime = clock::now();
+
+		// メインループ
+		MSG msg{};
+		bool running = true;
+		while (running) {
+			// 1) Windows メッセージを常に処理
+			while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+				if (msg.message == WM_QUIT) {
+					running = false;
+					break;
+				}
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			if (!running) break;
+
+			// 2) 入力状態をリセット＆更新
+			App::GetApp()->ResetInputState(hWnd, UseKeyVec);
+
+			// 3) ゲームの更新＆描画
+			App::GetApp()->UpdateDraw(1);
+
+			// 4) フレームレート制御
+			RegulateFrameRate(lastTime, targetMs);
+		}
+
+		RetCode = static_cast<int>(msg.wParam);
+	}
+	catch (BaseException& e) {
+		LPCWSTR text = e.what_w().c_str();
+		LPCWSTR title = L"Error";
+		if (GetWindowInfo(hWnd, &WinInfo)) {
+			MessageBox(hWnd, text, title, MB_OK);
+		}
+		else {
+			MessageBox(nullptr, text, title, MB_OK);
 		}
 		RetCode = 1;
 	}
 	catch (BaseMBException& e) {
-		//マルチバイトバージョンのメッセージボックスを呼ぶ
+		const char* text = e.what_m().c_str();
+		const char* title = "Error";
 		if (GetWindowInfo(hWnd, &WinInfo)) {
-			//実行失敗した
-			MessageBoxA(hWnd, e.what_m().c_str(), "エラー", MB_OK);
+			MessageBoxA(hWnd, text, title, MB_OK);
 		}
 		else {
-			//実行失敗した
-			MessageBoxA(nullptr, e.what_m().c_str(), "エラー", MB_OK);
+			MessageBoxA(nullptr, text, title, MB_OK);
 		}
 		RetCode = 1;
 	}
-	catch (exception& e) {
-		//STLエラー
-		//マルチバイトバージョンのメッセージボックスを呼ぶ
+	catch (std::exception& e) {
+		const char* text = e.what();
+		const char* title = "Error";
 		if (GetWindowInfo(hWnd, &WinInfo)) {
-			MessageBoxA(hWnd, e.what(), "エラー", MB_OK);
+			MessageBoxA(hWnd, text, title, MB_OK);
 		}
 		else {
-			MessageBoxA(nullptr, e.what(), "エラー", MB_OK);
+			MessageBoxA(nullptr, text, title, MB_OK);
 		}
 		RetCode = 1;
 	}
 	catch (...) {
-		//原因不明失敗した
+		LPCWSTR title = L"Unknown Error";
 		if (GetWindowInfo(hWnd, &WinInfo)) {
-			MessageBox(hWnd, L"原因不明のエラーです", L"エラー", MB_OK);
+			MessageBox(hWnd, L"", title, MB_OK);
 		}
 		else {
-			MessageBox(nullptr, L"原因不明のエラーです", L"エラー", MB_OK);
+			MessageBox(nullptr, L"", title, MB_OK);
 		}
 		RetCode = 1;
 	}
-	//アプリケーションの削除
-	App::DeleteApp();
-	//例外処理終了
-	//COMのリリース
-	::CoUninitialize();
+
+	// 後始末
+	if (appCreated)     App::DeleteApp();
+	if (comInitialized) ::CoUninitialize();
+	timeEndPeriod(1);
+
 	return RetCode;
 }
 
@@ -232,21 +305,16 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	// デバッグ時、deleteもれのチェック用
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//ロケールの設定
 	setlocale(LC_ALL, "JPN");
 
-	// フルスクリーンにするかどうかの判定
-	// コマンドラインに/fが設定されていたらフルスクリーンにする
 	bool isFullScreen = true;
 	wstring wstrcmd = lpCmdLine;
 	if (wstrcmd == L"/f" || wstrcmd == L"/F") {
-		isFullScreen = true;     // フラグをtrueに設定
+		isFullScreen = true;
 	}
 
 	MyRegisterClass(hInstance);
-	// アプリケーションの初期化を実行します:
 	HWND hWnd = InitInstance(hInstance, nCmdShow, isFullScreen, g_ClientWidth, g_ClientHeight);
 
 	if (!hWnd)
@@ -260,9 +328,9 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
 //--------------------------------------------------------------------------------------
 //
-//  関数: MakeWindowModeRectFunc()
+//  関数 : MakeWindowModeRectFunc()
 //
-//  目的: ウインドウモードに移行する矩形を作成する
+//	文字化けにより不明
 //
 //--------------------------------------------------------------------------------------
 void MakeWindowModeRectFunc(RECT& rc) {
@@ -302,18 +370,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_KEYDOWN:
-		// キーが押された
 		switch (wParam) {
 		case VK_ESCAPE:
-			//ウインドウを破棄する
 			DestroyWindow(hWnd);
 			break;
 		case VK_RETURN:
 			if (GetAsyncKeyState(VK_CONTROL)) {
-				//Ctrl+Enterでモード切替
 				if (App::AppCheck()) {
 					if (App::GetApp()->IsFullScreen()) {
-						//ウインドウモードに移行
 						RECT rc;
 						MakeWindowModeRectFunc(rc);
 						App::GetApp()->SetWindowMode(rc);
@@ -336,6 +400,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
-
-
-
