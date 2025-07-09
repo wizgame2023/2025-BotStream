@@ -12,20 +12,22 @@ namespace basecross {
 	
 	//ダッシュ関係
 	#define MouseDashButton App::GetApp()->GetInputDevice().GetKeyState().m_bPushKeyTbl[VK_SPACE]
-	#define ControllerDashButton m_controller.wButtons & XINPUT_GAMEPAD_A
-	#define DashButton MouseDashButton || ControllerDashButton
+	#define ControllerDashButton (m_controller.wButtons & XINPUT_GAMEPAD_A)
+	#define DashButton (MouseDashButton || ControllerDashButton)
 
 	//回避関係
 	#define ControllerDodgeButton m_controller.wPressedButtons & XINPUT_GAMEPAD_A
 	#define MouseDodgeButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_SPACE]
-	#define DodgeButton ControllerDodgeButton || MouseDodgeButton
+	#define DodgeButton (ControllerDodgeButton || MouseDodgeButton)
 
 
 	#define MouseAimButton GetAsyncKeyState(VK_RBUTTON) & 0x8000
 	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_LBUTTON]
 	#define MouseGunButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_RBUTTON]
 	#define MouseGunCancellationButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_RBUTTON]
-	#define AttackButton ControllerAttackButton || MouseAttackButton
+	#define MouseControllerCancellationButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER
+
+	#define AttackButton (ControllerAttackButton || MouseAttackButton)
 
 	void PlayerStateBase::Enter()
 	{
@@ -67,12 +69,12 @@ namespace basecross {
 		m_meleeFlag = cameraManager->GetMeleeFlag();
 
 		// 接近戦していいかのフラグを管理する
-		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunButton)
+		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunButton)
 		{
 			m_meleeFlag = false;
 			m_player->SetMeleeFlag(false);
 		}
-		else if(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunCancellationButton)
+		else if(m_controller.wReleasedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER || MouseGunCancellationButton)
 		{
 			m_meleeFlag = true;
 			m_player->SetMeleeFlag(true);
@@ -243,6 +245,7 @@ namespace basecross {
 		m_player->SetGunNow(false);
 
 		//回避する瞬間にスティックを傾けていたらその方向に進む
+		m_player->PlayerMove(PlayerState_Dodge);
 		auto m_stickL = m_player->GetStickL();
 		if (m_stickL != Vec3(0.0f, 0.0f, 0.0f))
 		{
@@ -361,9 +364,14 @@ namespace basecross {
 
 		//Aボタン離したらorスティックを離したら歩くステートに変更する	
 		Vec3 stickVec = m_player->GetStickL();
-		if (!DashButton || stickVec == Vec3(0.0f))
+		//m_player->
+		if (!DashButton && stickVec != Vec3(0.0f))
 		{
 			m_player->ChangeState(L"PlayerWalk");
+		}
+		else if(!DashButton || stickVec == Vec3(0.0f))
+		{
+			m_player->ChangeState(L"DashEnd");
 		}
 
 		//攻撃の処理
@@ -443,6 +451,47 @@ namespace basecross {
 	}
 
 
+	// ダッシュ終了ステート
+	void PlayerDashEndState::Enter()
+	{
+		PlayerStateBase::Enter();
+
+		// アニメーション変更
+		m_player->ChangeAnim(L"DashEnd");
+	}
+	void PlayerDashEndState::Update(float deltaTime)
+	{
+		// 入力デバイス取得
+		PlayerStateBase::Update(deltaTime);
+
+		//アニメーション更新
+		m_player->SetAddTimeAnimation(deltaTime * 1.7f);
+
+		m_timeOfAnimation += deltaTime;
+
+		if (m_timeOfAnimation >= 0.735f)
+		{
+			m_player->ChangeState(L"PlayerWalk");
+		}
+
+		Vec3 move = m_player->GetMoveVector(PlayerState_DashEnd);
+		Walk(PlayerState_DashEnd,m_walkFlag);
+		if (m_timeOfAnimation >= 0.6f)
+		{
+			if (move != Vec3(0.0f, 0.0f, 0.0f))
+			{
+				m_player->ChangeState(L"PlayerWalk");
+			}
+		}
+
+		
+	}
+	void PlayerDashEndState::Exit()
+	{
+		// リセット
+		m_timeOfAnimation = 0.0f;
+	}
+	//
 
 	//攻撃ステートの元となるクラス	
 	void PlayerAttackBaseState::Enter()
@@ -1041,6 +1090,8 @@ namespace basecross {
 
 	void PlayerAttackLongState::Update(float deltaTime)
 	{
+		PlayerStateBase::Update(deltaTime);
+
 		//攻撃の時間計測
 		m_timeOfAttack += deltaTime;
 
