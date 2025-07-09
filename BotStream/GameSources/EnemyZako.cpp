@@ -707,6 +707,10 @@ namespace basecross {
 
 		bool isArmorBreak = m_armor > 0;
 
+		//スタン値へのダメージ
+		m_stun += m_getHitInfo.StunDamage;
+		bool isStun = m_stun >= m_stunMax;
+
 		m_armor -= CalculateDamage(m_getHitInfo.Damage);
 
 		//hpがあるならダメージ処理する
@@ -730,14 +734,23 @@ namespace basecross {
 			{
 				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
 				m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
-				//m_armorFlash = m_armorFlashMax;
-				//m_armorFlash = m_armorFlashMax;
-				//HPがなくなったらやられるステート移行
-				if (m_HPCurrent <= 0)
-				{
-					m_state->ChangeState(L"Die");
-				}
 			}
+
+			//スタン時の演出
+			if (isStun) {
+				AddEffect(EnemyEffect_Stun);
+				App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+				m_stun = 0;
+
+				m_state->ChangeState(L"Stun");
+			}
+
+			//やられ処理移行
+			if (m_HPCurrent <= 0)
+			{
+				m_state->ChangeState(L"Die");
+			}
+
 		}
 	}
 
