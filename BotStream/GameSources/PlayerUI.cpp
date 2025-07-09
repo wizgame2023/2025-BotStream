@@ -360,6 +360,18 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+		// 左クリック
+		m_keyboardSprite[0] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl,
+			Vec3(pos.x, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[0]->SetUVRect(Vec2(0.0f, 0.28f), Vec2(0.5f, 1.0f));
+		m_keyboardSprite[0]->OnClear(true);
 		// 剣 --------------------------
 
 		// LB / 銃----------------------
@@ -372,6 +384,18 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
+		
+		// 右クリック
+		m_keyboardSprite[1] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl,
+			Vec3(pos.x - offsetX - gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[1]->SetUVRect(Vec2(0.5f, 0.28f), Vec2(1.0f, 1.0f));
+		m_keyboardSprite[1]->OnClear(true);
 
 		// プラスの部分
 		m_fightSprite[5] = m_stage->AddGameObject<Sprite>(
@@ -394,9 +418,22 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+		// 左クリック
+		m_keyboardSprite[2] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl,
+			Vec3(pos.x - offsetX + gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[2]->SetUVRect(Vec2(0.0f, 0.28f), Vec2(0.5f, 1.0f));
+		m_keyboardSprite[2]->OnClear(true);
+
 		// 銃 --------------------------
 
-		// A / 回避
+		// A / 回避----------------------------------------
 		m_fightSprite[7] = m_stage->AddGameObject<Sprite>(
 			L"Buttons",
 			buttonScl,
@@ -406,6 +443,19 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+
+		// SPACEキー
+		m_keyboardSprite[3] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl + Vec2(10.0f,0.0f),
+			Vec3(pos.x + offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[3]->SetUVRect(Vec2(0.0f), Vec2(0.5f, 0.28f));
+		m_keyboardSprite[3]->OnClear(true);
+
 		// ----------------------------------------------
 
 		// UI非表示(後でコメントアウト)
@@ -416,6 +466,57 @@ namespace basecross {
 	{
 		// ムービー中などはUIを非表示にするとかになったら多分使うと思うので書いておく
 		//AllFightSpriteClear(m_movieFlag);
+		constexpr int loopIOffset = 3;
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		
+		// コントローラーが接続されているかどうかでUIを変更
+		if (cntl[0].bConnected)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				m_fightSprite[i + loopIOffset]->OnClear(false);
+				if (i + loopIOffset == 6) m_fightSprite[i + loopIOffset + 1]->OnClear(false);
+				m_keyboardSprite[i]->OnClear(true);
+			}
+
+			/*
+			m_fightSprite[3]->SetTexture(L"Buttons");
+			m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+			m_fightSprite[4]->SetTexture(L"Buttons");
+			m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
+			m_fightSprite[4]->SetRotate(Vec3(0.0f));
+
+			m_fightSprite[6]->SetTexture(L"Buttons");
+			m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+			m_fightSprite[7]->SetTexture(L"Buttons");
+			m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+			*/
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if(i + loopIOffset != 5) m_fightSprite[i + loopIOffset]->OnClear(true);
+				if (i + loopIOffset == 6) m_fightSprite[i + loopIOffset + 1]->OnClear(true);
+				m_keyboardSprite[i]->OnClear(false);
+			}
+			/*
+			m_fightSprite[3]->SetTexture(L"SpaceMouse");
+			m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.333f), Vec2(1.0f, 1.0f));
+
+			m_fightSprite[4]->SetTexture(L"SpaceMouse");
+			m_fightSprite[4]->SetUVRect(Vec2(0.0f, 0.333f), Vec2(1.0f, 1.0f));
+			m_fightSprite[4]->SetRotate(Vec3(0.0f, XM_PI, 0.0f));
+
+			m_fightSprite[6]->SetTexture(L"SpaceMouse");
+			m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.333f), Vec2(1.0f, 1.0f));
+
+			m_fightSprite[7]->SetTexture(L"SpaceMouse");
+			m_fightSprite[7]->SetUVRect(Vec2(0.0f), Vec2(1.0f, 0.333f));
+			*/
+		}
 	}
 
 	// 戦闘用UIすべての表示非表示を設定する
@@ -538,6 +639,116 @@ namespace basecross {
 		{
 			m_partsTextSprite[i]->OnClear(clear);
 			m_num[i]->OnClear(clear);
+		}
+	}
+
+	// --------------------------------------------------------------------------------------
+
+
+	//================================================================
+	// プレイヤーがやばいときに表示する奴
+	//================================================================
+	void PlayerEmergencyUI::OnCreate()
+	{
+		constexpr int layer = 4;
+		// とりあえず赤色で表示
+		Col4 color = { 1.0f, 0.0f, 0.0f, 0.0f };
+
+		// 16:9のはずなんだけどなぁ…0.5625掛けるとちょっと足りない
+		const Vec2 size(1300.0f, 800.0f);
+
+		m_stage = GetStage();
+		m_emergencySprite = m_stage->AddGameObject<Sprite>(
+			L"EmergencyTex",
+			size,
+			Vec3(0, 0, 0),//画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color,
+			layer
+		);
+	}
+
+	void PlayerEmergencyUI::OnUpdate()
+	{
+		auto player = m_player.lock();
+		if (!player)
+		{
+			GetStage()->RemoveGameObject<PlayerEmergencyUI>(GetThis<PlayerEmergencyUI>());
+			return;
+		}
+
+		// プレイヤーの現在のHPと最大値を取得
+		float currentHP = player->GetHPCurrent();
+		float maxHP = player->GetMaxHP();
+
+		// プレイヤーのHPが残り3割以下の時
+		if ((currentHP / maxHP) < 0.3f)
+		{
+			m_time += App::GetApp()->GetElapsedTime() * 2.0f;
+			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, sinf(m_time)));
+			if (sinf(m_time) < 0.0f)
+			{
+				m_time = 0.000001f;
+			}
+		}
+		else
+		{
+			m_time = 0;
+			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, 0.0f)); // 非表示
+		}
+	}
+
+	// --------------------------------------------------------------------------------------
+
+
+	//================================================================
+	// 砂嵐
+	//================================================================
+	void GameOverNoise::OnCreate()
+	{
+		constexpr int layer = 10;
+		Col4 color = { 1.0f, 1.0f, 1.0f, 0.0f };
+		const Vec2 size(1300.0f, 800.0f);
+		m_stage = GetStage();
+		m_noiseSprite = m_stage->AddGameObject<Sprite>(
+			L"Noise",
+			size,
+			Vec3(0, 0, 0), //画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color,
+			layer
+		);
+		m_noiseSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.333f));
+		m_time = 1.0f;
+	}
+
+	void GameOverNoise::OnUpdate()
+	{
+		float alpha = m_noiseSprite->GetColor().w;
+		if (alpha <= 1.0f)
+		{
+			m_time += App::GetApp()->GetElapsedTime() * 3.0f;
+			m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
+		}
+		// UVの幅
+		constexpr float spriteUV = 1.0f / 3.0f; 
+
+		m_noiseSprite->SetUVRect(
+			Vec2(spriteUV * m_frameCount[0], spriteUV * m_frameCount[1]),
+			Vec2(spriteUV * m_frameCount[0] + spriteUV, spriteUV * m_frameCount[1] + spriteUV)
+		);
+		
+		m_frameCount[0]++;
+
+		// 3x3のUVをループ
+ 		if (m_frameCount[0] > 2)
+		{
+			m_frameCount[0] = 0;
+			m_frameCount[1]++;
+			if (m_frameCount[1] > 2)
+			{
+				m_frameCount[1] = 0;
+			}
 		}
 	}
 }

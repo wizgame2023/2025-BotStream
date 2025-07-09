@@ -217,6 +217,10 @@ namespace basecross {
 			m_HPFrame->SetScale(Vec3(2.0f, 0.5f, 5.0f));
 			m_HPBer->SetScale(Vec3(2.0f, 0.5f, 5.0f));
 
+			// ŽB‰e—p
+			//m_HPFrame->SetScale(Vec3(0.0f));
+			//m_HPBer->SetScale(Vec3(0.0f));
+
 			//HP‚ÌŠ„‡‚É‚æ‚Á‚ÄƒQ[ƒW‚ªŒ¸‚é
 			float HPPercent = (float)m_HPCurrent / (float)m_HPMax;
 			m_HPBer->SetPercent(HPPercent);

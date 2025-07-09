@@ -48,6 +48,7 @@ namespace basecross {
 		Col4 GetColor();//ÉQÉbÉ^Å[
 
 		void SetPosition(Vec3 pos);
+		void SetRotate(Vec3 rotate);
 		Vec3 GetPosition();
 		void SetUVRect(Vec2 topLeft, Vec2 botRight);
 

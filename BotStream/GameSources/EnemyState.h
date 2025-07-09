@@ -8,6 +8,10 @@
 #include "Project.h"
 #include <random>
 
+//ƒvƒŒƒCƒ„[‚ÌHPŠ„‡‚ª©•ª‚Æ”ä‚×‚Ä’á‚¢‚Ù‚Ç‰“‚­‚©‚çUŒ‚‚µ‚æ‚¤‚Æ‚·‚é
+//‰ñ“]E’@‚«‚Â‚¯‚Í‰“‹——£‚©‚ço‚·‚±‚Æ‚ª‘½‚¢H
+
+
 namespace basecross {
 	class GameObject;
 
@@ -65,12 +69,19 @@ namespace basecross {
 	// —§‚¿
 	class BossFirstStandState : public StateBase {
 		float m_time = 0;
-		const float m_startAttack = 3.0f;
+		//UŒ‚‚ÉˆÚ‚é‚Ü‚Å1`4•b
+		const float m_startAttack = 1.0f;
+		const float m_startAttackPlus = 3.0f;
 		const float m_startAttackRand = 10;
 		const float m_spinRand = 400;
-		const float m_slamRand = 250;
-		const float m_sphereRand = 200;
-		const float m_farDist = 10;
+		const float m_slamRand = 100;
+		const float m_chaseRand = 500;
+		const float m_beamRand = 200;
+
+		//’†‹——£
+		const float m_midDist = 5;
+		//‰“‹——£
+		const float m_farDist = 20;
 
 		random_device rnd;
 	public:

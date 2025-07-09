@@ -113,6 +113,8 @@ namespace basecross {
 
 	void Scene::GameResourses()
 	{
+		bool forKeyboard = true;
+
 		auto& app = App::GetApp();
 
 		auto path = app->GetDataDirWString();
@@ -130,6 +132,8 @@ namespace basecross {
 		app->RegisterTexture(L"SlowTex", strTexture);
 		strTexture = texPath + L"Door.png";
 		app->RegisterTexture(L"DoorTex", strTexture);
+		strTexture = texPath + L"EmergencySpeite.png";
+		app->RegisterTexture(L"EmergencyTex", strTexture);
 
 		// title
 		strTexture = texPath + L"TitleBack.png";
@@ -148,14 +152,26 @@ namespace basecross {
 		app->RegisterTexture(L"StageSelectString", strTexture);
 		strTexture = texPath + L"SelectBack2.png";
 		app->RegisterTexture(L"SelectBack", strTexture);
-		strTexture = texPath + L"StagePhoto1_1.png";
 
 		// StageSelectのステージ写真
+		strTexture = texPath + L"StagePhoto1_1.png";
 		app->RegisterTexture(L"Stage1-1Tex", strTexture);
 		strTexture = texPath + L"StagePhoto1_2.png";
 		app->RegisterTexture(L"Stage1-2Tex", strTexture);
 
+		strTexture = texPath + L"StagePhoto2_1.png";
+		app->RegisterTexture(L"Stage2-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto2_2.png";
+		app->RegisterTexture(L"Stage2-2Tex", strTexture);
+
+		strTexture = texPath + L"StagePhoto3_1.png";
+		app->RegisterTexture(L"Stage3-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto3_2.png";
+		app->RegisterTexture(L"Stage3-2Tex", strTexture);
+
 		// GameClear / GameOver
+		strTexture = texPath + L"Noise.png";
+		app->RegisterTexture(L"Noise", strTexture);
 		strTexture = texPath + L"GameOverBack.png";
 		app->RegisterTexture(L"GameOverBack", strTexture);
 		strTexture = texPath + L"GameClearBack.png";
@@ -196,6 +212,8 @@ namespace basecross {
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
 		app->RegisterTexture(L"Buttons", strTexture);
+		strTexture = texPath + L"SpaceMouse.png";
+		app->RegisterTexture(L"SpaceMouse", strTexture);
 
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
@@ -285,18 +303,37 @@ namespace basecross {
 		strTexture = texPath + L"Tutorial/Tutorial_progresstxt7.png";
 		app->RegisterTexture(L"Tuto_barTxt7", strTexture);
 
-		strTexture = texPath + L"Tutorial/Tutorial1.png";
-		app->RegisterTexture(L"Tuto_txt1", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial2.png";
-		app->RegisterTexture(L"Tuto_txt2", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial3.png";
-		app->RegisterTexture(L"Tuto_txt3", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial4.png";
-		app->RegisterTexture(L"Tuto_txt4", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial5.png";
-		app->RegisterTexture(L"Tuto_txt5", strTexture);
-		strTexture = texPath + L"Tutorial/Tutorial6.png";
-		app->RegisterTexture(L"Tuto_txt6", strTexture);
+		if (forKeyboard) 
+		{
+			strTexture = texPath + L"Tutorial/Tutorial1_key.png";
+			app->RegisterTexture(L"Tuto_txt1", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial2_key.png";
+			app->RegisterTexture(L"Tuto_txt2", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial3_key.png";
+			app->RegisterTexture(L"Tuto_txt3", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial4_key.png";
+			app->RegisterTexture(L"Tuto_txt4", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial5_key.png";
+			app->RegisterTexture(L"Tuto_txt5", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial6_key.png";
+			app->RegisterTexture(L"Tuto_txt6", strTexture);
+		}
+		else 
+		{
+
+			strTexture = texPath + L"Tutorial/Tutorial1.png";
+			app->RegisterTexture(L"Tuto_txt1", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial2.png";
+			app->RegisterTexture(L"Tuto_txt2", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial3.png";
+			app->RegisterTexture(L"Tuto_txt3", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial4.png";
+			app->RegisterTexture(L"Tuto_txt4", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial5.png";
+			app->RegisterTexture(L"Tuto_txt5", strTexture);
+			strTexture = texPath + L"Tutorial/Tutorial6.png";
+			app->RegisterTexture(L"Tuto_txt6", strTexture);
+		}
 
 		// その他ゲーム中テクスチャ
 		strTexture = texPath + L"Shock_wave_ring001.png";

@@ -154,7 +154,7 @@ namespace basecross {
 		shared_ptr<Stage> m_stage;
 	public:
 		// stagePtr: ステージ, buttonPos: アイコン位置, buttonSize: サイズ, switch: 選択インデックス
-		PlayerButtonUI(const std::shared_ptr<Stage>& stagePtr,
+		PlayerButtonUI(const shared_ptr<Stage>& stagePtr,
 			const Vec2& buttonPos,
 			const Vec2& buttonSize/*,
 			int buttonSwitch*/
@@ -185,7 +185,7 @@ namespace basecross {
 
 	public:
 		// stagePtr: ステージ, textPos: 文字位置, textSize: サイズ, switch: 選択インデックス
-		PlayerButtonText(const std::shared_ptr<Stage>& stagePtr,
+		PlayerButtonText(const shared_ptr<Stage>& stagePtr,
 			const Vec2& textPos,
 			const Vec2& textSize,
 			int textSwitch
@@ -210,9 +210,11 @@ namespace basecross {
 
 		shared_ptr<Sprite> m_fightSprite[8];
 
+		shared_ptr<Sprite> m_keyboardSprite[4];
+
 	public:
 		// stagePtr: ステージ
-		PlayerWeaponUI(const std::shared_ptr<Stage>& stagePtr) :
+		PlayerWeaponUI(const shared_ptr<Stage>& stagePtr) :
 			MyGameObject(stagePtr)
 		{
 		}
@@ -233,7 +235,7 @@ namespace basecross {
 		shared_ptr<Sprite> m_partsTextSprite[3];
 		shared_ptr<Sprite> m_num[3];
 	public:
-		PartsTextChange(const std::shared_ptr<Stage>& stagePtr) :
+		PartsTextChange(const shared_ptr<Stage>& stagePtr) :
 			MyGameObject(stagePtr)
 		{
 		}
@@ -244,6 +246,50 @@ namespace basecross {
 		virtual void OnUpdate() override;
 
 		void AllClear(bool clear);
+	};
+
+	//==============================================================================
+	// HPやばいときのUI(画面効果みたいな？)
+	//==============================================================================
+	class PlayerEmergencyUI : public MyGameObject {
+		shared_ptr<Stage> m_stage;
+
+		shared_ptr<Sprite> m_emergencySprite;
+
+		weak_ptr<Player> m_player;
+
+		float m_time = 0;
+	public:
+		PlayerEmergencyUI(const shared_ptr<Stage>& stagePtr, const shared_ptr<Player> player) :
+			MyGameObject(stagePtr),
+			m_player(player)
+		{
+		}
+		virtual ~PlayerEmergencyUI() {}
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
+	};
+
+	//==============================================================================
+	// ゲームオーバー時のノイズ
+	//==============================================================================
+	class GameOverNoise : public MyGameObject {
+		shared_ptr<Stage> m_stage;
+
+		shared_ptr<Sprite> m_noiseSprite;
+
+		float m_time = 0;
+
+		int m_frameCount[2] = { 0 };
+
+	public:
+		GameOverNoise(const shared_ptr<Stage>& stagePtr) :
+			MyGameObject(stagePtr)
+		{
+		}
+		virtual ~GameOverNoise() {}
+		virtual void OnCreate() override;
+		virtual void OnUpdate() override;
 	};
 }
 // namespace basecross
