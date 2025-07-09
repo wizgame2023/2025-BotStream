@@ -24,6 +24,9 @@ namespace basecross {
 			PostEvent(0.0f, GetThis<ObjectInterface>(), GetThis<Scene>(), L"ToGameStage");
 
 			GameResourses();
+
+			// フルスクリーンにする
+			App::GetApp()->SetFullScreenMode();
 		}
 		catch (...) {
 			throw;
@@ -214,6 +217,8 @@ namespace basecross {
 		app->RegisterTexture(L"Buttons", strTexture);
 		strTexture = texPath + L"SpaceMouse.png";
 		app->RegisterTexture(L"SpaceMouse", strTexture);
+		strTexture = texPath + L"EnterBackSpace.png";
+		app->RegisterTexture(L"EnterBackSpace", strTexture);
 
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);
@@ -370,6 +375,8 @@ namespace basecross {
 		app->RegisterResource(L"PlayerModelTestVer2.0", boneMultiModelMesh);
 		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Enemy_B.bmf");//雑魚敵のメッシュ(空中)
 		app->RegisterResource(L"Enemy_B", boneMultiModelMesh);
+		boneMultiModelMesh = MultiMeshResource::CreateBoneModelMultiMesh(modPath, L"Enemy_D.bmf");//雑魚敵のメッシュ(人型)
+		app->RegisterResource(L"Enemy_D", boneMultiModelMesh);
 
 		auto boneModelMesh = MeshResource::CreateBoneModelMesh(modPath, L"Enemy_A.bmf");//雑魚敵のメッシュ(遠距離)
 		app->RegisterResource(L"Enemy_A", boneModelMesh);

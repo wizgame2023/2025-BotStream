@@ -85,7 +85,7 @@ namespace basecross {
 		ptrColl->SetDrawActive(false);
 
 		//接地判定
-		m_LandDetect->SetBindPos(Vec3(0, -1.8f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -0.8f, 0));
 		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 
@@ -460,6 +460,39 @@ namespace basecross {
 				break;
 			}
 
+		}
+		// ダッシュ終了処理
+		if (playerState == PlayerState_DashEnd)
+		{
+			// 回避処理
+			m_dodgeTime += _delta * 3.0f;
+
+			// 回避のスピード曲線
+			auto cosCurve = (cos(m_dodgeTime) + 1.0f) / 2;
+
+			// 二次関数的な動きで回避行動をする
+			// 今は向いている方向に前方回避をする
+			float dodgeSpeed = 20.0f * 2.5f;
+			totalVec.x = (cos(m_angle) * (dodgeSpeed * (cosCurve)) * _delta);
+			totalVec.z = (sin(m_angle) * (dodgeSpeed * (cosCurve)) * _delta);
+
+			// 回避が終わったらダッシュ処理ができる
+			if (m_dodgeTime > XM_PI)
+			{
+				//// Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
+				//if (m_controller.bConnected && m_controller.wButtons & XINPUT_GAMEPAD_A)
+				//{
+				//	m_dashFlag = true;
+				//	m_dodgeTime = 0.0f;
+				//	m_endDodgeFlag = false;// 回避処理終了
+				//}
+				//else
+				//{
+				//	m_dodgeTime = 0.0f;
+				//	m_endDodgeFlag = false;// 回避処理終了
+				//}
+
+			}
 		}
 		// 回避処理
 		if (playerState == PlayerState_Dodge)

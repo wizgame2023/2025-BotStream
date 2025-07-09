@@ -479,6 +479,7 @@ namespace basecross {
 				m_keyboardSprite[i]->OnClear(true);
 			}
 
+			// なんかSetTextrureが反映されないから↑の方式にしたけど、まぁいいか！
 			/*
 			m_fightSprite[3]->SetTexture(L"Buttons");
 			m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
@@ -670,6 +671,16 @@ namespace basecross {
 
 	void PlayerEmergencyUI::OnUpdate()
 	{
+		shared_ptr<PauseSprite> pauseSp = m_stage->GetSharedGameObject<PauseSprite>(L"PauseUI");
+
+		bool isPause = pauseSp->GetPauseFlag();
+
+		// ポーズ中なら更新停止
+		if (isPause)
+		{
+			return;
+		}
+
 		auto player = m_player.lock();
 		if (!player)
 		{
@@ -684,7 +695,7 @@ namespace basecross {
 		// プレイヤーのHPが残り3割以下の時
 		if ((currentHP / maxHP) < 0.3f)
 		{
-			m_time += App::GetApp()->GetElapsedTime() * 2.0f;
+			m_time += App::GetApp()->GetElapsedTime() * 1.5f;
 			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, sinf(m_time)));
 			if (sinf(m_time) < 0.0f)
 			{
