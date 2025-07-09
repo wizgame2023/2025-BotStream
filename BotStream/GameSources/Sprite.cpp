@@ -110,6 +110,11 @@ namespace basecross {
 		m_trans->SetPosition(pos);
 	}
 
+	void Sprite::SetRotate(Vec3 rotate)
+	{
+		m_trans->SetRotation(rotate);
+	}
+
 	Vec3 Sprite::GetPosition()
 	{
 		return m_trans->GetPosition();
