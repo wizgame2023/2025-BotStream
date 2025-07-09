@@ -21,6 +21,12 @@ namespace basecross {
 	
 	void CameraStateBase::Update(float deltaTime)
 	{
+		//近接戦闘していいかのフラグを受け取る
+		m_meleeFlag = m_cameraManager->GetMeleeFlag();
+		//現在どの攻撃をしているか受け取る
+		m_gunNow = m_cameraManager->GetGunNow();
+		m_meleeNow = m_cameraManager->GetMeleeNow();
+
 		//コントローラーを受け取る
 		auto inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
@@ -58,17 +64,23 @@ namespace basecross {
 		CameraStateBase::Update(deltaTime);
 
 		//カメラの位置更新
-		m_cameraManager->CameraPosUpdate(8, 0, 17.0f);
+		m_cameraManager->CameraPosUpdate(8, 0, 17.0f, 100.0f,CameraManager::CameraMoveMode::DirectMove);
 
 		//通常モード時のカメラ操作処理
 		m_cameraManager->CameraControlNomalMode();
 		//慣性付きの回転処理
 		m_cameraManager->InertialRotation();
 
+		//現在ステート状態を渡す
+		m_cameraManager->SetStateMode(CameraManager::DebagState::Normal);
+
 		//もし,LBボタンを押していたら銃ステートに移行する
-		if (m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+		if (!m_meleeNow)
 		{
-			m_cameraManager->ChangeState(L"Gun");
+			if (!m_meleeFlag)
+			{
+				m_cameraManager->ChangeState(L"NormalToGun");
+			}
 		}
 
 		//右スティックを押したら、移動ステートに移行する
@@ -92,18 +104,21 @@ namespace basecross {
 	}
 
 	void CameraGunState::Update(float deltaTime)
-	{
+	{	
+		CameraStateBase::Update(deltaTime);
+
 		//もし,LBボタンを押していなかったら通常モードに戻る
-		if (!(m_controller.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER))
+		if (m_meleeFlag)
 		{
-			m_cameraManager->ChangeState(L"Normal");
+			m_cameraManager->ChangeState(L"GunToNormal");
 			return;
 		}
 
-		CameraStateBase::Update(deltaTime);
+		//現在ステート状態を渡す
+		m_cameraManager->SetStateMode(CameraManager::DebagState::Gun);
 
 		//カメラの位置更新
-		m_cameraManager->CameraPosUpdate(3.0f, 3.0f, 8.0f);
+		m_cameraManager->CameraPosUpdate(3.0f, 3.0f, 8.0f,100.0f, CameraManager::CameraMoveMode::DirectMove);
 		//慣性付きの回転処理
 		m_cameraManager->InertialRotation(0.7f, 60.0f);
 
@@ -152,13 +167,28 @@ namespace basecross {
 	{
 		CameraStateBase::Update(deltaTime);
 
+		//もし、LBボタンを押していなかったら通常モードに移行しようとする
+		if (m_meleeFlag)
+		{
+			m_cameraManager->ChangeState(L"GunToNormal");
+			return;
+		}
+
+		//現在ステート状態を渡す
+		m_cameraManager->SetStateMode(CameraManager::DebagState::NormalToGun);
+
 		//カメラの位置更新
-		//m_cameraManager->CameraPosUpdate(8, 0, 17.0f);
+		auto moveEnd = m_cameraManager->CameraPosUpdate(3.0f, 3.0f, 8.0f, 40.0f);
+		//慣性付きの回転処理
+		m_cameraManager->InertialRotation(0.7f, 60.0f);
+		//銃モード時のカメラ操作処理
+		m_cameraManager->CameraControlShotMode();
 
-		//m_cameraManager
-
-		//移動モード時のカメラ操作処理
-		m_cameraManager->CameraControlTransitionMode();
+		//移動処理が終わったらステートを銃モードに変更する
+		if (moveEnd)
+		{
+			m_cameraManager->ChangeState(L"Gun");
+		}
 	}
 
 	void CameraNormalToGunState::Exit()
@@ -167,6 +197,44 @@ namespace basecross {
 	}
 	//
 
+
+	//銃モードから通常モードに戻る処理
+	void CameraGunToNormalState::Enter()
+	{
+
+	}
+
+	void CameraGunToNormalState::Update(float deltaTime)
+	{
+		CameraStateBase::Update(deltaTime);
+
+		//もし、LBボタンを押していたら銃モードに移行しようとする
+		if (!m_meleeFlag)
+		{
+			m_cameraManager->ChangeState(L"NormalToGun");
+			return;
+		}
+
+		//現在ステート状態を渡す
+		m_cameraManager->SetStateMode(CameraManager::DebagState::GunToNormal);
+
+		//カメラの位置更新
+		auto moveEnd = m_cameraManager->CameraPosUpdate(8.0f, 0.0f, 17.0f, 40.0f);
+
+		//銃モード時のカメラ操作処理
+		m_cameraManager->CameraControlNomalMode();
+
+		//移動処理が終わったらステートを銃モードに変更する
+		if (moveEnd)
+		{
+			m_cameraManager->ChangeState(L"Normal");
+		}
+	}
+
+	void CameraGunToNormalState::Exit()
+	{
+
+	}
 
 	//ムービー用のステート(ステージ開始時一段階目)//
 	void CameraStartMovieState_First::Enter()

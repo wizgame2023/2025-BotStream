@@ -106,6 +106,12 @@ namespace basecross {
 	{
 		m_stage = GetStage();
 
+		m_bulletSprite = m_stage->AddGameObject<Sprite>(
+			L"BulletUI", // テクスチャ名
+			Vec2(m_digitSize, m_digitSize),     // サイズ
+			Vec3(m_digitPos.x - 23.0f, m_digitPos.y + 2.0f, 0)  // 表示位置
+		);
+
 		//弾数関係------------------------------------------------------------
 		for (int i = 0; i < 3; ++i)
 		{
@@ -532,6 +538,116 @@ namespace basecross {
 		{
 			m_partsTextSprite[i]->OnClear(clear);
 			m_num[i]->OnClear(clear);
+		}
+	}
+
+	// --------------------------------------------------------------------------------------
+
+
+	//================================================================
+	// プレイヤーがやばいときに表示する奴
+	//================================================================
+	void PlayerEmergencyUI::OnCreate()
+	{
+		constexpr int layer = 4;
+		// とりあえず赤色で表示
+		Col4 color = { 1.0f, 0.0f, 0.0f, 0.0f };
+
+		// 16:9のはずなんだけどなぁ…0.5625掛けるとちょっと足りない
+		const Vec2 size(1300.0f, 800.0f);
+
+		m_stage = GetStage();
+		m_emergencySprite = m_stage->AddGameObject<Sprite>(
+			L"EmergencyTex",
+			size,
+			Vec3(0, 0, 0),//画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color,
+			layer
+		);
+	}
+
+	void PlayerEmergencyUI::OnUpdate()
+	{
+		auto player = m_player.lock();
+		if (!player)
+		{
+			GetStage()->RemoveGameObject<PlayerEmergencyUI>(GetThis<PlayerEmergencyUI>());
+			return;
+		}
+
+		// プレイヤーの現在のHPと最大値を取得
+		float currentHP = player->GetHPCurrent();
+		float maxHP = player->GetMaxHP();
+
+		// プレイヤーのHPが残り3割以下の時
+		if ((currentHP / maxHP) < 0.3f)
+		{
+			m_time += App::GetApp()->GetElapsedTime() * 2.0f;
+			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, sinf(m_time)));
+			if (sinf(m_time) < 0.0f)
+			{
+				m_time = 0.000001f;
+			}
+		}
+		else
+		{
+			m_time = 0;
+			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, 0.0f)); // 非表示
+		}
+	}
+
+	// --------------------------------------------------------------------------------------
+
+
+	//================================================================
+	// 砂嵐
+	//================================================================
+	void GameOverNoise::OnCreate()
+	{
+		constexpr int layer = 10;
+		Col4 color = { 1.0f, 1.0f, 1.0f, 0.0f };
+		const Vec2 size(1300.0f, 800.0f);
+		m_stage = GetStage();
+		m_noiseSprite = m_stage->AddGameObject<Sprite>(
+			L"Noise",
+			size,
+			Vec3(0, 0, 0), //画面中央に表示
+			Vec3(0.0f), // 回転なし
+			color,
+			layer
+		);
+		m_noiseSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.333f));
+		m_time = 1.0f;
+	}
+
+	void GameOverNoise::OnUpdate()
+	{
+		float alpha = m_noiseSprite->GetColor().w;
+		if (alpha <= 1.0f)
+		{
+			m_time += App::GetApp()->GetElapsedTime() * 3.0f;
+			m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
+		}
+		// UVの幅
+		constexpr float spriteUV = 1.0f / 3.0f; 
+
+		m_noiseSprite->SetUVRect(
+			Vec2(spriteUV * m_frameCount[0], spriteUV * m_frameCount[1]),
+			Vec2(spriteUV * m_frameCount[0] + spriteUV, spriteUV * m_frameCount[1] + spriteUV)
+		);
+		
+		m_frameCount[0]++;
+
+		// 3x3のUVをループ
+ 		if (m_frameCount[0] > 2)
+		{
+			m_frameCount[0] = 0;
+			m_frameCount[1]++;
+			if (m_frameCount[1] > 2)
+			{
+				m_frameCount[1] = 0;
+			}
 		}
 	}
 }

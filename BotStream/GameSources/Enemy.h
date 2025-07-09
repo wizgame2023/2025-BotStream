@@ -44,6 +44,8 @@ namespace basecross{
 
 		virtual void HitBackStandBehavior();
 
+		void DetectBeingAttacked(shared_ptr<GameObject>& other)override;
+
 		void ChangeState(wstring stateName) {
 			m_state->ChangeState(stateName);
 		}

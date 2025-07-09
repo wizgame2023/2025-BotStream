@@ -25,6 +25,8 @@ namespace basecross {
 		shared_ptr<Sprite> m_SEMater[10];	// SEのメーター
 		shared_ptr<Sprite> m_audioSelect[2];	// オーディオ設定の選択しているところ
 
+		shared_ptr<XAudio2Manager> m_SEManager = nullptr;	// SEなどを再生するためのマネージャ
+
 		// ポーズ中のボタンUI
 		shared_ptr<Sprite> m_pauseAButton;
 		// ボタンの説明

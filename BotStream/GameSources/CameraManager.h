@@ -45,6 +45,12 @@ namespace basecross{
 		CONTROLER_STATE m_controler;//コントローラー
 		Vec2 m_contrloerVec;		//コントローラーの右スティック入力
 
+		//キーマウ
+		POINT m_mouseCurrentPos; //マウスの現在位置
+		POINT m_mouseBeforPos;	 //マウスの過去位置
+		Vec2 m_mouseMoveVec;	 //マウスの移動ベクトル
+
+
 		float m_cameraAngleY;		//Playerから見てカメラのいる角度Y軸
 		float m_cameraAngleX;		//Playerから見てカメラのいる角度X軸
 		float m_range;				//Playerからどのくらい離れるか
@@ -93,11 +99,19 @@ namespace basecross{
 		/////////////////////////////////////////////////////////////////////////////
 
 		float m_meleeRange;	//近接戦闘の範囲
-		bool m_meleeFlag;	//近接戦闘していいかのフラグ	
+		bool m_meleeFlag = true;	//近接戦闘していいかのフラグ
+		bool m_meleeNow = false;	//攻撃をしているフラグ
+		bool m_gunNow = false;		//遠距離攻撃をしているフラグ
 
 		bool m_PauseFlag;	//ポーズのフラグ
 
-		
+		//カーソルがワープした際のフラグ
+		bool m_cursorFlagX = false; // x座標版
+		bool m_cursorFlagY = false; // y座標版
+
+		// 現在のステートは何かの変数
+		int ModeState = 0;
+
 		//右か左かそれとも真ん中か
 		enum LeftOrRight
 		{
@@ -107,6 +121,21 @@ namespace basecross{
 		};
 
 	public:
+		// デバック用の変数(どのステートの状態か)
+		enum DebagState
+		{
+			Normal,
+			Gun,
+			NormalToGun,
+			GunToNormal
+		};
+		// カメラの移動方法
+		enum CameraMoveMode
+		{
+			NormalMove, // スピードをかけて移動する処理
+			DirectMove  // 直接その位置に移動する処理
+		};
+
 		CameraManager(const shared_ptr<Stage>& stagePtr,float range = 15.0f,float targetRange = 25.0f,float melleRange = 5.0f,
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
@@ -129,7 +158,7 @@ namespace basecross{
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 		//カメラのX軸回転の制限
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f);//カメラのポジションの更新
+		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f,float cameraSpeed = 100.0f,int moveMode = NormalMove);//カメラのポジションの更新
 		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
 
 		//カメラの操作をする処理
@@ -144,8 +173,9 @@ namespace basecross{
 		//ステート変更処理 引数に入れたステートに変更する
 		void ChangeState(wstring stateName);
 		
-		//近距離攻撃をするかの処理のゲッター
+		//近距離攻撃をするかの処理のゲッターセッタ
 		bool GetMeleeFlag();
+		void SetMeleeFlag(bool onOff);
 
 		//ターゲット対象との距離を渡す
 		float GetTargetDis();
@@ -162,6 +192,12 @@ namespace basecross{
 		void SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle);
 		//ロックオンを解除する条件
 		void ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec);
+
+		//ステートのゲッタセッタ
+		void SetStateMode(int stateMode)
+		{
+			ModeState = stateMode;
+		}
 
 		//角度のゲッタセッタ
 		//第一引数　X軸かY軸どちらの軸の角度を取るか
@@ -244,6 +280,24 @@ namespace basecross{
 		float GetAddAngleNAxis()
 		{
 			return Vec2(m_addAngleXAxis, m_addAngleYAxis).length();
+		}
+
+		//何の攻撃をしているかのセッタ
+		void SetMeleeNow(bool onOff)
+		{
+			m_meleeNow = onOff;
+		}
+		void SetGunNow(bool onOff)
+		{
+			m_gunNow = onOff;
+		}
+		bool GetMeleeNow()
+		{
+			return m_meleeNow;
+		}
+		bool GetGunNow()
+		{
+			return m_gunNow;
 		}
 
 		//ターゲット対象を渡す関数

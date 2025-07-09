@@ -89,6 +89,9 @@ namespace basecross {
 		shared_ptr<SoundItem> m_SE = nullptr;//再生しているSE
 		shared_ptr<XAudio2Manager> m_SEManager = nullptr;//SEなどを再生するためのマネージャ
 
+		//エフェクト
+		Handle m_effect;
+
 		//ボーズ状態かどうか
 		bool m_PauseFlag = false;
 
@@ -134,8 +137,11 @@ namespace basecross {
 		// 地面着地
 		void OnLanding();
 
+		//削除時処理
+		virtual void OnDestroy()override;
+
 		//OnCollisionEnterに置く
-		void DetectBeingAttacked(shared_ptr<GameObject>& other);
+		virtual void DetectBeingAttacked(shared_ptr<GameObject>& other);
 
 		//OnCreateで実行
 		virtual void CreateChildObjects() {

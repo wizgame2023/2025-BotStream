@@ -127,10 +127,13 @@ namespace basecross {
         SetSharedGameObject(L"PlayerUI", playerUI);
 
 		// 数字の位置,大きさ
-		Vec2 digitPos(300.0f, -260.0f);
+		Vec2 digitPos(310.0f, -260.0f);
 		constexpr float digitSize = 25.0f;
 		// プレイヤーの弾のUI
-		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos,digitSize);
+		AddGameObject<PlayerBulletUI>(m_player.lock(), digitPos, digitSize);
+
+		// プレイヤーがやばいときのやつ
+		AddGameObject<PlayerEmergencyUI>(m_player.lock());
 
 		// ボスゲージ
 		m_bossGauge = AddGameObject<BossGaugeUI>(
@@ -328,6 +331,7 @@ namespace basecross {
 
         if (ConsiderGameOver() && m_onceFlag == false)
         {
+			AddGameObject<GameOverNoise>();
             m_sndMgr.lock()->StopBGM();
 			m_onceFlag = true;
             m_scene.lock()->PostEvent(1.0f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameOver");

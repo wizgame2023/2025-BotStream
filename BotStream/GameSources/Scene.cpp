@@ -34,6 +34,9 @@ namespace basecross {
 	}
 
 	void Scene::OnEvent(const shared_ptr<Event>& event) {
+		// すべてのエフェクトを止める
+		EffectManager::Instance().StopAllEffect();
+
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
@@ -62,7 +65,7 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"Tutorial")
 		{
-			m_stageNum = 1;
+			m_stageNum = 0;
 			ResetActiveStage<TutorialStage>();
 		}
 		// ここは後にWaveStageに変更する
@@ -127,6 +130,8 @@ namespace basecross {
 		app->RegisterTexture(L"SlowTex", strTexture);
 		strTexture = texPath + L"Door.png";
 		app->RegisterTexture(L"DoorTex", strTexture);
+		strTexture = texPath + L"EmergencySpeite.png";
+		app->RegisterTexture(L"EmergencyTex", strTexture);
 
 		// title
 		strTexture = texPath + L"TitleBack.png";
@@ -145,14 +150,26 @@ namespace basecross {
 		app->RegisterTexture(L"StageSelectString", strTexture);
 		strTexture = texPath + L"SelectBack2.png";
 		app->RegisterTexture(L"SelectBack", strTexture);
-		strTexture = texPath + L"StagePhoto1_1.png";
 
 		// StageSelectのステージ写真
+		strTexture = texPath + L"StagePhoto1_1.png";
 		app->RegisterTexture(L"Stage1-1Tex", strTexture);
 		strTexture = texPath + L"StagePhoto1_2.png";
 		app->RegisterTexture(L"Stage1-2Tex", strTexture);
 
+		strTexture = texPath + L"StagePhoto2_1.png";
+		app->RegisterTexture(L"Stage2-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto2_2.png";
+		app->RegisterTexture(L"Stage2-2Tex", strTexture);
+
+		strTexture = texPath + L"StagePhoto3_1.png";
+		app->RegisterTexture(L"Stage3-1Tex", strTexture);
+		strTexture = texPath + L"StagePhoto3_2.png";
+		app->RegisterTexture(L"Stage3-2Tex", strTexture);
+
 		// GameClear / GameOver
+		strTexture = texPath + L"Noise.png";
+		app->RegisterTexture(L"Noise", strTexture);
 		strTexture = texPath + L"GameOverBack.png";
 		app->RegisterTexture(L"GameOverBack", strTexture);
 		strTexture = texPath + L"GameClearBack.png";
@@ -256,6 +273,8 @@ namespace basecross {
 		//射撃用テクスチャ
 		strTexture = texPath + L"Aiming.png";
 		app->RegisterTexture(L"AimingTex", strTexture);
+		strTexture = texPath + L"BulletUI.png";
+		app->RegisterTexture(L"BulletUI", strTexture);
 
 		//Tutorial
 		strTexture = texPath + L"Tutorial/Tutorial_progressbar.png";
@@ -428,6 +447,7 @@ namespace basecross {
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
 
+		app->RegisterWav(L"ArmorDefenseSE", SoundPath + L"ArmorDefenseSE.wav");
 		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
 		app->RegisterWav(L"SelectionSE", SoundPath + L"SelectionSE.wav");
 		app->RegisterWav(L"SelectionCancelSE", SoundPath + L"SelectionCancelSE.wav");

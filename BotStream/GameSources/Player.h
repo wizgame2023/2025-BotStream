@@ -74,6 +74,13 @@ namespace basecross {
 		bool m_attackFlag = true;
 		//ダッシュのフラグ
 		bool m_dashFlag = false;
+		// 接近戦できるかのフラグ
+		bool m_meleeFlag = true;	
+		//近接攻撃をしているフラグ
+		bool m_meleeNow = false;	
+		//遠距離攻撃をしているフラグ
+		bool m_gunNow = false;		
+
 
 
 		// ジャスト回避したかのフラグ
@@ -188,6 +195,12 @@ namespace basecross {
 		//m_equippedPartsのゲッタ
 		PartsStatus GetEquippedParts();
 
+		// 左スティック＆移動キーの傾きのゲッタ
+		Vec3 Player::GetStickL()
+		{
+			return m_stickL;
+		}
+
 		//現在の球数を受け取る
 		int Player::GetBulletNum()
 		{
@@ -249,6 +262,19 @@ namespace basecross {
 		{
 			return m_jastDodge;
 		}
+
+		//接近か遠距離どっちの攻撃をしていいかのフラグゲッタセッタ
+		bool GetMeleeFlag();
+		void SetMeleeFlag(bool onOff);
+
+		//何の攻撃をしているかのゲッタセッタ
+		bool GetMeleeNow();
+		bool GetGunNow();
+
+		void SetMeleeNow(bool onOff);
+		void SetGunNow(bool onOff);
+		
+
 
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 

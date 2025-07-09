@@ -30,6 +30,67 @@ namespace basecross {
 		}
 	}
 
+	void EnemyBase::DetectBeingAttacked(shared_ptr<GameObject>& other)
+	{
+		auto atk = dynamic_pointer_cast<AttackCollision>(other);
+		if (!atk) return;
+
+		m_hitDirection = other->GetComponent<Transform>()->GetWorldPosition();
+		m_hitDirection -= GetComponent<Transform>()->GetWorldPosition();
+
+		bool isAttacked = false;
+		HitInfo info = atk->GetHitInfo();
+
+		isAttacked = isAttacked || (FindTag(L"Enemy") && info.Type == AttackType::Player);
+		isAttacked = isAttacked || (FindTag(L"Player") && info.Type == AttackType::Enemy);
+
+		//UŒ‚‚ğó‚¯‚½‚ç
+		if (isAttacked) {
+			atk->SetMoveContact(true);
+			Vec3 v = GetForward();
+			float fwd = atan2(v.z, v.x);
+
+			if (info.HitEffect == L"SlashHitEfk")
+			{
+				EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0), Col4(1.0f, 0.35f, 0.15f, 1.0f), Vec3(0));
+			}
+			if (info.HitEffect == L"GunHitEfk")
+			{
+				EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0), Col4(1.0f, 0.95f, 0.45f, 1.0f), Vec3(0));
+			}
+			if (info.HitEffect == L"EnemyHitEfk")
+			{
+				EfkPlaying(info.HitEffect, GetAngle() - XM_PIDIV2, Vec3(0, 1, 0), Col4(1.0f, 0.35f, 0.15f, 1.0f), Vec3(0));
+			}
+			if (info.HitEffect == L"EnemyLongHitEfk")
+			{
+				EfkPlaying(info.HitEffect, fwd, Vec3(0, 1, 0), Col4(1.0f, 0.95f, 0.45f, 1.0f), Vec3(0));
+			}
+
+			//ƒA[ƒ}[‚ª‚ ‚é‚©‚É‚æ‚Á‚ÄSE‚ğ•Ï‚¦‚é
+			if (m_armor > 0)
+			{
+				PlaySnd(L"ArmorDefenseSE", 1.0f, 0);
+			}
+			else
+			{
+				PlaySnd(info.HitSound, 1.0f, 0);
+			}
+
+			//UŒ‚”»’è‚©‚çUŒ‚‚Ìƒf[ƒ^‚ğæ“¾
+			m_getHitInfo = info;
+
+			if (info.HitOnce == true) {
+				//UŒ‚”»’è‚ğÁ‚·
+				atk->ActivateCollision(0);
+			}
+
+			//”í’eˆ—‚Ö
+			OnDamaged();
+		}
+
+	}
+
 	void EnemyBase::OnCreate() {
 		Actor::OnCreate();
 		//Transformİ’è

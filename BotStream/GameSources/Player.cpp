@@ -408,7 +408,33 @@ namespace basecross {
 		// 入力デバイス取得
 		InputDevice inputDevice = App::GetApp()->GetInputDevice();
 		m_controller = inputDevice.GetControlerVec()[0];
-		m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		if (m_controller.bConnected)
+		{
+			m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+		}
+		if (!m_controller.bConnected)
+		{
+			//リセット
+			m_stickL = Vec3(0.0f, 0, 0.0f);
+
+			auto keyState = App::GetApp()->GetInputDevice().GetKeyState();
+			if (keyState.m_bPushKeyTbl['W'])
+			{
+				m_stickL += Vec3(0.0f, 0, 1.0f);
+			}
+			if (keyState.m_bPushKeyTbl['A'])
+			{
+				m_stickL += Vec3(-1.0f, 0, 0.0f);
+			}
+			if (keyState.m_bPushKeyTbl['S'])
+			{
+				m_stickL += Vec3(0.0f, 0, -1.0f);
+			}
+			if (keyState.m_bPushKeyTbl['D'])
+			{
+				m_stickL += Vec3(1.0f, 0, 0.0f);
+			}
+		}
 		Vec3 totalVec;
 
 		if (playerState == PlayerState_Walk || playerState == PlayerState_Dash)//徒歩、ダッシュ処理
@@ -629,6 +655,39 @@ namespace basecross {
 		return m_equippedParts;
 	}
 
+	//接近か遠距離どっちの攻撃をしていいかのフラグゲッタセッタ
+	bool Player::GetMeleeFlag()
+	{
+		return m_meleeFlag;
+	}
+	void Player::SetMeleeFlag(bool onOff)
+	{
+		GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager")->SetMeleeFlag(onOff);
+		m_meleeFlag = onOff;
+	}
+
+	//何の攻撃をしているかのゲッタセッタ
+	bool Player::GetMeleeNow()
+	{
+		return m_meleeNow;
+	}
+	bool Player::GetGunNow()
+	{
+		return m_gunNow;
+	}
+
+	void Player::SetMeleeNow(bool onOff)
+	{
+		GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager")->SetMeleeNow(onOff);
+		m_meleeNow = onOff;
+	}
+	void Player::SetGunNow(bool onOff)
+	{
+		GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager")->SetGunNow(onOff);
+		m_gunNow = onOff;
+	}
+
+
 	//衝突判定
 	void Player::OnCollisionEnter(shared_ptr<GameObject>& Other)
 	{
@@ -697,10 +756,11 @@ namespace basecross {
 			<< L"\n Vel.x " << m_velocity.x << L"\ Vel.y " << m_velocity.y << L" Vel.z " << m_velocity.z
 			<< endl << "onLand: " << m_isLand << " LandDetect: " << m_LandDetect->GetLand()
 			<< L"\nQuat : (" << L"\n" << quat.x << L"\n" << quat.y << L"\n" << quat.z << L"\n" << quat.w
-			<<L"\nDeltaTime" << _delta
-			<<L"\nDeltaScale" << deltaScale
+			<< L"\nDeltaTime" << _delta
+			<< L"\nDeltaScale" << deltaScale
 			<< L"\nAngle : " << GetAngle()
 			<< L"\ninstance : " << efkMana
+			<< L"\nMeleeFlag : " << m_meleeFlag
 			//<< L"\nLandDetect : "<<m_LandDetect
 			<< endl;
 
