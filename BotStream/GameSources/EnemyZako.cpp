@@ -246,34 +246,13 @@ namespace basecross {
 	//ダメージを受けた際の処理
 	void EnemyZako::HitBackStandBehavior()
 	{
-		////ダメージを受けた後のHPによってステートの遷移を変える
-		//m_hitbacktime -= _delta;
-
-		////スタン値追加
-		//m_stun += m_getHitInfo.StunDamage;
+		//ダメージを受けた後のHPによってステートの遷移を変える
+		m_hitbacktime -= _delta;
 
 		//攻撃を受けたときの処理
 		if (m_hitbacktime <= 0) 
 		{
-			//if (m_HPCurrent <= 0)
-			//{
-			//	ChangeState(L"Die");
-			//}
-			//else
-			//{
-			//	//スタン値が一定を過ぎたらスタン状態になる
-			//	if (m_stun >= m_stunMax)
-			//	{
-			//		ChangeState(L"Stun");
-			//		AddEffect(EnemyEffect_Stun);
-			//		App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
-			//		m_stun = 0;
-			//	}
-			//	else
-			//	{
-					ChangeState(L"Stand");
-			//	}
-			//}
+			ChangeState(L"Stand");
 		}
 	}
 
@@ -329,13 +308,6 @@ namespace basecross {
 			{
 				CreateDamageBill(GetThis<GameObject>(), damage, pushY, scale, displayTime);
 				m_HPCurrent -= CalculateDamage(m_getHitInfo.Damage) / 5.0f;
-				//m_armorFlash = m_armorFlashMax;
-				//m_armorFlash = m_armorFlashMax;
-				//HPがなくなったらやられるステート移行
-				if (m_HPCurrent <= 0)
-				{
-					m_state->ChangeState(L"Die");
-				}
 			}
 
 			//スタン時の演出
@@ -347,10 +319,10 @@ namespace basecross {
 				m_state->ChangeState(L"Stun");
 			}
 
-			//やられ
+			//やられ処理移行
 			if (m_HPCurrent <= 0)
 			{
-				m_state->ChangeState(L"Dead");
+				m_state->ChangeState(L"Die");
 			}
 
 		}
