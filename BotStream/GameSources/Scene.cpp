@@ -212,6 +212,8 @@ namespace basecross {
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
 		app->RegisterTexture(L"Buttons", strTexture);
+		strTexture = texPath + L"SpaceMouse.png";
+		app->RegisterTexture(L"SpaceMouse", strTexture);
 
 		strTexture = texPath + L"Select.png";
 		app->RegisterTexture(L"Select", strTexture);

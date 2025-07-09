@@ -360,6 +360,18 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+		// 左クリック
+		m_keyboardSprite[0] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl,
+			Vec3(pos.x, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[0]->SetUVRect(Vec2(0.0f, 0.28f), Vec2(0.5f, 1.0f));
+		m_keyboardSprite[0]->OnClear(true);
 		// 剣 --------------------------
 
 		// LB / 銃----------------------
@@ -372,6 +384,18 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
+		
+		// 右クリック
+		m_keyboardSprite[1] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl,
+			Vec3(pos.x - offsetX - gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[1]->SetUVRect(Vec2(0.5f, 0.28f), Vec2(1.0f, 1.0f));
+		m_keyboardSprite[1]->OnClear(true);
 
 		// プラスの部分
 		m_fightSprite[5] = m_stage->AddGameObject<Sprite>(
@@ -394,9 +418,22 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+		// 左クリック
+		m_keyboardSprite[2] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl,
+			Vec3(pos.x - offsetX + gunOffsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[2]->SetUVRect(Vec2(0.0f, 0.28f), Vec2(0.5f, 1.0f));
+		m_keyboardSprite[2]->OnClear(true);
+
 		// 銃 --------------------------
 
-		// A / 回避
+		// A / 回避----------------------------------------
 		m_fightSprite[7] = m_stage->AddGameObject<Sprite>(
 			L"Buttons",
 			buttonScl,
@@ -406,6 +443,19 @@ namespace basecross {
 			layer
 		);
 		m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+
+		// SPACEキー
+		m_keyboardSprite[3] = m_stage->AddGameObject<Sprite>(
+			L"SpaceMouse",
+			buttonScl + Vec2(10.0f,0.0f),
+			Vec3(pos.x + offsetX, pos.y - buttonOffsetY, pos.z),
+			Vec3(0.0f),
+			Col4(1.0f),
+			layer
+		);
+		m_keyboardSprite[3]->SetUVRect(Vec2(0.0f), Vec2(0.5f, 0.28f));
+		m_keyboardSprite[3]->OnClear(true);
+
 		// ----------------------------------------------
 
 		// UI非表示(後でコメントアウト)
@@ -416,6 +466,57 @@ namespace basecross {
 	{
 		// ムービー中などはUIを非表示にするとかになったら多分使うと思うので書いておく
 		//AllFightSpriteClear(m_movieFlag);
+		constexpr int loopIOffset = 3;
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		
+		// コントローラーが接続されているかどうかでUIを変更
+		if (cntl[0].bConnected)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				m_fightSprite[i + loopIOffset]->OnClear(false);
+				if (i + loopIOffset == 6) m_fightSprite[i + loopIOffset + 1]->OnClear(false);
+				m_keyboardSprite[i]->OnClear(true);
+			}
+
+			/*
+			m_fightSprite[3]->SetTexture(L"Buttons");
+			m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+			m_fightSprite[4]->SetTexture(L"Buttons");
+			m_fightSprite[4]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 0.75f));
+			m_fightSprite[4]->SetRotate(Vec3(0.0f));
+
+			m_fightSprite[6]->SetTexture(L"Buttons");
+			m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
+
+			m_fightSprite[7]->SetTexture(L"Buttons");
+			m_fightSprite[7]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
+			*/
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if(i + loopIOffset != 5) m_fightSprite[i + loopIOffset]->OnClear(true);
+				if (i + loopIOffset == 6) m_fightSprite[i + loopIOffset + 1]->OnClear(true);
+				m_keyboardSprite[i]->OnClear(false);
+			}
+			/*
+			m_fightSprite[3]->SetTexture(L"SpaceMouse");
+			m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.333f), Vec2(1.0f, 1.0f));
+
+			m_fightSprite[4]->SetTexture(L"SpaceMouse");
+			m_fightSprite[4]->SetUVRect(Vec2(0.0f, 0.333f), Vec2(1.0f, 1.0f));
+			m_fightSprite[4]->SetRotate(Vec3(0.0f, XM_PI, 0.0f));
+
+			m_fightSprite[6]->SetTexture(L"SpaceMouse");
+			m_fightSprite[6]->SetUVRect(Vec2(0.0f, 0.333f), Vec2(1.0f, 1.0f));
+
+			m_fightSprite[7]->SetTexture(L"SpaceMouse");
+			m_fightSprite[7]->SetUVRect(Vec2(0.0f), Vec2(1.0f, 0.333f));
+			*/
+		}
 	}
 
 	// 戦闘用UIすべての表示非表示を設定する

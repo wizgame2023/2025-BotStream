@@ -8,12 +8,12 @@ using namespace basecross;
 
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 
-const wchar_t* pClassName = L"Œ‚Íe‚æ‚è‹­‚µ";
-const wchar_t* pWndTitle = L"Œ‚Íe‚æ‚è‹­‚µ";
+const wchar_t* pClassName = L"EGO";
+const wchar_t* pWndTitle = L"EGO";
 int g_ClientWidth = 1280;
 int g_ClientHeight = 800;
 
-BOOL IsMouseCursor = TRUE;
+BOOL IsMouseCursor = FALSE;
 //--------------------------------------------------------------------------------------
 //
 //  ŠÖ”: MyRegisterClass()
