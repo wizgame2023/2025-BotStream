@@ -64,13 +64,16 @@ namespace basecross {
 		}
 		else if (!cntl[0].bConnected)
 		{
-			if (keybord.m_bPushKeyTbl[VK_UP])
+			if (keybord.m_bPushKeyTbl[VK_UP] || keybord.m_bPushKeyTbl['W'])
 				ret.y = 1;
-			if (keybord.m_bPushKeyTbl[VK_LEFT])
+
+			if (keybord.m_bPushKeyTbl[VK_LEFT] || keybord.m_bPushKeyTbl['A'])
 				ret.x = -1;
-			if (keybord.m_bPushKeyTbl[VK_DOWN])
+
+			if (keybord.m_bPushKeyTbl[VK_DOWN] || keybord.m_bPushKeyTbl['S'])
 				ret.y = -1;
-			if (keybord.m_bPushKeyTbl[VK_RIGHT])
+
+			if (keybord.m_bPushKeyTbl[VK_RIGHT] || keybord.m_bPushKeyTbl['D'])
 				ret.x = 1;
 		}
 
