@@ -100,10 +100,10 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow, bool isFullScreen, int iCli
 		}
 	}
 	ShowCursor(IsMouseCursor);
-	ShowWindow(
-		hWnd,      
-		nCmdShow    
-	);
+	//ShowWindow(
+	//	hWnd,      
+	//	nCmdShow    
+	//);
 	UpdateWindow(hWnd);
 	return hWnd;
 }
@@ -159,7 +159,7 @@ int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth
 		// 入力監視キーリスト
 		std::vector<DWORD> UseKeyVec = {
 			VK_PRIOR, VK_SPACE, VK_LBUTTON, VK_RBUTTON, VK_TAB,VK_RETURN,
-			VK_LEFT,VK_RIGHT,VK_UP,VK_DOWN,
+			VK_LEFT,VK_RIGHT,VK_UP,VK_DOWN,VK_BACK,
 			'W','A','S','D',
 		};
 
@@ -264,7 +264,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	setlocale(LC_ALL, "JPN");
 
-	bool isFullScreen = true;
+	bool isFullScreen = false;
 	wstring wstrcmd = lpCmdLine;
 	if (wstrcmd == L"/f" || wstrcmd == L"/F") {
 		isFullScreen = true;

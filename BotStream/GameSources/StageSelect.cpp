@@ -64,15 +64,20 @@ namespace basecross {
 		}
 		else if (!cntl[0].bConnected)
 		{
-			if (keybord.m_bPushKeyTbl[VK_UP])
+			if (keybord.m_bPushKeyTbl[VK_UP] || keybord.m_bPushKeyTbl['W'])
 				ret.y = 1;
-			if (keybord.m_bPushKeyTbl[VK_LEFT])
+
+			if (keybord.m_bPushKeyTbl[VK_LEFT] || keybord.m_bPushKeyTbl['A'])
 				ret.x = -1;
-			if (keybord.m_bPushKeyTbl[VK_DOWN])
+
+			if (keybord.m_bPushKeyTbl[VK_DOWN] || keybord.m_bPushKeyTbl['S'])
 				ret.y = -1;
-			if (keybord.m_bPushKeyTbl[VK_RIGHT])
+
+			if (keybord.m_bPushKeyTbl[VK_RIGHT] || keybord.m_bPushKeyTbl['D'])
 				ret.x = 1;
 		}
+
+		IsContorollerConnect();
 
 		if (fabs(ret.y) < dead)
 			m_selectOnceFlag2 = false;
@@ -216,8 +221,15 @@ namespace basecross {
 			}
 		}
 
-		// Bボタンかスペースキーで戻る
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag && !m_tutorialFlag)
+		// 何も選ばずにBボタンかバックスペースを押すとタイトルに行く
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && !m_stageFlag)
+		{
+			m_BGMManager->Stop(m_BGM);
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
+		}
+
+		// Bボタンかバックスペースで戻る
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && m_stageFlag && !m_tutorialFlag)
 		{
 			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
 
@@ -243,7 +255,7 @@ namespace basecross {
 
 		}
 		// チュートリアルキャンセル
-		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_SPACE]) && m_stageFlag && m_tutorialFlag)
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && m_stageFlag && m_tutorialFlag)
 		{
 			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
 
@@ -359,6 +371,51 @@ namespace basecross {
 		m_stageNum[0]->SetColor(Col4(1, 1, 0, 1));
 
 		auto stageTwoPos = m_stageNum[1]->GetPosition();
+		Vec2 buttonSize(60.0f);
+
+
+		m_AButtonSp = AddGameObject<Sprite>(
+			L"Buttons",
+			buttonSize,
+			Vec3(280.0f, -350.0f, 0.0f)
+		);
+		m_AButtonSp->SetUVRect(Vec2(0.0f), Vec2(0.333f, 0.25f));
+
+		auto AButtPos = m_AButtonSp->GetPosition();
+		m_enterKeySp = AddGameObject<Sprite>(
+			L"EnterBackSpace",
+			Vec2(80.0f),
+			AButtPos + Vec3(-10.0f, 0.0f, 0.0f)
+		);
+		m_enterKeySp->SetUVRect(Vec2(0.0f), Vec2(0.5f, 1.0f));
+
+		m_BButtonSp = AddGameObject<Sprite>(
+			L"Buttons",
+			buttonSize,
+			Vec3(480.0f, -350.0f, 0.0f)
+		);
+		m_BButtonSp->SetUVRect(Vec2(0.333f, 0.0f), Vec2(0.666f, 0.25f));
+
+		auto BButtPos = m_BButtonSp->GetPosition();
+		m_backSpaceKeySp = AddGameObject<Sprite>(
+			L"EnterBackSpace",
+			Vec2(70.0f,100.0f),
+			BButtPos + Vec3(-10.0f, 0.0f, 0.0f)
+		);
+		m_backSpaceKeySp->SetUVRect(Vec2(0.5f,0.0f), Vec2(1.0f));
+
+		for (int i = 0; i < 2; i++)
+		{
+			auto buttonPos = i ? BButtPos : AButtPos;
+
+			m_textSp[i] = AddGameObject<Sprite>(
+				L"Texts",
+				Vec2(100, 75),
+				buttonPos + Vec3(80.0f, 0.0f, 0.0f)
+			);
+			m_textSp[i]->SetUVRect(Vec2(0.0f, 0.333f * i), Vec2(0.5f, 0.333f * (i + 1)));
+		}
+
 
 		m_tutorialSprite = AddGameObject<Sprite>(
 			L"Texts",
@@ -413,4 +470,16 @@ namespace basecross {
 		}
 	}
 
+	// コントローラーがつながっているときに表示するスプライトを判定する関数みたいな
+	void StageSelect::IsContorollerConnect()
+	{
+		bool clear = App::GetApp()->GetInputDevice().GetControlerVec()[0].bConnected;
+
+		// つながっているとき
+		m_AButtonSp->OnClear(!clear);
+		m_BButtonSp->OnClear(!clear);
+		
+		m_enterKeySp->OnClear(clear);
+		m_backSpaceKeySp->OnClear(clear);
+	}
 }
