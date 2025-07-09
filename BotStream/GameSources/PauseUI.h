@@ -29,6 +29,8 @@ namespace basecross {
 
 		// ポーズ中のボタンUI
 		shared_ptr<Sprite> m_pauseAButton;
+		shared_ptr<Sprite> m_pauseEnterKey;
+
 		// ボタンの説明
 		shared_ptr<Sprite> m_buttonText;	
 
@@ -95,6 +97,12 @@ namespace basecross {
 		float GetAudioMax(int BGMorSE)
 		{
 			return m_audioMax[BGMorSE];
+		}
+
+		// 現在ポーズしているかのフラグを取得
+		bool GetPauseFlag()
+		{
+			return m_pauseFlag;
 		}
 
 		// 本当にポーズをしていいのかのフラグを設定
