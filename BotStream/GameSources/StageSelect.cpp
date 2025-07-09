@@ -221,7 +221,14 @@ namespace basecross {
 			}
 		}
 
-		// Bボタンかスペースキーで戻る
+		// 何も選ばずにBボタンかバックスペースを押すとタイトルに行く
+		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && !m_stageFlag)
+		{
+			m_BGMManager->Stop(m_BGM);
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
+		}
+
+		// Bボタンかバックスペースで戻る
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && m_stageFlag && !m_tutorialFlag)
 		{
 			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
