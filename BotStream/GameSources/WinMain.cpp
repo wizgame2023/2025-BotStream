@@ -151,7 +151,9 @@ int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth
 			'W','A','S','D','X','B'
 		};
 		while (WM_QUIT != msg.message) {
-			if (!App::GetApp()->ResetInputState(hWnd, UseKeyVec)) {
+			/*if (!App::GetApp()->ResetInputState(hWnd, UseKeyVec))*/
+			App::GetApp()->ResetInputState(hWnd, UseKeyVec);
+			{
 				//キー状態が何もなければウインドウメッセージを得る
 				if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 					//キーボードとマウス状態をリセット
