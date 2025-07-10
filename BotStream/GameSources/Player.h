@@ -23,6 +23,7 @@ namespace basecross {
 		PlayerState_Walk,
 		PlayerState_Dodge,
 		PlayerState_Dash,
+		PlayerState_DashEnd,
 		PlayerState_Attack1,
 		PlayerState_Attack2,
 		PlayerState_Attack3,
