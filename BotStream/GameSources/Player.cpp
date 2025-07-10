@@ -117,9 +117,10 @@ namespace basecross {
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
 		{
-			m_pos = GetPosition();	
+			m_pos = GetPosition();
 			if (m_pos.y < 1.0f)
 			{
+				m_isLand = true;
 				m_pos.y = 1.0f;
 				SetPosition(m_pos);
 				auto test = GetVelocity();
@@ -224,7 +225,7 @@ namespace basecross {
 		}
 		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
 
-		DebugLog();//デバックログ
+		//DebugLog();//デバックログ
 		//めり込み防止処理
 		//ImmersedInCheck();
 	}
