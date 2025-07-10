@@ -731,16 +731,29 @@ namespace basecross {
 		);
 		m_noiseSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.333f));
 		m_time = 1.0f;
+
+		m_scene = App::GetApp()->GetScene<Scene>();
+		float bgmVol = m_scene.lock()->GetBGMVolume();
+
+		m_BGMMana = App::GetApp()->GetXAudio2Manager();
+
+		m_BGM = m_BGMMana->Start(L"GameOverNoise", false, 0.9f * bgmVol);
 	}
 
 	void GameOverNoise::OnUpdate()
 	{
 		float alpha = m_noiseSprite->GetColor().w;
+		m_time += App::GetApp()->GetElapsedTime() * 3.0f;
 		if (alpha <= 1.0f)
 		{
-			m_time += App::GetApp()->GetElapsedTime() * 3.0f;
 			m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
 		}
+
+		if((m_time / 3) >= 1.2f)
+		{
+			m_BGMMana->Stop(m_BGM);
+		}
+
 		// UVの幅
 		constexpr float spriteUV = 1.0f / 3.0f; 
 
