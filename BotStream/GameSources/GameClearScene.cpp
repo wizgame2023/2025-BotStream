@@ -31,6 +31,15 @@ namespace basecross {
 		CreateSprite();
 		m_time = 1.0f;
 		m_scene = App::GetApp()->GetScene<Scene>();
+		float bgmVol = m_scene.lock()->GetBGMVolume();
+		m_SEVol = m_scene.lock()->GetSEVolume();
+
+		m_BGMMana = App::GetApp()->GetXAudio2Manager();
+		m_SEMana = App::GetApp()->GetXAudio2Manager();
+
+		m_BGM = m_BGMMana->Start(L"GameClearSE", false, 1.0f * bgmVol);
+
+
 		m_stageNum = m_scene.lock()->GetStageNum();
 		m_strStage = L"ToWaveStage" + to_wstring(m_stageNum);
 	}
@@ -79,6 +88,7 @@ namespace basecross {
 			if (ret.x >= 0.3f && !m_selectFlag && m_select < 2)
 			{
 				m_select++;
+				m_SE = m_SEMana->Start(L"StageSelectSE", false, m_SEVol);
 				if (m_select == 1)
 				{
 					m_selectSprite[0]->SetPosition(Vec3((m_selectPos.x + m_select * 350) - 130, m_selectPos.y, m_selectPos.z));
@@ -94,6 +104,7 @@ namespace basecross {
 			else if (ret.x <= -0.3f && !m_selectFlag && m_select > 0)
 			{
 				m_select--;
+				m_SE = m_SEMana->Start(L"StageSelectSE", false, m_SEVol);
 				if (m_select == 1)
 				{
 					m_selectSprite[0]->SetPosition(Vec3((m_selectPos.x + m_select * 350) - 130, m_selectPos.y, m_selectPos.z));
@@ -114,6 +125,7 @@ namespace basecross {
 			// Aボタンかエンターキーで決定
 			if (cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN])
 			{
+				m_BGMMana->Stop(m_BGM);
 				switch (m_select)
 				{
 				// 次のステージ
