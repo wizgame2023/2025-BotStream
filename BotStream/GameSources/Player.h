@@ -63,8 +63,12 @@ namespace basecross {
 		bool m_dodgeFlag = true;
 		//回避処理を終えたかのフラグ
 		bool m_endDodgeFlag = false;
+		//ダッシュ終了処理を終えたかのフラグ
+		bool m_endBrakeFlag = false;
 		//回避計測時間
 		float m_dodgeTime = 0.0f;
+		//ダッシュ終了ステート計測時間
+		float m_brakeTime = 0.0f;
 		//回避のクールタイムを測る変数
 		float m_dodgeCoolTime = 0.0f;
 		//回避のクールタイムの時間
@@ -262,6 +266,22 @@ namespace basecross {
 		bool GetDodge()
 		{
 			return m_jastDodge;
+		}
+
+		// ブレーキ終了フラグのゲッタ
+		bool GetEndBrakeFlag()
+		{
+			return m_endBrakeFlag;
+		}
+		// ブレーキ終了フラグのセッタ
+		void SetEndBrakeFlag(bool flag)
+		{
+			m_endBrakeFlag = flag;
+		}
+		// ブレーキタイムのリセット
+		void ResetBrakeTime()
+		{
+			m_brakeTime = 0.0f;
 		}
 
 		//接近か遠距離どっちの攻撃をしていいかのフラグゲッタセッタ

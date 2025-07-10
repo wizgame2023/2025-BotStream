@@ -85,7 +85,7 @@ namespace basecross {
 		ptrColl->SetDrawActive(false);
 
 		//接地判定
-		m_LandDetect->SetBindPos(Vec3(0, -0.8f, 0));
+		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
 		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 
@@ -411,6 +411,16 @@ namespace basecross {
 		if (m_controller.bConnected)
 		{
 			m_stickL = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
+
+			// スティックのデットゾーン
+			if (abs(m_stickL.x) <= 0.3f)
+			{
+				m_stickL.x = 0.0f;
+			}
+			if (abs(m_stickL.y) <= 0.3f)
+			{
+				m_stickL.y = 0.0f;
+			}
 		}
 		if (!m_controller.bConnected)
 		{
@@ -464,34 +474,23 @@ namespace basecross {
 		// ダッシュ終了処理
 		if (playerState == PlayerState_DashEnd)
 		{
-			// 回避処理
-			m_dodgeTime += _delta * 3.0f;
+			// ブレーキ処理
+			m_brakeTime += _delta * 2.0f;
 
-			// 回避のスピード曲線
-			auto cosCurve = (cos(m_dodgeTime) + 1.0f) / 2;
+			// ブレーキのスピード曲線
+			auto cosCurve = (cos(m_brakeTime) + 1.0f) / 2;
 
-			// 二次関数的な動きで回避行動をする
-			// 今は向いている方向に前方回避をする
+			// 二次関数的な動きでブレーキ行動をする
+			// 今は向いている方向にブレーキをする
 			float dodgeSpeed = 20.0f * 2.5f;
 			totalVec.x = (cos(m_angle) * (dodgeSpeed * (cosCurve)) * _delta);
 			totalVec.z = (sin(m_angle) * (dodgeSpeed * (cosCurve)) * _delta);
 
-			// 回避が終わったらダッシュ処理ができる
-			if (m_dodgeTime > XM_PI)
+			// 時間経過したらブレーキ処理をリセットする
+			if (m_brakeTime > XM_PI)
 			{
-				//// Aボタンを押し続ける限り走るそうでなければダッシュ回避処理をしない
-				//if (m_controller.bConnected && m_controller.wButtons & XINPUT_GAMEPAD_A)
-				//{
-				//	m_dashFlag = true;
-				//	m_dodgeTime = 0.0f;
-				//	m_endDodgeFlag = false;// 回避処理終了
-				//}
-				//else
-				//{
-				//	m_dodgeTime = 0.0f;
-				//	m_endDodgeFlag = false;// 回避処理終了
-				//}
-
+				m_brakeTime = 0.0f;
+				m_endBrakeFlag = true;
 			}
 		}
 		// 回避処理
