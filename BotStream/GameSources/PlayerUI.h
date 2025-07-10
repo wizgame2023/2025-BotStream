@@ -278,6 +278,12 @@ namespace basecross {
 
 		shared_ptr<Sprite> m_noiseSprite;
 
+		shared_ptr<SoundItem> m_BGM;
+
+		shared_ptr<XAudio2Manager> m_BGMMana;
+
+		weak_ptr<Scene> m_scene;
+
 		float m_time = 0;
 
 		int m_frameCount[2] = { 0 };

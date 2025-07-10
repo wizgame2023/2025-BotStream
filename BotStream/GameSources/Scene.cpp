@@ -43,7 +43,7 @@ namespace basecross {
 		if (event->m_MsgStr == L"ToGameStage") {
 			//最初のアクティブステージの設定
 
-			ResetActiveStage<TitleStage>();
+			ResetActiveStage<GameClear>();
 
 		}
 
@@ -439,6 +439,7 @@ namespace basecross {
 		app->RegisterWav(L"BossWave", SoundPath + L"BossWave.wav");
 		app->RegisterWav(L"Result", SoundPath + L"Result.wav");
 
+		app->RegisterWav(L"GameOverNoise", SoundPath + L"GameOverNoise.wav");
 
 		//SE
 		app->RegisterWav(L"Decision", SoundPath + L"Decision.wav");
@@ -468,6 +469,7 @@ namespace basecross {
 		app->RegisterWav(L"StartVoiceSE", SoundPath + L"StartVoice2.wav");
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
+		app->RegisterWav(L"GameClearSE", SoundPath + L"GameClearSE.wav");
 
 		app->RegisterWav(L"ArmorDefenseSE", SoundPath + L"ArmorDefenseSE.wav");
 		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
