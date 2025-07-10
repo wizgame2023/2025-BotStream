@@ -47,7 +47,13 @@ namespace basecross {
 			m_time = 0;
 		}
 		
+		bool isConnected = cntl[0].bConnected;
+
+		m_textSprite->OnClear(!isConnected);
+		m_textSpriteKeyBoard->OnClear(isConnected);
+
 		m_textSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, sinf(m_time)));
+		m_textSpriteKeyBoard->SetColor(Col4(1.0f, 1.0f, 1.0f, sinf(m_time)));
 
 		//BGMのボリュームの更新
 		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
@@ -90,6 +96,11 @@ namespace basecross {
 			Vec3(0, -200, 0)
 		);
 
+		m_textSpriteKeyBoard = AddGameObject<Sprite>(
+			L"TitleText2",
+			titleSize2,
+			Vec3(0, -200, 0)
+		);
 	}
 
 	void TitleStage::CreateBGM()
