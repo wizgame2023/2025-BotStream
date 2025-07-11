@@ -1320,7 +1320,7 @@ namespace basecross {
 		m_timeOfAttack += deltaTime;
 
 		//アニメーション更新時間設定
-		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.2f);
 
 		//攻撃しているときも少しだけ進んでいる
 		auto m_speed = 1.0f;//足の速さ
@@ -1332,7 +1332,7 @@ namespace basecross {
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.InvincibleOnHit = true;
-			tmp.Damage = 5;
+			tmp.Damage = 35;
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .3f;
 			tmp.Type = AttackType::Enemy;
@@ -1442,15 +1442,15 @@ namespace basecross {
 		auto playerdist = m_enemyZako->GetPlayerDist();
 		if (playerdist > 30.0f)//中
 		{
-			m_speed = 300.0f;
+			m_speed = 100.0f;
 			//スピード制限
-			m_enemyZako->SpeedLimit(3.5f);
+			m_enemyZako->SpeedLimit(2.5f);
 		}
 		else//近い
 		{
-			m_speed = 200.0f;
+			m_speed = 100.0f;
 			//スピード制限
-			m_enemyZako->SpeedLimit(3.0f);
+			m_enemyZako->SpeedLimit(2.5f);
 		}
 	}
 
@@ -1467,7 +1467,6 @@ namespace basecross {
 		//攻撃を受けたのでヒットバックする
 		m_enemyZako->HitBack();
 
-
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);
 	}
@@ -1480,7 +1479,7 @@ namespace basecross {
 
 
 		//アニメーション更新時間設定
-		m_enemyZako->SetAddTimeAnimation(deltaTime * 2.5f);
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 0.7f);
 	}
 	void EnemyZakoHumanoidHitState::Exit()
 	{
@@ -1503,7 +1502,7 @@ namespace basecross {
 		EnemyZakoStateBase::Update(deltaTime);
 
 		//アニメーション更新時間
-		m_enemyZako->SetAddTimeAnimation(deltaTime * 1.5f);
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 0.7f);
 		//時間計測
 		m_timeOfState += deltaTime;
 
@@ -1537,13 +1536,14 @@ namespace basecross {
 		EnemyZakoStateBase::Enter();
 
 		//スタンアニメーション再生
-		m_enemyZako->ChangeAnim(L"Stan");
+		m_enemyZako->ChangeAnim(L"Stun");
 	}
 	void EnemyZakoHumanoidStanState::Update(float deltaTime)
 	{
 		EnemyZakoStateBase::Update(deltaTime);
 
 		m_stunTimeCount += deltaTime;
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 0.4f);
 
 		//一定時間過ぎたらステート変更する
 		if (m_stunTimeCount > m_stunTimeMax)
@@ -1551,7 +1551,6 @@ namespace basecross {
 			m_enemyZako->ChangeState(L"Stand");
 		}
 
-		m_enemyZako->SetAddTimeAnimation(deltaTime);
 	}
 	void EnemyZakoHumanoidStanState::Exit()
 	{

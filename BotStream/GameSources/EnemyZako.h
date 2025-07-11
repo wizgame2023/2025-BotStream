@@ -151,7 +151,7 @@ namespace basecross {
 	{
 	public:
 		EnemyZakoHumanoid(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
-			EnemyZako(stagePtr, pos, rot, scale, used, Zako_Humanoid)
+			EnemyZako(stagePtr, pos, rot, scale, used)
 		{
 
 		}

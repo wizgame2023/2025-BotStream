@@ -541,7 +541,7 @@ namespace basecross {
 			RemoveTag(L"LockOnCan");
 			RemoveTag(L"LockOnTarget");
 
-			m_used = false;
+			//m_used = false;
 
 			//GetStage()->RemoveGameObject<EnemyZako>(GetThis<EnemyZako>());
 			//GetStage()->RemoveGameObject<LandDetect>(m_LandDetect);
@@ -562,9 +562,9 @@ namespace basecross {
 		Actor::OnCreate();
 
 		//ステータス初期化
-		m_HPMax = 200.0f;
+		m_HPMax = 150.0f;
 		m_HPCurrent = m_HPMax;
-		m_armorMax = 30.0f;
+		m_armorMax = 50.0f;
 		m_armor = m_armorMax;
 		m_armorRecoverTime = 10.0f;
 		m_armorRecover = 0.0f;
@@ -588,24 +588,24 @@ namespace basecross {
 
 		//攻撃タイプによって見た目が変わる
 		//ptrDraw->SetMeshResource(L"Enemy_A");
-		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
+		ptrDraw->SetMultiMeshResource(L"Enemy_D");//仮のメッシュ
 		ptrDraw->SetDiffuse(Col4(0.5f));
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
 		//アニメーション追加(攻撃タイプによって追加アニメーションが変わる)
-		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);
-		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);
-		ptrDraw->AddAnimation(L"Down", 362, 62, false, 24.0f);
-		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);
-		ptrDraw->AddAnimation(L"Stan", 320, 19, false, 24.0f);
-		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 5.5f);
+		ptrDraw->AddAnimation(L"Idle", 0, 1, 60.0f);
+		ptrDraw->AddAnimation(L"Walk", 25, 100, 60.0f);
+		ptrDraw->AddAnimation(L"Down", 420, 80, false, 60.0f);
+		ptrDraw->AddAnimation(L"Hit", 380, 40, false, 60.0f);
+		ptrDraw->AddAnimation(L"Stun", 380, 40, false, 60.0f);
+		ptrDraw->AddAnimation(L"Attack1", 260, 80, false, 60.0f);
 
 		//影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();
 		//影の形（メッシュ）を設定
 		//shadowPtr->SetMeshResource(L"Enemy_A");
-		shadowPtr->SetMultiMeshResource(L"PlayerModelTestVer2.0");
+		shadowPtr->SetMultiMeshResource(L"Enemy_D");
 		shadowPtr->SetMeshToTransformMatrix(spanMat);
 
 
@@ -646,8 +646,12 @@ namespace basecross {
 		{
 			if (m_used)
 			{
-				// 初期化
-				Initialize();
+				m_HPCurrent = m_HPMax;
+				m_attackFlag = false;
+				m_timeCountOfAttackCool = 3.0f;
+				//初期ステートに戻す
+				ChangeState(L"Stand");
+				GetComponent<PNTBoneModelDraw>()->SetDiffuse(Col4(1.0f, 1.0f, 1.0f, 1.0f));
 			}
 		}
 		if (m_beforUsed)
@@ -661,17 +665,6 @@ namespace basecross {
 		}
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
-
-		////アーマー回復
-		//if (m_armorMax != 0 && m_armor <= 0) 
-		//{
-		//	m_armorRecoverCountTime += _delta;
-		//	if (m_armorRecoverTime <= m_armorRecoverCountTime) 
-		//	{
-		//		m_armor = m_armorMax;
-		//		m_armorRecoverCountTime = 0;
-		//	}
-		//}
 
 		EnemyBase::OnUpdate();
 
