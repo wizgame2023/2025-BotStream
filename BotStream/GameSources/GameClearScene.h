@@ -13,6 +13,13 @@ namespace basecross {
 		void CreateViewLight();
 		shared_ptr<Sprite> m_selectSprite[2];
 		shared_ptr<Sprite> m_fadeInSprite;
+
+		shared_ptr<SoundItem> m_BGM;
+		shared_ptr<SoundItem> m_SE;
+
+		shared_ptr<XAudio2Manager> m_BGMMana;
+		shared_ptr<XAudio2Manager> m_SEMana;
+
 		weak_ptr<Scene> m_scene;
 
 		// ‘I‘ğØ‚è‘Ö‚¦ƒtƒ‰ƒO
@@ -26,6 +33,8 @@ namespace basecross {
 		int m_stageNum;
 
 		float m_time;
+
+		float m_SEVol;
 
 		wstring m_strStage;
 	public:
