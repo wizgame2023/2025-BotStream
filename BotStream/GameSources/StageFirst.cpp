@@ -35,6 +35,10 @@ namespace basecross {
 		{
 			enemyVariation.push_back(EVar_Aerial);
 		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Humanoid);
+		}
 
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
@@ -249,8 +253,9 @@ namespace basecross {
 		}
 
 		//ゲームクリア処理
-		if (m_gameClearFlag)
+		if (m_gameClearFlag && m_onceFlag == false)
 		{
+			m_onceFlag = true;
 			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
 			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}
