@@ -1506,16 +1506,8 @@ namespace basecross {
 		//時間計測
 		m_timeOfState += deltaTime;
 
-		//一定時間過ぎたら(やられる演出)消える
-		if (m_timeOfState >= m_timeMaxOfState)
-		{
-			m_enemyZako->SetPosition(Vec3(999));
-		}
-
 		if (m_timeOfState >= (m_timeMaxOfState + 0.5f))
 		{
-			//初期化
-			m_enemyZako->Initialize();
 			m_enemyZako->SetUsed(false);
 		}
 
@@ -1543,7 +1535,6 @@ namespace basecross {
 		EnemyZakoStateBase::Update(deltaTime);
 
 		m_stunTimeCount += deltaTime;
-		m_enemyZako->SetAddTimeAnimation(deltaTime * 0.4f);
 
 		//一定時間過ぎたらステート変更する
 		if (m_stunTimeCount > m_stunTimeMax)
@@ -1551,6 +1542,7 @@ namespace basecross {
 			m_enemyZako->ChangeState(L"Stand");
 		}
 
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 0.7f);
 	}
 	void EnemyZakoHumanoidStanState::Exit()
 	{

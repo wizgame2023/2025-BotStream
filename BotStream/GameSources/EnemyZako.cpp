@@ -598,7 +598,7 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Walk", 25, 100, 60.0f);
 		ptrDraw->AddAnimation(L"Down", 420, 80, false, 60.0f);
 		ptrDraw->AddAnimation(L"Hit", 380, 40, false, 60.0f);
-		ptrDraw->AddAnimation(L"Stun", 380, 40, false, 60.0f);
+		ptrDraw->AddAnimation(L"Stun", 525, 60, false, 60.0f);
 		ptrDraw->AddAnimation(L"Attack1", 260, 80, false, 60.0f);
 
 		//影をつける（シャドウマップを描画する）
