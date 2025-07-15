@@ -118,7 +118,7 @@ namespace basecross {
 		PlayerStateBase::Enter();
 
 		// 何もなければ立ち止まるアニメーション
-		m_player->ChangeAnim(L"Idle");
+		//m_player->ChangeAnim(L"Idle");
 
 		////現在攻撃していないことを渡す
 		//m_player->SetMeleeNow(false);
