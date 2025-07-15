@@ -26,6 +26,7 @@ namespace basecross {
 		EnemyEffect_Sphere,
 		EnemyEffect_SphereEnd,
 		EnemyEffect_Spin,
+		EnemyEffect_Roar,
 		EnemyEffect_Wave,
 		EnemyEffect_Rush,
 		EnemyEffect_Attack,
