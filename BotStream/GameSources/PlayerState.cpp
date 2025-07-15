@@ -275,6 +275,7 @@ namespace basecross {
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
 		m_player->PlayerMove(PlayerState_Dodge);
+		auto stickL = m_player->GetStickL();
 
 		//アニメーション更新
 		m_player->SetAddTimeAnimation(deltaTime * 1.7f);
@@ -283,14 +284,18 @@ namespace basecross {
 		bool endDodgeFlag = m_player->GetEndDodgeFlag();
 		if (!endDodgeFlag)
 		{
-			//ダッシュステートにするか歩くステートにするか
-			if (DashButton)
+			//ダッシュステートにするか歩くステート,ブレーキステートにするか
+ 			if (DashButton && stickL != Vec3(0))
 			{
 				m_player->ChangeState(L"Dash");
 			}
-			else
+			else if (!DashButton && stickL != Vec3(0))
 			{
 				m_player->ChangeState(L"PlayerWalk");
+			}
+			else
+			{
+				m_player->ChangeState(L"DashEnd");
 			}
 			//回避終了判定リセット
 			m_player->SetEndDodgeFlag(true);
@@ -315,13 +320,21 @@ namespace basecross {
 	{
 		PlayerStateBase::Enter();
 		//ダッシュ用SEを再生
-		m_SE = m_SEManager->Start(L"Landing", XAUDIO2_LOOP_INFINITE, 0.9f * m_SEVol);
+		m_SE = m_SEManager->Start(L"Landing", 0, 0.9f * m_SEVol);
 		//ダッシュ用エフェクトを再生
 		m_effect = m_player->AddEffect(PlayerEffect_Dash);
 	}
 
 	void PlayerDashState::Update(float deltaTime)
-	{
+	{		
+		m_countTimeOfDashSE += deltaTime;
+		if (m_countTimeOfDashSE >= 0.6f)
+		{
+			//ダッシュ用SEを再生
+			m_SE = m_SEManager->Start(L"Landing", 0, 0.9f * m_SEVol);
+			m_countTimeOfDashSE = 0.0f;
+		}
+
 		// 入力デバイス取得
 		PlayerStateBase::Update(deltaTime);
 
@@ -364,12 +377,41 @@ namespace basecross {
 
 		//Aボタン離したらorスティックを離したら歩くステートに変更する	
 		Vec3 stickVec = m_player->GetStickL();
-		//m_player->
-		if (!DashButton && stickVec != Vec3(0.0f))
+
+		//ダッシュボタンを一定時間離したらダッシュをやめる
+		if (!DashButton)
 		{
-			m_player->ChangeState(L"PlayerWalk");
+			m_releasedDashButton = true;
 		}
-		else if(!DashButton || stickVec == Vec3(0.0f))
+		if (m_releasedDashButton)
+		{
+			m_countTimeOfDashButton += deltaTime;
+
+			if (DashButton)
+			{
+				m_releasedDashButton = false;
+			}
+
+		}
+		
+		// ダッシュをやめるときに移動をやめているかによって移行するステートを変える
+		if (m_countTimeOfDashButton >= m_timeOfDashButton)
+		{
+			if (stickVec != Vec3(0.0f))
+			{
+				m_player->ChangeState(L"PlayerWalk");
+			}
+			if (stickVec == Vec3(0.0f))
+			{
+				m_player->ChangeState(L"DashEnd");
+			}
+
+			//リセット
+			m_countTimeOfDashButton = 0.0f;
+			m_releasedDashButton = false;
+		}
+
+		if (move == Vec3(0.0f))
 		{
 			m_player->ChangeState(L"DashEnd");
 		}
@@ -383,7 +425,9 @@ namespace basecross {
 		//ダッシュSEを止める
 		m_SEManager->Stop(m_SE);
 
+		m_countTimeOfDashButton = 0.0f;
 		EffectManager::Instance().StopEffect(m_effect);
+		m_countTimeOfDashSE = 0.0f;
 	}
 
 	// 攻撃についての処理
@@ -474,22 +518,43 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 
-		Vec3 move = m_player->GetMoveVector(PlayerState_DashEnd);
+		//Vec3 move = m_player->GetMoveVector(PlayerState_DashEnd);
 		Walk(PlayerState_DashEnd,m_walkFlag);
-		if (m_timeOfAnimation >= 0.6f)
+		//if (m_timeOfAnimation >= 0.6f)
+		//{
+		//	if (move != Vec3(0.0f, 0.0f, 0.0f))
+		//	{
+		//		m_player->ChangeState(L"PlayerWalk");
+		//	}
+		//}
+
+		// 攻撃移行可能
+		if (AttackButton)
 		{
-			if (move != Vec3(0.0f, 0.0f, 0.0f))
-			{
-				m_player->ChangeState(L"PlayerWalk");
-			}
+			m_player->ChangeState(L"Attack1");
+		}
+		// 回避移行可能
+		if (DodgeButton)
+		{
+			m_player->ChangeState(L"Dodge");
 		}
 
+
+
+		//ブレーキした後の処理(歩きステートに移行)
+		bool endBrakeFlag = m_player->GetEndBrakeFlag();
+		if (endBrakeFlag)
+		{
+			m_player->ChangeState(L"PlayerWalk");
+		}
 		
 	}
 	void PlayerDashEndState::Exit()
 	{
 		// リセット
 		m_timeOfAnimation = 0.0f;
+		m_player->SetEndBrakeFlag(false);
+		m_player->ResetBrakeTime();
 	}
 	//
 

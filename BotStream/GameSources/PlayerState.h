@@ -119,6 +119,13 @@ namespace basecross {
 
 		//攻撃についての処理
 		void AttackTransition(bool onOff);
+
+		// ダッシュボタンを離した処理
+		float m_countTimeOfDashButton = 0.0f;
+		float m_timeOfDashButton = 0.05f;
+		bool m_releasedDashButton = false;
+
+		float m_countTimeOfDashSE = 0.0f;
 	
 		Handle m_effect = NULL;
 	public:
