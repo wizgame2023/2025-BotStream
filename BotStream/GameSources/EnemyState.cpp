@@ -58,13 +58,18 @@ namespace basecross {
 		auto boss = dynamic_pointer_cast<BossFirst>(_obj.lock());
 		boss->RotateToPlayer(1.0f);
 
-		if (m_time >= m_startAttack + (m_startAttackPlus * (boss->GetHPCurrent() / boss->GetHPMax())) &&
+		if (m_time >= m_startAttack + (m_startAttackPlus * (boss->GetHPCurrent() / boss->GetHPMax())) ||
 			rnd() % 1000 <= m_startAttackRand) {
 			const float dist = boss->GetPlayerDist();
 
 			if (dist < m_midDist) {
 				//‹ß‚¢
-				boss->ChangeState(L"Attack");
+				if (App::GetApp()->GetScene<Scene>()->GetStageNum() >= 2 && rnd() % 1000 <= m_roarRand) {
+					boss->ChangeState(L"Roar");
+				}
+				else {
+					boss->ChangeState(L"Attack");
+				}
 
 				//‰ñ“]
 				if (rnd() % 1000 <= m_spinRand) {
@@ -509,6 +514,51 @@ namespace basecross {
 		}
 	}
 	void BossFirstBeamEndState::Exit() {
+
+	}
+
+	void BossFirstRoarState::Enter() {
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj.lock());
+		boss->ChangeAnim(L"Bonus", false);
+
+		m_time = 0;
+		m_isAttackEnd = false;
+	}
+	void BossFirstRoarState::Update(float deltatime) {
+		m_time += deltatime;
+
+		auto boss = dynamic_pointer_cast<BossFirst>(_obj.lock());
+
+		if (m_time < m_attackTime) {
+			auto boss = dynamic_pointer_cast<BossFirst>(_obj.lock());
+			boss->RotateToPlayer(5.0f, 0);
+		}
+
+		if (m_time >= m_attackTime && !m_isAttackEnd) {
+			m_isAttackEnd = true;
+			boss->AddEffect(EnemyEffect_Roar);
+			boss->PlaySnd(L"Beam", 1.0f, 0);
+
+			//UŒ‚”»’è‚Ì’è‹`
+			auto tmp = boss->GetAttackPtr()->GetHitInfo();
+			tmp.HitOnce = true;
+			tmp.Type = AttackType::Enemy;
+			tmp.Damage = 3;
+			tmp.HitVel_Stand = Vec3(120, 30, 0);
+			tmp.HitVel_Air = Vec3(120, 20, 0);
+			tmp.HitTime_Stand = 1.5f;
+			tmp.HitTime_Air = 1.5f;
+			boss->DefAttack(.1f, tmp);
+			boss->GetAttackPtr()->SetCollScale(30.0f);
+			boss->GetAttackPtr()->SetPos(Vec3(10, 3, 0));
+
+		}
+
+		if (m_time >= m_endTime) {
+			boss->ChangeState(L"Stand");
+		}
+	}
+	void BossFirstRoarState::Exit() {
 
 	}
 
