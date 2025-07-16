@@ -492,4 +492,163 @@ namespace basecross {
 			ChangeState(L"Stand");
 		}
 	};
+
+	// 人型ザコのステート----------------------------------------------------------
+
+	//何もないときのステート
+	class EnemyZakoHumanoidStandState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+	public:
+		EnemyZakoHumanoidStandState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//プレイヤーに距離を取る時のステート
+	class EnemyZakoHumanoidEscapeState :public EnemyZakoStateBase
+	{
+	private:
+
+	public:
+		EnemyZakoHumanoidEscapeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//接近戦をするときの準備ステート
+	class EnemyZakoHumanoidPreparationforMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfShot = 0.0f;//打つ時間経過を測る変数
+		float m_timeMaxOfShot = 4.0f;//打つ時間の保存用変数
+		float m_speed = 1.0f;//足の速さ
+	public:
+		EnemyZakoHumanoidPreparationforMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+		void SppedChange();//脚のスピードを変える処理
+	};
+
+	//攻撃をするときのステート(近距離)
+	class EnemyZakoHumanoidMeleeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfAttack = 0.0f;//攻撃時間経過を測る変数
+		float m_timeMaxOfAttack = 2.0f;//攻撃時間の保存用変数
+
+		float m_timeOfAttackAdd = 0.7f;//攻撃判定の発生時間
+
+		bool m_Attack = true;//攻撃判定を出したかのフラグ
+
+	public:
+		EnemyZakoHumanoidMeleeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//ダメージを受けた雑魚敵
+	class EnemyZakoHumanoidHitState :public EnemyZakoStateBase
+	{
+	private:
+		//ステート活動時間
+		float timeOfStateCount;
+		//このステートでいられる上限の時間
+		float timeOfStateCountMax;
+	public:
+		EnemyZakoHumanoidHitState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	//やられたときの雑魚敵
+	class EnemyZakoHumanoidDieState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfState = 0.0f;//ステートが始まってからの時間経過を測る変数
+		float m_timeMaxOfState = 1.8f;//ステートでいられる上限時間の保存用変数
+
+	public:
+		EnemyZakoHumanoidDieState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+
+	};
+
+	//スタン時のステート(雑魚敵)
+	class EnemyZakoHumanoidStanState : public EnemyZakoStateBase
+	{
+	private:
+		//スタン時間計測
+		float m_stunTimeMax = 3.0f;
+		float m_stunTimeCount;
+	public:
+		EnemyZakoHumanoidStanState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	class EnemyZakoHumanoidStateMachine :public StateMachineBase
+	{
+	public:
+		EnemyZakoHumanoidStateMachine(shared_ptr<GameObject>& obj)
+		{
+			AddState(L"Stand", shared_ptr<EnemyZakoHumanoidStandState>(new EnemyZakoHumanoidStandState(obj)));
+			AddState(L"Escape", shared_ptr<EnemyZakoHumanoidEscapeState>(new EnemyZakoHumanoidEscapeState(obj)));//逃げる
+			AddState(L"PreparationforMelee", shared_ptr<EnemyZakoHumanoidPreparationforMeleeState>(new EnemyZakoHumanoidPreparationforMeleeState(obj)));
+			AddState(L"Melee", shared_ptr<EnemyZakoHumanoidMeleeState>(new EnemyZakoHumanoidMeleeState(obj)));
+			AddState(L"Hit", shared_ptr<EnemyZakoHumanoidHitState>(new EnemyZakoHumanoidHitState(obj)));
+			AddState(L"Stun", shared_ptr<EnemyZakoHumanoidStanState>(new EnemyZakoHumanoidStanState(obj)));
+			AddState(L"Die", shared_ptr<EnemyZakoHumanoidDieState>(new EnemyZakoHumanoidDieState(obj)));
+
+			ChangeState(L"Stand");
+		}
+	};
+
 }

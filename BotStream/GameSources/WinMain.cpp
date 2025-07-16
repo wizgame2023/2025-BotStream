@@ -159,7 +159,7 @@ int MainLoop(HINSTANCE hInstance, HWND hWnd, bool isFullScreen, int iClientWidth
 		// 入力監視キーリスト
 		std::vector<DWORD> UseKeyVec = {
 			VK_PRIOR, VK_SPACE, VK_LBUTTON, VK_RBUTTON, VK_TAB,VK_RETURN,
-			VK_LEFT,VK_RIGHT,VK_UP,VK_DOWN,
+			VK_LEFT,VK_RIGHT,VK_UP,VK_DOWN,VK_BACK,
 			'W','A','S','D',
 		};
 

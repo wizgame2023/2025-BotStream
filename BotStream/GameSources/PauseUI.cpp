@@ -101,7 +101,6 @@ namespace basecross {
 			// カーソル
 			m_selectSprite->OnClear(false);
 
-
 			// メインメニュー or オーディオメニューの切り替え
 			if (!m_pauseAudioFlag)
 			{
@@ -116,6 +115,17 @@ namespace basecross {
 				MainUIClear(false);
 				// Audio項目表示
 				AudioUIClear(false);
+			}
+
+			if (cntl[0].bConnected)
+			{
+				m_pauseEnterKey->OnClear(true);
+				m_pauseAButton->OnClear(false);
+			}
+			else
+			{
+				m_pauseEnterKey->OnClear(false);
+				m_pauseAButton->OnClear(true);
 			}
 
 			// --- スティック上下でメニュー移動 -----------  
@@ -352,6 +362,7 @@ namespace basecross {
 		}
 		m_selectSprite->OnClear(clear);
 		m_pauseAButton->OnClear(clear);
+		m_pauseEnterKey->OnClear(clear);
 		m_buttonText->OnClear(clear);
 	}
 
@@ -409,7 +420,16 @@ namespace basecross {
 		m_pauseAButton->SetDrawLayer(layerTop + 1);
 		m_pauseAButton->OnClear(true);
 
+
 		auto AbuttonPos = m_pauseAButton->GetPosition();
+		m_pauseEnterKey = m_stage->AddGameObject<Sprite>(
+			L"EnterBackSpace",
+			Vec2(80.0f, 80.0f),
+			AbuttonPos + Vec3(-10.0f,0.0f,0.0f)
+		);
+		m_pauseEnterKey->SetDrawLayer(layerTop + 1);
+		m_pauseEnterKey->OnClear(true);
+
 		m_buttonText = m_stage->AddGameObject<Sprite>(
 			L"Texts",
 			Vec2(150, 150 / 2),
@@ -418,6 +438,7 @@ namespace basecross {
 		m_buttonText->SetDrawLayer(layerTop + 1);
 		m_buttonText->OnClear(true);
 		
+
 
 		// pause
 		m_pauseTextSprite[0]->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.5f));
@@ -433,7 +454,9 @@ namespace basecross {
 		m_pauseTextSprite[5]->SetUVRect(Vec2(0.666f, 0.5f), Vec2(1.0f, 1.0f));
 		// Aボタン
 		m_pauseAButton->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.25f));
-		// 決定
+		// エンターキー
+		m_pauseEnterKey->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 1.0f));
+		// 決定(文字)
 		m_buttonText->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.5f, 0.333f));
 
 		// BGMTextPos

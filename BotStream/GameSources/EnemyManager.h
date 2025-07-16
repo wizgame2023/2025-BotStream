@@ -16,13 +16,14 @@ namespace basecross {
 	enum EnemyVariation {
 		EVar_Normal,
 		EVar_Projectile,
-		EVar_Aerial
+		EVar_Aerial,
+		EVar_Humanoid
 	};
 
 	class EnemyManager : public MyGameObject
 	{
 		//プール(10体 [0]はボス向け)
-		shared_ptr<EnemyBase> m_enemies[30];
+		shared_ptr<EnemyBase> m_enemies[40];
 	public:
 		EnemyManager(const shared_ptr<Stage>& stagePtr) :
 			MyGameObject(stagePtr)
@@ -75,6 +76,10 @@ namespace basecross {
 
 				case EVar_Aerial:
 					e = GetStage()->AddGameObject<EnemyZakoFlying>(Vec3(0), Vec3(0), Vec3(0));
+					break;
+
+				case EVar_Humanoid:
+					e = GetStage()->AddGameObject<EnemyZakoHumanoid>(Vec3(0), Vec3(0), Vec3(0));
 					break;
 
 				default:

@@ -479,6 +479,7 @@ namespace basecross {
 				m_keyboardSprite[i]->OnClear(true);
 			}
 
+			// なんかSetTextrureが反映されないから↑の方式にしたけど、まぁいいか！
 			/*
 			m_fightSprite[3]->SetTexture(L"Buttons");
 			m_fightSprite[3]->SetUVRect(Vec2(0.0f, 0.25f), Vec2(0.333f, 0.5f));
@@ -670,6 +671,16 @@ namespace basecross {
 
 	void PlayerEmergencyUI::OnUpdate()
 	{
+		shared_ptr<PauseSprite> pauseSp = m_stage->GetSharedGameObject<PauseSprite>(L"PauseUI");
+
+		bool isPause = pauseSp->GetPauseFlag();
+
+		// ポーズ中なら更新停止
+		if (isPause)
+		{
+			return;
+		}
+
 		auto player = m_player.lock();
 		if (!player)
 		{
@@ -684,7 +695,7 @@ namespace basecross {
 		// プレイヤーのHPが残り3割以下の時
 		if ((currentHP / maxHP) < 0.3f)
 		{
-			m_time += App::GetApp()->GetElapsedTime() * 2.0f;
+			m_time += App::GetApp()->GetElapsedTime() * 1.5f;
 			m_emergencySprite->SetColor(Col4(1.0f, 0.0f, 0.0f, sinf(m_time)));
 			if (sinf(m_time) < 0.0f)
 			{
@@ -720,16 +731,29 @@ namespace basecross {
 		);
 		m_noiseSprite->SetUVRect(Vec2(0.0f, 0.0f), Vec2(0.333f, 0.333f));
 		m_time = 1.0f;
+
+		m_scene = App::GetApp()->GetScene<Scene>();
+		float bgmVol = m_scene.lock()->GetBGMVolume();
+
+		m_BGMMana = App::GetApp()->GetXAudio2Manager();
+
+		m_BGM = m_BGMMana->Start(L"GameOverNoise", false, 0.9f * bgmVol);
 	}
 
 	void GameOverNoise::OnUpdate()
 	{
 		float alpha = m_noiseSprite->GetColor().w;
+		m_time += App::GetApp()->GetElapsedTime() * 3.0f;
 		if (alpha <= 1.0f)
 		{
-			m_time += App::GetApp()->GetElapsedTime() * 3.0f;
 			m_noiseSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f - sinf(m_time)));
 		}
+
+		if((m_time / 3) >= 1.2f)
+		{
+			m_BGMMana->Stop(m_BGM);
+		}
+
 		// UVの幅
 		constexpr float spriteUV = 1.0f / 3.0f; 
 

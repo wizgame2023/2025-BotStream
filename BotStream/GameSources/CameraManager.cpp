@@ -158,6 +158,7 @@ namespace basecross {
 		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
 		//	//}
 
+
 		//scene->SetDebugString(wss.str());
 
 	}

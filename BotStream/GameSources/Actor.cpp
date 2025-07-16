@@ -272,6 +272,9 @@ namespace basecross {
 		case EnemyEffect_SphereEnd:
 			m_effect = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0));
 			break;
+		case EnemyEffect_Roar:
+			m_effect = EfkPlaying(L"EnergySphereEnd", angle, Vec3(0, 1, 0), Vec3(3), Vec3(10.0f * fwd.x, 2.0f, 10.0f * fwd.z));
+			break;
 		case EnemyEffect_Wave:
 			m_effect = EfkPlaying(L"EnemyWave", angle, Vec3(0, 1, 0), Vec3(1), Vec3(10.0f * fwd.x, -2.7f, 10.0f * fwd.z));
 			break;
@@ -286,6 +289,9 @@ namespace basecross {
 			break;
 		case EnemyZakoEffect_ArmorBreak:
 			m_effect = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f));
+			break;
+		case EnemyEffect_Attack2:
+			m_effect = EfkPlaying(L"Slash01Efk", GetAngle(), Vec3(0, 1, 0));
 			break;
 		default:
 			break;
