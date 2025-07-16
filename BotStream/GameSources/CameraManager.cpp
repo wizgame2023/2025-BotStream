@@ -86,7 +86,6 @@ namespace basecross {
 		m_delta = App::GetApp()->GetElapsedTime();
 		m_lockStageCamera = m_stageCamera.lock();
 		
-
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
 		{
@@ -117,237 +116,49 @@ namespace basecross {
 		// キーマウの取得
 		KEYBOARD_STATE keyState = App::GetApp()->GetInputDevice().GetKeyState();
 		
-
-
 		//マウスの移動ベクトル取得
 		MouseCameraMove();
-		//// マウスの移動ベクトル計算
-		//m_mouseMoveVec = Vec2(m_mouseCurrentPos.x - m_mouseBeforPos.x,
-		//	m_mouseCurrentPos.y - m_mouseBeforPos.y);
-
-		////カーソルが端まで行ったらループさせる
-		//int maxPosX = 1500;	int minPosX = 0;
-		//int maxPosY = 850;	int minPosY = 0;
-
-		//// 移動ループした後は移動量が大きくなるので調整
-		//if (m_cursorFlagX)
-		//{
-		//	// 右端から左端へ// 今ここ作業中
-		//	if (m_mouseMoveVec.x <= -1)
-		//	{
-		//		m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
-		//	}
-		//	// 左端から右端へ
-		//	else if (m_mouseMoveVec.x >= +1)
-		//	{
-		//		m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
-		//	}
-
-		//	m_cursorFlagX = false;
-		//}
-
-		//if (m_cursorFlagY)
-		//{
-		//	//上端から下端へ
-		//	if (m_mouseMoveVec.y <= -1)
-		//	{
-		//		m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
-		//	}
-		//	//下端から上端へ
-		//	else if (m_mouseMoveVec.y >= 1)
-		//	{
-		//		m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
-		//	}
-
-		//	m_cursorFlagY = false;
-		//}
-
-		////マウス位置更新
-		//if (ActiveWindow == MyWindowHandle)
-		//{
-		//	SetCursorPos(850, 450);
-		//	GetCursorPos(&m_mouseBeforPos);
-		//}
-
-		//// X座標
-		//if (m_mouseCurrentPos.x >= maxPosX)
-		//{
-		//	m_mouseCurrentPos.x = minPosX + 1;
-		//	SetCursorPos(minPosX + 1, m_mouseCurrentPos.y);
-		//	m_cursorFlagX = true;
-		//}
-		//if (m_mouseCurrentPos.x <= minPosX)
-		//{
-		//	m_mouseCurrentPos.x = minPosX - 1;
-		//	SetCursorPos(maxPosX - 1, m_mouseCurrentPos.y);
-		//	m_cursorFlagX = true;
-		//}
-		//// Y座標
-		//if (m_mouseCurrentPos.y >= maxPosY)
-		//{
-		//	m_mouseCurrentPos.y = minPosY + 1;
-		//	SetCursorPos(m_mouseCurrentPos.x, minPosY + 1);
-		//	m_cursorFlagY = true;
-		//}
-		//if (m_mouseCurrentPos.y <= minPosY)
-		//{
-		//	m_mouseCurrentPos.y = minPosY - 1;
-		//	SetCursorPos(m_mouseCurrentPos.x, maxPosY - 1);
-		//	m_cursorFlagY = true;
-		//}
-
-
-
-
-		//カーソルの前の位置と見比べてどれくらい移動しているか確認する
-
-
-
-
-		//mousePos = keyState.m_MouseClientPoint;
-
-		////慣性付きの回転処理
-		//InertialRotation();
-		////X軸回転の制限処理
-		//CameraAngleXLimit();
-
 		//ステートマシン更新(ステート更新)
 		m_stateMashine->Update(m_delta);
 
-		////ロックオン処理
-		//auto enemyManager = m_stage->GetSharedGameObject<EnemyManager>(L"EnemyManager");
-		////ここのshared_ptrをweak_ptrにしたいんだけどどうすればいいんだろう？
-		//vector<shared_ptr<EnemyBase>> enemyVec = enemyManager->GetEnemyVec(true);//まず、見えている状態のEnemyを受け取る
-
-		//近遠どちらの攻撃をするかの処理
-		//MeleeFlagUpdate();
-
-		//ロックオンを解除する条件処理
-		//ConditionsLockOff(enemyVec);
-
-		//ObjectFactory::Create<Cube>(GetStage(), Vec3(-10.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), Col4(0.0f, 1.0f, 0.0f, 1.0f));
-
-		float playerAngle = player->GetAngle();
-		//ロックオン対象の敵を決める処理
-		//SelectTargetObj(enemyVec, playerAngle);
-		
-		////右スティック押し込みでプレイヤーの向いている方向に回転する
-		//if (m_controler.wPressedButtons & XINPUT_GAMEPAD_RIGHT_THUMB)
-		//{
-		//	//if (!m_lockOnFlag && !m_movePlayerAngleFlag)
-		//	//{
-		//		//Playerの向いている方向に移動するフラグをオンにする
-		//		m_movePlayerAngleFlag = true;	
-		//		//向く座標を決める
-		//		m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
-		//	//}
-		//}
-		////フラグがオンになったらPlayerの向きに移動する
-		//if (m_movePlayerAngleFlag)
-		//{
-		//	//Playerの向いている方向の鏡合わせになるように角度を変更する
-		//	MovePlayerAngle(m_targetAngleY);
-		//}
-
-		////LBを押している最中は射撃モードに移行する
-		//if (m_controler.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
-		//{
-		//	//射撃状態
-		//	//Playerとの距離を縮めて狙いを定めているっぽくする
-		//	m_range = 10.0f;
-
-		//	//銃使うフラグにした
-		//	m_meleeFlag = false;
-
-		//	//その後に射撃用のUIも出したい
-		//	m_spriteAiming->OnClear(false);
-
-		//	m_spriteAttack->SetTexture(L"GunTex");
-
-		//	//注視点の変更(普段よりも先に見たい)
-		//	m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f,
-		//		cos(m_cameraAngleX) * -15.0f,
-		//		sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -15.0f));
-
-		//}
-		//else
-		//{
-		//	//通常状態
-		//	//Playerとの距離を縮めて狙いを定めているっぽくする
-		//	m_range = 15.0f;
-
-		//	//銃を使わないフラグ
-		//	m_meleeFlag = true;
-
-		//	//ここはUIを出さない
-		//	m_spriteAiming->OnClear(true);
-
-		//	m_spriteAttack->SetTexture(L"KatanaTex");
-
-		//	//注視点の変更
-		//	m_lockStageCamera->SetAt(m_playerPos + Vec3(cosf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f,
-		//		cos(m_cameraAngleX) * -5.0f,
-		//		sinf(m_cameraAngleY) * sin(m_cameraAngleX) * -5.0f));
-		//}
-
-
-		//////現在の注視点を見れるようにする(デバック用)
-		////if (m_controler.wPressedButtons & XINPUT_GAMEPAD_B)
+		////デバック用
+		//wstringstream wss(L"");
+		//auto scene = App::GetApp()->GetScene<Scene>();
+		//////ロックオン対象との距離を計算
+		////if (m_targetObj)
 		////{
-		////	player->GetStage()->AddGameObject<Cube>(m_lockStageCamera->GetAt(), Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f),Col4(1.0f,0.0f,0.0f,1.0f));
+		////	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
+		////	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
 		////}
 
+		//
+		//wss /* << L"デバッグ用文字列 "*/
+		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
+		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
+		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
+		//	<< L"\nターゲット対象の距離: " << m_targetDis
+		//	<< L"\nFPS: " << 1.0f / m_delta
+		//	<< L"\nmelee : " << m_meleeFlag
+		//	<< L"\nMousePos.x : " << m_mouseCurrentPos.x
+		//	<< L"\nMousePos.y : " << m_mouseCurrentPos.y
+		//	<< L"\nMouseVec.x : " << m_mouseMoveVec.x
+		//	<< L"\nMouseVec.y : " << m_mouseMoveVec.y
+		//	<< L"\nNowState : " << ModeState
+		//	//<< L"\n当たった場所x: " << hitPos.x
+		//	//<< L"\n当たった場所y: " << hitPos.y
+		//	//<< L"\n当たった場所z: " << hitPos.z
+		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
+		//	//<<L"\nFPS:"<< 1.0f/delta
+		//	<< endl;
 
-		////ロックオンするときの処理
-		////LockOn(player);
+		//	//if (m_lockOnNum >= 0)
+		//	//{		
+		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
+		//	//	float a = targetAngle;
+		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
+		//	//}
 
-
-		////LockOnCanはどのオブジェクト達になるのか処理
-		////LockOnCandidate(enemyVec, m_playerPos);
-		////角度の調整0~360度までしか出ないようにする
-		//AdjustmentAngle();
-		////カメラの位置更新
-		//CameraPosUpdate();
-
-
-		//デバック用
-		wstringstream wss(L"");
-		auto scene = App::GetApp()->GetScene<Scene>();
-		////ロックオン対象との距離を計算
-		//if (m_targetObj)
-		//{
-		//	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-		//	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
-		//}
-
-		
-		wss /* << L"デバッグ用文字列 "*/
-			<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-			<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-			<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-			<< L"\nターゲット対象の距離: " << m_targetDis
-			<< L"\nFPS: " << 1.0f / m_delta
-			<< L"\nmelee : " << m_meleeFlag
-			<< L"\nMousePos.x : " << m_mouseCurrentPos.x
-			<< L"\nMousePos.y : " << m_mouseCurrentPos.y
-			<< L"\nMouseVec.x : " << m_mouseMoveVec.x
-			<< L"\nMouseVec.y : " << m_mouseMoveVec.y
-			<< L"\nNowState : " << ModeState
-			//<< L"\n当たった場所x: " << hitPos.x
-			//<< L"\n当たった場所y: " << hitPos.y
-			//<< L"\n当たった場所z: " << hitPos.z
-			//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-			//<<L"\nFPS:"<< 1.0f/delta
-			<< endl;
-
-			//if (m_lockOnNum >= 0)
-			//{		
-			//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-			//	float a = targetAngle;
-			//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-			//}
-
-		scene->SetDebugString(wss.str());
+		//scene->SetDebugString(wss.str());
 
 	}
 
@@ -528,13 +339,6 @@ namespace basecross {
 	//射撃モード時のカメラ操作処理
 	void CameraManager::CameraControlShotMode()
 	{
-		//射撃状態
-		//Playerとの距離を縮めて狙いを定めているっぽくする
-		//m_range = 10.0f;
-
-		//m_spriteAttack->SetTexture(L"GunTex");
-
-
 		auto pushMaxAtPos = -15.0f;
 		auto pushMaxAtPosY = -15.0f;
 		//移動処理
@@ -542,8 +346,6 @@ namespace basecross {
 		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPosY, 16.0f*5);
 		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 16.0f*5);
 
-		//銃使うフラグにした
-		//m_meleeFlag = false;
 		//ここはUIを出す
 		m_spriteAiming->OnClear(false);
 
@@ -593,8 +395,6 @@ namespace basecross {
 		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, speed);
 		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, speed);
 
-		//銃を使わないフラグ
-		//m_meleeFlag = true;
 		//ここはUIを出さない
 		m_spriteAiming->OnClear(true);
 
