@@ -31,6 +31,7 @@ namespace basecross {
 		CreateSprite();
 		m_time = 1.0f;
 		m_scene = App::GetApp()->GetScene<Scene>();
+		auto stageType = m_scene.lock()->GetStageType();
 		float bgmVol = m_scene.lock()->GetBGMVolume();
 		m_SEVol = m_scene.lock()->GetSEVolume();
 
@@ -41,11 +42,11 @@ namespace basecross {
 
 		m_stageNum = m_scene.lock()->GetStageNum();
 		m_strStage = L"ToWaveStage";
-		if (m_stageNum != 0)
+		if (stageType == Scene::StageType::STAGE_WAVE)
 		{
 			m_strStage += to_wstring(m_stageNum);
 		}
-		else
+		else if(stageType == Scene::StageType::STAGE_TUTORIAL)
 		{
 			m_strStage = L"Tutorial";
 		}

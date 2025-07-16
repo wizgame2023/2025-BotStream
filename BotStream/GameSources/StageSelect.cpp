@@ -31,6 +31,8 @@ namespace basecross {
 		m_BGMVol = m_scene.lock()->GetBGMVolume();
 		m_SEVol = m_scene.lock()->GetSEVolume();
 
+		AddGameObject<PauseSprite>();
+
 		CreateViewLight();
 		CreateSprite();
 		CreateBGM();
@@ -62,7 +64,7 @@ namespace basecross {
 			ret.x = cntl[0].fThumbLX;
 			ret.y = cntl[0].fThumbLY;
 		}
-		else if (!cntl[0].bConnected)
+		else
 		{
 			if (keybord.m_bPushKeyTbl[VK_UP] || keybord.m_bPushKeyTbl['W'])
 				ret.y = 1;
@@ -78,6 +80,8 @@ namespace basecross {
 		}
 
 		IsContorollerConnect();
+
+
 
 		if (fabs(ret.y) < dead)
 			m_selectOnceFlag2 = false;

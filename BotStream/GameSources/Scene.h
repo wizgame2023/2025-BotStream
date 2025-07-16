@@ -12,6 +12,17 @@ namespace basecross{
 	///	ÉQÅ[ÉÄÉVÅ[Éì
 	//--------------------------------------------------------------------------------------
 	class Scene : public SceneBase{
+	public:
+		enum StageType
+		{
+			STAGE_WAVE,
+			STAGE_TUTORIAL,
+			STAGE_SELECT
+		};
+
+	private:
+		StageType m_stageType;
+
 		int m_stageNum = 1;
 
 		// BGM.SEÇÃâπó 
@@ -74,6 +85,10 @@ namespace basecross{
 			m_SEVolume = SEVolume;
 		}
 
+		StageType GetStageType()
+		{
+			return m_stageType;
+		}
 	};
 
 }
