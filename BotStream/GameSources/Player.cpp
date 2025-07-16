@@ -51,7 +51,7 @@ namespace basecross {
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
 		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
 		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);//立ち状態
-		ptrDraw->AddAnimation(L"Walk", 165, 65, true, 24.0f);//歩き状態
+		ptrDraw->AddAnimation(L"Walk", 175, 57, true, 24.0f);//歩き状態
 		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
 		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
 		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);//走りをやめる
@@ -62,7 +62,7 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
 		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
 		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
-		ptrDraw->AddAnimation(L"Walk_Gun", 570, 50, true, 24.0f);//歩き状態(銃所持)
+		ptrDraw->AddAnimation(L"Walk_Gun", 570, 29, true, 24.0f);//歩き状態(銃所持)
 		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);//銃を撃つ
 		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);//銃を戻す
 		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);//やられ
