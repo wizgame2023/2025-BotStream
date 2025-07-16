@@ -404,6 +404,7 @@ namespace basecross {
 		//‚¢‚Á‚½‚ñG‹›“G‚ÌHP‚Í50‚Æ‚·‚é
 		m_HPMax = 50.0f;
 		m_HPCurrent = m_HPMax;
+		m_stunMax = 1;
 
 		//Transformİ’è
 		m_trans = GetComponent<Transform>();
