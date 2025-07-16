@@ -72,6 +72,7 @@ namespace basecross {
         bool m_isPaused = false;
 
         bool m_onceFlag = false;
+        bool m_movieOnceFlag = false;
 
 
         shared_ptr<BossGaugeUI> m_bossGauge;

@@ -37,6 +37,10 @@ namespace basecross {
 		{
 			enemyVariation.push_back(EVar_Aerial);
 		}
+		for (int i = 0; i <= 10; i++)
+		{
+			enemyVariation.push_back(EVar_Humanoid);
+		}
 
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
@@ -48,13 +52,11 @@ namespace basecross {
 
 		//wave1敵
 		// 床のポジション Vec3(0.0f, -3.0f, -260.0f), 大きさ Vec3(120.0f, 3.0f, 120.0f)
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoHumanoid>(Vec3(0.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(10.0f, 2.0f, -255.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-10.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZako>(Vec3(-5.0f, 2.0f, -235.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -245.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(30.0f, 2.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+		m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, -265.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 		m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(20.0f, 3.0f, -225.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 
@@ -115,12 +117,12 @@ namespace basecross {
 			WaveInitialize();
 		}
 
-		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_onceFlag == false)
+		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_movieOnceFlag == false)
 		{
 			m_movieController->BossDieMovie();
 
 			m_sndMgr.lock()->StopBGM();
-			m_onceFlag = true;
+			m_movieOnceFlag = true;
 		}
 
 		if (ConsiderGameOver() && m_onceFlag == false)
@@ -133,8 +135,9 @@ namespace basecross {
 		}
 
 		//ゲームクリア処理
-		if (m_gameClearFlag)
+		if (m_gameClearFlag && m_onceFlag == false)
 		{
+			m_onceFlag = true;
 			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
 			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}
@@ -168,14 +171,13 @@ namespace basecross {
 			//プレイヤーの位置を初期化
 			SetPlayerTransform(Vec3(0.0f, 3.0f, -40.0f), Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f));
 
-			m_enemyMgr.lock()->InstEnemy(Vec3(0.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy(Vec3(10.0f, 2.0f, -10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy(Vec3(-10.0f, 2.0f, -20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(20.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy(Vec3(-20.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
-			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-30.0f, 2.0f, 5.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(20.0f, 2.0f, -15.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoLong>(Vec3(-20.0f, 2.0f, 0.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoHumanoid>(Vec3(0.0f, 2.0f, 30.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoHumanoid>(Vec3(20.0f, 2.0f, 10.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
+			m_enemyMgr.lock()->InstEnemy<EnemyZakoHumanoid>(Vec3(-20.0f, 2.0f, 20.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 			m_enemyMgr.lock()->InstEnemy<EnemyZakoFlying>(Vec3(-30.0f, 2.0f, 35.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(5.0f, 5.0f, 5.0f));
 

@@ -167,6 +167,9 @@ namespace basecross{
 		void CameraControlTransitionMode();
 		void CameraControlStartMovieMode();
 
+		// マウスでのカメラ移動処理
+		void MouseCameraMove();
+
 		//現在地から目的地までの移動処理
 		float MoveToDestination(float nowOnePos,float destination, float speed = 20.0f);
 

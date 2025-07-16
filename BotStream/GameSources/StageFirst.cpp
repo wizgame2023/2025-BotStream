@@ -231,12 +231,12 @@ namespace basecross {
 			WaveInitialize();
 		}
 
-		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_onceFlag == false)
+		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_movieOnceFlag == false)
 		{
 			m_movieController->BossDieMovie();
 
 			m_sndMgr.lock()->StopBGM();
-			m_onceFlag = true;
+			m_movieOnceFlag = true;
 		}
 
 		if (ConsiderGameOver() && m_onceFlag == false)
@@ -249,8 +249,9 @@ namespace basecross {
 		}
 
 		//ゲームクリア処理
-		if (m_gameClearFlag)
+		if (m_gameClearFlag && m_onceFlag == false)
 		{
+			m_onceFlag = true;
 			m_fadeout.lock()->SetFadeOutFlag(true);// ブラックアウト
 			m_scene.lock()->PostEvent(1.2f, GetThis<ObjectInterface>(), m_scene.lock(), L"ToGameClear");
 		}

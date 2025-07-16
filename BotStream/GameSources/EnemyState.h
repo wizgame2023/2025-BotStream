@@ -69,17 +69,18 @@ namespace basecross {
 	// —§‚¿
 	class BossFirstStandState : public StateBase {
 		float m_time = 0;
-		//UŒ‚‚ÉˆÚ‚é‚Ü‚Å1`4•b
-		const float m_startAttack = 1.0f;
-		const float m_startAttackPlus = 3.0f;
-		const float m_startAttackRand = 10;
-		const float m_spinRand = 400;
-		const float m_slamRand = 100;
-		const float m_chaseRand = 500;
-		const float m_beamRand = 200;
+		//UŒ‚‚ÉˆÚ‚é‚Ü‚Å0.5`2•b
+		const float m_startAttack = .5f;
+		const float m_startAttackPlus = 1.5f;
+		const float m_startAttackRand = 10.0f;
+		const float m_spinRand = 400.0f;
+		const float m_slamRand = 100.0f;
+		const float m_chaseRand = 500.0f;
+		const float m_beamRand = 200.0f;
+		const float m_roarRand = 600.0f;
 
 		//’†‹——£
-		const float m_midDist = 5;
+		const float m_midDist = 8;
 		//‰“‹——£
 		const float m_farDist = 20;
 
@@ -343,6 +344,23 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	// ™ôšK
+	class BossFirstRoarState : public StateBase {
+		float m_time = 0;
+		const float m_attackTime = .2f;
+		const float m_endTime = .5f;
+
+		bool m_isAttackEnd = false;
+	public:
+		BossFirstRoarState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	// ’@‚«‚Â‚¯‰“®
 	class BossFirstSlamStartState : public StateBase {
 		float m_time = 0;
@@ -490,6 +508,7 @@ namespace basecross {
 			
 			AddState(L"Attack", shared_ptr<BossFirstAttackState>(new BossFirstAttackState(obj)));
 			AddState(L"Attack2", shared_ptr<BossFirstAttack2State>(new BossFirstAttack2State(obj)));
+			AddState(L"Roar", shared_ptr<BossFirstRoarState>(new BossFirstRoarState(obj)));
 			
 			AddState(L"SpinStart", shared_ptr<BossFirstSpinStartState>(new BossFirstSpinStartState(obj)));
 			AddState(L"Spin", shared_ptr<BossFirstSpinState>(new BossFirstSpinState(obj)));
