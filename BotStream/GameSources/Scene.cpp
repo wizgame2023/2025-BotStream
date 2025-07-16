@@ -56,8 +56,8 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"ToStageSelect")
 		{
+			m_stageType = StageType::STAGE_SELECT;
 			ResetActiveStage<StageSelect>();
-
 		}
 
 		if (event->m_MsgStr == L"ToPersonalityStage")
@@ -68,7 +68,7 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"Tutorial")
 		{
-			m_stageNum = 0;
+			m_stageType = StageType::STAGE_TUTORIAL;
 			ResetActiveStage<TutorialStage>();
 		}
 		// ここは後にWaveStageに変更する
@@ -76,18 +76,21 @@ namespace basecross {
 		if (event->m_MsgStr == L"ToWaveStage1")
 		{
 			m_stageNum = 1;
+			m_stageType = StageType::STAGE_WAVE;
 			ResetActiveStage<StageFirst>();
 		}
 
 		if (event->m_MsgStr == L"ToWaveStage2")
 		{
 			m_stageNum = 2;
+			m_stageType = StageType::STAGE_WAVE;
 			ResetActiveStage<StageSecond>();
 		}
 
 		if (event->m_MsgStr == L"ToWaveStage3")
 		{
 			m_stageNum = 3;
+			m_stageType = StageType::STAGE_WAVE;
 			ResetActiveStage<StageThird>();
 		}
 
