@@ -35,10 +35,6 @@ namespace basecross {
 		{
 			enemyVariation.push_back(EVar_Aerial);
 		}
-		for (int i = 0; i <= 10; i++)
-		{
-			enemyVariation.push_back(EVar_Humanoid);
-		}
 
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
