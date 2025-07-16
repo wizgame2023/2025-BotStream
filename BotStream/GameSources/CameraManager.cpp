@@ -78,8 +78,14 @@ namespace basecross {
 	//更新
 	void CameraManager::OnUpdate()
 	{
+		// 今選択しているウィンドウハンドルを取得
+		auto ActiveWindow = GetActiveWindow();
+		// このゲームのウィンドウハンドルを取得
+		auto MyWindowHandle = App::GetApp()->GetHWnd();
+
 		m_delta = App::GetApp()->GetElapsedTime();
 		m_lockStageCamera = m_stageCamera.lock();
+		
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
@@ -89,9 +95,13 @@ namespace basecross {
 		}
 		//ポーズフラグがオンならカメラ移動はできない
 		if (m_PauseFlag)
-		{
-			SetCursorPos(850, 450);
-			GetCursorPos(&m_mouseBeforPos);
+		{		
+			if (ActiveWindow == MyWindowHandle)
+			{	
+				SetCursorPos(850, 450);		
+				GetCursorPos(&m_mouseBeforPos);
+			}
+
 			return;
 		}
 
@@ -107,81 +117,84 @@ namespace basecross {
 		// キーマウの取得
 		KEYBOARD_STATE keyState = App::GetApp()->GetInputDevice().GetKeyState();
 		
-		// マウスの位置取得
-		GetCursorPos(&m_mouseCurrentPos);
 
-		// マウスの移動ベクトル計算
-		m_mouseMoveVec = Vec2(m_mouseCurrentPos.x - m_mouseBeforPos.x,
-			m_mouseCurrentPos.y - m_mouseBeforPos.y);
 
-		//カーソルが端まで行ったらループさせる
-		int maxPosX = 1500;	int minPosX = 0;
-		int maxPosY = 850;	int minPosY = 0;
+		//マウスの移動ベクトル取得
+		MouseCameraMove();
+		//// マウスの移動ベクトル計算
+		//m_mouseMoveVec = Vec2(m_mouseCurrentPos.x - m_mouseBeforPos.x,
+		//	m_mouseCurrentPos.y - m_mouseBeforPos.y);
 
-		// 移動ループした後は移動量が大きくなるので調整
-		if (m_cursorFlagX)
-		{
-			// 右端から左端へ// 今ここ作業中
-			if (m_mouseMoveVec.x <= -1)
-			{
-				m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
-			}
-			// 左端から右端へ
-			else if (m_mouseMoveVec.x >= +1)
-			{
-				m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
-			}
+		////カーソルが端まで行ったらループさせる
+		//int maxPosX = 1500;	int minPosX = 0;
+		//int maxPosY = 850;	int minPosY = 0;
 
-			m_cursorFlagX = false;
-		}
+		//// 移動ループした後は移動量が大きくなるので調整
+		//if (m_cursorFlagX)
+		//{
+		//	// 右端から左端へ// 今ここ作業中
+		//	if (m_mouseMoveVec.x <= -1)
+		//	{
+		//		m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
+		//	}
+		//	// 左端から右端へ
+		//	else if (m_mouseMoveVec.x >= +1)
+		//	{
+		//		m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
+		//	}
 
-		if (m_cursorFlagY)
-		{
-			//上端から下端へ
-			if (m_mouseMoveVec.y <= -1)
-			{
-				m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
-			}
-			//下端から上端へ
-			else if (m_mouseMoveVec.y >= 1)
-			{
-				m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
-			}
+		//	m_cursorFlagX = false;
+		//}
 
-			m_cursorFlagY = false;
-		}
+		//if (m_cursorFlagY)
+		//{
+		//	//上端から下端へ
+		//	if (m_mouseMoveVec.y <= -1)
+		//	{
+		//		m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
+		//	}
+		//	//下端から上端へ
+		//	else if (m_mouseMoveVec.y >= 1)
+		//	{
+		//		m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
+		//	}
 
-		//マウス位置更新
-		//m_mouseBeforPos = m_mouseCurrentPos;
-		SetCursorPos(850, 450);
-		GetCursorPos(&m_mouseBeforPos);
+		//	m_cursorFlagY = false;
+		//}
 
-		// X座標
-		if (m_mouseCurrentPos.x >= maxPosX)
-		{
-			m_mouseCurrentPos.x = minPosX + 1;
-			SetCursorPos(minPosX + 1, m_mouseCurrentPos.y);
-			m_cursorFlagX = true;
-		}
-		if (m_mouseCurrentPos.x <= minPosX)
-		{
-			m_mouseCurrentPos.x = minPosX - 1;
-			SetCursorPos(maxPosX - 1, m_mouseCurrentPos.y);
-			m_cursorFlagX = true;
-		}
-		// Y座標
-		if (m_mouseCurrentPos.y >= maxPosY)
-		{
-			m_mouseCurrentPos.y = minPosY + 1;
-			SetCursorPos(m_mouseCurrentPos.x, minPosY + 1);
-			m_cursorFlagY = true;
-		}
-		if (m_mouseCurrentPos.y <= minPosY)
-		{
-			m_mouseCurrentPos.y = minPosY - 1;
-			SetCursorPos(m_mouseCurrentPos.x, maxPosY - 1);
-			m_cursorFlagY = true;
-		}
+		////マウス位置更新
+		//if (ActiveWindow == MyWindowHandle)
+		//{
+		//	SetCursorPos(850, 450);
+		//	GetCursorPos(&m_mouseBeforPos);
+		//}
+
+		//// X座標
+		//if (m_mouseCurrentPos.x >= maxPosX)
+		//{
+		//	m_mouseCurrentPos.x = minPosX + 1;
+		//	SetCursorPos(minPosX + 1, m_mouseCurrentPos.y);
+		//	m_cursorFlagX = true;
+		//}
+		//if (m_mouseCurrentPos.x <= minPosX)
+		//{
+		//	m_mouseCurrentPos.x = minPosX - 1;
+		//	SetCursorPos(maxPosX - 1, m_mouseCurrentPos.y);
+		//	m_cursorFlagX = true;
+		//}
+		//// Y座標
+		//if (m_mouseCurrentPos.y >= maxPosY)
+		//{
+		//	m_mouseCurrentPos.y = minPosY + 1;
+		//	SetCursorPos(m_mouseCurrentPos.x, minPosY + 1);
+		//	m_cursorFlagY = true;
+		//}
+		//if (m_mouseCurrentPos.y <= minPosY)
+		//{
+		//	m_mouseCurrentPos.y = minPosY - 1;
+		//	SetCursorPos(m_mouseCurrentPos.x, maxPosY - 1);
+		//	m_cursorFlagY = true;
+		//}
 
 
 
@@ -297,10 +310,9 @@ namespace basecross {
 		//CameraPosUpdate();
 
 
-		////デバック用
-		//wstringstream wss(L"");
-		//auto scene = App::GetApp()->GetScene<Scene>();
-
+		//デバック用
+		wstringstream wss(L"");
+		auto scene = App::GetApp()->GetScene<Scene>();
 		////ロックオン対象との距離を計算
 		//if (m_targetObj)
 		//{
@@ -594,6 +606,103 @@ namespace basecross {
 				sinf(m_cameraAngleY) * sin(m_cameraAngleX) * m_pushAtPos.z)
 		);
 
+	}
+
+	// マウスでの移動ベクトル取得処理
+	void CameraManager::MouseCameraMove()
+	{
+
+		// 今選択しているウィンドウハンドルを取得
+		auto ActiveWindow = GetActiveWindow();
+		// このゲームのウィンドウハンドルを取得
+		auto MyWindowHandle = App::GetApp()->GetHWnd();
+
+		//マウス位置更新
+		if (ActiveWindow != MyWindowHandle)
+		{
+			GetCursorPos(&m_mouseBeforPos);
+			return;
+		}
+
+		// マウスの位置取得
+		GetCursorPos(&m_mouseCurrentPos);
+
+		// キーマウの取得
+		KEYBOARD_STATE keyState = App::GetApp()->GetInputDevice().GetKeyState();
+
+		// マウスの位置取得
+		GetCursorPos(&m_mouseCurrentPos);
+
+		// マウスの移動ベクトル計算
+		m_mouseMoveVec = Vec2(m_mouseCurrentPos.x - m_mouseBeforPos.x,
+			m_mouseCurrentPos.y - m_mouseBeforPos.y);
+
+		//カーソルが端まで行ったらループさせる
+		int maxPosX = 1500;	int minPosX = 0;
+		int maxPosY = 850;	int minPosY = 0;
+
+		// 移動ループした後は移動量が大きくなるので調整
+		if (m_cursorFlagX)
+		{
+			// 右端から左端へ// 今ここ作業中
+			if (m_mouseMoveVec.x <= -1)
+			{
+				m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
+			}
+			// 左端から右端へ
+			else if (m_mouseMoveVec.x >= +1)
+			{
+				m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
+			}
+
+			m_cursorFlagX = false;
+		}
+
+		if (m_cursorFlagY)
+		{
+			//上端から下端へ
+			if (m_mouseMoveVec.y <= -1)
+			{
+				m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
+			}
+			//下端から上端へ
+			else if (m_mouseMoveVec.y >= 1)
+			{
+				m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
+			}
+
+			m_cursorFlagY = false;
+		}
+
+		SetCursorPos(850, 450);
+		GetCursorPos(&m_mouseBeforPos);
+
+		// X座標
+		if (m_mouseCurrentPos.x >= maxPosX)
+		{
+			m_mouseCurrentPos.x = minPosX + 1;
+			SetCursorPos(minPosX + 1, m_mouseCurrentPos.y);
+			m_cursorFlagX = true;
+		}
+		if (m_mouseCurrentPos.x <= minPosX)
+		{
+			m_mouseCurrentPos.x = minPosX - 1;
+			SetCursorPos(maxPosX - 1, m_mouseCurrentPos.y);
+			m_cursorFlagX = true;
+		}
+		// Y座標
+		if (m_mouseCurrentPos.y >= maxPosY)
+		{
+			m_mouseCurrentPos.y = minPosY + 1;
+			SetCursorPos(m_mouseCurrentPos.x, minPosY + 1);
+			m_cursorFlagY = true;
+		}
+		if (m_mouseCurrentPos.y <= minPosY)
+		{
+			m_mouseCurrentPos.y = minPosY - 1;
+			SetCursorPos(m_mouseCurrentPos.x, maxPosY - 1);
+			m_cursorFlagY = true;
+		}
 	}
 	
 
