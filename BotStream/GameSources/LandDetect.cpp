@@ -47,11 +47,11 @@ namespace basecross {
 	}
 
 	void LandDetect::OnCollisionEnter(shared_ptr<GameObject>& Other) {
-		if (Other->FindTag(L"Floor")) {
-			//カウントをリセットする
-			m_isLand = true;
-			m_CollideCount = m_CollideCountMax;
-		}
+		//if (Other->FindTag(L"Floor")) {
+		//	//カウントをリセットする
+		//	m_isLand = true;
+		//	m_CollideCount = m_CollideCountMax;
+		//}
 	}
 	
 	void LandDetect::OnCollisionExcute(shared_ptr<GameObject>& Other) {
