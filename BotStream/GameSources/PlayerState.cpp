@@ -1201,6 +1201,8 @@ namespace basecross {
 
 	void PlayerHitState::Update(float deltaTime)
 	{
+		PlayerStateBase::Update(deltaTime);
+
 		//アニメーション更新
 		m_player->SetAddTimeAnimation(deltaTime/2.0f);
 
