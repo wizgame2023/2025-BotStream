@@ -75,7 +75,7 @@ namespace basecross {
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 	};
 
-	//頭パーツ用
+	//パーツ(試作パーツ)
 	class HeadParts : public Parts
 	{
 		//shared_ptr<Stage> m_stage;
@@ -120,7 +120,7 @@ namespace basecross {
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 2;
 			m_partsStatus.addHP = 0;
-			m_partsStatus.addSpeed = 0.3f;
+			m_partsStatus.addSpeed = 0.4f;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 10;
 
@@ -167,4 +167,185 @@ namespace basecross {
 		}
 
 	};
+
+
+	//パーツ(試作パーツ(強化版))
+	class PartsPrototype2 : public Parts
+	{
+
+	public:
+		PartsPrototype2(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 4;
+			m_partsStatus.addHP = 15;
+			m_partsStatus.addSpeed = 0.15;
+			m_partsStatus.addAttack = 0;
+			m_partsStatus.addAttribute = 15;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = parts;
+
+			//名前
+			m_partsStatus.partsName = L"試作パーツ(強化版)";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"Stage1-1Tex";
+		}
+		~PartsPrototype2()
+		{
+		}
+	};
+
+
+	//パーツ(完全版パーツ)
+	class PartsCompleteVersion : public Parts
+	{
+
+	public:
+		PartsCompleteVersion(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 5;
+			m_partsStatus.addHP = 20;
+			m_partsStatus.addSpeed = 0.2;
+			m_partsStatus.addAttack = 0;
+			m_partsStatus.addAttribute = 20;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = parts;
+
+			//名前
+			m_partsStatus.partsName = L"完全版パーツ";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"Stage1-2Tex";
+		}
+		~PartsCompleteVersion()
+		{
+		}
+	};
+
+
+	//パーツ(改造モーター)
+	class PartsModMoter :public Parts
+	{
+	private:
+
+	public:
+		PartsModMoter(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 6;
+			m_partsStatus.addHP = 0;
+			m_partsStatus.addSpeed = 0.25f;
+			m_partsStatus.addAttack = 1;
+			m_partsStatus.addAttribute = -10;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = MoterParts;
+
+			//名前
+			m_partsStatus.partsName = L"改造モーター";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"Stage2-1Tex";
+		}
+		~PartsModMoter()
+		{
+		}
+	};
+
+
+	//パーツ(古びたモーター)
+	class PartsOldMoter :public Parts
+	{
+	private:
+
+	public:
+		PartsOldMoter(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 7;
+			m_partsStatus.addHP = 5;
+			m_partsStatus.addSpeed = 0.2f;
+			m_partsStatus.addAttack = 0;
+			m_partsStatus.addAttribute = -20;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = MoterParts;
+
+			//名前
+			m_partsStatus.partsName = L"古びたモーター";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"Stage2-2Tex";
+		}
+		~PartsOldMoter()
+		{
+		}
+	};
+
+
+	//パーツ(戦術強化パッチ)
+	class PartsSkillUpPatch :public Parts
+	{
+	private:
+
+	public:
+		PartsSkillUpPatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 8;
+			m_partsStatus.addHP = 0;
+			m_partsStatus.addSpeed = 0.1f;
+			m_partsStatus.addAttack = 5;
+			m_partsStatus.addAttribute = 5;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = PatchParts;
+
+			//名前
+			m_partsStatus.partsName = L"戦術強化パッチ";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"Stage3-1Tex";
+		}
+		~PartsSkillUpPatch()
+		{
+		}
+
+	};
+
+
+	//パーツ(オールマイティパッチ)
+	class PartsAlmightyPatch :public Parts
+	{
+	private:
+
+	public:
+		PartsAlmightyPatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+			Parts(stagePtr, pos, rot, scale)
+		{
+			//どれぐらいステータスを上げるか決める
+			m_partsStatus.id = 9;
+			m_partsStatus.addHP = 20;
+			m_partsStatus.addSpeed = 0.2f;
+			m_partsStatus.addAttack = 2;
+			m_partsStatus.addAttribute = 20;
+
+			// どのタイプのパーツか決める
+			m_partsStatus.partsType = PatchParts;
+
+			//名前
+			m_partsStatus.partsName = L"オールマイティパッチ";
+			//とりあえず適当なテクスチャにする
+			m_partsStatus.partsImagePass = L"Stage3-2Tex";
+		}
+		~PartsAlmightyPatch()
+		{
+		}
+
+	};
+
 }
