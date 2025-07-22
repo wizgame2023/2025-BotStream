@@ -743,6 +743,8 @@ namespace basecross {
 		m_effect = AddEffect(EnemyEffect_SphereEnd);
 
 		m_disappear = true;
+		//–³Œø‰»
+		GetAttackPtr()->ActivateCollision(0.0f);
 	}
 
 	void BossFirstSphere::CreateChildObjects() {
