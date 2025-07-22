@@ -64,12 +64,12 @@ namespace basecross {
 				stage->AddGameObject<PartsOldMoter>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
 				break;
 			case 7:
-				//戦術強化パッチ
-				stage->AddGameObject<PartsSkillUpPatch>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
+				//パワー型パッチ
+				stage->AddGameObject<PartsPowerPatch>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
 				break;
 			case 8:
-				//オールマイティパッチ
-				stage->AddGameObject<PartsAlmightyPatch>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
+				//バランス型パッチ
+				stage->AddGameObject<PartsBalancePatch>(dropPos, Vec3(0.0f, 0.0f, 0.0f), Vec3(2.0f, 2.0f, 2.0f));
 				break;
 			default:
 				break;

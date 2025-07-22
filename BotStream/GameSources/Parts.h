@@ -240,7 +240,7 @@ namespace basecross {
 			m_partsStatus.id = 6;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.25f;
-			m_partsStatus.addAttack = 1;
+			m_partsStatus.addAttack = 2;
 			m_partsStatus.addAttribute = -10;
 
 			// どのタイプのパーツか決める
@@ -268,9 +268,9 @@ namespace basecross {
 		{
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 7;
-			m_partsStatus.addHP = 5;
-			m_partsStatus.addSpeed = 0.2f;
-			m_partsStatus.addAttack = 0;
+			m_partsStatus.addHP = 0;
+			m_partsStatus.addSpeed = 0.15f;
+			m_partsStatus.addAttack = 1;
 			m_partsStatus.addAttribute = -20;
 
 			// どのタイプのパーツか決める
@@ -287,49 +287,49 @@ namespace basecross {
 	};
 
 
-	//パーツ(戦術強化パッチ)
-	class PartsSkillUpPatch :public Parts
+	//パーツ(パワー型パッチ)
+	class PartsPowerPatch :public Parts
 	{
 	private:
 
 	public:
-		PartsSkillUpPatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+		PartsPowerPatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 8;
 			m_partsStatus.addHP = 0;
-			m_partsStatus.addSpeed = 0.1f;
-			m_partsStatus.addAttack = 5;
+			m_partsStatus.addSpeed = 0;
+			m_partsStatus.addAttack = 7;
 			m_partsStatus.addAttribute = 5;
 
 			// どのタイプのパーツか決める
 			m_partsStatus.partsType = PatchParts;
 
 			//名前
-			m_partsStatus.partsName = L"戦術強化パッチ";
+			m_partsStatus.partsName = L"パワー型パッチ";
 			//とりあえず適当なテクスチャにする
 			m_partsStatus.partsImagePass = L"Stage3-1Tex";
 		}
-		~PartsSkillUpPatch()
+		~PartsPowerPatch()
 		{
 		}
 
 	};
 
 
-	//パーツ(オールマイティパッチ)
-	class PartsAlmightyPatch :public Parts
+	//パーツ(バランス型パッチ)
+	class PartsBalancePatch :public Parts
 	{
 	private:
 
 	public:
-		PartsAlmightyPatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+		PartsBalancePatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 9;
-			m_partsStatus.addHP = 20;
+			m_partsStatus.addHP = 10;
 			m_partsStatus.addSpeed = 0.2f;
 			m_partsStatus.addAttack = 2;
 			m_partsStatus.addAttribute = 20;
@@ -338,11 +338,11 @@ namespace basecross {
 			m_partsStatus.partsType = PatchParts;
 
 			//名前
-			m_partsStatus.partsName = L"オールマイティパッチ";
+			m_partsStatus.partsName = L"バランス型パッチ";
 			//とりあえず適当なテクスチャにする
 			m_partsStatus.partsImagePass = L"Stage3-2Tex";
 		}
-		~PartsAlmightyPatch()
+		~PartsBalancePatch()
 		{
 		}
 
