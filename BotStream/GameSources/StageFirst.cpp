@@ -35,10 +35,6 @@ namespace basecross {
 		{
 			enemyVariation.push_back(EVar_Aerial);
 		}
-		for (int i = 0; i <= 10; i++)
-		{
-			enemyVariation.push_back(EVar_Humanoid);
-		}
 
 		m_enemyMgr = AddGameObject<EnemyManager>(enemyVariation);
 		SetSharedGameObject(L"EnemyManager", m_enemyMgr.lock());
@@ -235,12 +231,12 @@ namespace basecross {
 			WaveInitialize();
 		}
 
-		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_onceFlag == false)
+		if (m_waveCurrent == m_waveMax && ConsiderBossCheck() && m_movieOnceFlag == false)
 		{
 			m_movieController->BossDieMovie();
 
 			m_sndMgr.lock()->StopBGM();
-			m_onceFlag = true;
+			m_movieOnceFlag = true;
 		}
 
 		if (ConsiderGameOver() && m_onceFlag == false)

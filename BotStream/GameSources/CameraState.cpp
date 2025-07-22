@@ -289,7 +289,7 @@ namespace basecross {
 		m_cameraManager->AdjustmentAngle();
 
 		//カメラの位置更新
-		auto moveEnd = m_cameraManager->CameraPosUpdate(8, 0, 17.0f);
+		auto moveEnd = m_cameraManager->CameraPosUpdate(8, 0, 17.0f,60.0f);
 
 		//ムービー用コントローラー取得
 		auto RT_movieController = m_cameraManager->GetStage()->GetSharedGameObject<RT_MovieController>(L"MovieController");
@@ -456,7 +456,7 @@ namespace basecross {
 		m_timeCount += deltaTime;
 
 		//カメラの位置更新
-		auto moveEnd = m_cameraManager->CameraPosUpdate(8, 0, 17.0f);
+		auto moveEnd = m_cameraManager->CameraPosUpdate(8, 0, 17.0f,60.0f);
 		m_cameraManager->SetPushStart(false);
 
 		if (moveEnd)
