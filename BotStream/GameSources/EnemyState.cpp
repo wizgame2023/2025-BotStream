@@ -59,7 +59,7 @@ namespace basecross {
 		boss->RotateToPlayer(1.0f);
 
 		if (m_time >= m_startAttack + (m_startAttackPlus * (boss->GetHPCurrent() / boss->GetHPMax())) ||
-			rnd() % 1000 <= m_startAttackRand) {
+			(m_time >= m_startAttack && rnd() % 1000 <= m_startAttackRand)) {
 			const float dist = boss->GetPlayerDist();
 
 			if (dist < m_midDist) {

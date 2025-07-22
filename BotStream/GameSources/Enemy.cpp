@@ -241,6 +241,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
 		//ボーナス行動
 		ptrDraw->AddAnimation(L"Bonus", 541, 99, false, 90.0f);
+		//咆哮(動作は上と同じ)
+		ptrDraw->AddAnimation(L"Roar", 541, 99, false, 60.0f);
 
 		//近接1
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
