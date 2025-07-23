@@ -472,6 +472,7 @@ namespace basecross {
 		app->RegisterWav(L"ClearVoiceSE", SoundPath + L"ClearVoice.wav");
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
 		app->RegisterWav(L"GameClearSE", SoundPath + L"GameClearSE.wav");
+		app->RegisterWav(L"RecoverySE", SoundPath + L"RecoverySE.wav");
 
 		app->RegisterWav(L"ArmorDefenseSE", SoundPath + L"ArmorDefenseSE.wav");
 		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
