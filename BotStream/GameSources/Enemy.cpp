@@ -241,6 +241,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
 		//ボーナス行動
 		ptrDraw->AddAnimation(L"Bonus", 541, 99, false, 90.0f);
+		//咆哮(動作は上と同じ)
+		ptrDraw->AddAnimation(L"Roar", 541, 99, false, 30.0f);
 
 		//近接1
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
@@ -295,7 +297,7 @@ namespace basecross {
 
 		m_armorMax = 200.0f;
 		m_armor = m_armorMax;
-		m_armorRecoverTime = 6.0f;
+		m_armorRecoverTime = 9.0f;
 
 		m_stunMax = 5;
 
