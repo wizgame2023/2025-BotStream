@@ -549,7 +549,7 @@ namespace basecross {
 			tmp.HitTime_Stand = 1.5f;
 			tmp.HitTime_Air = 1.5f;
 			boss->DefAttack(.1f, tmp);
-			boss->GetAttackPtr()->SetCollScale(30.0f);
+			boss->GetAttackPtr()->SetCollScale(10.0f);
 			boss->GetAttackPtr()->SetPos(Vec3(10, 3, 0));
 
 		}

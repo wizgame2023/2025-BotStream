@@ -347,8 +347,8 @@ namespace basecross {
 	// ™ôšK
 	class BossFirstRoarState : public StateBase {
 		float m_time = 0;
-		const float m_attackTime = .3f;
-		const float m_endTime = 1.0f;
+		const float m_attackTime = .6f;
+		const float m_endTime = 2.0f;
 
 		bool m_isAttackEnd = false;
 	public:
