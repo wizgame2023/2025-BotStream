@@ -385,11 +385,20 @@ namespace basecross {
 
 				m_audioMaxSetCol[idx]++;
 
+
 				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
 				if (idx == 0)
+				{
 					m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
+					auto currentSelectPos = m_BGMMater[m_audioMaxSetCol[idx]]->GetPosition();
+					m_audioSelect[idx]->SetPosition(currentSelectPos);
+				}
 				else
+				{
 					m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
+					auto currentSelectPos = m_SEMater[m_audioMaxSetCol[idx]]->GetPosition();
+					m_audioSelect[idx]->SetPosition(currentSelectPos);
+				}
 
 
 				// 音量が0.999f以上になったら1.0fにする
@@ -403,6 +412,20 @@ namespace basecross {
 			else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f)
 			{
 				
+
+				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
+				if (idx == 0)
+				{
+					m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1));
+					auto currentSelectPos = m_BGMMater[m_audioMaxSetCol[idx]]->GetPosition();
+					m_audioSelect[idx]->SetPosition(currentSelectPos);
+				}
+				else
+				{
+					m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1));
+					auto currentSelectPos = m_SEMater[m_audioMaxSetCol[idx]]->GetPosition();
+					m_audioSelect[idx]->SetPosition(currentSelectPos);
+				}
 				m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
 
 				m_audioMaxSetCol[idx]--;
