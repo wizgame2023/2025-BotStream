@@ -134,7 +134,7 @@ namespace basecross {
 		app->RegisterTexture(L"Fadeout", strTexture);
 		strTexture = texPath + L"SlowSpeite.png";
 		app->RegisterTexture(L"SlowTex", strTexture);
-		strTexture = texPath + L"Door.png";
+		strTexture = texPath + L"Door2.png";
 		app->RegisterTexture(L"DoorTex", strTexture);
 		strTexture = texPath + L"EmergencySpeite.png";
 		app->RegisterTexture(L"EmergencyTex", strTexture);
@@ -212,7 +212,7 @@ namespace basecross {
 
 
 		// Floor
-		strTexture = texPath + L"FloorTex2.png";
+		strTexture = texPath + L"FloorTex3.png";
 		app->RegisterTexture(L"FloorTex", strTexture);
 
 		// Buttons
@@ -346,9 +346,9 @@ namespace basecross {
 		app->RegisterTexture(L"WallTex", strTexture);
 
 		// ステージの壁とか
-		strTexture = texPath + L"WallSide.png";
+		strTexture = texPath + L"WallSide2.png";
 		app->RegisterTexture(L"WallSideTex", strTexture);
-		strTexture = texPath + L"WallFront.png";
+		strTexture = texPath + L"WallFront2.png";
 		app->RegisterTexture(L"WallFrontTex", strTexture);
 		strTexture = texPath + L"Ceiling.png";
 		app->RegisterTexture(L"CeilingTex", strTexture);
