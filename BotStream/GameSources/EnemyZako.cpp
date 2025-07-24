@@ -600,7 +600,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Down", 420, 80, false, 60.0f);
 		ptrDraw->AddAnimation(L"Hit", 380, 40, false, 60.0f);
 		ptrDraw->AddAnimation(L"Stun", 525, 60, false, 60.0f);
-		ptrDraw->AddAnimation(L"Attack1", 260, 80, false, 60.0f);
+		ptrDraw->AddAnimation(L"Attack1", 280, 60, false, 60.0f);
+		ptrDraw->AddAnimation(L"Charge", 240, 20, false, 60.0f);
 
 		//影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();

@@ -428,6 +428,7 @@ namespace basecross {
 		EffectManager::Instance().RegisterEffect(L"RushEfk", efkPath + L"Rush.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnemyAttack", efkPath + L"PrayerDamage.efkefc");
 		EffectManager::Instance().RegisterEffect(L"GunLine", efkPath + L"GunLine.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemySlash", efkPath + L"EnemySlash.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
