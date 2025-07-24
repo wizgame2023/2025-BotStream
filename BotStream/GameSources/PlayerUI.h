@@ -27,7 +27,7 @@ namespace basecross {
 
 		void AllClear(bool clear);
 	public:
-		PlayerGaugeUI(const shared_ptr<Stage>& stagePtr,shared_ptr<Player> player) :
+		PlayerGaugeUI(const shared_ptr<Stage>& stagePtr, const shared_ptr<Player>& player) :
 			MyGameObject(stagePtr),
 			m_player(player)
 		{
@@ -116,7 +116,7 @@ namespace basecross {
 		// digitPos:ˆÊ’uİ’è
 		// bulletNum:Å‘å‘•“U”
 		// digitSize:•¶š‚Ì‘å‚«‚³
-		PlayerBulletUI(const shared_ptr<Stage>& stagePtr, shared_ptr<Player> player, Vec2 digitPos, float digitSize = 40.0f) :
+		PlayerBulletUI(const shared_ptr<Stage>& stagePtr, const shared_ptr<Player>& player, const Vec2& digitPos, float digitSize = 40.0f) :
 			MyGameObject(stagePtr),
 			m_digitPos(digitPos),
 			m_digitSize(digitSize),
@@ -260,7 +260,7 @@ namespace basecross {
 
 		float m_time = 0;
 	public:
-		PlayerEmergencyUI(const shared_ptr<Stage>& stagePtr, const shared_ptr<Player> player) :
+		PlayerEmergencyUI(const shared_ptr<Stage>& stagePtr, const shared_ptr<Player>& player) :
 			MyGameObject(stagePtr),
 			m_player(player)
 		{
