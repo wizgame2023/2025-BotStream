@@ -171,6 +171,10 @@ namespace basecross {
 				m_doors.push_back(doorLeft);
 				auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, 59.5f));
 				m_doors.push_back(doorRight);
+
+				// PlayerのHP回復
+				PlayerRecovery();
+
 				break;
 			}
 			// ----------------------------------------------------------------------------
@@ -191,6 +195,8 @@ namespace basecross {
 				//ボスムービー再生
 				m_movieController->BossMovie();
 
+				// PlayerのHP回復
+				PlayerRecovery();
 				break;
 			}
 			// ----------------------------------------------------------------------------

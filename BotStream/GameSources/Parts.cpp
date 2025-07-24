@@ -25,7 +25,7 @@ namespace basecross {
 
 	void Parts::OnCreate()
 	{
-		//初期化
+		// 初期化
 		auto trans = GetComponent<Transform>();
 		trans->SetPosition(m_pos);
 		trans->SetRotation(m_rot);
@@ -43,7 +43,7 @@ namespace basecross {
 		ptrDraw->SetDiffuse(Col4(1, 1, 1, 1));
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 
-		//パーツタイプによって見た目が変わる
+		// パーツタイプによって見た目が変わる
 		switch (m_partsStatus.partsType)
 		{
 		case parts:
@@ -62,16 +62,16 @@ namespace basecross {
 			break;
 		}
 
-		//OBB衝突判定を付ける
+		// OBB衝突判定を付ける
 		auto ptrColl = AddComponent<CollisionSphere>();
 		ptrColl->SetAfterCollision(AfterCollision::None);
 
 		auto stage = GetStage();
 
-		//パーツポーチ取得
+		// パーツポーチ取得
 		m_partspoach = stage->GetSharedGameObject<EquippedParts>(L"PartsPoach");
 		
-		//ビルボード生成
+		// ビルボード生成
 		m_billBoard = stage->AddGameObject<BillBoard>(GetThis<GameObject>(),
 			m_partsStatus.partsImagePass
 			);
@@ -82,17 +82,17 @@ namespace basecross {
 
 	void Parts::OnUpdate()
 	{
-		//ポーズ状態がオンならアップデートしない
+		// ポーズ状態がオンならアップデートしない
 		if (m_pose) return;
 
 		auto stage = GetStage();
 		auto player = stage->GetSharedGameObject<Player>(L"Player");
 		auto playerPos = player->GetPosition();
 		auto deltaTime = App::GetApp()->GetElapsedTime();
-		//プレイヤーとパーツの距離を取る
+		// プレイヤーとパーツの距離を取る
 		auto distPos = playerPos - m_pos;
 
-		//プレイヤーとの距離が一定以下ならパーツ説明ビルボードを出す
+		// プレイヤーとの距離が一定以下ならパーツ説明ビルボードを出す
 		if (distPos.length() <= 30.0f)
 		{
 			m_billBoard->SetScale(Vec3(7.0f, 7.0f, 1.0f));
@@ -102,6 +102,21 @@ namespace basecross {
 			m_billBoard->SetScale(Vec3(0.0f, 0.0f, 0.0f));
 		}
 
+		// カメラの情報を取得する
+		auto stageCamera = OnGetDrawCamera();
+		auto cameraPos = stageCamera->GetEye();
+
+		// カメラとパーツの距離を取る
+		distPos = cameraPos - m_pos;
+
+		// カメラがパーツ説明ビルボードに近かったら透明にする
+		if (distPos.length() <= 15.0f)
+		{
+			m_billBoard->SetScale(Vec3(0.0f, 0.0f, 0.0f));
+		}
+
+
+		// 回転する
 		auto partsQt = GetComponent<Transform>()->GetQuaternion();
 		partsQt = partsQt * (Quat(0.0f, 1.0f * (sin(XMConvertToRadians(-2.0f) / 2.0f)), 0.0f, cos(XMConvertToRadians(-2.0f) / 2.0f)) * deltaTime);
 

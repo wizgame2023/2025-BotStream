@@ -824,7 +824,7 @@ namespace basecross {
 		EnemyZakoStateBase::Enter();
 
 		m_chargeTime = 0.0f;
-		m_maxChargeTime = 2.0f;
+		m_maxChargeTime = 1.5f;
 		// プレイヤーの方向ベクトルをキャッシュ
 		Vec3 toPlayer = m_enemyZako->GetPlayerDistInVec3();
 		toPlayer.normalize();
@@ -1099,6 +1099,8 @@ namespace basecross {
 
 		m_stunTimeMax = 4.0f;
 		m_enemyZako->ChangeAnim(L"Down");//ダメージを受けたアニメーションに変更
+
+		m_enemyZako->GetAttackPtr()->ActivateCollision(0.0f);//攻撃判定を無効にする
 	}
 	void EnemyZakoFlyingStanState::Update(float deltaTime)
 	{
@@ -1172,6 +1174,7 @@ namespace basecross {
 		//やられたとき用のアニメーションに変更
 		m_enemyZako->ChangeAnim(L"Down");
 
+		m_enemyZako->GetAttackPtr()->ActivateCollision(0.0f);//攻撃判定を無効にする
 	}
 	void EnemyZakoFlyingDieState::Update(float deltaTime)
 	{
