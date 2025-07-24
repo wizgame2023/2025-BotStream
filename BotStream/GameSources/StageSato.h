@@ -67,8 +67,6 @@ namespace basecross {
 
 		shared_ptr<CameraManager> m_cameraMana;
 
-		vector<shared_ptr<DamageBillRoot>> m_root;
-
 		vector<shared_ptr<DamageBill>> m_damageBill;
 
 		// スプライトのリスト

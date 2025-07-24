@@ -7,7 +7,14 @@
 #include "Project.h"
 
 namespace basecross {
-	Sprite::Sprite(shared_ptr<Stage>& stagePtr, wstring textureName, Vec2 size, Vec3 pos, Vec3 rot, Col4 color, int layer) :
+	Sprite::Sprite(
+		const shared_ptr<Stage>& stagePtr,
+		const wstring& textureName,
+		const Vec2& size,
+		const Vec3& pos, 
+		const Vec3& rot,
+		const Col4& color, 
+		int layer) :
 		MyGameObject(stagePtr),
 		m_textureName(textureName),
 		m_size(size),

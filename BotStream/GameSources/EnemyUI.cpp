@@ -10,7 +10,7 @@
 
 namespace basecross {
 	BillBoardGauge::BillBoardGauge(const shared_ptr<Stage>& StagePtr,
-		shared_ptr<GameObject>& actorPtr, wstring spriteName, int layer, float pushY, Vec3 scale) :
+		const shared_ptr<GameObject>& actorPtr, const wstring& spriteName, int layer, float pushY, Vec3 scale) :
 		BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale),
 		m_indices(vector<uint16_t>())
 	{

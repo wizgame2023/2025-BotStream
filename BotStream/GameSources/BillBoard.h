@@ -54,12 +54,12 @@ namespace basecross {
 	public:
 		//構築と破棄
 		BillBoard(const shared_ptr<Stage>& StagePtr,
-			shared_ptr<GameObject>& actorPtr,
-			wstring spriteName,
+			const shared_ptr<GameObject>& actorPtr,
+			const wstring& spriteName,
 			int layer = 2,
 			float pushY = 18.0f,
-			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
-			Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
+			const Vec3& scale = Vec3(3.0f, 3.0f, 3.0f),
+			const Col4& color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
 			float pushX = 0.0f);
 
 		virtual ~BillBoard();
@@ -95,12 +95,12 @@ namespace basecross {
 	public:
 		DamageBill(
 			const shared_ptr<Stage>& stagePtr,
-			shared_ptr<GameObject>& actorPtr,
-			wstring spriteName,
+			const shared_ptr<GameObject>& actorPtr,
+			const wstring& spriteName,
 			int layer = 2,
 			float pushY = 18.0f,
-			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
-			Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
+			const Vec3& scale = Vec3(3.0f, 3.0f, 3.0f),
+			const Col4& color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
 			float pushX = 0.0f,
 
 			float displayTime = 1.0f // ビルボードの表示時間
@@ -111,46 +111,5 @@ namespace basecross {
 		virtual void OnUpdate() override;
 	};
 
-	// ダメージビルボードの本体座標みたいな
-	class DamageBillRoot : public MyGameObject
-	{
-		weak_ptr<GameObject> m_actor;
-		float m_pushY;
-		Quat Billboard(const Vec3& line);
-	public:
-		DamageBillRoot(const shared_ptr<Stage>& stagePtr, shared_ptr<GameObject>& actorPtr, float pushY = 18.0f);
-		virtual ~DamageBillRoot() {}
-		virtual void OnCreate() override;
-		virtual void OnUpdate() override;
-	};
-
-	class TestBill : public BillBoard
-	{
-		vector<uint16_t> m_indices;
-
-		//Col4 m_color;
-	public:
-		TestBill(
-			const shared_ptr<Stage>& StagePtr,
-			shared_ptr<GameObject>& actorPtr,
-			wstring spriteName,
-			int layer = 2,
-			float pushY = 18.0f,
-			Vec3 scale = Vec3(3.0f, 3.0f, 3.0f),
-			Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f)
-		) :
-			BillBoard(StagePtr, actorPtr, spriteName, layer, pushY, scale, color),
-			m_indices(vector<uint16_t>())
-		{
-		}
-
-		virtual ~TestBill() {}
-
-		void SetBillUV(Vec2 topLeft, Vec2 botRight);
-
-		virtual void OnCreate()override;
-		virtual void OnUpdate()override;
-
-	};
 }
 //end basecross
