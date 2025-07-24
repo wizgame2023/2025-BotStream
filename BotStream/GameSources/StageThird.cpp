@@ -48,7 +48,7 @@ namespace basecross {
 		m_boss = AddGameObject<BossFirst>(Vec3(0.0f, 2.0f, 250.0f), Vec3(0.0f, -5.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f));
 		SetSharedGameObject(L"Boss", m_boss.lock());
 		dynamic_pointer_cast<BossFirst>(m_boss.lock())->ChangeHPMax(1200);
-		dynamic_pointer_cast<BossFirst>(m_boss.lock())->ChangeArmorMax(400.0f, 10.0f);
+		dynamic_pointer_cast<BossFirst>(m_boss.lock())->ChangeArmorMax(400.0f, 15.0f);
 
 		//wave1敵
 		// 床のポジション Vec3(0.0f, -3.0f, -260.0f), 大きさ Vec3(120.0f, 3.0f, 120.0f)
@@ -191,6 +191,8 @@ namespace basecross {
 			auto doorRight = AddGameObject<Door>(Vec3(5.0f, 10.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(+2.5f, 3.0f, 59.5f));
 			m_doors.push_back(doorRight);
 
+			// PlayerのHP回復
+			PlayerRecovery();
 
 			break;
 		}
@@ -211,6 +213,9 @@ namespace basecross {
 
 			//ボスムービー再生
 			m_movieController->BossMovie();
+
+			// PlayerのHP回復
+			PlayerRecovery();
 
 			break;
 		}

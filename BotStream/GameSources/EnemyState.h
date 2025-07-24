@@ -278,7 +278,7 @@ namespace basecross {
 	// ƒGƒlƒ‹ƒM[’eI‚í‚è
 	class BossFirstSphereEndState : public StateBase {
 		float m_time = 0;
-		const float m_recoveryTime = .75f;
+		const float m_recoveryTime = 1.25f;
 
 	public:
 		BossFirstSphereEndState(shared_ptr<GameObject>& obj) :
@@ -347,8 +347,8 @@ namespace basecross {
 	// ™ôšK
 	class BossFirstRoarState : public StateBase {
 		float m_time = 0;
-		const float m_attackTime = .2f;
-		const float m_endTime = .5f;
+		const float m_attackTime = .6f;
+		const float m_endTime = 2.0f;
 
 		bool m_isAttackEnd = false;
 	public:

@@ -115,6 +115,8 @@ namespace basecross {
         virtual bool ConsiderGameOver();
         //ğŒ‚É‚æ‚Á‚ÄGamePhase‚ğ•ÏX
         virtual void UpdateGamePhase();
+        //Player‚Ì‰ñ•œˆ—
+        virtual void PlayerRecovery();
 
     public:
         //\’z‚Æ”jŠü
