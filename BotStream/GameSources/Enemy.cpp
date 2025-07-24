@@ -9,14 +9,14 @@
 #include "Enemy.h"
 
 namespace basecross {
-	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(false)
 	{
 
 	}
 
-	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale, bool use) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(use)
 	{
@@ -122,7 +122,7 @@ namespace basecross {
 
 		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
 
-		m_state = shared_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
 	}
 
 	void EnemyBase::OnUpdate() {
@@ -241,6 +241,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"WakeUp", 431, 56, false, 60.0f);
 		//ボーナス行動
 		ptrDraw->AddAnimation(L"Bonus", 541, 99, false, 90.0f);
+		//咆哮(動作は上と同じ)
+		ptrDraw->AddAnimation(L"Roar", 541, 99, false, 30.0f);
 
 		//近接1
 		ptrDraw->AddAnimation(L"AttackClose1", 651, 67, false, 60.0f);
@@ -295,7 +297,7 @@ namespace basecross {
 
 		m_armorMax = 200.0f;
 		m_armor = m_armorMax;
-		m_armorRecoverTime = 6.0f;
+		m_armorRecoverTime = 9.0f;
 
 		m_stunMax = 5;
 
@@ -338,7 +340,7 @@ namespace basecross {
 
 		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
 
-		m_state = shared_ptr<BossFirstStateMachine>(new BossFirstStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<BossFirstStateMachine>(new BossFirstStateMachine(GetThis<GameObject>()));
 	}
 
 	void BossFirst::OnUpdate() {

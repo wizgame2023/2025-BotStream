@@ -8,7 +8,7 @@
 #include "Actor.h"
 
 namespace basecross {
-	Actor::Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	Actor::Actor(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale) :
 		ObjectMove(stagePtr),
 		m_pos(pos),
 		m_rot(rot),

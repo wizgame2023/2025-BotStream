@@ -534,11 +534,7 @@ namespace basecross {
 			m_player->ChangeState(L"Attack1");
 		}
 		// 回避移行可能
-		if (DodgeButton)
-		{
-			m_player->ChangeState(L"Dodge");
-		}
-
+		Dodge(m_dodgeFlag);
 
 
 		//ブレーキした後の処理(歩きステートに移行)

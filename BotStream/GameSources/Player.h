@@ -180,6 +180,8 @@ namespace basecross {
 		int GetSP();
 		//HPのセッター
 		void SetHP(int setHP);
+		//HPのセッター
+		void AddHP(int addHP);
 		//SPのセッター
 		void SetSP(int setSP);
 		//SPMaxのゲッター
