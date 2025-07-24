@@ -9,14 +9,14 @@
 #include "Enemy.h"
 
 namespace basecross {
-	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(false)
 	{
 
 	}
 
-	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use) :
+	EnemyBase::EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale, bool use) :
 		Actor(stagePtr, pos, rot, scale),
 		m_used(use)
 	{
@@ -122,7 +122,7 @@ namespace basecross {
 
 		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
 
-		m_state = shared_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyStateMachine>(new EnemyStateMachine(GetThis<GameObject>()));
 	}
 
 	void EnemyBase::OnUpdate() {
@@ -340,7 +340,7 @@ namespace basecross {
 
 		m_player = dynamic_pointer_cast<Player>(GetStage()->GetSharedObject(L"Player"));
 
-		m_state = shared_ptr<BossFirstStateMachine>(new BossFirstStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<BossFirstStateMachine>(new BossFirstStateMachine(GetThis<GameObject>()));
 	}
 
 	void BossFirst::OnUpdate() {

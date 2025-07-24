@@ -87,7 +87,7 @@ namespace basecross {
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる		
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -388,7 +388,7 @@ namespace basecross {
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -472,7 +472,7 @@ namespace basecross {
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -627,7 +627,7 @@ namespace basecross {
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoHumanoidStateMachine>(new EnemyZakoHumanoidStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoHumanoidStateMachine>(new EnemyZakoHumanoidStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる		
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
