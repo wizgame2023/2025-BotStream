@@ -631,6 +631,13 @@ namespace basecross {
 	{
 		m_HPCurrent = setHP;
 	}
+	//HPの追加
+	void Player::AddHP(int AddHP)
+	{
+		PlaySnd(L"RecoverySE", 0.9f, 0);
+
+		m_HPCurrent += AddHP;
+	}
 	//SPのセッター
 	void Player::SetSP(int setSP)
 	{
