@@ -378,11 +378,10 @@ namespace basecross {
 				m_audioSelectFlag = false;
 
 			// 右に倒したら +0.1f
-			if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
+			if ((ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f) && !m_audioSelectFlag)
 			{
 
 				m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
-
 				m_audioMaxSetCol[idx]++;
 
 
@@ -401,17 +400,27 @@ namespace basecross {
 				}
 
 
+
 				// 音量が0.999f以上になったら1.0fにする
 				if (m_audioMax[idx] >= 0.999f)
 				{
 					m_audioMax[idx] = 1.0f;
 				}
 
+				m_audioSelectFlag = true;
+
 			}
 			// スティックを左に倒したら -0.1f
-			else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f)
+			else if ((ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f) && !m_audioSelectFlag)
 			{
 				
+				m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
+				m_audioMaxSetCol[idx]--;
+
+				if (m_audioMaxSetCol[idx] < 0)
+				{
+					m_audioMaxSetCol[idx] = 0; // 最小値は0
+				}
 
 				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
 				if (idx == 0)
@@ -426,16 +435,14 @@ namespace basecross {
 					auto currentSelectPos = m_SEMater[m_audioMaxSetCol[idx]]->GetPosition();
 					m_audioSelect[idx]->SetPosition(currentSelectPos);
 				}
-				m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
-
-				m_audioMaxSetCol[idx]--;
 
 				// 音量が0.001f以下になったら0にする
 				if (m_audioMax[idx] <= 0.001f)
 				{
 					m_audioMax[idx] = 0.0f;
-					m_audioMaxSetCol[idx] = 0;
 				}
+
+				m_audioSelectFlag = true;
 
 			}
 
