@@ -248,6 +248,15 @@ namespace basecross {
 		}
 	}
 
+	//Playerの回復処理
+	void WaveStageBase::PlayerRecovery()
+	{
+		int playerMaxHP = m_player.lock()->GetMaxHP();
+		int recoveryHP = (int)(playerMaxHP * 0.3f);
+		// PlayerのHP回復
+		m_player.lock()->AddHP(recoveryHP);
+	}
+
 	//Waveが切り替わる際に行う処理
 	void WaveStageBase::WaveInitialize() {
 		switch (m_waveCurrent) {
