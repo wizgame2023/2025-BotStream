@@ -732,12 +732,15 @@ namespace basecross {
 			}
 
 			//スタン時の演出
-			if (isStun) {
-				AddEffect(EnemyEffect_Stun);
-				App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
-				m_stun = 0;
+			if (!FindTag(L"AttackNow"))
+			{
+				if (isStun) {
+					AddEffect(EnemyEffect_Stun);
+					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+					m_stun = 0;
 
-				m_state->ChangeState(L"Stun");
+					m_state->ChangeState(L"Stun");
+				}
 			}
 
 			//やられ処理移行

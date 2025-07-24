@@ -291,7 +291,8 @@ namespace basecross {
 			m_effect = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f));
 			break;
 		case EnemyEffect_Slash:
-			m_effect = EfkPlaying(L"EnemySlash", angle, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f), Vec3(0.0f, 0.0f, 0.0f));
+			m_effect = EfkPlaying(L"EnemySlash", angle, Vec3(0, 1, 0.1f), Vec3(1.0f, 1.0f, 1.0f), Vec3(-1.3f, 0.0f, -1.7f));
+			EffectManager::Instance().SetSpeed(m_effect, 7.0f);
 			break;
 		default:
 			break;
