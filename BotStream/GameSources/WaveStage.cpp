@@ -658,7 +658,7 @@ namespace basecross {
         ptrDraw->SetMeshToTransformMatrix(spanMat);
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
-        ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
+        //ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
         //ptrDraw->SetTextureResource(L"Wall");
 
         AddTag(L"CameraObstacles");
@@ -707,7 +707,7 @@ namespace basecross {
 
 
         //ptrDraw->SetDiffuse(Col4(0.8f, 0.9f, 1.0f, 0.0f));
-        ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
+        //ptrDraw->SetDiffuse(Col4(0.4f, 0.5f, 0.6f, 0.0f));
         //ptrDraw->SetTextureResource(L"Wall");
 
         AddTag(L"CameraObstacles");
