@@ -18,7 +18,7 @@ namespace basecross{
 	{
 	protected:
 		bool m_used = false;
-		shared_ptr<StateMachineBase> m_state;
+		unique_ptr<StateMachineBase> m_state;
 		const float m_rotateSpeed = 1.2f;
 		const float m_rotateThreshold = .3f;
 
@@ -38,8 +38,8 @@ namespace basecross{
 
 
 	public:
-		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
-		EnemyBase(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool use);
+		EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale);
+		EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale, bool use);
 		~EnemyBase() {}
 
 		virtual void HitBackStandBehavior();
@@ -57,7 +57,7 @@ namespace basecross{
 		void OnUpdate() override;
 
 		//初期化処理(敵をスポーンさせるとき使う？)
-		void Initialize(Vec3 pos, Vec3 rot, Vec3 scale) {
+		void Initialize(const Vec3& pos, const Vec3& rot, const Vec3& scale) {
 			m_used = true;
 
 			auto ptr = GetComponent<Transform>();
@@ -122,7 +122,7 @@ namespace basecross{
 		bool m_isRecoveredFromArmorBreak = false;
 		float m_prevArmor = 0.0f;
 	public:
-		BossFirst(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false) :
+		BossFirst(const shared_ptr<Stage>& stagePtr, const Vec3 pos, const Vec3 rot, const Vec3 scale, bool used = false) :
 			EnemyBase(stagePtr, pos, rot, scale, used)
 		{
 
@@ -205,7 +205,7 @@ namespace basecross{
 
 		void DrawInit();
 	public:
-		BossFirstShockwave(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, shared_ptr<Actor> originObj) :
+		BossFirstShockwave(const shared_ptr<Stage>& stagePtr, const Vec3 pos, const Vec3 rot, const Vec3 scale, const shared_ptr<Actor>& originObj) :
 			ProjectileBase(stagePtr, pos, rot, scale, originObj)
 		{
 
@@ -268,7 +268,7 @@ namespace basecross{
 
 		void CreateChildObjects() override;
 	public:
-		BossFirstSphere(const shared_ptr<Stage>& stagePtr, Vec3 pos, Quat rot, Vec3 scale, float towardPlayerTime) :
+		BossFirstSphere(const shared_ptr<Stage>& stagePtr, const Vec3 pos, const Quat rot, const Vec3 scale, float towardPlayerTime) :
 			Actor(stagePtr, pos, Vec3(0), scale),
 			m_face(rot),
 			m_firstMoveTime(towardPlayerTime)

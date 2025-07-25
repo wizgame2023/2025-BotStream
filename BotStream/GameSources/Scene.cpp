@@ -350,7 +350,7 @@ namespace basecross {
 		app->RegisterTexture(L"WallSideTex", strTexture);
 		strTexture = texPath + L"WallFront2.png";
 		app->RegisterTexture(L"WallFrontTex", strTexture);
-		strTexture = texPath + L"Ceiling.png";
+		strTexture = texPath + L"Ceiling2.png";
 		app->RegisterTexture(L"CeilingTex", strTexture);
 
 		//スタティックメッシュ
