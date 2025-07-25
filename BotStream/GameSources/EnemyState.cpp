@@ -68,7 +68,7 @@ namespace basecross {
 					boss->ChangeState(L"Roar");
 				}
 				else {
-					boss->ChangeState(L"Attack");
+					boss->ChangeState(L"AttackWait");
 				}
 
 				//‰ñ“]
@@ -131,12 +131,32 @@ namespace basecross {
 			}
 			else {
 				//Žh‚·I
-				boss->ChangeState(L"Attack");
+				boss->ChangeState(L"AttackWait");
 			}
-			
+
 		}
 	}
 	void BossFirstChaseState::Exit() {
+
+	}
+
+	void BossFirstAttackWaitState::Enter() {
+
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj.lock());
+		boss->ChangeAnim(L"Idle", false);
+		m_time = 0;
+	}
+	void BossFirstAttackWaitState::Update(float deltatime) {
+		m_time += deltatime;
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj.lock());
+		boss->RotateToPlayer(1.0f, 0);
+
+		if (m_time >= m_timeMax || abs(boss->GetPlayerSubDirection()) <= m_rotateGoal) {
+			boss->ChangeState(L"Attack");
+		}
+
+	}
+	void BossFirstAttackWaitState::Exit() {
 
 	}
 
