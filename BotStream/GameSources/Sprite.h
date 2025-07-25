@@ -33,7 +33,14 @@ namespace basecross {
 
 
 	public:
-		Sprite(shared_ptr<Stage>& stagePtr, wstring textureName, Vec2 size, Vec3 pos = Vec3(0.0f, 0.0f, 0.0f), Vec3 rot = Vec3(0.0f, 0.0f, 0.0f), Col4 color = Col4(1.0f, 1.0f, 1.0f, 1.0f), int layer = 1);//コンストラクタ
+		Sprite(
+			const shared_ptr<Stage>& stagePtr,
+			const wstring& textureName, 
+			const Vec2& size, 
+			const Vec3& pos = Vec3(0.0f, 0.0f, 0.0f), 
+			const Vec3& rot = Vec3(0.0f, 0.0f, 0.0f),
+			const Col4& color = Col4(1.0f, 1.0f, 1.0f, 1.0f),
+			int layer = 1);//コンストラクタ
 		virtual ~Sprite();//デストラクタ
 
 		virtual void OnCreate()override;//作成

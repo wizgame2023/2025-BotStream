@@ -10,12 +10,12 @@ namespace basecross {
 
 	BillBoard::BillBoard(
 		const shared_ptr<Stage>& StagePtr,
-		shared_ptr<GameObject>& actorPtr, 
-		wstring spriteName, 
+		const shared_ptr<GameObject>& actorPtr, 
+		const wstring& spriteName, 
 		int layer, 
 		float pushY, 
-		Vec3 scale, 
-		Col4 color, 
+		const Vec3& scale, 
+		const Col4& color, 
 		float pushX) :
 		MyGameObject(StagePtr),
 		m_actor(actorPtr),
@@ -173,12 +173,12 @@ namespace basecross {
 	//------------------------------------------------
 	DamageBill::DamageBill(
 		const shared_ptr<Stage>& stagePtr,
-		shared_ptr<GameObject>& actorPtr,
-		wstring spriteName,
+		const shared_ptr<GameObject>& actorPtr,
+		const wstring& spriteName,
 		int layer,
 		float pushY,
-		Vec3 scale,
-		Col4 color,
+		const Vec3& scale,
+		const Col4& color,
 		float pushX,
 		float displayTime)
 		: BillBoard(stagePtr, actorPtr, spriteName, layer, pushY, scale, color, pushX),
@@ -230,111 +230,6 @@ namespace basecross {
 		auto draw = GetComponent<PCTStaticDraw>();
 		draw->SetTextureResource(m_textureName);
 		draw->SetDiffuse(m_color);
-	}
-
-	//------------------------------------------------
-	// ダメージビルボードの本体座標みたいな
-	//------------------------------------------------
-	DamageBillRoot::DamageBillRoot(const shared_ptr<Stage>& stagePtr, shared_ptr<GameObject>& actorPtr, float pushY)
-		: MyGameObject(stagePtr), m_actor(actorPtr), m_pushY(pushY) {
-	}
-
-	Quat DamageBillRoot::Billboard(const Vec3& line)
-	{
-		Vec3 temp = line;
-		Mat4x4 rot;
-		Vec3 up(0, 1.0f, 0);
-		Vec2 tempXZ(temp.x, temp.z);
-		if (tempXZ.length() < 0.1f) {
-			up = Vec3(0, 0, 1.0f);
-		}
-		temp.normalize();
-		rot = XMMatrixLookAtLH(Vec3(0, 0, 0), temp, up);
-		rot.inverse();
-		Quat qt = rot.quatInMatrix();
-		qt.normalize();
-		return qt;
-	}
-
-	void DamageBillRoot::OnCreate()
-	{
-		SetDrawActive(false); // 透明
-	}
-
-	void DamageBillRoot::OnUpdate()
-	{
-		// アクタが存在しない場合はこのビルボードを削除
-		if (m_actor.expired()) {
-			GetStage()->RemoveGameObject<DamageBillRoot>(GetThis<DamageBillRoot>());
-			return;
-		}
-
-		auto actorLock = m_actor.lock();
-		auto actorTrans = actorLock->GetComponent<Transform>();
-		auto trans = GetComponent<Transform>();
-
-		Vec3 pos = actorTrans->GetPosition();
-		pos.y += m_pushY;
-		trans->SetPosition(pos);
-
-		auto cam = GetStage()->GetView()->GetTargetCamera();
-		Quat qt = Billboard(cam->GetAt() - cam->GetEye());
-		trans->SetQuaternion(qt);
-	}
-
-	void TestBill::OnCreate()
-	{
-		auto PtrTransform = GetComponent<Transform>();
-		if (!m_actor.expired()) {
-			auto SeekPtr = m_actor.lock();
-			auto SeekTransPtr = SeekPtr->GetComponent<Transform>();
-			auto Pos = SeekTransPtr->GetPosition();
-			Pos.y += m_pushY;
-			PtrTransform->SetPosition(Pos);
-			PtrTransform->SetScale(m_scale);
-			PtrTransform->SetQuaternion(SeekTransPtr->GetQuaternion());
-
-			MeshUtill::CreateSquare(1.0f, m_vertices, m_indices);
-
-			SetBillUV(Vec2(0.0f, 0.0f), Vec2(1.0f, 1.0f));
-
-			vector<VertexPositionColorTexture> new_vertices;
-			for (auto& v : m_vertices) {
-				VertexPositionColorTexture nv;
-				nv.position = v.position;
-				nv.color = Col4(m_color);
-				nv.textureCoordinate = v.textureCoordinate;
-				new_vertices.push_back(nv);
-			}
-
-			m_SquareMeshResource = MeshResource::CreateMeshResource<VertexPositionColorTexture>(new_vertices, m_indices, true);
-
-			auto DrawComp = AddComponent<PCTStaticDraw>();
-			DrawComp->SetMeshResource(m_SquareMeshResource);
-			DrawComp->SetTextureResource(m_textureName);
-			DrawComp->SetDiffuse(m_color);
-
-			SetAlphaActive(true);
-			SetDrawLayer(m_layer);
-		}
-
-	}
-
-	void TestBill::OnUpdate()
-	{
-
-	}
-
-	void TestBill::SetBillUV(Vec2 topLeft, Vec2 botRight)
-	{
-		m_vertices[0].textureCoordinate = Vec2(topLeft);
-
-		m_vertices[1].textureCoordinate = Vec2(botRight.x, topLeft.y);
-
-		m_vertices[2].textureCoordinate = Vec2(topLeft.x, botRight.y);
-
-		m_vertices[3].textureCoordinate = Vec2(botRight);
-
 	}
 }
 
