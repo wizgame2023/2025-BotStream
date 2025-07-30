@@ -265,6 +265,9 @@ namespace basecross {
         auto KeyState = app->GetInputDevice().GetKeyState();
         auto pad = app->GetInputDevice().GetControlerVec()[0];
 
+        //ƒŠƒZƒbƒgˆ—
+        app->GetScene<Scene>()->Reset();
+
         UpdateGamePhase();
         EffectManager::Instance().InterfaceUpdate();
 

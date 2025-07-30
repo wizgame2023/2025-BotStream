@@ -55,6 +55,9 @@ namespace basecross{
 		*/
 		//--------------------------------------------------------------------------------------
 		virtual void OnEvent(const shared_ptr<Event>& event) override;
+
+		// リセット関数
+		void Reset();
 	
 		//ゲームに必要な物のパスを渡す
 		void GameResourses();
