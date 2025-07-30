@@ -40,7 +40,7 @@ namespace basecross{
 		float m_delta;
 
 		//ステートマシン用メンバ変数
-		shared_ptr<StateMachineBase> m_stateMashine = nullptr;
+		unique_ptr<StateMachineBase> m_stateMashine = nullptr;
 
 		CONTROLER_STATE m_controler;//コントローラー
 		Vec2 m_contrloerVec;		//コントローラーの右スティック入力
@@ -67,7 +67,7 @@ namespace basecross{
 
 
 
-		//スプライト
+		// スプライト
 		shared_ptr<Sprite> m_spriteAiming = nullptr;//射撃用のクロスヘアのスプライト
 
 
@@ -98,21 +98,21 @@ namespace basecross{
 		vector<float> m_lockOnAngle;			//LockOnCanがPlayerにとってどの方向にいるのかの変数
 		/////////////////////////////////////////////////////////////////////////////
 
-		float m_meleeRange;	//近接戦闘の範囲
-		bool m_meleeFlag = true;	//近接戦闘していいかのフラグ
-		bool m_meleeNow = false;	//攻撃をしているフラグ
-		bool m_gunNow = false;		//遠距離攻撃をしているフラグ
+		float m_meleeRange;			// 近接戦闘の範囲
+		bool m_meleeFlag = true;	// 近接戦闘していいかのフラグ
+		bool m_meleeNow = false;	// 攻撃をしているフラグ
+		bool m_gunNow = false;		// 遠距離攻撃をしているフラグ
 
-		bool m_PauseFlag;	//ポーズのフラグ
+		bool m_PauseFlag;	// ポーズのフラグ
 
-		//カーソルがワープした際のフラグ
+		// カーソルがワープした際のフラグ
 		bool m_cursorFlagX = false; // x座標版
 		bool m_cursorFlagY = false; // y座標版
 
 		// 現在のステートは何かの変数
 		int ModeState = 0;
 
-		//右か左かそれとも真ん中か
+		// 右か左かそれとも真ん中か
 		enum LeftOrRight
 		{
 			Middle,
@@ -140,28 +140,28 @@ namespace basecross{
 			float speedXAxis = 1.0f,float speedYAxis = 3.0f);
 		~CameraManager();
 
-		void OnCreate()override;//作成
-		void OnUpdate()override;//更新
+		void OnCreate()override; // 作成
+		void OnUpdate()override; // 更新
 
-		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);//ロックオン機能
-		void MovePlayerAngle(float playerAngle);									//Playerの背中を見える角度にする
-		void MoveLockAt(Vec3 targetPos);											//注視点の移動処理//ここを作業する
-		bool MoveAngle(float targetAngle,int XorY);									//回転度の移動処理
-		void AdjustmentAngle();														//角度の調整
+		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);// ロックオン機能
+		void MovePlayerAngle(float playerAngle);									// Playerの背中を見える角度にする
+		void MoveLockAt(Vec3 targetPos);											// 注視点の移動処理//ここを作業する
+		bool MoveAngle(float targetAngle,int XorY);									// 回転度の移動処理
+		void AdjustmentAngle();														// 角度の調整
 		
-		void UpdateTargesDeta(Vec3 playerPos);					//LockOnCanのデータを更新する関数
-		void ChangeLockOn(int leftOrRight,float targetAngle);	//LockOnTargetを変更する処理
+		void UpdateTargesDeta(Vec3 playerPos);					// LockOnCanのデータを更新する関数
+		void ChangeLockOn(int leftOrRight,float targetAngle);	// LockOnTargetを変更する処理
 
-		//LockOnCanを決める関数
+		// LockOnCanを決める関数
 		void LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec, Vec3 playerPos);
-		//ロックオンの解除
+		// ロックオンの解除
 		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
-		//カメラのX軸回転の制限
+		// カメラのX軸回転の制限
 		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
 		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f,float cameraSpeed = 100.0f,int moveMode = NormalMove);//カメラのポジションの更新
 		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
 
-		//カメラの操作をする処理
+		// カメラの操作をする処理
 		void CameraControlNomalMode();
 		void CameraControlShotMode();
 		void CameraControlTransitionMode();
@@ -170,40 +170,40 @@ namespace basecross{
 		// マウスでのカメラ移動処理
 		void MouseCameraMove();
 
-		//現在地から目的地までの移動処理
+		// 現在地から目的地までの移動処理
 		float MoveToDestination(float nowOnePos,float destination, float speed = 20.0f);
-
-		//ステート変更処理 引数に入れたステートに変更する
+		 
+		// ステート変更処理 引数に入れたステートに変更する
 		void ChangeState(wstring stateName);
 		
-		//近距離攻撃をするかの処理のゲッターセッタ
+		// 近距離攻撃をするかの処理のゲッターセッタ
 		bool GetMeleeFlag();
 		void SetMeleeFlag(bool onOff);
 
-		//ターゲット対象との距離を渡す
+		// ターゲット対象との距離を渡す
 		float GetTargetDis();
 
-		//ポーズ処理のオンオフ
+		// ポーズ処理のオンオフ
 		void PoseSwitch(bool onOff);
 
-		//近遠どちらの攻撃をするかの処理
+		// 近遠どちらの攻撃をするかの処理
 		void MeleeFlagUpdate();
 
-		//ロックオン処理
+		// ロックオン処理
 		void LockOn(shared_ptr<Player> player);
-		//ロックオンする敵を決める処理
+		// ロックオンする敵を決める処理
 		void SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle);
-		//ロックオンを解除する条件
+		// ロックオンを解除する条件
 		void ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 
-		//ステートのゲッタセッタ
+		// ステートのゲッタセッタ
 		void SetStateMode(int stateMode)
 		{
 			ModeState = stateMode;
 		}
 
-		//角度のゲッタセッタ
-		//第一引数　X軸かY軸どちらの軸の角度を取るか
+		// 角度のゲッタセッタ
+		// 第一引数　X軸かY軸どちらの軸の角度を取るか
 		float GetAngle(wstring XorY)
 		{
 			if (XorY == L"X")
@@ -217,7 +217,7 @@ namespace basecross{
 
 			return 0;
 		}
-		//第一引数　X軸かY軸どちらの軸の角度を取るか 第二引数 どの角度に向くか
+		// 第一引数　X軸かY軸どちらの軸の角度を取るか 第二引数 どの角度に向くか
 		void SetAngle(wstring XorY,float angle)
 		{
 			if (XorY == L"X")
@@ -230,7 +230,7 @@ namespace basecross{
 			}
 		}
 
-		//カメラのAtゲッタ
+		// カメラのAtゲッタ
 		Vec3 GetCameraAt()
 		{
 			return m_lockStageCamera->GetAt();
@@ -240,7 +240,7 @@ namespace basecross{
 			m_lockStageCamera->SetAt(setAt);
 		}
 
-		//カメラのEyeセッタゲッタ
+		// カメラのEyeセッタゲッタ
 		Vec3 GetCameraEye()
 		{
 			return m_lockStageCamera->GetEye();
@@ -250,7 +250,7 @@ namespace basecross{
 			m_lockStageCamera->SetEye(setEye);
 		}
 
-		//pushStartのゲッタセッタ
+		// pushStartのゲッタセッタ
 		bool GetPushStart()
 		{
 			return m_pushStart;
@@ -260,7 +260,7 @@ namespace basecross{
 			m_pushStart = onOff;
 		}
 
-		//ポーズフラグのゲッタセッタ
+		// ポーズフラグのゲッタセッタ
 		bool GetPose()
 		{
 			return m_PauseFlag;
@@ -270,7 +270,7 @@ namespace basecross{
 			m_PauseFlag = onOff;
 		}
 
-		//pushPosのゲッタセッタ
+		// pushPosのゲッタセッタ
 		Vec3 GetPushPos()
 		{
 			return m_pushPos;
@@ -285,7 +285,7 @@ namespace basecross{
 			return Vec2(m_addAngleXAxis, m_addAngleYAxis).length();
 		}
 
-		//何の攻撃をしているかのセッタ
+		// 何の攻撃をしているかのセッタ
 		void SetMeleeNow(bool onOff)
 		{
 			m_meleeNow = onOff;
@@ -303,11 +303,11 @@ namespace basecross{
 			return m_gunNow;
 		}
 
-		//ターゲット対象を渡す関数
+		// ターゲット対象を渡す関数
 		shared_ptr<Actor> GetTargetObj();
 	};
 
-	//カメラのロックオン範囲
+	// カメラのロックオン範囲
 	class LockOnRange : public ObjectMove
 	{
 	private:
