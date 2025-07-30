@@ -332,6 +332,7 @@ namespace basecross {
 		//StageSelect================================================================
 		else
 		{
+
 			if (!m_pauseFlag &&
 				(cntl[0].wPressedButtons & XINPUT_GAMEPAD_START ||
 					keybord.m_bPressedKeyTbl[VK_TAB]))
@@ -349,7 +350,7 @@ namespace basecross {
 
 			// デッドゾーン定義
 			constexpr float dead = 0.65f;
-
+			constexpr float change = 50.0f;
 
 			// --- スティック上下でメニュー移動 -----------  
 			if (fabs(ret.y) < dead)
@@ -373,6 +374,8 @@ namespace basecross {
 			auto audioPos = m_pauseTextSprite[idx]->GetPosition();
 			m_selectSprite->SetPosition(audioPos);
 
+			Vec3 selectPos = m_audioSelect[idx]->GetPosition();
+
 			// 左右いずれかのデッドゾーン復帰でフラグクリア
 			if (fabs(ret.x) < dead)
 				m_audioSelectFlag = false;
@@ -380,32 +383,24 @@ namespace basecross {
 			// 右に倒したら +0.1f
 			if ((ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f) && !m_audioSelectFlag)
 			{
-
+				// 選択しているところの位置の更新
+				m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
 				m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
-				m_audioMaxSetCol[idx]++;
-
-
-				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
-				if (idx == 0)
-				{
-					m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
-					auto currentSelectPos = m_BGMMater[m_audioMaxSetCol[idx]]->GetPosition();
-					m_audioSelect[idx]->SetPosition(currentSelectPos);
-				}
-				else
-				{
-					m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
-					auto currentSelectPos = m_SEMater[m_audioMaxSetCol[idx]]->GetPosition();
-					m_audioSelect[idx]->SetPosition(currentSelectPos);
-				}
-
-
 
 				// 音量が0.999f以上になったら1.0fにする
 				if (m_audioMax[idx] >= 0.999f)
 				{
 					m_audioMax[idx] = 1.0f;
 				}
+
+				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
+				if (idx == 0)
+					m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
+				else
+					m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
+
+
+				m_audioMaxSetCol[idx]++;
 
 				m_audioSelectFlag = true;
 
@@ -414,35 +409,6 @@ namespace basecross {
 			else if ((ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f) && !m_audioSelectFlag)
 			{
 				
-				m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
-				m_audioMaxSetCol[idx]--;
-
-				if (m_audioMaxSetCol[idx] < 0)
-				{
-					m_audioMaxSetCol[idx] = 0; // 最小値は0
-				}
-
-				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
-				if (idx == 0)
-				{
-					m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1));
-					auto currentSelectPos = m_BGMMater[m_audioMaxSetCol[idx]]->GetPosition();
-					m_audioSelect[idx]->SetPosition(currentSelectPos);
-				}
-				else
-				{
-					m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1));
-					auto currentSelectPos = m_SEMater[m_audioMaxSetCol[idx]]->GetPosition();
-					m_audioSelect[idx]->SetPosition(currentSelectPos);
-				}
-
-				// 音量が0.001f以下になったら0にする
-				if (m_audioMax[idx] <= 0.001f)
-				{
-					m_audioMax[idx] = 0.0f;
-				}
-
-				m_audioSelectFlag = true;
 
 			}
 
@@ -543,6 +509,12 @@ namespace basecross {
 		m_pauseBack->OnClear(clear);
 		MainUIClear(clear);
 		AudioUIClear(clear);
+	}
+
+	// オーディオの設定の操作
+	void PauseSprite::AudioSetteing(const Vec2& ret, bool flag)
+	{
+
 	}
 
 	void PauseSprite::CreateSprite()
