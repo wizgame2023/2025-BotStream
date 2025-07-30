@@ -1,7 +1,7 @@
 #pragma once
 /*!
 @file Parts.h
-@brief ƒp[ƒcƒIƒuƒWƒFƒNƒg
+@brief ãƒ‘ãƒ¼ãƒ„ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 */
 
 #include "stdafx.h"
@@ -12,7 +12,7 @@ namespace basecross {
 	class EquippedParts;
 	class BillBoard;
 
-	//ƒp[ƒcƒ^ƒCƒv
+	//ãƒ‘ãƒ¼ãƒ„ã‚¿ã‚¤ãƒ—
 	enum partsType
 	{
 		parts,
@@ -20,42 +20,42 @@ namespace basecross {
 		PatchParts
 	};
 
-	//ƒp[ƒc‚ÌƒXƒe[ƒ^ƒXˆê——
+	//ãƒ‘ãƒ¼ãƒ„ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ä¸€è¦§
 	struct PartsStatus
 	{
 		//ID
 		int id;
-		//ƒp[ƒcƒ^ƒCƒv
+		//ãƒ‘ãƒ¼ãƒ„ã‚¿ã‚¤ãƒ—
 		int partsType;
-		//UŒ‚—Í
+		//æ”»æ’ƒåŠ›
 		int addAttack;
-		//‘¬“x
+		//é€Ÿåº¦
 		float addSpeed;
-		//‘P‚©ˆ«
+		//å–„ã‹æ‚ª
 		int addAttribute;
-		//’Ç‰ÁHP
+		//è¿½åŠ HP
 		int addHP;
-		//ƒp[ƒc‚Ì–¼‘O
+		//ãƒ‘ãƒ¼ãƒ„ã®åå‰
 		wstring partsName;
-		//ƒp[ƒc‚ÌÊ^‚ÌƒpƒX–¼
+		//ãƒ‘ãƒ¼ãƒ„ã®å†™çœŸã®ãƒ‘ã‚¹å
 		wstring partsImagePass;
 	};
 
-	//ƒp[ƒcƒNƒ‰ƒX
+	//ãƒ‘ãƒ¼ãƒ„ã‚¯ãƒ©ã‚¹
 	class Parts : public ObjectMove
 	{
 	protected:
 		shared_ptr<Transform> m_trans;
-		Vec3 m_pos;//ˆÊ’u
-		Vec3 m_rot;//‰ñ“]
-		Vec3 m_scale;//‘å‚«‚³
+		Vec3 m_pos;//ä½ç½®
+		Vec3 m_rot;//å›è»¢
+		Vec3 m_scale;//å¤§ãã•
 
-		//ƒp[ƒc‚ÌƒXƒe[ƒ^ƒX
+		//ãƒ‘ãƒ¼ãƒ„ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
 		PartsStatus m_partsStatus;
-		//ƒp[ƒc‚ğ“ü‚ê‚éƒ|[ƒ`
+		//ãƒ‘ãƒ¼ãƒ„ã‚’å…¥ã‚Œã‚‹ãƒãƒ¼ãƒ
 		shared_ptr<EquippedParts> m_partspoach;
 
-		//ƒrƒ‹ƒ{[ƒh
+		//ãƒ“ãƒ«ãƒœãƒ¼ãƒ‰
 		shared_ptr<BillBoard> m_billBoard;
 
 		bool m_pose = false;
@@ -75,7 +75,7 @@ namespace basecross {
 		void OnCollisionEnter(shared_ptr<GameObject>& Other)override;
 	};
 
-	//ƒp[ƒc(ìƒp[ƒc)
+	//ãƒ‘ãƒ¼ãƒ„(è©¦ä½œãƒ‘ãƒ¼ãƒ„)
 	class HeadParts : public Parts
 	{
 		//shared_ptr<Stage> m_stage;
@@ -85,19 +85,19 @@ namespace basecross {
 		HeadParts(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr,pos,rot,scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 1;
 			m_partsStatus.addHP = 10;
 			m_partsStatus.addSpeed = 0.1f;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 10;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = parts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"ƒeƒXƒg—pƒp[ƒc";
-			//‚Æ‚è‚ ‚¦‚¸“K“–‚ÈƒeƒNƒXƒ`ƒƒ‚É‚·‚é
+			//åå‰
+			m_partsStatus.partsName = L"ãƒ†ã‚¹ãƒˆç”¨ãƒ‘ãƒ¼ãƒ„";
+			//ã¨ã‚Šã‚ãˆãšé©å½“ãªãƒ†ã‚¯ã‚¹ãƒãƒ£ã«ã™ã‚‹
 			m_partsStatus.partsImagePass = L"PartsTestTEX";
 		}
 		~HeadParts()
@@ -108,7 +108,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(‚«”\ƒ‚[ƒ^[)
+	//ãƒ‘ãƒ¼ãƒ„(é«˜æ€§èƒ½ãƒ¢ãƒ¼ã‚¿ãƒ¼)
 	class PartsHiMoter :public Parts
 	{
 	private:
@@ -117,19 +117,19 @@ namespace basecross {
 		PartsHiMoter(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 2;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.4f;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 10;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = MoterParts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"‚«”\ƒ‚[ƒ^[";
-			//‚Æ‚è‚ ‚¦‚¸“K“–‚ÈƒeƒNƒXƒ`ƒƒ‚É‚·‚é
+			//åå‰
+			m_partsStatus.partsName = L"é«˜æ€§èƒ½ãƒ¢ãƒ¼ã‚¿ãƒ¼";
+			//ã¨ã‚Šã‚ãˆãšé©å½“ãªãƒ†ã‚¯ã‚¹ãƒãƒ£ã«ã™ã‚‹
 			m_partsStatus.partsImagePass = L"PartsHiMoterTEX";
 		}
 		~PartsHiMoter()
@@ -138,7 +138,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(í“¬—pƒpƒbƒ`)
+	//ãƒ‘ãƒ¼ãƒ„(æˆ¦é—˜ç”¨ãƒ‘ãƒƒãƒ)
 	class PartsBattlePatch :public Parts
 	{
 	private:
@@ -147,19 +147,19 @@ namespace basecross {
 		PartsBattlePatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 3;
 			m_partsStatus.addHP = 20;
 			m_partsStatus.addSpeed = 0.0f;
 			m_partsStatus.addAttack = 3;
 			m_partsStatus.addAttribute = -20;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = PatchParts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"í“¬—pƒpƒbƒ`";
-			//‚Æ‚è‚ ‚¦‚¸“K“–‚ÈƒeƒNƒXƒ`ƒƒ‚É‚·‚é
+			//åå‰
+			m_partsStatus.partsName = L"æˆ¦é—˜ç”¨ãƒ‘ãƒƒãƒ";
+			//ã¨ã‚Šã‚ãˆãšé©å½“ãªãƒ†ã‚¯ã‚¹ãƒãƒ£ã«ã™ã‚‹
 			m_partsStatus.partsImagePass = L"PartsBattlePatchTEX";
 		}
 		~PartsBattlePatch()
@@ -169,7 +169,7 @@ namespace basecross {
 	};
 
 
-	// ƒp[ƒc(‰ü‘¢ƒp[ƒc)
+	// ãƒ‘ãƒ¼ãƒ„(æ”¹é€ ãƒ‘ãƒ¼ãƒ„)
 	class PartsPrototype2 : public Parts
 	{
 
@@ -177,19 +177,19 @@ namespace basecross {
 		PartsPrototype2(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 4;
 			m_partsStatus.addHP = 15;
-			m_partsStatus.addSpeed = 0.15;
+			m_partsStatus.addSpeed = 0.5;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 15;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = parts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"ìƒp[ƒc(‹­‰»”Å)";
-			//ƒeƒNƒXƒ`ƒƒ
+			//åå‰
+			m_partsStatus.partsName = L"æ”¹é€ ãƒ‘ãƒ¼ãƒ„";
+      //ãƒ†ã‚¯ã‚¹ãƒãƒ£
 			m_partsStatus.partsImagePass = L"PartsModdingTEX";
 		}
 		~PartsPrototype2()
@@ -198,7 +198,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(Š®‘S”Åƒp[ƒc)
+	//ãƒ‘ãƒ¼ãƒ„(å®Œå…¨ç‰ˆãƒ‘ãƒ¼ãƒ„)
 	class PartsCompleteVersion : public Parts
 	{
 
@@ -206,19 +206,19 @@ namespace basecross {
 		PartsCompleteVersion(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 5;
 			m_partsStatus.addHP = 20;
-			m_partsStatus.addSpeed = 0.2;
+			m_partsStatus.addSpeed = 0.15;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 20;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = parts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"Š®‘S”Åƒp[ƒc";
-			//ƒeƒNƒXƒ`ƒƒ
+			//åå‰
+			m_partsStatus.partsName = L"å®Œå…¨ç‰ˆãƒ‘ãƒ¼ãƒ„";
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£
 			m_partsStatus.partsImagePass = L"PartsCompleteTEX";
 		}
 		~PartsCompleteVersion()
@@ -227,7 +227,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(‰ü‘¢ƒ‚[ƒ^[)
+	//ãƒ‘ãƒ¼ãƒ„(æ”¹é€ ãƒ¢ãƒ¼ã‚¿ãƒ¼)
 	class PartsModMoter :public Parts
 	{
 	private:
@@ -236,19 +236,19 @@ namespace basecross {
 		PartsModMoter(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 6;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.25f;
-			m_partsStatus.addAttack = 2;
+			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = -10;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = MoterParts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"‰ü‘¢ƒ‚[ƒ^[";
-			//ƒeƒNƒXƒ`ƒƒ
+			//åå‰
+			m_partsStatus.partsName = L"æ”¹é€ ãƒ¢ãƒ¼ã‚¿ãƒ¼";
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£
 			m_partsStatus.partsImagePass = L"PartsModdingMoterTEX";
 		}
 		~PartsModMoter()
@@ -257,7 +257,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(ŒÃ®ƒ‚[ƒ^[)
+	//ãƒ‘ãƒ¼ãƒ„(å¤å¼ãƒ¢ãƒ¼ã‚¿ãƒ¼)
 	class PartsOldMoter :public Parts
 	{
 	private:
@@ -266,19 +266,19 @@ namespace basecross {
 		PartsOldMoter(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 7;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.15f;
-			m_partsStatus.addAttack = 1;
+			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = -20;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = MoterParts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"ŒÃ‚Ñ‚½ƒ‚[ƒ^[";
-			//ƒeƒNƒXƒ`ƒƒ
+			//åå‰
+			m_partsStatus.partsName = L"å¤ã³ãŸãƒ¢ãƒ¼ã‚¿ãƒ¼";
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£
 			m_partsStatus.partsImagePass = L"PartsOldMoterTEX";
 		}
 		~PartsOldMoter()
@@ -287,7 +287,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(ƒpƒ[Œ^ƒpƒbƒ`)
+	//ãƒ‘ãƒ¼ãƒ„(ãƒ‘ãƒ¯ãƒ¼å‹ãƒ‘ãƒƒãƒ)
 	class PartsPowerPatch :public Parts
 	{
 	private:
@@ -296,19 +296,19 @@ namespace basecross {
 		PartsPowerPatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 8;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0;
 			m_partsStatus.addAttack = 7;
 			m_partsStatus.addAttribute = 5;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = PatchParts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"ƒpƒ[Œ^ƒpƒbƒ`";
-			//ƒeƒNƒXƒ`ƒƒ
+			//åå‰
+			m_partsStatus.partsName = L"ãƒ‘ãƒ¯ãƒ¼å‹ãƒ‘ãƒƒãƒ";
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£
 			m_partsStatus.partsImagePass = L"PartsSpecializePatchTEX";
 		}
 		~PartsPowerPatch()
@@ -318,7 +318,7 @@ namespace basecross {
 	};
 
 
-	//ƒp[ƒc(ƒoƒ‰ƒ“ƒXŒ^ƒpƒbƒ`)
+	//ãƒ‘ãƒ¼ãƒ„(ãƒãƒ©ãƒ³ã‚¹å‹ãƒ‘ãƒƒãƒ)
 	class PartsBalancePatch :public Parts
 	{
 	private:
@@ -327,19 +327,19 @@ namespace basecross {
 		PartsBalancePatch(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
 			Parts(stagePtr, pos, rot, scale)
 		{
-			//‚Ç‚ê‚®‚ç‚¢ƒXƒe[ƒ^ƒX‚ğã‚°‚é‚©Œˆ‚ß‚é
+			//ã©ã‚Œãã‚‰ã„ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸Šã’ã‚‹ã‹æ±ºã‚ã‚‹
 			m_partsStatus.id = 9;
 			m_partsStatus.addHP = 10;
 			m_partsStatus.addSpeed = 0.2f;
 			m_partsStatus.addAttack = 2;
 			m_partsStatus.addAttribute = 20;
 
-			// ‚Ç‚Ìƒ^ƒCƒv‚Ìƒp[ƒc‚©Œˆ‚ß‚é
+			// ã©ã®ã‚¿ã‚¤ãƒ—ã®ãƒ‘ãƒ¼ãƒ„ã‹æ±ºã‚ã‚‹
 			m_partsStatus.partsType = PatchParts;
 
-			//–¼‘O
-			m_partsStatus.partsName = L"ƒoƒ‰ƒ“ƒXŒ^ƒpƒbƒ`";
-			//ƒeƒNƒXƒ`ƒƒ
+			//åå‰
+			m_partsStatus.partsName = L"ãƒãƒ©ãƒ³ã‚¹å‹ãƒ‘ãƒƒãƒ";
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£
 			m_partsStatus.partsImagePass = L"PartsGeneralPatchTEX";
 		}
 		~PartsBalancePatch()

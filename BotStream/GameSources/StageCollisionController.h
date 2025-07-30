@@ -17,7 +17,7 @@ namespace basecross {
 		void CollisionActive(bool On);//ステージ上の有効なコリジョン範囲を決める
 
 	public:
-		StageCollisionController(shared_ptr<Stage>& stagePtr);
+		StageCollisionController(const shared_ptr<Stage>& stagePtr);
 		~StageCollisionController();
 
 		void OnCreate()override;

@@ -8,7 +8,7 @@
 #include "Project.h"
 
 namespace basecross {
-	StageCollisionController::StageCollisionController(shared_ptr<Stage>& stagePtr) :
+	StageCollisionController::StageCollisionController(const shared_ptr<Stage>& stagePtr) :
 		MyGameObject(stagePtr),
 		m_CollisionSwhich(true)
 	{

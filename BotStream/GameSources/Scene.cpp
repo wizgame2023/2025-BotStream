@@ -444,6 +444,7 @@ namespace basecross {
 		EffectManager::Instance().RegisterEffect(L"RushEfk", efkPath + L"Rush.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnemyAttack", efkPath + L"PrayerDamage.efkefc");
 		EffectManager::Instance().RegisterEffect(L"GunLine", efkPath + L"GunLine.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemySlash", efkPath + L"EnemySlash.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");
@@ -492,6 +493,7 @@ namespace basecross {
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
 		app->RegisterWav(L"GameClearSE", SoundPath + L"GameClearSE.wav");
 		app->RegisterWav(L"RecoverySE", SoundPath + L"RecoverySE.wav");
+		app->RegisterWav(L"ChargeSE", SoundPath + L"ChargeSE.wav"); // チャージSE
 
 		app->RegisterWav(L"ArmorDefenseSE", SoundPath + L"ArmorDefenseSE.wav");
 		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
@@ -502,6 +504,19 @@ namespace basecross {
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
 		// ジャスト回避
 		app->RegisterWav(L"JastDodgeSE", SoundPath + L"JastDodge.wav");
+	}
+
+	// リセット処理
+	void Scene::Reset()
+	{
+		auto& cntlVec = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto& keyState = App::GetApp()->GetInputDevice().GetKeyState();
+
+		if ((cntlVec[0].wButtons & XINPUT_GAMEPAD_START && cntlVec[0].wButtons & XINPUT_GAMEPAD_BACK&&
+			cntlVec[0].wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && cntlVec[0].wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER))
+		{
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
+		}
 	}
 
 }

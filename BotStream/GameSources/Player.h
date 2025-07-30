@@ -122,7 +122,7 @@ namespace basecross {
 		float m_addTimeAnimation = 1.0f * _delta;
 
 		//ステートマシン
-		shared_ptr<PlayerStateMachine> m_stateMachine;
+		unique_ptr<PlayerStateMachine> m_stateMachine;
 
 		//UI関係
 		shared_ptr<PlayerBulletUI> m_playerBulletUI = nullptr;// 現在の球数を表示するUI
@@ -180,7 +180,7 @@ namespace basecross {
 		int GetSP();
 		//HPのセッター
 		void SetHP(int setHP);
-		//HPのセッター
+		//現在HPの追加処理
 		void AddHP(int addHP);
 		//SPのセッター
 		void SetSP(int setSP);

@@ -600,7 +600,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Down", 420, 80, false, 60.0f);
 		ptrDraw->AddAnimation(L"Hit", 380, 40, false, 60.0f);
 		ptrDraw->AddAnimation(L"Stun", 525, 60, false, 60.0f);
-		ptrDraw->AddAnimation(L"Attack1", 260, 80, false, 60.0f);
+		ptrDraw->AddAnimation(L"Attack1", 280, 60, false, 60.0f);
+		ptrDraw->AddAnimation(L"Charge", 240, 20, false, 60.0f);
 
 		//影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();
@@ -731,12 +732,15 @@ namespace basecross {
 			}
 
 			//スタン時の演出
-			if (isStun) {
-				AddEffect(EnemyEffect_Stun);
-				App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
-				m_stun = 0;
+			if (!FindTag(L"AttackNow"))
+			{
+				if (isStun) {
+					AddEffect(EnemyEffect_Stun);
+					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+					m_stun = 0;
 
-				m_state->ChangeState(L"Stun");
+					m_state->ChangeState(L"Stun");
+				}
 			}
 
 			//やられ処理移行

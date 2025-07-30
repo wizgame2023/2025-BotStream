@@ -181,6 +181,8 @@ namespace basecross {
 		{
 			// 押している時間を測る
 			m_timeOfPushAttackButton += m_deltaTime;
+
+			//m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
 		}
 		// 攻撃するときの処理(刀か銃にするか)
 		if (AttackButton)
@@ -761,7 +763,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 12 + (m_plusAttack / 2);
+			tmp.Damage = 13 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-2, 8, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
@@ -779,7 +781,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 12 + (m_plusAttack / 2);
+			tmp.Damage = 14 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-2, 8, 0);//ヒットバック距離 本来のヒットバックはVec3(-2,5,0)
 			tmp.HitTime_Stand = .5f;//のけぞり時間なし
 			m_player->DefAttack(.5f, tmp);
@@ -902,7 +904,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 18 + (m_plusAttack / 2);
+			tmp.Damage = 20 + (m_plusAttack / 2);
 			tmp.HitVel_Stand = Vec3(-10, 5, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .5f;
 			m_player->DefAttack(.5f, tmp);
@@ -920,6 +922,12 @@ namespace basecross {
 	//次のステートに行く処理
 	void PlayerAttack3State::NextState()
 	{
+		//一定時間たったら回避行動ができる(一段目と二段目の攻撃のみ)
+		if (m_timeOfAttack > m_graceTimeOfNextAttack)
+		{
+			Dodge(m_dodgeFlag);
+		}
+
 		//次の攻撃に遷移する	//一定時間後からフラグがオンになってたら次の攻撃が撃てるようになる
 		if (m_nestAttackFlag && m_timeOfAttack > m_graceTimeOfNextAttack)
 		{
@@ -1007,7 +1015,7 @@ namespace basecross {
 		{
 			auto tmp = m_player->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
-			tmp.Damage = 25 + m_plusAttack;
+			tmp.Damage = 35 + m_plusAttack;
 			tmp.HitVel_Stand = Vec3(-20, 10, 0);//ヒットバック距離
 			tmp.HitTime_Stand = .8f;
 			//tmp.ForceRecover = false;//ノックバックする

@@ -91,6 +91,9 @@ namespace basecross {
 		auto KeyState = app->GetInputDevice().GetKeyState();
 		auto pad = app->GetInputDevice().GetControlerVec()[0];
 
+		//リセット処理
+		app->GetScene<Scene>()->Reset();
+
 		ResetDeltaScaleToDefault();
 		UpdateGamePhase();
 
@@ -103,7 +106,7 @@ namespace basecross {
 			// 暗闇の有効化
 			ActivateDark(m_waveCurrent);
 		}
-		if (m_fadeout.lock()->GetBlackFlag())
+		if (m_fadeout.lock()->GetBlackFlag() && m_onceFlag == false)
 		{
 			m_nextWaveFlag = true;
 		}
