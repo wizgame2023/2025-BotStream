@@ -59,7 +59,7 @@ namespace basecross {
 		Vec3 m_selectPos;
 
 	public:
-		PauseSprite(shared_ptr<Stage>& StagePtr) :
+		PauseSprite(const shared_ptr<Stage>& StagePtr) :
 			MyGameObject(StagePtr)
 		{
 
@@ -77,6 +77,9 @@ namespace basecross {
 	
 		// 全てのUIを消す
 		void AllUIClear(bool clear);
+
+		// オーディオの設定の操作
+		void AudioSetteing(const Vec2& ret, bool flag);
 
 		//Actorを止める処理
 		void MoveSwitchActor();
