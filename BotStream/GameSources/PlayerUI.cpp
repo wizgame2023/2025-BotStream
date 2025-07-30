@@ -589,15 +589,59 @@ namespace basecross {
 
 	void PartsTextChange::OnUpdate()
 	{
-		// SetUVRectの早見表的なもの
-		// SetUVRectに適用するなら1を先に入れてください
-		// 戦闘用パッチ
-		Vec2 patch1(0.0f, 0.0f), patch2(0.5f, 0.25f);
-		// 高性能モーター
-		Vec2 motor1(0.0f, 0.25f), motor2(0.5f, 0.5f);
-		// 試作パーツ
-		Vec2 testParts1(0.0f, 0.5f), testParts2(0.5f, 0.75f);
+		float patchX1 = 0.0f, patchX2 = 0.333f;
+		float motorX1 = 0.333f, motorX2 = 0.666f;
+		float testPartsX1 = 0.666f, testPartsX2 = 1.0f;
 
+		// SetUVRectの早見表的なもの
+		vector<vector<Vec2>> parts = {
+			{
+				// 試作パーツ
+				Vec2(testPartsX1, 0.0f),
+				Vec2(testPartsX2, 0.2f)
+			},
+			{
+				// 高性能モーター
+				Vec2(motorX1, 0.0f),
+				Vec2(motorX2, 0.2f)
+			},
+			{
+				// 戦闘用パッチ
+				Vec2(patchX1, 0.0f),
+				Vec2(patchX2, 0.2f)
+			},
+			{
+				// 改造パーツ
+				Vec2(testPartsX1, 0.2f),
+				Vec2(testPartsX2, 0.4f)
+			},
+			{
+				// 完全版パーツ
+				Vec2(testPartsX1, 0.4f),
+				Vec2(testPartsX2, 0.6f)
+			},
+			{
+				// 改造モーター
+				Vec2(motorX1, 0.2f),
+				Vec2(motorX2, 0.4f)
+			},
+			{
+				// 旧式モーター
+				Vec2(motorX1, 0.4f),
+				Vec2(motorX2, 0.6f)
+			},
+			{
+				// 攻撃特化パッチ
+				Vec2(patchX1, 0.2f),
+				Vec2(patchX2, 0.4f)
+			},
+			{
+				// 汎用パッチ
+				Vec2(patchX1, 0.4f),
+				Vec2(patchX2, 0.6f)
+			}
+
+		};
 
 		auto stage = GetStage();
 		auto equippedParts = stage->GetSharedGameObject<EquippedParts>(L"PartsPoach")->GetEquippedParts();
@@ -608,28 +652,10 @@ namespace basecross {
 		for (int i = 0; i < equippedPartsSize; i++)
 		{
 			int partsId = equippedParts[i].id;
-			switch (partsId)
-			{
-			case 1:
-				//試作パーツ
-				m_partsTextSprite[i]->OnClear(false);
-				m_partsTextSprite[i]->SetUVRect(testParts1, testParts2);
-				break;
-			case 2:
-				//高性能モーター
-				m_partsTextSprite[i]->OnClear(false);
-				m_partsTextSprite[i]->SetUVRect(motor1, motor2);
-				break;
-			case 3:
-				//戦闘用パッチ
-				m_partsTextSprite[i]->OnClear(false);
-				m_partsTextSprite[i]->SetUVRect(patch1, patch2);
-				break;
-			default:
-				//装備していないもしくはその他の場合は透明にする
-				m_partsTextSprite[i]->OnClear(true);
-				break;
-			}
+
+			m_partsTextSprite[i]->OnClear(false);
+			m_partsTextSprite[i]->SetUVRect(parts[partsId - 1][0], parts[partsId - 1][1]);
+			
 		}
 	}
 
