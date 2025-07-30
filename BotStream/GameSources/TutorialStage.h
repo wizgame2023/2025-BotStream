@@ -93,7 +93,7 @@ namespace basecross {
 
     public:
         //ç\ízÇ∆îjä¸
-        TutorialSpriteBase(shared_ptr<Stage>& stagePtr, wstring resKey)
+        TutorialSpriteBase(const shared_ptr<Stage>& stagePtr, wstring resKey)
             : MyGameObject(stagePtr),
             m_resKey(resKey)
         {
@@ -117,7 +117,7 @@ namespace basecross {
 
     public:
         //ç\ízÇ∆îjä¸
-        TutorialDescription(shared_ptr<Stage>& stagePtr, wstring resKey, Vec2 size,
+        TutorialDescription(const shared_ptr<Stage>& stagePtr, wstring resKey, Vec2 size,
             shared_ptr<TutorialSpriteBase> parent)
             : TutorialSpriteBase(stagePtr, resKey),
             m_width(size.x),
@@ -170,7 +170,7 @@ namespace basecross {
 
     public:
         //ç\ízÇ∆îjä¸
-        TutorialDone(shared_ptr<Stage>& stagePtr, wstring resKey, shared_ptr<TutorialSpriteBase> parent)
+        TutorialDone(const shared_ptr<Stage>& stagePtr, wstring resKey, shared_ptr<TutorialSpriteBase> parent)
             : TutorialSpriteBase(stagePtr, resKey),
             m_parent(parent)
         {
@@ -209,7 +209,7 @@ namespace basecross {
 
     public:
         //ç\ízÇ∆îjä¸
-        TutorialProgress(shared_ptr<Stage>& stagePtr, wstring resKey, shared_ptr<TutorialSpriteBase> parent)
+        TutorialProgress(const shared_ptr<Stage>& stagePtr, wstring resKey, shared_ptr<TutorialSpriteBase> parent)
             : TutorialSpriteBase(stagePtr, resKey),
             m_parent(parent)
         {
@@ -254,7 +254,7 @@ namespace basecross {
 
     public:
         //ç\ízÇ∆îjä¸
-        TutorialProgressFrame(shared_ptr<Stage>& stagePtr, wstring resKey, Vec3 pos)
+        TutorialProgressFrame(const shared_ptr<Stage>& stagePtr, wstring resKey, Vec3 pos)
             : TutorialSpriteBase(stagePtr, resKey)
         {
             m_addPos = pos;
@@ -350,7 +350,7 @@ namespace basecross {
 
     public:
         //ç\ízÇ∆îjä¸
-        TutorialDialog(shared_ptr<Stage>& stagePtr, wstring resKey, Vec2 pos, Col4 color) :
+        TutorialDialog(const shared_ptr<Stage>& stagePtr, wstring resKey, Vec2 pos, Col4 color) :
             TutorialSpriteBase(stagePtr, resKey),
             m_originPos(pos),
             m_currentPos(pos),
