@@ -49,6 +49,10 @@ namespace basecross {
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
+		auto scene = App::GetApp()->GetScene<Scene>();
+		// タイトルシーンに移行できる関数
+		scene->Reset();
+
 		Vec2 ret;
 		if (cntl[0].bConnected)
 		{
@@ -148,6 +152,12 @@ namespace basecross {
 				}
 			}
 		}
+	}
+
+	// ステージ破棄時処理
+	void GameClear::OnDestroy()
+	{
+		m_BGMMana->Stop(m_BGM);
 	}
 
 	void GameClear::CreateSprite()

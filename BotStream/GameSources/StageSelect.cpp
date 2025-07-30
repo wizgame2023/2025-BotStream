@@ -44,6 +44,10 @@ namespace basecross {
 		auto delta = App::GetApp()->GetElapsedTime();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
 
+		auto scene = App::GetApp()->GetScene<Scene>();
+		// タイトルシーンに移行できる関数
+		scene->Reset();
+
 		//BGMのボリュームの更新
 		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
 		auto BGMVoice = m_BGM->m_SourceVoice;
@@ -159,6 +163,7 @@ namespace basecross {
 				m_selectOnceFlag1 = true;
 			}
 		}
+
 
 
 		//==========================================================================================================
@@ -307,7 +312,7 @@ namespace basecross {
 		// Aボタンかエンターキーで最終決定
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && m_stageFlag && !m_selectOnceFlag1 && !m_tutorialFlag)
 		{
-			m_BGMManager->Stop(m_BGM);
+			//m_BGMManager->Stop(m_BGM);
 			switch (m_selectStageNum)
 			{
 			case 0:
@@ -327,6 +332,12 @@ namespace basecross {
 			}
 		}
 
+	}
+
+	// ステージ破棄時処理
+	void StageSelect::OnDestroy()
+	{
+		m_BGMManager->Stop(m_BGM);
 	}
 
 	void StageSelect::CreateBGM()

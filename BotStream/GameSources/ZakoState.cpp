@@ -1366,7 +1366,7 @@ namespace basecross {
 			auto tmp = m_enemyZako->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.InvincibleOnHit = true;
-			tmp.Damage = 35;
+			tmp.Damage = 25;
 			tmp.HitVel_Stand = Vec3(-3, 5, 0);
 			tmp.HitTime_Stand = .3f;
 			tmp.Type = AttackType::Enemy;

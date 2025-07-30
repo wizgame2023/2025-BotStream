@@ -180,7 +180,7 @@ namespace basecross {
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 4;
 			m_partsStatus.addHP = 15;
-			m_partsStatus.addSpeed = 0.15;
+			m_partsStatus.addSpeed = 0.5;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 15;
 
@@ -188,7 +188,7 @@ namespace basecross {
 			m_partsStatus.partsType = parts;
 
 			//名前
-			m_partsStatus.partsName = L"試作パーツ(強化版)";
+			m_partsStatus.partsName = L"改造パーツ";
 			//とりあえず適当なテクスチャにする
 			m_partsStatus.partsImagePass = L"Stage1-1Tex";
 		}
@@ -209,7 +209,7 @@ namespace basecross {
 			//どれぐらいステータスを上げるか決める
 			m_partsStatus.id = 5;
 			m_partsStatus.addHP = 20;
-			m_partsStatus.addSpeed = 0.2;
+			m_partsStatus.addSpeed = 0.15;
 			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = 20;
 
@@ -240,7 +240,7 @@ namespace basecross {
 			m_partsStatus.id = 6;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.25f;
-			m_partsStatus.addAttack = 2;
+			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = -10;
 
 			// どのタイプのパーツか決める
@@ -270,7 +270,7 @@ namespace basecross {
 			m_partsStatus.id = 7;
 			m_partsStatus.addHP = 0;
 			m_partsStatus.addSpeed = 0.15f;
-			m_partsStatus.addAttack = 1;
+			m_partsStatus.addAttack = 0;
 			m_partsStatus.addAttribute = -20;
 
 			// どのタイプのパーツか決める
