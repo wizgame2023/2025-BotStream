@@ -59,7 +59,7 @@ namespace basecross {
 		Vec3 m_selectPos;
 
 	public:
-		PauseSprite(shared_ptr<Stage>& StagePtr) :
+		PauseSprite(const shared_ptr<Stage>& StagePtr) :
 			MyGameObject(StagePtr)
 		{
 

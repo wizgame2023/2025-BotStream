@@ -477,6 +477,7 @@ namespace basecross {
 		app->RegisterWav(L"ClearVoice2SE", SoundPath + L"ClearVoice2.wav");
 		app->RegisterWav(L"GameClearSE", SoundPath + L"GameClearSE.wav");
 		app->RegisterWav(L"RecoverySE", SoundPath + L"RecoverySE.wav");
+		app->RegisterWav(L"ChargeSE", SoundPath + L"ChargeSE.wav"); // チャージSE
 
 		app->RegisterWav(L"ArmorDefenseSE", SoundPath + L"ArmorDefenseSE.wav");
 		app->RegisterWav(L"StageSelectSE", SoundPath + L"StageSelectSE.wav");
@@ -487,6 +488,19 @@ namespace basecross {
 		app->RegisterWav(L"GetPartsSE", SoundPath + L"GetParts.wav");
 		// ジャスト回避
 		app->RegisterWav(L"JastDodgeSE", SoundPath + L"JastDodge.wav");
+	}
+
+	// リセット処理
+	void Scene::Reset()
+	{
+		auto& cntlVec = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto& keyState = App::GetApp()->GetInputDevice().GetKeyState();
+
+		if ((cntlVec[0].wButtons & XINPUT_GAMEPAD_START && cntlVec[0].wButtons & XINPUT_GAMEPAD_BACK&&
+			cntlVec[0].wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER && cntlVec[0].wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER))
+		{
+			PostEvent(0.0f, GetThis<ObjectInterface>(), App::GetApp()->GetScene<Scene>(), L"ToTitleStage");
+		}
 	}
 
 }
