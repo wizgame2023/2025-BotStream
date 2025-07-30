@@ -49,23 +49,15 @@ namespace basecross {
 		//注視点はPlayerの位置よりも少し先にしたい
 		m_lockStageCamera->SetAt(playerPos);
 
-		//スプライト追加
-		//m_spriteAttack = m_stage->AddGameObject<Sprite>(L"KatanaTex", Vec2(100.0f, 100.0f), Vec3(570.0f, -350.0f, 0));
-
 		Vec3 CameraPos = m_lockStageCamera->GetEye();
 				
-		//ロックオンの有効範囲を可視化
-		//m_stage->AddGameObject<LockOnRange>(m_targetRange, player);
-
 		//SE用のマネージャー取得
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
 		//射撃用のクロスヘア用のテクスチャ追加
 		m_spriteAiming = m_stage->AddGameObject<Sprite>(L"AimingTex", Vec2(50.0f, 50.0f));
 
-
 		//カメラ用ステートマシンの作成まだステートは作成途中
-		m_stateMashine = shared_ptr<CameraStateMachine>(new CameraStateMachine(GetThis<GameObject>()));
-
+		m_stateMashine = unique_ptr<CameraStateMachine>(new CameraStateMachine(GetThis<GameObject>()));
 
 		//もしステージ用のカメラを取得できなかったらreturnして自分を削除します
 		if (!m_lockStageCamera)
@@ -100,7 +92,6 @@ namespace basecross {
 				SetCursorPos(850, 450);		
 				GetCursorPos(&m_mouseBeforPos);
 			}
-
 			return;
 		}
 

@@ -30,7 +30,7 @@ namespace basecross {
 		bool m_gunNow = false;
 
 	public:
-		CameraStateBase(shared_ptr<GameObject>& obj) :
+		CameraStateBase(const shared_ptr<GameObject>& obj) :
 			StateBase(obj),
 			m_cameraManager(dynamic_pointer_cast<CameraManager>(obj))
 		{
@@ -54,7 +54,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraNomalState(shared_ptr<GameObject>& obj) :
+		CameraNomalState(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -75,7 +75,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraGunState(shared_ptr<GameObject>& obj) :
+		CameraGunState(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -96,7 +96,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraResetState(shared_ptr<GameObject>& obj) :
+		CameraResetState(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -116,7 +116,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraNormalToGunState(shared_ptr<GameObject>& obj) :
+		CameraNormalToGunState(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -137,7 +137,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraGunToNormalState(shared_ptr<GameObject>& obj) :
+		CameraGunToNormalState(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -158,7 +158,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraStartMovieState_First(shared_ptr<GameObject>& obj) :
+		CameraStartMovieState_First(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -179,7 +179,7 @@ namespace basecross {
 	private:
 
 	public:
-		CameraStartMovieState_Second(shared_ptr<GameObject>& obj) :
+		CameraStartMovieState_Second(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -207,7 +207,7 @@ namespace basecross {
 		float m_timeMax = 2.0f;
 
 	public:
-		CameraBossMovieState_First(shared_ptr<GameObject>& obj) :
+		CameraBossMovieState_First(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -235,7 +235,7 @@ namespace basecross {
 		float m_timeMax = 2.2f;
 
 	public:
-		CameraBossMovieState_Second(shared_ptr<GameObject>& obj) :
+		CameraBossMovieState_Second(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -264,7 +264,7 @@ namespace basecross {
 		float m_timeMax = 0.5f;
 
 	public:
-		CameraBossMovieState_Three(shared_ptr<GameObject>& obj) :
+		CameraBossMovieState_Three(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -294,7 +294,7 @@ namespace basecross {
 		float m_timeMax = 2.0f;
 
 	public:
-		CameraBossMovieState_Fourth(shared_ptr<GameObject>& obj) :
+		CameraBossMovieState_Fourth(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -326,7 +326,7 @@ namespace basecross {
 		float m_timeMax = 2.0f;
 
 	public:
-		CameraBossDieMovieState_First(shared_ptr<GameObject>& obj) :
+		CameraBossDieMovieState_First(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
 		{
 
@@ -346,7 +346,7 @@ namespace basecross {
 	class CameraStateMachine :public StateMachineBase
 	{
 	public:
-		CameraStateMachine(shared_ptr<GameObject>& obj)
+		CameraStateMachine(const shared_ptr<GameObject>& obj)
 		{
 			//ÉXÉeÅ[ÉgÇÃìoò^
 			//í èÌèÛë‘

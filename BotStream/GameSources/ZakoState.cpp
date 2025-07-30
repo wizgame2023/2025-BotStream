@@ -1299,6 +1299,37 @@ namespace basecross {
 
 	}
 
+	//近接戦の準備ステート(チャージ)
+	void EnemyZakoHumanoidChargeState::Enter()
+	{
+		EnemyZakoStateBase::Enter();
+
+		m_enemyZako->ChangeAnim(L"Charge");
+
+		m_enemyZako->AddTag(L"AttackNow");
+
+		m_SE = m_SEManager->Start(L"EnemyZako_Charge", 0, 0.4f * m_SEVol);
+
+	}
+	void EnemyZakoHumanoidChargeState::Update(float deltaTime)
+	{
+		EnemyZakoStateBase::Update(deltaTime);
+
+		m_enemyZako->SetAddTimeAnimation(deltaTime * 0.25f);
+
+		m_timeOfCharge += deltaTime;
+
+		if (m_timeOfCharge >= 2)
+		{
+			m_enemyZako->ChangeState(L"Melee");
+
+		}
+	}
+	void EnemyZakoHumanoidChargeState::Exit()
+	{
+		m_timeOfCharge = 0.0f;
+	}
+
 	//接近戦をするときのステート
 	void EnemyZakoHumanoidMeleeState::Enter()
 	{
@@ -1312,7 +1343,7 @@ namespace basecross {
 		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 
 		//攻撃しているタグ追加
-		m_enemyZako->AddTag(L"AttackNow");
+		//m_enemyZako->AddTag(L"AttackNow");
 	}
 	void EnemyZakoHumanoidMeleeState::Update(float deltaTime)
 	{
@@ -1354,7 +1385,7 @@ namespace basecross {
 			//攻撃用SE再生
 			m_SE = m_SEManager->Start(L"Enemy_Slash", 0, 0.4f * m_SEVol);
 
-			m_effect = m_enemyZako->AddEffect(EnemyEffect_Attack2);
+			m_effect = m_enemyZako->AddEffect(EnemyEffect_Slash);
 
 		}
 
@@ -1414,7 +1445,7 @@ namespace basecross {
 
 				//攻撃フラグがオンなら攻撃できる
 				if (!attackFlag) return;
-				m_enemyZako->ChangeState(L"Melee");
+				m_enemyZako->ChangeState(L"Charge");
 			}
 			else if (m_enemyZako->GetPlayerDist() >= meleeRange)
 			{

@@ -90,7 +90,7 @@ namespace basecross {
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
 
 		AddTag(L"Player");//Player用のタグ
-		m_stateMachine = shared_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
+		m_stateMachine = unique_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 
 		//ジャスト回避時の演出用スプライト
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
@@ -637,6 +637,10 @@ namespace basecross {
 		PlaySnd(L"RecoverySE", 0.9f, 0);
 
 		m_HPCurrent += AddHP;
+		if (m_HPCurrent >= m_HPMax)
+		{
+			m_HPCurrent = m_HPMax;
+		}
 	}
 	//SPのセッター
 	void Player::SetSP(int setSP)

@@ -31,7 +31,7 @@ namespace basecross {
 		EnemyEffect_Rush,
 		EnemyEffect_Attack,
 		EnemyZakoEffect_ArmorBreak,
-		EnemyEffect_Attack2
+		EnemyEffect_Slash
 	};
 
 	class Actor : public ObjectMove
