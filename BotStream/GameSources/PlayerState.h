@@ -42,7 +42,7 @@ namespace basecross {
 		void Dodge(bool onOff);
 
 	public:
-		PlayerStateBase(shared_ptr<GameObject>& obj) :
+		PlayerStateBase(const shared_ptr<GameObject>& obj) :
 			StateBase(obj),
 			m_player(dynamic_pointer_cast<Player>(obj))
 		{
@@ -68,7 +68,7 @@ namespace basecross {
 		void AttackTransition(bool onOff);
 
 	public:
-		PlayerWalkState(shared_ptr<GameObject>& obj) :
+		PlayerWalkState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 			//m_player(dynamic_pointer_cast<Player>(obj))
 		{
@@ -94,7 +94,7 @@ namespace basecross {
 		//エフェクトのハンドラー
 		Handle m_effect = NULL;
 	public:
-		PlayerDodgeState(shared_ptr<GameObject>& obj) :
+		PlayerDodgeState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
 
@@ -129,7 +129,7 @@ namespace basecross {
 	
 		Handle m_effect = NULL;
 	public:
-		PlayerDashState(shared_ptr<GameObject>& obj) :
+		PlayerDashState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj),
 			m_player(dynamic_pointer_cast<Player>(obj))
 		{
@@ -160,7 +160,7 @@ namespace basecross {
 
 		//Handle m_effect = NULL;
 	public:
-		PlayerDashEndState(shared_ptr<GameObject>& obj) :
+		PlayerDashEndState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj),
 			m_player(dynamic_pointer_cast<Player>(obj))
 		{
@@ -198,7 +198,7 @@ namespace basecross {
 		int m_plusAttack = 0;
 
 	public:
-		PlayerAttackBaseState(shared_ptr<GameObject>& obj) :
+		PlayerAttackBaseState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
 		}
@@ -243,7 +243,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerAttack1State(shared_ptr<GameObject>& obj) :
+		PlayerAttack1State(const shared_ptr<GameObject>& obj) :
 			PlayerAttackBaseState(obj)
 		{
 
@@ -288,7 +288,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerAttack2State(shared_ptr<GameObject>& obj) :
+		PlayerAttack2State(const shared_ptr<GameObject>& obj) :
 			PlayerAttackBaseState(obj)
 		{
 
@@ -332,7 +332,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerAttack3State(shared_ptr<GameObject>& obj) :
+		PlayerAttack3State(const shared_ptr<GameObject>& obj) :
 			PlayerAttackBaseState(obj)
 		{
 
@@ -374,7 +374,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerAttackExState(shared_ptr<GameObject>& obj) :
+		PlayerAttackExState(const shared_ptr<GameObject>& obj) :
 			PlayerAttackBaseState(obj)
 		{
 
@@ -402,7 +402,7 @@ namespace basecross {
 		float m_maxTimeOfState = 1.1f * 0.8f;
 
 	public:
-		PlayerAttackExEndState(shared_ptr<GameObject>& obj):
+		PlayerAttackExEndState(const shared_ptr<GameObject>& obj):
 			PlayerStateBase(obj)
 		{
 
@@ -433,7 +433,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerAttackSpecialState(shared_ptr<GameObject>& obj) :
+		PlayerAttackSpecialState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
 
@@ -460,7 +460,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerAttackLongState(shared_ptr<GameObject>& obj) :
+		PlayerAttackLongState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
 
@@ -490,7 +490,7 @@ namespace basecross {
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
 	public:
-		PlayerHitState(shared_ptr<GameObject>& obj) :
+		PlayerHitState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
 
@@ -511,7 +511,7 @@ namespace basecross {
 	private:
 
 	public:
-		PlayerStartMovieState(shared_ptr<GameObject>& obj) :
+		PlayerStartMovieState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
 		{
 
@@ -531,7 +531,7 @@ namespace basecross {
 	class PlayerStateMachine : public StateMachineBase
 	{
 	public:
-		PlayerStateMachine(shared_ptr<GameObject>& obj)
+		PlayerStateMachine(const shared_ptr<GameObject>& obj)
 		{
 			//ステートの登録
 			AddState(L"PlayerWalk", shared_ptr<PlayerWalkState>(new PlayerWalkState(obj)));
