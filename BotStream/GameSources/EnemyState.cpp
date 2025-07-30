@@ -59,7 +59,7 @@ namespace basecross {
 		boss->RotateToPlayer(1.0f);
 
 		if (m_time >= m_startAttack + (m_startAttackPlus * (boss->GetHPCurrent() / boss->GetHPMax())) ||
-			rnd() % 1000 <= m_startAttackRand) {
+			(m_time >= m_startAttack && rnd() % 1000 <= m_startAttackRand)) {
 			const float dist = boss->GetPlayerDist();
 
 			if (dist < m_midDist) {
@@ -68,7 +68,7 @@ namespace basecross {
 					boss->ChangeState(L"Roar");
 				}
 				else {
-					boss->ChangeState(L"Attack");
+					boss->ChangeState(L"AttackWait");
 				}
 
 				//‰ñ“]
@@ -131,15 +131,34 @@ namespace basecross {
 			}
 			else {
 				//Žh‚·I
-				boss->ChangeState(L"Attack");
+				boss->ChangeState(L"AttackWait");
 			}
-			
+
 		}
 	}
 	void BossFirstChaseState::Exit() {
 
 	}
 
+	void BossFirstAttackWaitState::Enter() {
+
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj.lock());
+		boss->ChangeAnim(L"Idle", false);
+		m_time = 0;
+	}
+	void BossFirstAttackWaitState::Update(float deltatime) {
+		m_time += deltatime;
+		auto boss = dynamic_pointer_cast<EnemyBase>(_obj.lock());
+		boss->RotateToPlayer(1.0f, 0);
+
+		if (m_time >= m_timeMax || abs(boss->GetPlayerSubDirection()) <= m_rotateGoal) {
+			boss->ChangeState(L"Attack");
+		}
+
+	}
+	void BossFirstAttackWaitState::Exit() {
+
+	}
 
 	void BossFirstAttackState::Enter() {
 		auto boss = dynamic_pointer_cast<EnemyBase>(_obj.lock());
@@ -147,6 +166,7 @@ namespace basecross {
 		m_time = 0;
 		m_attacked = false;
 	}
+
 	void BossFirstAttackState::Update(float deltatime) {
 		m_time += deltatime;
 
@@ -165,8 +185,8 @@ namespace basecross {
 			tmp.HitEffect = L"EnemyHitEfk";
 
 			boss->DefAttack(.3f, tmp);
-			boss->GetAttackPtr()->SetCollScale(6.0f);
-			boss->GetAttackPtr()->SetPos(Vec3(3.0f, 1, 0));
+			boss->GetAttackPtr()->SetCollScale(4.0f);
+			boss->GetAttackPtr()->SetPos(Vec3(4.0f, 1, 0));
 		}
 
 		if (m_time >= m_end) {
@@ -203,8 +223,8 @@ namespace basecross {
 			tmp.HitEffect = L"EnemyHitEfk";
 
 			boss->DefAttack(.3f, tmp);
-			boss->GetAttackPtr()->SetCollScale(6.0f);
-			boss->GetAttackPtr()->SetPos(Vec3(3.0f, 1, 0));
+			boss->GetAttackPtr()->SetCollScale(4.0f);
+			boss->GetAttackPtr()->SetPos(Vec3(4.0f, 1, 0));
 		}
 
 		if (m_time >= m_end) {
@@ -543,13 +563,13 @@ namespace basecross {
 			auto tmp = boss->GetAttackPtr()->GetHitInfo();
 			tmp.HitOnce = true;
 			tmp.Type = AttackType::Enemy;
-			tmp.Damage = 3;
+			tmp.Damage = 1;
 			tmp.HitVel_Stand = Vec3(120, 30, 0);
 			tmp.HitVel_Air = Vec3(120, 20, 0);
 			tmp.HitTime_Stand = 1.5f;
 			tmp.HitTime_Air = 1.5f;
 			boss->DefAttack(.1f, tmp);
-			boss->GetAttackPtr()->SetCollScale(30.0f);
+			boss->GetAttackPtr()->SetCollScale(10.0f);
 			boss->GetAttackPtr()->SetPos(Vec3(10, 3, 0));
 
 		}

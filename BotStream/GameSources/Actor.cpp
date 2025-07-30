@@ -8,7 +8,7 @@
 #include "Actor.h"
 
 namespace basecross {
-	Actor::Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale) :
+	Actor::Actor(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale) :
 		ObjectMove(stagePtr),
 		m_pos(pos),
 		m_rot(rot),
@@ -290,8 +290,9 @@ namespace basecross {
 		case EnemyZakoEffect_ArmorBreak:
 			m_effect = EfkPlaying(L"ArmorBreak", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Vec3(1.0f, 1.0f, 1.0f));
 			break;
-		case EnemyEffect_Attack2:
-			m_effect = EfkPlaying(L"Slash01Efk", GetAngle(), Vec3(0, 1, 0));
+		case EnemyEffect_Slash:
+			m_effect = EfkPlaying(L"EnemySlash", angle, Vec3(0, 1, 0.1f), Vec3(1.0f, 1.0f, 1.0f), Vec3(-1.3f, 0.0f, -1.7f));
+			EffectManager::Instance().SetSpeed(m_effect, 7.0f);
 			break;
 		default:
 			break;

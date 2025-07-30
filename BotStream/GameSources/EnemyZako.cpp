@@ -87,7 +87,7 @@ namespace basecross {
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる		
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -388,7 +388,7 @@ namespace basecross {
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(1.0f, 1.0f, 1.0f));
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoStateMachine>(new EnemyZakoStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -404,6 +404,7 @@ namespace basecross {
 		//いったん雑魚敵のHPは50とする
 		m_HPMax = 50.0f;
 		m_HPCurrent = m_HPMax;
+		m_stunMax = 1;
 
 		//Transform設定
 		m_trans = GetComponent<Transform>();
@@ -471,7 +472,7 @@ namespace basecross {
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoFlyingStateMachine>(new EnemyZakoFlyingStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる
 		m_HPFrame = GetStage()->AddGameObject<BillBoard>(GetThis<GameObject>(), L"ZakoGaugeFrame", 4, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -599,7 +600,8 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Down", 420, 80, false, 60.0f);
 		ptrDraw->AddAnimation(L"Hit", 380, 40, false, 60.0f);
 		ptrDraw->AddAnimation(L"Stun", 525, 60, false, 60.0f);
-		ptrDraw->AddAnimation(L"Attack1", 260, 80, false, 60.0f);
+		ptrDraw->AddAnimation(L"Attack1", 280, 60, false, 60.0f);
+		ptrDraw->AddAnimation(L"Charge", 240, 20, false, 60.0f);
 
 		//影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();
@@ -626,7 +628,7 @@ namespace basecross {
 		//m_LandDetect->SetCollScale(3.0f);
 
 		//ステートマシン生成
-		m_state = shared_ptr<EnemyZakoHumanoidStateMachine>(new EnemyZakoHumanoidStateMachine(GetThis<GameObject>()));
+		m_state = unique_ptr<EnemyZakoHumanoidStateMachine>(new EnemyZakoHumanoidStateMachine(GetThis<GameObject>()));
 
 		//頭上にHPバーを表示させる		
 		m_HPBer = GetStage()->AddGameObject<BillBoardGauge>(GetThis<GameObject>(), L"ZakoHPMater", 3, 5.0f, Vec3(2.0f, 0.5f, 5.0f));
@@ -730,12 +732,15 @@ namespace basecross {
 			}
 
 			//スタン時の演出
-			if (isStun) {
-				AddEffect(EnemyEffect_Stun);
-				App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
-				m_stun = 0;
+			if (!FindTag(L"AttackNow"))
+			{
+				if (isStun) {
+					AddEffect(EnemyEffect_Stun);
+					App::GetApp()->GetXAudio2Manager()->Start(L"ArmorBreak", 0, 0.9f);
+					m_stun = 0;
 
-				m_state->ChangeState(L"Stun");
+					m_state->ChangeState(L"Stun");
+				}
 			}
 
 			//やられ処理移行

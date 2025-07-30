@@ -118,6 +118,23 @@ namespace basecross {
 	};
 
 	// ãﬂê⁄1
+	class BossFirstAttackWaitState : public StateBase {
+		float m_time = 0;
+		const float m_rotateSpeed = XM_PI;
+		const float m_timeMax = 2.0f;
+		const float m_rotateGoal = XM_PIDIV4 / 4;
+
+	public:
+		BossFirstAttackWaitState(shared_ptr<GameObject>& obj) :
+			StateBase(obj) {
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
+	// ãﬂê⁄1
 	class BossFirstAttackState : public StateBase {
 		float m_time = 0;
 		float m_startup = .6f;
@@ -278,7 +295,7 @@ namespace basecross {
 	// ÉGÉlÉãÉMÅ[íeèIÇÌÇË
 	class BossFirstSphereEndState : public StateBase {
 		float m_time = 0;
-		const float m_recoveryTime = .75f;
+		const float m_recoveryTime = 1.25f;
 
 	public:
 		BossFirstSphereEndState(shared_ptr<GameObject>& obj) :
@@ -347,8 +364,8 @@ namespace basecross {
 	// ôÙöK
 	class BossFirstRoarState : public StateBase {
 		float m_time = 0;
-		const float m_attackTime = .2f;
-		const float m_endTime = .5f;
+		const float m_attackTime = .6f;
+		const float m_endTime = 2.0f;
 
 		bool m_isAttackEnd = false;
 	public:
@@ -505,7 +522,8 @@ namespace basecross {
 		{
 			AddState(L"Stand", shared_ptr<BossFirstStandState>(new BossFirstStandState(obj)));
 			AddState(L"Chase", shared_ptr<BossFirstChaseState>(new BossFirstChaseState(obj)));
-			
+
+			AddState(L"AttackWait", shared_ptr<BossFirstAttackWaitState>(new BossFirstAttackWaitState(obj)));
 			AddState(L"Attack", shared_ptr<BossFirstAttackState>(new BossFirstAttackState(obj)));
 			AddState(L"Attack2", shared_ptr<BossFirstAttack2State>(new BossFirstAttack2State(obj)));
 			AddState(L"Roar", shared_ptr<BossFirstRoarState>(new BossFirstRoarState(obj)));

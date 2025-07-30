@@ -56,8 +56,8 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"ToStageSelect")
 		{
+			m_stageType = StageType::STAGE_SELECT;
 			ResetActiveStage<StageSelect>();
-
 		}
 
 		if (event->m_MsgStr == L"ToPersonalityStage")
@@ -68,7 +68,7 @@ namespace basecross {
 
 		if (event->m_MsgStr == L"Tutorial")
 		{
-			m_stageNum = 0;
+			m_stageType = StageType::STAGE_TUTORIAL;
 			ResetActiveStage<TutorialStage>();
 		}
 		// ここは後にWaveStageに変更する
@@ -76,18 +76,21 @@ namespace basecross {
 		if (event->m_MsgStr == L"ToWaveStage1")
 		{
 			m_stageNum = 1;
+			m_stageType = StageType::STAGE_WAVE;
 			ResetActiveStage<StageFirst>();
 		}
 
 		if (event->m_MsgStr == L"ToWaveStage2")
 		{
 			m_stageNum = 2;
+			m_stageType = StageType::STAGE_WAVE;
 			ResetActiveStage<StageSecond>();
 		}
 
 		if (event->m_MsgStr == L"ToWaveStage3")
 		{
 			m_stageNum = 3;
+			m_stageType = StageType::STAGE_WAVE;
 			ResetActiveStage<StageThird>();
 		}
 
@@ -131,7 +134,7 @@ namespace basecross {
 		app->RegisterTexture(L"Fadeout", strTexture);
 		strTexture = texPath + L"SlowSpeite.png";
 		app->RegisterTexture(L"SlowTex", strTexture);
-		strTexture = texPath + L"Door.png";
+		strTexture = texPath + L"Door2.png";
 		app->RegisterTexture(L"DoorTex", strTexture);
 		strTexture = texPath + L"EmergencySpeite.png";
 		app->RegisterTexture(L"EmergencyTex", strTexture);
@@ -209,7 +212,7 @@ namespace basecross {
 
 
 		// Floor
-		strTexture = texPath + L"FloorTex2.png";
+		strTexture = texPath + L"FloorTex3.png";
 		app->RegisterTexture(L"FloorTex", strTexture);
 
 		// Buttons
@@ -343,11 +346,11 @@ namespace basecross {
 		app->RegisterTexture(L"WallTex", strTexture);
 
 		// ステージの壁とか
-		strTexture = texPath + L"WallSide.png";
+		strTexture = texPath + L"WallSide2.png";
 		app->RegisterTexture(L"WallSideTex", strTexture);
-		strTexture = texPath + L"WallFront.png";
+		strTexture = texPath + L"WallFront2.png";
 		app->RegisterTexture(L"WallFrontTex", strTexture);
-		strTexture = texPath + L"Ceiling.png";
+		strTexture = texPath + L"Ceiling2.png";
 		app->RegisterTexture(L"CeilingTex", strTexture);
 
 		//スタティックメッシュ
@@ -425,6 +428,7 @@ namespace basecross {
 		EffectManager::Instance().RegisterEffect(L"RushEfk", efkPath + L"Rush.efkefc");
 		EffectManager::Instance().RegisterEffect(L"EnemyAttack", efkPath + L"PrayerDamage.efkefc");
 		EffectManager::Instance().RegisterEffect(L"GunLine", efkPath + L"GunLine.efkefc");
+		EffectManager::Instance().RegisterEffect(L"EnemySlash", efkPath + L"EnemySlash.efkefc");
 
 		// 連続攻撃
 		EffectManager::Instance().RegisterEffect(L"Slash01Efk", efkPath + L"slash01.efkefc");

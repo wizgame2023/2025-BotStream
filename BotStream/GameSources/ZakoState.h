@@ -530,6 +530,24 @@ namespace basecross {
 		virtual void Exit();
 	};
 
+	//攻撃の準備ステート
+	class EnemyZakoHumanoidChargeState :public EnemyZakoStateBase
+	{
+	private:
+		float m_timeOfCharge = 0.0f;//攻撃時間経過を測る変数
+
+	public:
+		EnemyZakoHumanoidChargeState(shared_ptr<GameObject>& obj) :
+			EnemyZakoStateBase(obj)
+		{
+
+		}
+
+		virtual void Enter();
+		virtual void Update(float deltatime);
+		virtual void Exit();
+	};
+
 	//接近戦をするときの準備ステート
 	class EnemyZakoHumanoidPreparationforMeleeState :public EnemyZakoStateBase
 	{
@@ -646,6 +664,7 @@ namespace basecross {
 			AddState(L"Hit", shared_ptr<EnemyZakoHumanoidHitState>(new EnemyZakoHumanoidHitState(obj)));
 			AddState(L"Stun", shared_ptr<EnemyZakoHumanoidStanState>(new EnemyZakoHumanoidStanState(obj)));
 			AddState(L"Die", shared_ptr<EnemyZakoHumanoidDieState>(new EnemyZakoHumanoidDieState(obj)));
+			AddState(L"Charge", shared_ptr<EnemyZakoHumanoidChargeState>(new EnemyZakoHumanoidChargeState(obj)));
 
 			ChangeState(L"Stand");
 		}

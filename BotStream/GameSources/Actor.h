@@ -31,7 +31,7 @@ namespace basecross {
 		EnemyEffect_Rush,
 		EnemyEffect_Attack,
 		EnemyZakoEffect_ArmorBreak,
-		EnemyEffect_Attack2
+		EnemyEffect_Slash
 	};
 
 	class Actor : public ObjectMove
@@ -166,7 +166,7 @@ namespace basecross {
 		}
 
 	public:
-		Actor(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale);
+		Actor(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale);
 		~Actor();
 
 		void OnCreate() override;
