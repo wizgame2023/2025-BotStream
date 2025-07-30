@@ -211,9 +211,6 @@ namespace basecross {
 		app->RegisterTexture(L"BossGaugeFrame", strTexture);
 
 
-		// Floor
-		strTexture = texPath + L"FloorTex3.png";
-		app->RegisterTexture(L"FloorTex", strTexture);
 
 		// Buttons
 		strTexture = texPath + L"Buttons.png";
@@ -263,13 +260,30 @@ namespace basecross {
 		app->RegisterTexture(L"AvoidTex", strTexture);
 
 		// パーツのステータス
-		strTexture = texPath + L"PartsUI1_2.png";
+		// 試作パーツ / 高性能モーター / 戦闘用パッチ
+		strTexture = texPath + L"PartsUI1.png";
 		app->RegisterTexture(L"PartsTestTEX", strTexture);
-		strTexture = texPath + L"PartsUI2_2.png";
+		strTexture = texPath + L"PartsUI2.png";
 		app->RegisterTexture(L"PartsHiMoterTEX", strTexture);
-		strTexture = texPath + L"PartsUI3_2.png";
+		strTexture = texPath + L"PartsUI3.png";
 		app->RegisterTexture(L"PartsBattlePatchTEX", strTexture);
-		app->RegisterTexture(L"Parts3TEX", strTexture);
+
+		// 改造パーツ / 完全版パーツ / 改造モーター
+		strTexture = texPath + L"PartsUI4.png";
+		app->RegisterTexture(L"PartsModdingTEX", strTexture);
+		strTexture = texPath + L"PartsUI5.png";
+		app->RegisterTexture(L"PartsCompleteTEX", strTexture);
+		strTexture = texPath + L"PartsUI6.png";
+		app->RegisterTexture(L"PartsModdingMoterTEX", strTexture);
+
+		// 古式モーター / 攻撃特化パッチ / 汎用パッチ
+		strTexture = texPath + L"PartsUI7.png";
+		app->RegisterTexture(L"PartsOldMoterTEX", strTexture);
+		strTexture = texPath + L"PartsUI8.png";
+		app->RegisterTexture(L"PartsSpecializePatchTEX", strTexture);
+		strTexture = texPath + L"PartsUI9.png";
+		app->RegisterTexture(L"PartsGeneralPatchTEX", strTexture);
+
 		strTexture = texPath + L"PartsTexts.png";
 		app->RegisterTexture(L"PartsText", strTexture);
 
@@ -352,6 +366,8 @@ namespace basecross {
 		app->RegisterTexture(L"WallFrontTex", strTexture);
 		strTexture = texPath + L"Ceiling2.png";
 		app->RegisterTexture(L"CeilingTex", strTexture);
+		strTexture = texPath + L"FloorTex3.png";
+		app->RegisterTexture(L"FloorTex", strTexture);
 
 		//スタティックメッシュ
 		auto staticModelMesh = MeshResource::CreateStaticModelMesh(modPath, L"Parts_A.bmf");//パーツメッシュ

@@ -169,7 +169,7 @@ namespace basecross {
 	};
 
 
-	//パーツ(試作パーツ(強化版))
+	// パーツ(改造パーツ)
 	class PartsPrototype2 : public Parts
 	{
 
@@ -189,8 +189,8 @@ namespace basecross {
 
 			//名前
 			m_partsStatus.partsName = L"試作パーツ(強化版)";
-			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"Stage1-1Tex";
+			//テクスチャ
+			m_partsStatus.partsImagePass = L"PartsModdingTEX";
 		}
 		~PartsPrototype2()
 		{
@@ -218,8 +218,8 @@ namespace basecross {
 
 			//名前
 			m_partsStatus.partsName = L"完全版パーツ";
-			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"Stage1-2Tex";
+			//テクスチャ
+			m_partsStatus.partsImagePass = L"PartsCompleteTEX";
 		}
 		~PartsCompleteVersion()
 		{
@@ -248,8 +248,8 @@ namespace basecross {
 
 			//名前
 			m_partsStatus.partsName = L"改造モーター";
-			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"Stage2-1Tex";
+			//テクスチャ
+			m_partsStatus.partsImagePass = L"PartsModdingMoterTEX";
 		}
 		~PartsModMoter()
 		{
@@ -257,7 +257,7 @@ namespace basecross {
 	};
 
 
-	//パーツ(古びたモーター)
+	//パーツ(古式モーター)
 	class PartsOldMoter :public Parts
 	{
 	private:
@@ -278,8 +278,8 @@ namespace basecross {
 
 			//名前
 			m_partsStatus.partsName = L"古びたモーター";
-			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"Stage2-2Tex";
+			//テクスチャ
+			m_partsStatus.partsImagePass = L"PartsOldMoterTEX";
 		}
 		~PartsOldMoter()
 		{
@@ -308,8 +308,8 @@ namespace basecross {
 
 			//名前
 			m_partsStatus.partsName = L"パワー型パッチ";
-			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"Stage3-1Tex";
+			//テクスチャ
+			m_partsStatus.partsImagePass = L"PartsSpecializePatchTEX";
 		}
 		~PartsPowerPatch()
 		{
@@ -339,8 +339,8 @@ namespace basecross {
 
 			//名前
 			m_partsStatus.partsName = L"バランス型パッチ";
-			//とりあえず適当なテクスチャにする
-			m_partsStatus.partsImagePass = L"Stage3-2Tex";
+			//テクスチャ
+			m_partsStatus.partsImagePass = L"PartsGeneralPatchTEX";
 		}
 		~PartsBalancePatch()
 		{
