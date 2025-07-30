@@ -96,7 +96,7 @@ namespace basecross {
 			m_partsStatus.partsType = parts;
 
 			//名前
-			m_partsStatus.partsName = L"テスト用パーツ";
+			m_partsStatus.partsName = L"TestParts";
 			//とりあえず適当なテクスチャにする
 			m_partsStatus.partsImagePass = L"PartsTestTEX";
 		}
@@ -128,7 +128,7 @@ namespace basecross {
 			m_partsStatus.partsType = MoterParts;
 
 			//名前
-			m_partsStatus.partsName = L"高性能モーター";
+			m_partsStatus.partsName = L"HighMotor";
 			//とりあえず適当なテクスチャにする
 			m_partsStatus.partsImagePass = L"PartsHiMoterTEX";
 		}
@@ -158,7 +158,7 @@ namespace basecross {
 			m_partsStatus.partsType = PatchParts;
 
 			//名前
-			m_partsStatus.partsName = L"戦闘用パッチ";
+			m_partsStatus.partsName = L"BattlePatch";
 			//とりあえず適当なテクスチャにする
 			m_partsStatus.partsImagePass = L"PartsBattlePatchTEX";
 		}
@@ -188,8 +188,8 @@ namespace basecross {
 			m_partsStatus.partsType = parts;
 
 			//名前
-			m_partsStatus.partsName = L"改造パーツ";
-      //テクスチャ
+			m_partsStatus.partsName = L"ModdingParts";
+			//テクスチャ
 			m_partsStatus.partsImagePass = L"PartsModdingTEX";
 		}
 		~PartsPrototype2()
@@ -217,7 +217,7 @@ namespace basecross {
 			m_partsStatus.partsType = parts;
 
 			//名前
-			m_partsStatus.partsName = L"完全版パーツ";
+			m_partsStatus.partsName = L"CompleteParts";
 			//テクスチャ
 			m_partsStatus.partsImagePass = L"PartsCompleteTEX";
 		}
@@ -247,7 +247,7 @@ namespace basecross {
 			m_partsStatus.partsType = MoterParts;
 
 			//名前
-			m_partsStatus.partsName = L"改造モーター";
+			m_partsStatus.partsName = L"ModdingMotor";
 			//テクスチャ
 			m_partsStatus.partsImagePass = L"PartsModdingMoterTEX";
 		}
@@ -277,7 +277,7 @@ namespace basecross {
 			m_partsStatus.partsType = MoterParts;
 
 			//名前
-			m_partsStatus.partsName = L"古びたモーター";
+			m_partsStatus.partsName = L"OldMotor";
 			//テクスチャ
 			m_partsStatus.partsImagePass = L"PartsOldMoterTEX";
 		}
@@ -307,7 +307,7 @@ namespace basecross {
 			m_partsStatus.partsType = PatchParts;
 
 			//名前
-			m_partsStatus.partsName = L"パワー型パッチ";
+			m_partsStatus.partsName = L"SpecializePatch";
 			//テクスチャ
 			m_partsStatus.partsImagePass = L"PartsSpecializePatchTEX";
 		}
@@ -338,7 +338,7 @@ namespace basecross {
 			m_partsStatus.partsType = PatchParts;
 
 			//名前
-			m_partsStatus.partsName = L"バランス型パッチ";
+			m_partsStatus.partsName = L"GeneralPatch";
 			//テクスチャ
 			m_partsStatus.partsImagePass = L"PartsGeneralPatchTEX";
 		}
