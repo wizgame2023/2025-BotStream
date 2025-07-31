@@ -20,6 +20,7 @@ namespace basecross {
 		PlayerEffect_Dodge,
 		PlayerEffect_Dash,
 		PlayerEffect_DashRipple,
+		PlayerEffect_Charge,
 		EnemyEffect_Stun,
 		EnemyEffect_ArmorBreak,
 		EnemyEffect_Beam,
