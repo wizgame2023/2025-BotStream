@@ -257,6 +257,11 @@ namespace basecross {
 		case PlayerEffect_Beam:
 			m_effect = EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
 			break;
+		case PlayerEffect_Charge:
+			m_effect = EfkPlaying(L"Charge", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0), Col4(0.0f, 1.0f, 0.0f, 1.0f));
+			EffectManager::Instance().SetAllColor(m_effect, Col4(0.0f, 1.0f, 0.0f, 0.8f));
+			EffectManager::Instance().SetSpeed(m_effect, 0.48f);
+			break;
 		case EnemyEffect_Stun:
 			m_effect = EfkPlaying(L"Stun", angle, Vec3(0, 1, 0), Vec3(4), Vec3(0, 1, 0));
 			break;

@@ -167,7 +167,14 @@ namespace basecross {
 	}
 	void PlayerWalkState::Exit()
 	{
-		
+		auto chargeSE = m_chargeSE.lock();
+		if (chargeSE && m_timeOfPushAttackButton > 0)
+		{
+			m_SEManager->Stop(chargeSE);
+		}
+		m_chargeEffectFlag = false;
+		EffectManager::Instance().StopEffect(m_chargeEffect);
+		m_timeOfPushAttackButton = 0.0f;
 	}
 
 	// 攻撃についての処理
@@ -178,11 +185,29 @@ namespace basecross {
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
-		{
-			// 押している時間を測る
-			m_timeOfPushAttackButton += m_deltaTime;
+		{	
+			//近接攻撃していい状態以外はチャージできない
+			if (m_meleeFlag)
+			{
+				if (m_timeOfPushAttackButton == 0.0f)
+				{
+					
+					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
+				}
+				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
+				{
+					//Handle
+					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
+					m_chargeEffectFlag = true;
+				}
 
-			//m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
+				Vec3 playerPos = m_player->GetPosition();
+				EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
+				EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+
+				// 押している時間を測る
+				m_timeOfPushAttackButton += m_deltaTime;
+			}
 		}
 		// 攻撃するときの処理(刀か銃にするか)
 		if (AttackButton)
@@ -190,18 +215,16 @@ namespace basecross {
 			if (m_meleeFlag)
 			{
 				// 近距離
-				if (m_timeOfPushAttackButton >= 1.5f)
+				if (m_timeOfPushAttackButton >= 1.36f)
 				{
 					// 長押しなら最終段の技が出る
 					m_player->ChangeState(L"AttackEx");
 					// 攻撃エフェクトを出す
 					m_player->AddEffect(PlayerEffect_AttackEx);
 				}
-				if (m_timeOfPushAttackButton < 1.5f)
+				else if (m_timeOfPushAttackButton < 1.36f)
 				{
 					m_player->ChangeState(L"Attack1");
-					// 攻撃エフェクトを出す
-					m_player->AddEffect(PlayerEffect_Attack1);
 				}
 			}
 			else if (!m_meleeFlag)
@@ -220,8 +243,6 @@ namespace basecross {
 				}
 			}
 
-			// 押した時間リセット
-			m_timeOfPushAttackButton = 0.0f;
 		}
 
 		// もしSPゲージがMAXであれば必殺技が打てる
@@ -430,6 +451,15 @@ namespace basecross {
 		m_countTimeOfDashButton = 0.0f;
 		EffectManager::Instance().StopEffect(m_effect);
 		m_countTimeOfDashSE = 0.0f;
+
+		auto chargeSE = m_chargeSE.lock();
+		if (chargeSE && m_timeOfPushAttackButton > 0)
+		{
+			m_SEManager->Stop(chargeSE);
+		}
+		m_chargeEffectFlag = false;
+		EffectManager::Instance().StopEffect(m_chargeEffect);
+		m_timeOfPushAttackButton = 0.0f;
 	}
 
 	// 攻撃についての処理
@@ -441,8 +471,28 @@ namespace basecross {
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
 		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
 		{
-			// 押している時間を測る
-			m_timeOfPushAttackButton += m_deltaTime;
+			//近接攻撃していい状態以外はチャージできない
+			if (m_meleeFlag)
+			{
+				if (m_timeOfPushAttackButton == 0.0f)
+				{
+
+					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
+				}
+				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
+				{
+					//Handle
+					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
+					m_chargeEffectFlag = true;
+				}
+
+				Vec3 playerPos = m_player->GetPosition();
+				EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
+				EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+
+				// 押している時間を測る
+				m_timeOfPushAttackButton += m_deltaTime;
+			}
 		}
 		// 攻撃するときの処理(刀か銃にするか)
 		if (AttackButton)
@@ -450,18 +500,16 @@ namespace basecross {
 			if (m_meleeFlag)
 			{
 				// 近距離
-				if (m_timeOfPushAttackButton >= 1.5f)
+				if (m_timeOfPushAttackButton >= 1.36f)
 				{
 					// 長押しなら最終段の技が出る
 					m_player->ChangeState(L"AttackEx");
 					// 攻撃エフェクトを出す
 					m_player->AddEffect(PlayerEffect_AttackEx);
 				}
-				if (m_timeOfPushAttackButton < 1.5f)
+				else if (m_timeOfPushAttackButton < 1.36f)
 				{
 					m_player->ChangeState(L"Attack1");
-					// 攻撃エフェクトを出す
-					m_player->AddEffect(PlayerEffect_Attack1);
 				}
 			}
 			else if (!m_meleeFlag)
@@ -480,8 +528,6 @@ namespace basecross {
 				}
 			}
 
-			// 押した時間リセット
-			m_timeOfPushAttackButton = 0.0f;
 		}
 
 		// もしSPゲージがMAXであれば必殺技が打てる
@@ -594,6 +640,9 @@ namespace basecross {
 
 		//SE再生
 		m_SE = m_SEManager->Start(L"Attack1", 0, 0.9f * m_SEVol);
+		// 攻撃エフェクトを出す
+		m_player->AddEffect(PlayerEffect_Attack1);
+
 
 		//Attack1アニメーションに変更
 		m_player->ChangeAnim(L"Attack1");
