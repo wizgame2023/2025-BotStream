@@ -67,6 +67,11 @@ namespace basecross {
 		//攻撃についての処理
 		void AttackTransition(bool onOff);
 
+		weak_ptr<SoundItem> m_chargeSE;
+		bool m_chargeEffectFlag = false;
+		bool m_chargeStartFlag = false;
+		Handle m_chargeEffect;
+
 	public:
 		PlayerWalkState(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
@@ -119,6 +124,11 @@ namespace basecross {
 
 		//攻撃についての処理
 		void AttackTransition(bool onOff);
+
+		//チャージ関係
+		weak_ptr<SoundItem> m_chargeSE;
+		bool m_chargeEffectFlag = false;
+		Handle m_chargeEffect;
 
 		// ダッシュボタンを離した処理
 		float m_countTimeOfDashButton = 0.0f;
