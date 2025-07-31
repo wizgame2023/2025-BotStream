@@ -31,7 +31,8 @@ namespace basecross {
 		m_BGMVol = m_scene.lock()->GetBGMVolume();
 		m_SEVol = m_scene.lock()->GetSEVolume();
 
-		AddGameObject<PauseSprite>();
+		m_pauseSp = AddGameObject<PauseSprite>();
+		SetSharedGameObject(L"PauseUI", m_pauseSp.lock());
 
 		CreateViewLight();
 		CreateSprite();
@@ -40,13 +41,13 @@ namespace basecross {
 
 	void StageSelect::OnUpdate()
 	{
-		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
-		auto delta = App::GetApp()->GetElapsedTime();
-		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+		shared_ptr<PauseSprite> pauseSp = GetSharedGameObject<PauseSprite>(L"PauseUI");
 
-		auto scene = App::GetApp()->GetScene<Scene>();
-		// タイトルシーンに移行できる関数
-		scene->Reset();
+		bool isPause = pauseSp->GetPauseFlag();
+
+		auto delta = App::GetApp()->GetElapsedTime();
+
+		static float time = 0.0f;
 
 		//BGMのボリュームの更新
 		auto BGMVol = App::GetApp()->GetScene<Scene>()->GetBGMVolume();
@@ -55,6 +56,25 @@ namespace basecross {
 		{
 			BGMVoice->SetVolume(BGMVol);
 		}
+
+		if (isPause)
+		{
+			time += delta;
+			return;
+		}
+
+		if (time >= 0.1f)
+		{
+			time = 0.0f;
+			return;
+		}
+
+		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
+		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+
+		auto scene = App::GetApp()->GetScene<Scene>();
+		// タイトルシーンに移行できる関数
+		scene->Reset();
 
 		// デッドゾーン
 		constexpr float dead = 0.6f;
@@ -93,7 +113,7 @@ namespace basecross {
 		// 上に倒すとステージが切り替わる(+側)
 		if (ret.y >= dead && !m_selectOnceFlag2 && !m_stageFlag && m_tutorialFlag)
 		{
-			m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+			m_SE = m_SEManager->Start(L"StageSelectSE", 0, m_SEVol);
 
 			// ステージ番号を更新
 			m_selectStageNum = 0;
@@ -110,7 +130,7 @@ namespace basecross {
 		// 下に倒すとステージが切り替わる(-側)
 		else if (ret.y <= -dead && !m_selectOnceFlag2 && !m_stageFlag && !m_tutorialFlag)
 		{
-			m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+			m_SE = m_SEManager->Start(L"StageSelectSE", 0, m_SEVol);
 
 			// ステージ番号を更新
 			m_selectStageNum = 3;
@@ -151,7 +171,7 @@ namespace basecross {
 			// 左に倒すとステージが切り替わる(-側)
 			else if (ret.x <= -dead && !m_selectOnceFlag1 && m_selectStageNum > stageMinNum && !m_stageFlag)
 			{
-				m_SE = m_SEManager->Start(L"StageSelectSE", 0);
+				m_SE = m_SEManager->Start(L"StageSelectSE", 0, m_SEVol);
 
 				// 前のステージ番号の色を戻す
 				m_stageNum[m_selectStageNum]->SetColor(Col4(1, 1, 1, 1));
@@ -186,7 +206,7 @@ namespace basecross {
 		// Aボタンかエンターキーで選択
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_A || keybord.m_bPressedKeyTbl[VK_RETURN]) && !m_stageFlag)
 		{
-			m_SE = m_SEManager->Start(L"SelectionSE", 0);
+			m_SE = m_SEManager->Start(L"SelectionSE", 0, m_SEVol);
 
 			m_stageFlag = true;
 			m_selectOnceFlag1 = true;
@@ -240,7 +260,7 @@ namespace basecross {
 		// Bボタンかバックスペースで戻る
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && m_stageFlag && !m_tutorialFlag)
 		{
-			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0, m_SEVol);
 
 			m_stageFlag = false;
 			m_selectOnceFlag1 = true;
@@ -266,7 +286,7 @@ namespace basecross {
 		// チュートリアルキャンセル
 		if ((cntl[0].wPressedButtons & XINPUT_GAMEPAD_B || keybord.m_bPressedKeyTbl[VK_BACK]) && m_stageFlag && m_tutorialFlag)
 		{
-			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
+			m_SE = m_SEManager->Start(L"SelectionCancelSE", 0, m_SEVol);
 
 			m_stageFlag = false;
 

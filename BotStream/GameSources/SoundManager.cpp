@@ -31,10 +31,11 @@ namespace basecross {
 			m_BGMVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(0);
 			m_SEVol = GetStage()->GetSharedGameObject<PauseSprite>(L"PauseUI")->GetAudioMax(1);
 
-			//シーンに現在の全体BGM.SEのボリュームをセットする
-			auto scene = App::GetApp()->GetScene<Scene>();
-			scene->SetBGMVolume(m_BGMVol);
-			scene->SetSEVolume(m_SEVol);
+			// PauseSpriteに移行
+			////シーンに現在の全体BGM.SEのボリュームをセットする
+			//auto scene = App::GetApp()->GetScene<Scene>();
+			//scene->SetBGMVolume(m_BGMVol);
+			//scene->SetSEVolume(m_SEVol);
 		}
 
 		//m_ptrSound->Stop(m_BGM);

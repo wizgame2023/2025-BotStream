@@ -15,6 +15,7 @@ namespace basecross {
 		m_stage = GetStage();
 		////BGM,SEのボリュームの初期化したい！(他のステージで設定している可能性があるため)
 		m_scene = App::GetApp()->GetScene<Scene>();
+		m_stageType = m_scene->GetStageType();
 		m_audioMax[0] = m_scene->GetBGMVolume();
 		m_audioMax[1] = m_scene->GetSEVolume();
 
@@ -35,6 +36,12 @@ namespace basecross {
 		// コントローラーとキーボードの入力受付
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
+
+		//シーンに現在の全体BGM.SEのボリュームをセットする
+		auto scene = App::GetApp()->GetScene<Scene>();
+
+		scene->SetBGMVolume(m_audioMax[0]);
+		scene->SetSEVolume(m_audioMax[1]);
 
 		// コントローラーの左スティックの判定
 		Vec2 ret;
@@ -76,11 +83,9 @@ namespace basecross {
 				MoveSwitchActor();
 			}
 		}
-
-		auto stageType = m_scene->GetStageType();
 		
 		// StageSelectではなければ==============================================================
-		if (stageType != Scene::StageType::STAGE_SELECT)
+		if (m_stageType != Scene::StageType::STAGE_SELECT)
 		{
 			// --- 定数定義 ------------------------------------
 			constexpr int MAIN_MENU_COUNT = 4; // 再開/ステージ選択/Audio/終了 → 0～3
@@ -198,58 +203,8 @@ namespace basecross {
 					// まず現在の調整対象を idx に認識させる
 					int idx = m_audioFlag ? true : false;// 0=BGM, 1=SE
 
-					auto selectPos = m_audioSelect[idx]->GetPosition();
-					// 右に倒したら +0.1f
-					if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
-					{
-						// 選択しているところの位置の更新
-						m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
-						m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
+					AudioSetteing(ret, idx);
 
-						// 音量が0.999f以上になったら1.0fにする
-						if (m_audioMax[idx] >= 0.999f)
-						{
-							m_audioMax[idx] = 1.0f;
-						}
-
-						// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
-						if (idx == 0)
-							m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
-						else
-							m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
-
-
-						m_audioMaxSetCol[idx]++;
-
-						m_audioSelectFlag = true;
-					}
-					// スティックを左に倒したら -0.1f
-					else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f && selectPos.x > -50.0f) 
-					{
-						m_audioSelect[idx]->SetPosition({ selectPos.x - change, selectPos.y, selectPos.z });
-						m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
-						m_audioMaxSetCol[idx]--;
-
-						// 音量が0.001f以下になったら0にする
-						if (m_audioMax[idx] <= 0.001f)
-						{
-							m_audioMax[idx] = 0.0f;
-							m_audioMaxSetCol[idx] = 0;
-						}
-
-						// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
-						if (idx == 0)
-						{
-							m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-						}
-						else
-						{
-							m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-							m_SE = m_SEManager->Start(L"SelectionCancelSE", 0);
-						}
-
-						m_audioSelectFlag = true;
-					}
 					// オーディオの最大値が 0 の場合は選択しているところを見えなくする
 					// 代わりにスピーカーの所に×を表示
 					if (m_audioMax[0] <= 0.0f)
@@ -371,47 +326,7 @@ namespace basecross {
 			// 現在の調整対象を idx に認識させる
 			bool idx = m_audioFlag ? 1 : 0;// 0=BGM, 1=SE
 
-			auto audioPos = m_pauseTextSprite[idx]->GetPosition();
-			m_selectSprite->SetPosition(audioPos);
-
-			Vec3 selectPos = m_audioSelect[idx]->GetPosition();
-
-			// 左右いずれかのデッドゾーン復帰でフラグクリア
-			if (fabs(ret.x) < dead)
-				m_audioSelectFlag = false;
-
-			// 右に倒したら +0.1f
-			if ((ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f) && !m_audioSelectFlag)
-			{
-				// 選択しているところの位置の更新
-				m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
-				m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
-
-				// 音量が0.999f以上になったら1.0fにする
-				if (m_audioMax[idx] >= 0.999f)
-				{
-					m_audioMax[idx] = 1.0f;
-				}
-
-				// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
-				if (idx == 0)
-					m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
-				else
-					m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
-
-
-				m_audioMaxSetCol[idx]++;
-
-				m_audioSelectFlag = true;
-
-			}
-			// スティックを左に倒したら -0.1f
-			else if ((ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f) && !m_audioSelectFlag)
-			{
-				
-
-			}
-
+			AudioSetteing(ret, idx);
 
 			AudioUIClear(!m_pauseFlag);
 
@@ -450,9 +365,8 @@ namespace basecross {
 		constexpr int AUDIO_MENU_COUNT = 2; // BGM/SE → 0～1
 		constexpr int AUDIO_MATER = 10;
 
-		auto stageType = m_scene->GetStageType();
 		// StageSelectじゃない時========================================================
-		if (stageType != Scene::StageType::STAGE_SELECT)
+		if (m_stageType != Scene::StageType::STAGE_SELECT)
 		{
 
 			for (int i = MAIN_MENU_COUNT; i < MAIN_MENU_COUNT + AUDIO_MENU_COUNT; ++i)
@@ -512,16 +426,88 @@ namespace basecross {
 	}
 
 	// オーディオの設定の操作
-	void PauseSprite::AudioSetteing(const Vec2& ret, bool flag)
+	void PauseSprite::AudioSetteing(const Vec2& ret, bool idx)
 	{
+		constexpr float dead = 0.65f;
+		constexpr float change = 50.0f;
 
+		Vec3 audioPos;
+
+		if (m_stageType != Scene::StageType::STAGE_SELECT)
+			audioPos = m_pauseTextSprite[idx + 4]->GetPosition();
+		else
+			audioPos = m_pauseTextSprite[idx]->GetPosition();
+
+		m_selectSprite->SetPosition(audioPos);
+
+		Vec3 selectPos = m_audioSelect[idx]->GetPosition();
+
+		// 左右いずれかのデッドゾーン復帰でフラグクリア
+		if (fabs(ret.x) < dead)
+			m_audioSelectFlag = false;
+
+		// 右に倒したら +0.1f
+		if (ret.x >= dead && !m_audioSelectFlag && m_audioMax[idx] < 1.0f)
+		{
+			// 選択しているところの位置の更新
+			m_audioSelect[idx]->SetPosition({ selectPos.x + change, selectPos.y, selectPos.z });
+			m_audioMax[idx] = clamp(m_audioMax[idx] + 0.1f, 0.0f, 1.0f);
+
+			// 音量が0.999f以上になったら1.0fにする
+			if (m_audioMax[idx] >= 0.999f)
+			{
+				m_audioMax[idx] = 1.0f;
+			}
+
+			// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
+			if (idx == 0)
+			{
+				m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
+			}
+			else
+			{
+				m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(0.59f, 0.98f, 0.59f, 1));
+				m_SE = m_SEManager->Start(L"SelectionCancelSE", 0, m_audioMax[1]);
+			}
+
+
+			m_audioMaxSetCol[idx]++;
+
+			m_audioSelectFlag = true;
+		}
+		// スティックを左に倒したら -0.1f
+		else if (ret.x <= -dead && !m_audioSelectFlag && m_audioMax[idx] > 0.0f)
+		{
+			m_audioSelect[idx]->SetPosition({ selectPos.x - change, selectPos.y, selectPos.z });
+			m_audioMax[idx] = clamp(m_audioMax[idx] - 0.1f, 0.0f, 1.0f);
+			m_audioMaxSetCol[idx]--;
+
+			// 音量が0.001f以下になったら0にする
+			if (m_audioMax[idx] <= 0.001f)
+			{
+				m_audioMax[idx] = 0.0f;
+				m_audioMaxSetCol[idx] = 0;
+			}
+
+			// idx(BGMかSEかを判断)が 0ならBGM, 1ならSE
+			if (idx == 0)
+			{
+				m_BGMMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+			}
+			else
+			{
+				m_SEMater[m_audioMaxSetCol[idx]]->SetColor(Col4(1.0f, 1.0f, 1.0f, 1.0f));
+				m_SE = m_SEManager->Start(L"SelectionCancelSE", 0, m_audioMax[1]);
+			}
+
+			m_audioSelectFlag = true;
+		}
 	}
 
 	void PauseSprite::CreateSprite()
 	{
-		auto stageType = m_scene->GetStageType();
 		// StageSelectじゃないとき====================================================================
-		if (stageType != Scene::StageType::STAGE_SELECT)
+		if (m_stageType != Scene::StageType::STAGE_SELECT)
 		{
 			m_stage = GetStage();
 			constexpr float XY1 = 1450, textPosX = -400, textPosY = 300;
