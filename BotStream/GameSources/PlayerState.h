@@ -67,7 +67,8 @@ namespace basecross {
 		//UŒ‚‚É‚Â‚¢‚Ä‚Ìˆ—
 		void AttackTransition(bool onOff);
 
-		weak_ptr<SoundItem> m_chargeSE;
+		//shared_ptr<SoundItem> m_chargeSE;
+		shared_ptr<SoundItem> m_chargeSE;
 		bool m_chargeEffectFlag = false;
 		bool m_chargeStartFlag = false;
 		Handle m_chargeEffect;
@@ -126,7 +127,7 @@ namespace basecross {
 		void AttackTransition(bool onOff);
 
 		//ƒ`ƒƒ[ƒWŠÖŒW
-		weak_ptr<SoundItem> m_chargeSE;
+		shared_ptr<SoundItem> m_chargeSE;
 		bool m_chargeEffectFlag = false;
 		Handle m_chargeEffect;
 

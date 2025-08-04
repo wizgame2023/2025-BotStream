@@ -115,6 +115,8 @@ namespace basecross {
 	// Playerの歩くモーション
 	void PlayerWalkState::Enter()
 	{
+		//初期化はちゃんと最初にしよう
+
 		PlayerStateBase::Enter();
 
 		// 何もなければ立ち止まるアニメーション
@@ -124,6 +126,8 @@ namespace basecross {
 		//m_player->SetMeleeNow(false);
 		//m_player->SetGunNow(false);
 
+		m_timeOfPushAttackButton = 0.0f;
+		m_chargeEffectFlag = false;
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
@@ -165,17 +169,6 @@ namespace basecross {
 		//攻撃の処理
 		AttackTransition(m_attackFlag);
 	}
-	void PlayerWalkState::Exit()
-	{
-		auto chargeSE = m_chargeSE.lock();
-		if (chargeSE && m_timeOfPushAttackButton > 0)
-		{
-			m_SEManager->Stop(chargeSE);
-		}
-		m_chargeEffectFlag = false;
-		EffectManager::Instance().StopEffect(m_chargeEffect);
-		m_timeOfPushAttackButton = 0.0f;
-	}
 
 	// 攻撃についての処理
 	void PlayerWalkState::AttackTransition(bool onOff)
@@ -191,12 +184,10 @@ namespace basecross {
 			{
 				if (m_timeOfPushAttackButton == 0.0f)
 				{
-					
 					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
 				}
 				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
 				{
-					//Handle
 					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
 					m_chargeEffectFlag = true;
 				}
@@ -245,17 +236,23 @@ namespace basecross {
 
 		}
 
-		// もしSPゲージがMAXであれば必殺技が打てる
-		auto SPCurrent = m_player->GetSP();
-		auto SPMAX = m_player->GetMaxSP();
-		if (SPCurrent >= SPMAX)
-		{
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
-			{
-				m_player->ChangeState(L"AttackSpecial");
-			}
-		}
+		//// もしSPゲージがMAXであれば必殺技が打てる　もしかしたら復活するかも
+		//auto SPCurrent = m_player->GetSP();
+		//auto SPMAX = m_player->GetMaxSP();
+		//if (SPCurrent >= SPMAX)
+		//{
+		//	if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
+		//	{
+		//		m_player->ChangeState(L"AttackSpecial");
+		//	}
+		//}
 	}
+	void PlayerWalkState::Exit()
+	{
+		m_SEManager->Stop(m_chargeSE);
+		EffectManager::Instance().StopEffect(m_chargeEffect);
+	}
+
 
 
 	//回避ステート
@@ -338,14 +335,18 @@ namespace basecross {
 	}
 
 
-	//ダッシュステート
+	// ダッシュステート
 	void PlayerDashState::Enter()
 	{
 		PlayerStateBase::Enter();
-		//ダッシュ用SEを再生
+		// ダッシュ用SEを再生
 		m_SE = m_SEManager->Start(L"Landing", 0, 0.9f * m_SEVol);
-		//ダッシュ用エフェクトを再生
+		// ダッシュ用エフェクトを再生
 		m_effect = m_player->AddEffect(PlayerEffect_Dash);
+
+		// 初期化処理
+		m_timeOfPushAttackButton = 0.0f;
+		m_chargeEffectFlag = false;
 	}
 
 	void PlayerDashState::Update(float deltaTime)
@@ -353,7 +354,7 @@ namespace basecross {
 		m_countTimeOfDashSE += deltaTime;
 		if (m_countTimeOfDashSE >= 0.6f)
 		{
-			//ダッシュ用SEを再生
+			// ダッシュ用SEを再生
 			m_SE = m_SEManager->Start(L"Landing", 0, 0.9f * m_SEVol);
 			m_countTimeOfDashSE = 0.0f;
 		}
@@ -368,21 +369,21 @@ namespace basecross {
 			SEVoice->SetVolume(0.9f * m_SEVol);
 		}
 
-		//エフェクト追従処理
+		// エフェクト追従処理
 		Vec3 playerPos = m_player->GetPosition();
 		Quat playerQt = m_player->GetComponent<Transform>()->GetQuaternion();
 
 		EffectManager::Instance().SetPosition(m_effect, playerPos+Vec3(0.0f,1.9f,0.0f));
 		EffectManager::Instance().SetRotationFromAxisAngle(m_effect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
 
-		//移動処理
+		// 移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dash);
 		Walk(PlayerState_Dash, m_walkFlag);
 
-		//ダッシュステートのアニメーション再生
+		// ダッシュステートのアニメーション再生
 		m_player->SetAddTimeAnimation(deltaTime * 1.5f);
 
-		//歩きアニメーション変更処理
+		// 歩きアニメーション変更処理
 		if (move.length() != 0 && m_meleeFlag)
 		{
 			m_player->ChangeAnim(L"Dash");
@@ -398,10 +399,10 @@ namespace basecross {
 		}
 
 
-		//Aボタン離したらorスティックを離したら歩くステートに変更する	
+		// Aボタン離したらorスティックを離したら歩くステートに変更する	
 		Vec3 stickVec = m_player->GetStickL();
 
-		//ダッシュボタンを一定時間離したらダッシュをやめる
+		// ダッシュボタンを一定時間離したらダッシュをやめる
 		if (!DashButton)
 		{
 			m_releasedDashButton = true;
@@ -439,27 +440,23 @@ namespace basecross {
 			m_player->ChangeState(L"DashEnd");
 		}
 
-		//攻撃の処理
+		// 攻撃の処理
 		AttackTransition(m_attackFlag);
 	}
 
 	void PlayerDashState::Exit()
 	{
-		//ダッシュSEを止める
+		// ダッシュSEを止める
 		m_SEManager->Stop(m_SE);
 
 		m_countTimeOfDashButton = 0.0f;
 		EffectManager::Instance().StopEffect(m_effect);
 		m_countTimeOfDashSE = 0.0f;
 
-		auto chargeSE = m_chargeSE.lock();
-		if (chargeSE && m_timeOfPushAttackButton > 0)
-		{
-			m_SEManager->Stop(chargeSE);
-		}
-		m_chargeEffectFlag = false;
+		// チャージ関係リセット
+		m_SEManager->Stop(m_chargeSE);
 		EffectManager::Instance().StopEffect(m_chargeEffect);
-		m_timeOfPushAttackButton = 0.0f;
+
 	}
 
 	// 攻撃についての処理
@@ -476,12 +473,10 @@ namespace basecross {
 			{
 				if (m_timeOfPushAttackButton == 0.0f)
 				{
-
 					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
 				}
 				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
 				{
-					//Handle
 					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
 					m_chargeEffectFlag = true;
 				}
