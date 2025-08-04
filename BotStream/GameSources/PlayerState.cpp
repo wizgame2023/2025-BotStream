@@ -111,6 +111,88 @@ namespace basecross {
 		}
 	}
 
+	// Playerの動く元となるステート//////////////////////////////////////////////////////////////////////////////////
+	// 攻撃についての処理
+	void PlayerMoveStateBase::AttackTransition(bool onOff)
+	{
+		// 攻撃していい判定でなければ通らない
+		if (!onOff) return;
+
+		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
+		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+		{
+			//近接攻撃していい状態以外はチャージできない
+			if (m_meleeFlag)
+			{
+				if (m_timeOfPushAttackButton == 0.0f)
+				{
+					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
+				}
+				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
+				{
+					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
+					m_chargeEffectFlag = true;
+				}
+
+				Vec3 playerPos = m_player->GetPosition();
+				EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
+				EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+
+				// 押している時間を測る
+				m_timeOfPushAttackButton += m_deltaTime;
+			}
+		}
+		// 攻撃するときの処理(刀か銃にするか)
+		if (AttackButton)
+		{
+			if (m_meleeFlag)
+			{
+				// 近距離
+				if (m_timeOfPushAttackButton >= 1.36f)
+				{
+					// 長押しなら最終段の技が出る
+					m_player->ChangeState(L"AttackEx");
+					// 攻撃エフェクトを出す
+					m_player->AddEffect(PlayerEffect_AttackEx);
+				}
+				else if (m_timeOfPushAttackButton < 1.36f)
+				{
+					m_player->ChangeState(L"Attack1");
+				}
+			}
+			else if (!m_meleeFlag)
+			{
+				// 遠距離	
+				auto BulletNumNow = m_player->GetBulletNum();
+				// 弾が残っていれば打てる
+				if (BulletNumNow > 0)
+				{
+					m_player->ChangeState(L"AttackLong");
+					m_player->SetBulletNum(--BulletNumNow);
+				}
+				if (BulletNumNow <= 0)
+				{
+					m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
+				}
+			}
+
+		}
+
+		//// もしSPゲージがMAXであれば必殺技が打てる　もしかしたら復活するかもしれないので残す
+		//auto SPCurrent = m_player->GetSP();
+		//auto SPMAX = m_player->GetMaxSP();
+		//if (SPCurrent >= SPMAX)
+		//{
+		//	if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
+		//	{
+		//		m_player->ChangeState(L"AttackSpecial");
+		//	}
+		//}
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 	// Playerの歩くモーション
 	void PlayerWalkState::Enter()
@@ -170,86 +252,86 @@ namespace basecross {
 		AttackTransition(m_attackFlag);
 	}
 
-	// 攻撃についての処理
-	void PlayerWalkState::AttackTransition(bool onOff)
-	{
-		// 攻撃していい判定でなければ通らない
-		if (!onOff) return;
+	//// 攻撃についての処理
+	//void PlayerWalkState::AttackTransition(bool onOff)
+	//{
+	//	// 攻撃していい判定でなければ通らない
+	//	if (!onOff) return;
 
-		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
-		{	
-			//近接攻撃していい状態以外はチャージできない
-			if (m_meleeFlag)
-			{
-				if (m_timeOfPushAttackButton == 0.0f)
-				{
-					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
-				}
-				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
-				{
-					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
-					m_chargeEffectFlag = true;
-				}
+	//	//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
+	//	if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+	//	{	
+	//		//近接攻撃していい状態以外はチャージできない
+	//		if (m_meleeFlag)
+	//		{
+	//			if (m_timeOfPushAttackButton == 0.0f)
+	//			{
+	//				m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
+	//			}
+	//			if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
+	//			{
+	//				m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
+	//				m_chargeEffectFlag = true;
+	//			}
 
-				Vec3 playerPos = m_player->GetPosition();
-				EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
-				EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+	//			Vec3 playerPos = m_player->GetPosition();
+	//			EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
+	//			EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
 
-				// 押している時間を測る
-				m_timeOfPushAttackButton += m_deltaTime;
-			}
-		}
-		// 攻撃するときの処理(刀か銃にするか)
-		if (AttackButton)
-		{
-			if (m_meleeFlag)
-			{
-				// 近距離
-				if (m_timeOfPushAttackButton >= 1.36f)
-				{
-					// 長押しなら最終段の技が出る
-					m_player->ChangeState(L"AttackEx");
-					// 攻撃エフェクトを出す
-					m_player->AddEffect(PlayerEffect_AttackEx);
-				}
-				else if (m_timeOfPushAttackButton < 1.36f)
-				{
-					m_player->ChangeState(L"Attack1");
-				}
-			}
-			else if (!m_meleeFlag)
-			{
-				// 遠距離	
-				auto BulletNumNow = m_player->GetBulletNum();
-				// 弾が残っていれば打てる
-				if (BulletNumNow > 0)
-				{
-					m_player->ChangeState(L"AttackLong");
-					m_player->SetBulletNum(--BulletNumNow);
-				}
-				if (BulletNumNow <= 0)
-				{
-					m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
-				}
-			}
+	//			// 押している時間を測る
+	//			m_timeOfPushAttackButton += m_deltaTime;
+	//		}
+	//	}
+	//	// 攻撃するときの処理(刀か銃にするか)
+	//	if (AttackButton)
+	//	{
+	//		if (m_meleeFlag)
+	//		{
+	//			// 近距離
+	//			if (m_timeOfPushAttackButton >= 1.36f)
+	//			{
+	//				// 長押しなら最終段の技が出る
+	//				m_player->ChangeState(L"AttackEx");
+	//				// 攻撃エフェクトを出す
+	//				m_player->AddEffect(PlayerEffect_AttackEx);
+	//			}
+	//			else if (m_timeOfPushAttackButton < 1.36f)
+	//			{
+	//				m_player->ChangeState(L"Attack1");
+	//			}
+	//		}
+	//		else if (!m_meleeFlag)
+	//		{
+	//			// 遠距離	
+	//			auto BulletNumNow = m_player->GetBulletNum();
+	//			// 弾が残っていれば打てる
+	//			if (BulletNumNow > 0)
+	//			{
+	//				m_player->ChangeState(L"AttackLong");
+	//				m_player->SetBulletNum(--BulletNumNow);
+	//			}
+	//			if (BulletNumNow <= 0)
+	//			{
+	//				m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
+	//			}
+	//		}
 
-		}
+	//	}
 
-		//// もしSPゲージがMAXであれば必殺技が打てる　もしかしたら復活するかも
-		//auto SPCurrent = m_player->GetSP();
-		//auto SPMAX = m_player->GetMaxSP();
-		//if (SPCurrent >= SPMAX)
-		//{
-		//	if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
-		//	{
-		//		m_player->ChangeState(L"AttackSpecial");
-		//	}
-		//}
-	}
+	//	//// もしSPゲージがMAXであれば必殺技が打てる　もしかしたら復活するかも
+	//	//auto SPCurrent = m_player->GetSP();
+	//	//auto SPMAX = m_player->GetMaxSP();
+	//	//if (SPCurrent >= SPMAX)
+	//	//{
+	//	//	if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
+	//	//	{
+	//	//		m_player->ChangeState(L"AttackSpecial");
+	//	//	}
+	//	//}
+	//}
 	void PlayerWalkState::Exit()
 	{
-		m_SEManager->Stop(m_chargeSE);
+		//m_SEManager->Stop(m_chargeSE);
 		EffectManager::Instance().StopEffect(m_chargeEffect);
 	}
 
@@ -345,6 +427,8 @@ namespace basecross {
 		m_effect = m_player->AddEffect(PlayerEffect_Dash);
 
 		// 初期化処理
+		m_countTimeOfDashSE = 0.0f;
+		m_countTimeOfDashButton = 0.0f;
 		m_timeOfPushAttackButton = 0.0f;
 		m_chargeEffectFlag = false;
 	}
@@ -448,94 +532,91 @@ namespace basecross {
 	{
 		// ダッシュSEを止める
 		m_SEManager->Stop(m_SE);
-
-		m_countTimeOfDashButton = 0.0f;
+		// ダッシュ用のエフェクトを止める
 		EffectManager::Instance().StopEffect(m_effect);
-		m_countTimeOfDashSE = 0.0f;
 
 		// チャージ関係リセット
 		m_SEManager->Stop(m_chargeSE);
 		EffectManager::Instance().StopEffect(m_chargeEffect);
-
 	}
 
 	// 攻撃についての処理
-	void PlayerDashState::AttackTransition(bool onOff)
-	{
-		// 攻撃していい判定でなければ通らない
-		if (!onOff) return;
+	//void PlayerDashState::AttackTransition(bool onOff)
+	//{
+	//	// 攻撃していい判定でなければ通らない
+	//	if (!onOff) return;
 
-		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
-		{
-			//近接攻撃していい状態以外はチャージできない
-			if (m_meleeFlag)
-			{
-				if (m_timeOfPushAttackButton == 0.0f)
-				{
-					m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
-				}
-				if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
-				{
-					m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
-					m_chargeEffectFlag = true;
-				}
+	//	//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
+	//	if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+	//	{
+	//		//近接攻撃していい状態以外はチャージできない
+	//		if (m_meleeFlag)
+	//		{
+	//			if (m_timeOfPushAttackButton == 0.0f)
+	//			{
+	//				m_chargeSE = m_SEManager->Start(L"ChargeSE", 0, 0.9 * m_SEVol);
+	//			}
+	//			if (m_timeOfPushAttackButton >= 0.5f && !m_chargeEffectFlag)
+	//			{
+	//				m_chargeEffect = m_player->AddEffect(PlayerEffect_Charge);
+	//				m_chargeEffectFlag = true;
+	//			}
 
-				Vec3 playerPos = m_player->GetPosition();
-				EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
-				EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
+	//			Vec3 playerPos = m_player->GetPosition();
+	//			EffectManager::Instance().SetPosition(m_chargeEffect, playerPos);
+	//			EffectManager::Instance().SetRotationFromAxisAngle(m_chargeEffect, Vec3(0, 1, 0), m_player->GetAngle() + XM_PIDIV2);
 
-				// 押している時間を測る
-				m_timeOfPushAttackButton += m_deltaTime;
-			}
-		}
-		// 攻撃するときの処理(刀か銃にするか)
-		if (AttackButton)
-		{
-			if (m_meleeFlag)
-			{
-				// 近距離
-				if (m_timeOfPushAttackButton >= 1.36f)
-				{
-					// 長押しなら最終段の技が出る
-					m_player->ChangeState(L"AttackEx");
-					// 攻撃エフェクトを出す
-					m_player->AddEffect(PlayerEffect_AttackEx);
-				}
-				else if (m_timeOfPushAttackButton < 1.36f)
-				{
-					m_player->ChangeState(L"Attack1");
-				}
-			}
-			else if (!m_meleeFlag)
-			{
-				// 遠距離	
-				auto BulletNumNow = m_player->GetBulletNum();
-				// 弾が残っていれば打てる
-				if (BulletNumNow > 0)
-				{
-					m_player->ChangeState(L"AttackLong");
-					m_player->SetBulletNum(--BulletNumNow);
-				}
-				if (BulletNumNow <= 0)
-				{
-					m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
-				}
-			}
+	//			// 押している時間を測る
+	//			m_timeOfPushAttackButton += m_deltaTime;
+	//		}
+	//	}
+	//	// 攻撃するときの処理(刀か銃にするか)
+	//	if (AttackButton)
+	//	{
+	//		if (m_meleeFlag)
+	//		{
+	//			// 近距離
+	//			if (m_timeOfPushAttackButton >= 1.36f)
+	//			{
+	//				// 長押しなら最終段の技が出る
+	//				m_player->ChangeState(L"AttackEx");
+	//				// 攻撃エフェクトを出す
+	//				m_player->AddEffect(PlayerEffect_AttackEx);
+	//			}
+	//			else if (m_timeOfPushAttackButton < 1.36f)
+	//			{
+	//				m_player->ChangeState(L"Attack1");
+	//			}
+	//		}
+	//		else if (!m_meleeFlag)
+	//		{
+	//			// 遠距離	
+	//			auto BulletNumNow = m_player->GetBulletNum();
+	//			// 弾が残っていれば打てる
+	//			if (BulletNumNow > 0)
+	//			{
+	//				m_player->ChangeState(L"AttackLong");
+	//				m_player->SetBulletNum(--BulletNumNow);
+	//			}
+	//			if (BulletNumNow <= 0)
+	//			{
+	//				m_SEManager->Start(L"CantShotSE", 0, 0.9f * m_SEVol);
+	//			}
+	//		}
 
-		}
+	//	}
 
-		// もしSPゲージがMAXであれば必殺技が打てる
-		auto SPCurrent = m_player->GetSP();
-		auto SPMAX = m_player->GetMaxSP();
-		if (SPCurrent >= SPMAX)
-		{
-			if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
-			{
-				m_player->ChangeState(L"AttackSpecial");
-			}
-		}
-	}
+	//	// もしSPゲージがMAXであれば必殺技が打てる
+	//	auto SPCurrent = m_player->GetSP();
+	//	auto SPMAX = m_player->GetMaxSP();
+	//	if (SPCurrent >= SPMAX)
+	//	{
+	//		if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
+	//		{
+	//			m_player->ChangeState(L"AttackSpecial");
+	//		}
+	//	}
+	//}
 
 
 	// ダッシュ終了ステート
@@ -561,15 +642,7 @@ namespace basecross {
 			m_player->ChangeState(L"PlayerWalk");
 		}
 
-		//Vec3 move = m_player->GetMoveVector(PlayerState_DashEnd);
 		Walk(PlayerState_DashEnd,m_walkFlag);
-		//if (m_timeOfAnimation >= 0.6f)
-		//{
-		//	if (move != Vec3(0.0f, 0.0f, 0.0f))
-		//	{
-		//		m_player->ChangeState(L"PlayerWalk");
-		//	}
-		//}
 
 		// 攻撃移行可能
 		if (AttackButton)

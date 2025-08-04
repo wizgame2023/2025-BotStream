@@ -60,22 +60,48 @@ namespace basecross {
 		float GetTargetDistance();
 	};
 
-	//徒歩ステート
-	class PlayerWalkState :public PlayerStateBase
+	// 移動関係のベースとなるステート
+	class PlayerMoveStateBase :public PlayerStateBase
 	{
 	private:
-		//攻撃についての処理
-		void AttackTransition(bool onOff);
-
 		//shared_ptr<SoundItem> m_chargeSE;
+	protected:
+		//攻撃についての処理
+		virtual void AttackTransition(bool onOff);
+
+		// チャージSE用のポインタ
 		shared_ptr<SoundItem> m_chargeSE;
+		// チャージエフェクトを出していいかのフラグ
 		bool m_chargeEffectFlag = false;
+		// チャージが開始されているかのフラグ
 		bool m_chargeStartFlag = false;
+		// チャージエフェクトを保存するためのハンドル
 		Handle m_chargeEffect;
 
 	public:
-		PlayerWalkState(const shared_ptr<GameObject>& obj) :
+		PlayerMoveStateBase(const shared_ptr<GameObject>& obj) :
 			PlayerStateBase(obj)
+		{
+		}
+
+		~PlayerMoveStateBase()
+		{
+		}
+
+		// いったん共通処理が見つかるまでコメントアウト
+		virtual void Enter() {};
+		virtual void Update(float deltaTime) {};
+		virtual void Exit() {};
+	};
+
+	//徒歩ステート
+	class PlayerWalkState :public PlayerMoveStateBase
+	{
+	private:
+
+	public:
+		PlayerWalkState(const shared_ptr<GameObject>& obj) :
+			PlayerMoveStateBase(obj)
 			//m_player(dynamic_pointer_cast<Player>(obj))
 		{
 		}
@@ -87,7 +113,6 @@ namespace basecross {
 		virtual void Enter();
 		virtual void Update(float deltaTime);
 		virtual void Exit();
-
 	};
 
 	//回避ステート
@@ -116,20 +141,10 @@ namespace basecross {
 	};
 
 	//ダッシュステート
-	class PlayerDashState : public PlayerStateBase
+	class PlayerDashState : public PlayerMoveStateBase
 	{
 	private:
 		shared_ptr<Player> m_player;
-
-		float m_timeOfPushAttackButton = 0.0f;//攻撃ボタンを押している時間
-
-		//攻撃についての処理
-		void AttackTransition(bool onOff);
-
-		//チャージ関係
-		shared_ptr<SoundItem> m_chargeSE;
-		bool m_chargeEffectFlag = false;
-		Handle m_chargeEffect;
 
 		// ダッシュボタンを離した処理
 		float m_countTimeOfDashButton = 0.0f;
@@ -141,7 +156,7 @@ namespace basecross {
 		Handle m_effect = NULL;
 	public:
 		PlayerDashState(const shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj),
+			PlayerMoveStateBase(obj),
 			m_player(dynamic_pointer_cast<Player>(obj))
 		{
 
