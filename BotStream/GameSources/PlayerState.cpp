@@ -254,7 +254,12 @@ namespace basecross {
 
 	void PlayerWalkState::Exit()
 	{
-		m_SEManager->Stop(m_chargeSE);
+		// チャージ関係リセット
+		if (m_chargeSE != nullptr)
+		{
+			m_SEManager->Stop(m_chargeSE);
+			m_chargeSE.reset();
+		}
 		EffectManager::Instance().StopEffect(m_chargeEffect);
 	}
 
@@ -459,7 +464,13 @@ namespace basecross {
 		EffectManager::Instance().StopEffect(m_effect);
 
 		// チャージ関係リセット
-		m_SEManager->Stop(m_chargeSE);
+		if (m_chargeSE != nullptr)
+		{
+			m_SEManager->Stop(m_chargeSE);
+			m_chargeSE.reset();
+
+		}		
+		
 		EffectManager::Instance().StopEffect(m_chargeEffect);
 	}
 
