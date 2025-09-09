@@ -36,6 +36,8 @@ namespace basecross {
 
 		shared_ptr<Stage> m_stage;
 		
+		Scene::StageType m_stageType; // ステージの種類
+
 		// フラグ -------------------------------------------------
 		bool m_selectFlag = false; // 選択切り替えフラグ
 		bool m_audioSelectFlag = false;// Audio用の選択切り替えフラグ
@@ -77,6 +79,9 @@ namespace basecross {
 	
 		// 全てのUIを消す
 		void AllUIClear(bool clear);
+
+		// オーディオの設定の操作
+		void AudioSetteing(const Vec2& ret, bool idx);
 
 		//Actorを止める処理
 		void MoveSwitchActor();

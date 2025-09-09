@@ -35,6 +35,8 @@ namespace basecross {
 
 		weak_ptr<Scene> m_scene;
 
+		weak_ptr<PauseSprite> m_pauseSp;
+
 		Vec3 m_selectPos;
 
 		// Ø‚è‘Ö‚¦‚Ì‚Éˆê‹C‚ÉØ‚è‘Ö‚í‚ç‚È‚¢‚æ‚¤‚É‚·‚é‚½‚ß‚Ìƒtƒ‰ƒO1
