@@ -112,6 +112,9 @@ namespace basecross {
 		//ステートマシン更新(ステート更新)
 		m_stateMashine->Update(m_delta);
 
+		// Y軸の角度の調整0~360度までしか出ないようにする
+		m_cameraAngleY = AdjustmentAngle(m_cameraAngleY);
+
 		////デバック用
 		//wstringstream wss(L"");
 		//auto scene = App::GetApp()->GetScene<Scene>();
@@ -348,19 +351,23 @@ namespace basecross {
 	}
 
 	//プレイヤーの方向に回転するカメラ操作処理
-	void CameraManager::CameraControlTransitionMode()
+	void CameraManager::CameraControlTransitionMode(bool firstFlag)
 	{
 		CameraControlNomalMode();
 
-		//プレイヤーを取得
-		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
-		float playerAngle = player->GetAngle();
+		if (firstFlag)
+		{
+			//プレイヤーを取得
+			auto player = m_stage->GetSharedGameObject<Player>(L"Player");
+			m_resetPlayerAngle = player->GetAngle();
+			m_resetPlayerAngle = AdjustmentAngle(m_resetPlayerAngle);
+		}
 
 		//Playerの向いている方向に移動するフラグをオンにする
 		m_movePlayerAngleFlag = true;
 		//向く座標を決める
-		m_targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
-
+		m_targetAngleY = -m_resetPlayerAngle + XMConvertToRadians(180.0f);
+		m_targetAngleY = AdjustmentAngle(m_targetAngleY);
 
 		//フラグがオンになったらPlayerの向きに移動する
 		if (m_movePlayerAngleFlag)
@@ -910,21 +917,29 @@ namespace basecross {
 			}
 		}
 
+		// 移動したい角度が同じなら移動はしない
+		if (angleDifference == 0)
+		{
+			return true;
+		}
+
 		//移動完了してないことを知らせる
 		return false;
 	}
 
 	//角度の調整0~360度までしか出ないようにする
-	void CameraManager::AdjustmentAngle()
+	float CameraManager::AdjustmentAngle(float angle)
 	{
-		if (m_cameraAngleY >= XMConvertToRadians(360.0f))
+		if (angle >= XMConvertToRadians(360.0f))
 		{
-			m_cameraAngleY -= XMConvertToRadians(360.0f);
+			angle -= XMConvertToRadians(360.0f);
 		}
-		else if (m_cameraAngleY < XMConvertToRadians(0.0f))
+		else if (angle < XMConvertToRadians(0.0f))
 		{
-			m_cameraAngleY += XMConvertToRadians(360.0f);
+			angle += XMConvertToRadians(360.0f);
 		}
+
+		return angle;
 	}
 
 	//ロックオンを解除する処理

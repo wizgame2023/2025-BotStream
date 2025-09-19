@@ -94,7 +94,8 @@ namespace basecross {
 	class CameraResetState :public CameraStateBase
 	{
 	private:
-
+		//一番最初のUpdateか確認するフラグ
+		bool m_firstFlag;
 	public:
 		CameraResetState(const shared_ptr<GameObject>& obj) :
 			CameraStateBase(obj)
