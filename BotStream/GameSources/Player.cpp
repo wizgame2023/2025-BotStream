@@ -44,7 +44,7 @@ namespace basecross {
 			Vec3(0.7f, 0.35f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -1.2f, 0.0f)
+			Vec3(0.0f, -1.25f, 0.0f)
 		);
 
 		//ドローメッシュの設定
@@ -86,8 +86,8 @@ namespace basecross {
 
 		//接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
-		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
+		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(0.5f);
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(4.5f, 4.5f, 4.5f));
 
 		AddTag(L"Player");//Player用のタグ
 		m_stateMachine = unique_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
@@ -111,8 +111,36 @@ namespace basecross {
 			return;
 		}
 
-		//親クラス処理
-		Actor::OnUpdate();
+		//親クラス処理/////////////////////////////
+		//Actor::OnUpdate();
+		MyGameObject::OnUpdate();
+
+		//deltatimeの更新
+		_delta = App::GetApp()->GetElapsedTime();
+		//deltascaleを適用する
+		if (!m_ignoreDeltaScale) {
+			auto ws = GetWaveStage(false);
+			if (ws) {
+				_delta *= ws->GetDeltaScale();
+			}
+		}
+
+		//着地判定(無効化時間中ならそれを減算する)
+		if (m_LandDetect) {
+			OnLanding();
+		}
+
+		//物理的な処理
+		if (m_doPhysics) {
+			if (m_isLand) {
+				Friction();
+			}
+			else {
+				Gravity();
+			}
+		}
+		//////////////////////
+
 		auto testVol = GetSEVol();
 		//地面に立っているときは地面にめり込まないようにする
 		if (m_isLand)
@@ -378,6 +406,44 @@ namespace basecross {
 
 			//リセット
 			m_immersedInTime = 0.0f;
+		}
+
+	}
+
+	// 接地判定
+	void Player::OnLanding()
+	{
+		if (m_landDetectDisableTime > 0) {
+			m_landDetectDisableTime -= _delta;
+		}
+		else {
+			if (m_LandDetect->GetLand() != m_isLand) {
+				//���n��������
+				if (!m_isLand)
+				{
+					m_velocity.y = 0;
+					EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
+				}
+
+				//地面に立っているときは地面にめり込まないようにする
+				if (m_isLand)
+				{
+					m_pos = GetPosition();
+					if (m_pos.y < 1.0f)
+					{
+						m_isLand = true;
+						m_pos.y = 1.0f;
+						SetPosition(m_pos);
+						auto test = GetVelocity();
+						test.y = 0.0f;
+						SetVelocity(test);
+					}
+
+				}
+				m_pos = GetPosition();
+
+				m_isLand = !m_isLand;
+			}
 		}
 
 	}

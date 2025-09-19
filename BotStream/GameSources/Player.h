@@ -154,6 +154,10 @@ namespace basecross {
 		}
 		//void AddEffect(int addEffect)override;//エフェクトを出す処理
 
+		// 接地判定
+		void OnLanding()override;
+
+
 		//プレイヤーの移動処理
 		void PlayerMove(int playerState);
 		//移動ベクトルの計算処理
