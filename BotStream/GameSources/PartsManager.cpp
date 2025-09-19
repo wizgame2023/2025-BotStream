@@ -33,10 +33,10 @@ namespace basecross {
 		static int debug = 0;
 		if (debug > 8) debug = 0;
 
-		par = 10;//テスト用に絶対生成する
+		//par = 10;//テスト用に絶対生成する
 		//drop = 0;
-		//35%ぐらいの確率でパーツドロップ
-		if (par > 0 && par <= 15)
+		//40%ぐらいの確率でパーツドロップ
+		if (par > 0 && par <= 40)
 		{
 			switch(debug)
 			//switch (drop)
