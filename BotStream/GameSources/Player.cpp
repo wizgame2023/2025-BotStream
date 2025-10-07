@@ -196,36 +196,6 @@ namespace basecross {
 		m_stateMachine->ChangeState(stateName);
 	}
 
-	//ダッシュ処理
-	void Player::Dash()
-	{
-		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice();
-		auto controller = inputDevice.GetControlerVec()[0];
-
-		//回避した後にA長押しでダッシュ
-		if (controller.wButtons & XINPUT_GAMEPAD_A && m_dodgeFlag) {
-			m_dashFlag = true;
-		}
-		//ダッシュしている際Aボタンを離したらでダッシュ解除
-		if (controller.wPressedButtons & XINPUT_GAMEPAD_A && m_dashFlag) {
-			m_dashFlag = false;
-		}
-	}
-
-	//回避のフラグを渡す処理
-	void Player::Dodge()
-	{
-		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice();
-		auto controller = inputDevice.GetControlerVec()[0];
-
-		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
-			m_dodgeFlag = true;//回避した
-		}
-
-	}
-
 	//リロード処理
 	void Player::ReloadBullet(float reloadTime)
 	{

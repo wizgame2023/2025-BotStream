@@ -134,13 +134,6 @@ namespace basecross {
 		Vec3 m_stickL;
 
 		void Jump();
-
-		//ダッシュ処理
-		void Dash();
-
-		//回避処理
-		void Dodge();
-
 	public:
 		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
 		~Player();
