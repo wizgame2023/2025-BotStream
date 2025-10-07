@@ -141,23 +141,10 @@ namespace basecross {
 		}
 		//////////////////////
 
-		auto testVol = GetSEVol();
 		//地面に立っているときは地面にめり込まないようにする
-		if (m_isLand)
-		{
-			m_pos = GetPosition();
-			if (m_pos.y < 1.0f)
-			{
-				m_isLand = true;
-				m_pos.y = 1.0f;
-				SetPosition(m_pos);
-				auto test = GetVelocity();
-				test.y = 0.0f;
-				SetVelocity(test);
-			}
-
-		}
+		ImmersedInCheck();
 		m_pos = GetPosition();
+
 
 		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
 		auto angle = GetAngle();
@@ -166,10 +153,6 @@ namespace basecross {
 		//リロード処理
 		ReloadBullet(3.0f);
 
-		//UIバーを更新する
-		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
-		playerUI->SetPLHPSprite(m_HPCurrent);
-		playerUI->SetPLSPSprite(m_SPCurrent);
 
 		//回避クールタイム計算
 		if (!m_dodgeFlag)
@@ -182,80 +165,16 @@ namespace basecross {
 			}
 		}
 
+		// プレイヤー関係のUI処理
+		PlayerUi();
 		//ジャスト回避処理
 		JastDodge(0.3f, 1.0f);
-
-
 		//ステート処理
 		m_stateMachine->Update(_delta);
-
-		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
-
-		// テストエフェクト // 後で消す //----------------------------
-		if (keybord.m_bPressedKeyTbl[VK_RETURN])
-		{
-			//EfkPlaying(L"Beam", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"Dodge", angle + XM_PI, Vec3(0, 1, 0));
-			//EfkPlaying(L"Dash", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"WaveEfk", GetAngle(), Vec3(0, 1, 0));
-
-			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"Damage", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-
-			//EfkPlaying(L"SlashHitEfk", GetAngle() + XM_PI, Vec3(0, 1, 1));
-
-		}
-		//-------------------------------------------------------------
-		
-
 		//アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		//移動ですり抜けない処理
-		auto objVec = stage->GetGameObjectVec();
-
-		Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
-		TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
-		size_t triangleNumber; // レイが交差したポリゴンの番号
-		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
-
-		Vec3 beforPos = GetPosition();//移動前
-		Vec3 afterPos = (m_velocity * _delta) + GetPosition();//移動後
-		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
-		for (auto obj : objVec)
-		{
-			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
-			float hitLength = min;//Playerと障害物の距離の長さ
-
-			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
-			if (obstacles)
-			{
-				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
-				if (!obstacles->FindTag(L"CameraObstacles")) continue;
-
-				auto ptrDraw = obstacles->GetComponent<SmBaseDraw>();
-				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
-				Vec3 playerorObstaclesVec = hitPos - beforPos;
-				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
-			}
-
-			//minよりhitLengthが短かったら位置更新する
-			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
-			{
-				min = hitLength;
-				hitPos.y = afterPos.y;//Y座標は変えないようにする
-				afterPos = hitPos;
-			}
-		}
-		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
-
-		//DebugLog();//デバックログ
-		//めり込み防止処理
-		//ImmersedInCheck();
+		//移動で壁をすり抜けないようにする処理
+		WallCollisionCheck();
 	}
 
 	//ジャンプ処理
@@ -324,6 +243,15 @@ namespace basecross {
 		}
 	}
 
+	// プレイヤー関係のUI
+	void Player::PlayerUi()
+	{
+		//体力バーを更新する
+		auto playerUI = GetStage()->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
+		playerUI->SetPLHPSprite(m_HPCurrent);
+		playerUI->SetPLSPSprite(m_SPCurrent);
+	}
+
 	// アニメーションの更新
 	void Player::UpdateAnimation(float addTime)
 	{
@@ -379,35 +307,66 @@ namespace basecross {
 		}
 	}
 
-	//めり込み処理チェック処理
+	// めり込み処理チェック処理(地面)
 	void Player::ImmersedInCheck()
 	{
-		m_pos = GetPosition();
-
-		float immersedInTimeMax = 0.1f;
-		//めり込んで居なければカウントをリセット
-		if (m_pos.y >= 1.0f)
+		// 地面に立っているときは地面にめり込まないようにする
+		if (m_isLand)
 		{
-			m_immersedInTime = 0.0f;
+			m_pos = GetPosition();
+			if (m_pos.y < 1.0f)
+			{
+				m_isLand = true;
+				m_pos.y = 1.0f;
+				SetPosition(m_pos);
+				auto test = GetVelocity();
+				test.y = 0.0f;
+				SetVelocity(test);
+			}
+		}
+	}
+
+	// めり込み処理チェック処理(壁)
+	void Player::WallCollisionCheck()
+	{
+		auto objVec = GetStage()->GetGameObjectVec();
+
+		Vec3 hitPos;			// 出力用：レイの交差地点(衝突点)
+		TRIANGLE triangle;		// レイが交差したポリゴンを構成する頂点の座標
+		size_t triangleNumber;	// レイが交差したポリゴンの番号
+		float min = 9999999.9f;	//Playerから見てカメラの障害となる距離の最小値
+
+		Vec3 beforPos = GetPosition();//移動前
+		Vec3 afterPos = (m_velocity * _delta) + GetPosition();//移動後
+
+		// 障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
+		for (auto obj : objVec)
+		{
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj); //当たり判定の対象
+			float hitLength = min;									//Playerと障害物の距離の長さ
+
+			// 障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
+			if (obstacles)
+			{
+				// カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+				if (!obstacles->FindTag(L"CameraObstacles")) continue;
+
+				auto ptrDraw = obstacles->GetComponent<SmBaseDraw>();
+				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
+				Vec3 playerorObstaclesVec = hitPos - beforPos;
+				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
+			}
+
+			// minよりhitLengthが短かったら位置更新する
+			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
+			{
+				min = hitLength;
+				hitPos.y = afterPos.y;//Y座標は変えないようにする
+				afterPos = hitPos;
+			}
 		}
 
-		//めり込んでいる時間をカウントする
-		if (m_pos.y < 1.0f)
-		{
-			m_immersedInTime += _delta;
-		}
-
-		//一定時間めり込んでいたら強制的にめり込まないようにする
-		if (m_immersedInTime >= immersedInTimeMax)
-		{
-			m_pos.y = 1.0f;
-			SetPosition(m_pos);
-			m_velocity.y = 0.0f;
-
-			//リセット
-			m_immersedInTime = 0.0f;
-		}
-
+		GetComponent<Transform>()->SetPosition(afterPos); // 移動処理
 	}
 
 	// 接地判定

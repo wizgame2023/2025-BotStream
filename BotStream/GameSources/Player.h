@@ -167,14 +167,16 @@ namespace basecross {
 
 		//球がなくなった時のリロード処理
 		void ReloadBullet(float ReloadTime);
+		// プレイヤー関係のUI処理
+		void PlayerUi();
 		//アニメーションの更新
 		void UpdateAnimation(float addTime);
-
 		//ジャスト回避時の処理
 		void JastDodge(float deltaScale,float slowTime);
-
 		//地面めり込み回避処理
 		void ImmersedInCheck();
+		// 壁めり込み回避処理
+		void WallCollisionCheck();
 
 		//HPのゲッター
 		int GetHP();
