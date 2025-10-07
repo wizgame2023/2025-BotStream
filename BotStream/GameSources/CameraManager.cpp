@@ -152,7 +152,6 @@ namespace basecross {
 		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
 		//	//}
 
-
 		//scene->SetDebugString(wss.str());
 
 	}
@@ -306,19 +305,12 @@ namespace basecross {
 	//通常モード時のカメラ操作処理
 	void CameraManager::CameraControlNomalMode()
 	{
-		//通常状態
-		//m_range = 15.0f;
-
-		//m_spriteAttack->SetTexture(L"KatanaTex");
-
 		auto pushMaxAtPos = -5.0f;
 		//移動処理
 		m_pushAtPos.y = MoveToDestination(m_pushAtPos.y, pushMaxAtPos, 120.0f);
 		m_pushAtPos.z = MoveToDestination(m_pushAtPos.z, pushMaxAtPos, 120.0f);
 		m_pushAtPos.x = MoveToDestination(m_pushAtPos.x, pushMaxAtPos, 120.0f);
 
-		//銃を使わないフラグ
-		//m_meleeFlag = true;
 		//ここはUIを出さない
 		m_spriteAiming->OnClear(true);
 
@@ -599,21 +591,6 @@ namespace basecross {
 
 		m_cameraPos = m_playerPos + m_pushPos;
 
-
-		// 移動する距離の差
-		//float difference = maxPushPosY - m_pushPos.y;
-
-
-		//m_cameraPos = Vec3(m_playerPos.x + (cos(m_cameraAngleY) * sin(m_cameraAngleX) * m_range),
-		//	(m_playerPos.y + m_pushPos.y) + cos(m_cameraAngleX) * m_range,
-		//	m_playerPos.z + (sin(m_cameraAngleY) * sin(m_cameraAngleX) * m_range));
-		//	
-		//// 射撃モードは少し通常の状態から位置をずらす
-		//m_cameraPos += Vec3(cos(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength,
-		//	0.0f,
-		//	sin(m_cameraAngleY + XMConvertToRadians(45.0f)) * m_gunShiftLength);
-
-
 		// 障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
 		for (auto obj : objVec)
 		{
@@ -648,7 +625,7 @@ namespace basecross {
 		return moveEnd;
 	}
 
-	//LockOnCanを決める関数
+	//LockOnCanを決める関数 ←これ使わないから消す
 	void CameraManager::LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec,Vec3 playerPos)
 	{
 		m_targets.clear();//配列の初期化
@@ -685,14 +662,11 @@ namespace basecross {
 					LockOff(enemyVec);//ロックオンの解除
 				}
 			}
-
-			//auto  = cameraPos - enemyPos
-
 		}
 
 	}
 
-	//ロックオン機能 対象のオブジェクトを中心点とする
+	//ロックオン機能 対象のオブジェクトを中心点とする ←使わないので消す処理
 	void CameraManager::LockOn(shared_ptr<GameObject> lockOnObj,shared_ptr<Player> originObj)
 	{
 		Vec3 lockOnPos = lockOnObj->GetComponent<Transform>()->GetPosition();
