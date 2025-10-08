@@ -153,6 +153,8 @@ namespace basecross {
 
 		//プレイヤーの移動処理
 		void PlayerMove(int playerState);
+		// 移動入力の取得処理
+		void GetInputVector();
 		//移動ベクトルの計算処理
 		Vec3 GetMoveVector(int playerState);
 		//移動方向の処理

@@ -40,7 +40,8 @@ namespace basecross {
 		m_trans->SetScale(m_scale);
 
 		Mat4x4 spanMat;
-		spanMat.affineTransformation(
+		spanMat.affineTransformation
+		(
 			Vec3(0.7f, 0.35f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
@@ -49,73 +50,73 @@ namespace basecross {
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);//立ち状態
-		ptrDraw->AddAnimation(L"Walk", 175, 57, true, 24.0f);//歩き状態
-		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
-		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
-		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);//走りをやめる
-		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);//突進切り
-		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);//Attack1
-		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);//Attack2
-		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);//Attack3
-		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
-		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
-		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
-		ptrDraw->AddAnimation(L"Walk_Gun", 570, 29, true, 24.0f);//歩き状態(銃所持)
-		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);//銃を撃つ
-		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);//銃を戻す
-		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);//やられ
-
-
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");	  //仮のメッシュ
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
-		//影をつける（シャドウマップを描画する）
+		// アニメーションの設定
+		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);		  //立ち状態
+		ptrDraw->AddAnimation(L"Walk", 175, 57, true, 24.0f);	 	  //歩き状態
+		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);	 	  //回避
+		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);		  //走り
+		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);	  //走りをやめる
+		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);  //突進切り
+		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);	  //Attack1
+		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);	  //Attack2
+		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);	  //Attack3
+		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);	  //AttackEx
+		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f); //AttackEx終了
+		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);	  //Attack終了
+		ptrDraw->AddAnimation(L"Walk_Gun", 570, 29, true, 24.0f);	  //歩き状態(銃所持)
+		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);	  //銃を撃つ
+		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);		  //銃を戻す
+		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);		  //やられ
+
+
+		// 影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();
-		//影の形（メッシュ）を設定
+		// 影の形（メッシュ）を設定
 		shadowPtr->SetMultiMeshResource(L"PlayerModelTestVer2.0");
 		shadowPtr->SetMeshToTransformMatrix(spanMat);
 
-		//コリジョン作成
+		// コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(false);
 
-		//接地判定
+		// 接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
 		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(0.5f);
 		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(4.5f, 4.5f, 4.5f));
 
-		AddTag(L"Player");//Player用のタグ
+		AddTag(L"Player"); // Player用のタグ
 		m_stateMachine = unique_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 
-		//ジャスト回避時の演出用スプライト
+		// ジャスト回避時の演出用スプライト
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
 		m_JastDodgeSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 		
-		//最初に流れる音SE
+		// 最初に流れる音SE
 		PlaySnd(L"StartVoiceSE", 0.9f, 0);
 	}
 
 	void Player::OnUpdate()
 	{
-		//装備しているパーツは何があるのか確認する
+		// 装備しているパーツは何があるのか確認する
 		auto testParts = m_equippedParts;
 
-		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		// もしポーズフラグがオンであればアップデート処理は出来なくなる
 		if (m_PauseFlag)
 		{
 			return;
 		}
 
-		//親クラス処理/////////////////////////////
+		// 親クラス処理/////////////////////////////
 		//Actor::OnUpdate();
 		MyGameObject::OnUpdate();
 
-		//deltatimeの更新
+		// deltatimeの更新
 		_delta = App::GetApp()->GetElapsedTime();
 		//deltascaleを適用する
 		if (!m_ignoreDeltaScale) {
@@ -125,12 +126,12 @@ namespace basecross {
 			}
 		}
 
-		//着地判定(無効化時間中ならそれを減算する)
+		// 着地判定(無効化時間中ならそれを減算する)
 		if (m_LandDetect) {
 			OnLanding();
 		}
 
-		//物理的な処理
+		// 物理的な処理
 		if (m_doPhysics) {
 			if (m_isLand) {
 				Friction();
@@ -141,40 +142,36 @@ namespace basecross {
 		}
 		//////////////////////
 
-		//地面に立っているときは地面にめり込まないようにする
+		// 地面に立っているときは地面にめり込まないようにする
 		ImmersedInCheck();
-		m_pos = GetPosition();
 
-
-		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
-		auto angle = GetAngle();
-		auto stage = GetStage();
-
-		//リロード処理
+		// リロード処理
 		ReloadBullet(3.0f);
 
 
-		//回避クールタイム計算
+		// 回避クールタイム計算
 		if (!m_dodgeFlag)
 		{
 			m_dodgeCoolTime += _delta;
 			if (m_dodgeCoolTime >= m_maxDodgeCoolTime)
 			{
-				m_dodgeCoolTime = 0.0f;//リセット
-				m_dodgeFlag = true;//回避できるようにする
+				m_dodgeCoolTime = 0.0f;	//リセット
+				m_dodgeFlag = true;		//回避できるようにする
 			}
 		}
 
 		// プレイヤー関係のUI処理
 		PlayerUi();
-		//ジャスト回避処理
+		// ジャスト回避処理
 		JastDodge(0.3f, 1.0f);
-		//ステート処理
+		// ステート処理
 		m_stateMachine->Update(_delta);
-		//アニメーション再生
+		// アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		//移動で壁をすり抜けないようにする処理
+		// 移動で壁をすり抜けないようにする処理
 		WallCollisionCheck();
+		// 位置情報更新
+		m_pos = GetPosition();
 	}
 
 	//ジャンプ処理
@@ -201,8 +198,8 @@ namespace basecross {
 	{
 		if (m_bulletNum <= 0)
 		{
-
 			m_reloadTimeCount += _delta;
+
 			//時間経過したら球を補充させる
 			if (m_reloadTimeCount >= reloadTime)
 			{
@@ -420,7 +417,7 @@ namespace basecross {
 		}
 		if (!m_controller.bConnected)
 		{
-			//リセット
+			// リセット
 			m_stickL = Vec3(0.0f, 0, 0.0f);
 
 			auto keyState = App::GetApp()->GetInputDevice().GetKeyState();
@@ -580,32 +577,6 @@ namespace basecross {
 		return totalAngle;
 	}
 
-	////エフェクトを出す処理
-	//void Player::AddEffect(int addEffect)
-	//{
-	//	switch (addEffect)
-	//	{
-	//	case PlayerEffect_Attack1:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
-	//		break;
-	//	case PlayerEffect_Attack2:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-	//		break;
-	//	case PlayerEffect_Attack3:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
-	//		break;
-	//	case PlayerEffect_AttackEx:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-	//		EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
-	//		break;
-	//	case PlayerEffect_Beam:
-	//		EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
-
 	//HPのゲッター
 	int Player::GetHP()
 	{
@@ -750,28 +721,22 @@ namespace basecross {
 				m_timeOfJastDodgeCount = 0.0f;
 			}
 		}
-
-		////コリジョンが地面を接触してしまったら少し弾ませる
-		//if (FindTag(L"Ground"))
-		//{
-		//	m_pos.y = 2.0f;
-		//	SetPosition(m_pos);
-		//}
 	}
 
 	//ダメージを受けたらヒットステートに移動する
 	void Player::OnDamaged()
-	{//現在はHitステートを作ってノックバック処理の作成をする
+	{
+		// 現在はHitステートを作ってノックバック処理の作成をする
 		m_stateMachine->ChangeState(L"Hit");
 	}
 
-	////ノックバックの移動処理
+	// ノックバックの移動処理
 	void Player::hitbackMove()
 	{
 		//エラー対策
 	}
 
-	//デバック用文字列表示関数
+	// デバック用文字列表示関数
 	void Player::DebugLog()
 	{
 		auto waveStage = GetWaveStage(false);
@@ -781,7 +746,7 @@ namespace basecross {
 			deltaScale = GetWaveStage(false)->GetDeltaScale();
 		}
 
-		////デバック用
+		// デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
@@ -800,7 +765,6 @@ namespace basecross {
 			<< L"\nAngle : " << GetAngle()
 			<< L"\ninstance : " << efkMana
 			<< L"\nMeleeFlag : " << m_meleeFlag
-			//<< L"\nLandDetect : "<<m_LandDetect
 			<< endl;
 
 		scene->SetDebugString(wss.str());
