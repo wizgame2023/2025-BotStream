@@ -162,6 +162,8 @@ namespace basecross {
 		float m_playerStartdistance = 0.0f;//Playerとの最初の距離
 		float m_moveAngle = 0.0f;
 
+		shared_ptr<AttackCollision> m_attackPtr = nullptr;
+
 	public:
 		EnemyZakoChargeState(shared_ptr<GameObject>& obj) :
 			EnemyZakoStateBase(obj)

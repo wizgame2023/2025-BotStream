@@ -324,9 +324,9 @@ namespace basecross {
 			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
 			m_enemyZako->GetAttackPtr()->SetPos(Vec3(0, 0, 0));
-			auto AttackPtr = m_enemyZako->GetAttackPtr();
-			AttackPtr->GetComponent<Transform>()->SetScale(Vec3(3.5f, 3.5f, 3.5f));
-			AttackPtr->SetCollScale(1.0f);
+			m_attackPtr = m_enemyZako->GetAttackPtr();
+			m_attackPtr->GetComponent<Transform>()->SetScale(Vec3(3.5f, 3.5f, 3.5f));
+			m_attackPtr->SetCollScale(1.0f);
 
 			m_enemyZako->SetAttackFlag(false);//攻撃判定が複数発生させないようにする
 			m_Attack = false;//攻撃判定が複数発生させないようにする
@@ -342,6 +342,11 @@ namespace basecross {
 	{
 		//突進エフェクトを消す
 		EffectManager::Instance().StopEffect(m_effect);
+
+		//突進判定を消す
+		m_attackPtr->SetScale(Vec3(0.0f, 0.0f, 0.0f));
+		m_attackPtr->SetCollScale(0.0f);
+		m_attackPtr.reset();
 
 		//リセット
 		m_playerdistance = 0.0f;

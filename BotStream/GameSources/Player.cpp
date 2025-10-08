@@ -40,194 +40,138 @@ namespace basecross {
 		m_trans->SetScale(m_scale);
 
 		Mat4x4 spanMat;
-		spanMat.affineTransformation(
+		spanMat.affineTransformation
+		(
 			Vec3(0.7f, 0.35f, 0.7f),
 			Vec3(0.0f, 0.0f, 0.0f),
 			Vec3(0.0f, XMConvertToRadians(-90.0f), 0.0f),
-			Vec3(0.0f, -1.2f, 0.0f)
+			Vec3(0.0f, -1.25f, 0.0f)
 		);
 
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
-		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");//仮のメッシュ
-		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);//立ち状態
-		ptrDraw->AddAnimation(L"Walk", 175, 57, true, 24.0f);//歩き状態
-		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);//回避
-		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);//走り
-		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);//走りをやめる
-		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);//突進切り
-		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);//Attack1
-		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);//Attack2
-		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);//Attack3
-		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);//AttackEx
-		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f);//AttackEx終了
-		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);//Attack終了
-		ptrDraw->AddAnimation(L"Walk_Gun", 570, 29, true, 24.0f);//歩き状態(銃所持)
-		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);//銃を撃つ
-		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);//銃を戻す
-		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);//やられ
-
-
+		ptrDraw->SetMultiMeshResource(L"PlayerModelTestVer2.0");	  //仮のメッシュ
 		ptrDraw->SetSamplerState(SamplerState::LinearWrap);
 		ptrDraw->SetMeshToTransformMatrix(spanMat);
 		ptrDraw->SetEmissive(Col4(1.0f, 1.0f, 1.0f, 1.0f));
-		//ptrDraw->SetTextureResource(L"SpearmenTexture");
 
-		//影をつける（シャドウマップを描画する）
+		// アニメーションの設定
+		ptrDraw->AddAnimation(L"Idle", 21, 21, true, 60.0f);		  //立ち状態
+		ptrDraw->AddAnimation(L"Walk", 175, 57, true, 24.0f);	 	  //歩き状態
+		ptrDraw->AddAnimation(L"Dodge", 232, 11, false, 24.0f);	 	  //回避
+		ptrDraw->AddAnimation(L"Dash", 244, 28, true, 24.0f);		  //走り
+		ptrDraw->AddAnimation(L"DashEnd", 273, 27, false, 24.0f);	  //走りをやめる
+		ptrDraw->AddAnimation(L"DashAttack", 331, 51, false, 24.0f);  //突進切り
+		ptrDraw->AddAnimation(L"Attack1", 395, 14, false, 24.0f);	  //Attack1
+		ptrDraw->AddAnimation(L"Attack2", 410, 34, false, 24.0f);	  //Attack2
+		ptrDraw->AddAnimation(L"Attack3", 445, 38, false, 24.0f);	  //Attack3
+		ptrDraw->AddAnimation(L"AttackEx", 484, 50, false, 24.0f);	  //AttackEx
+		ptrDraw->AddAnimation(L"AttackExEnd", 531, 21, false, 24.0f); //AttackEx終了
+		ptrDraw->AddAnimation(L"AttackEnd", 484, 8, false, 24.0f);	  //Attack終了
+		ptrDraw->AddAnimation(L"Walk_Gun", 570, 29, true, 24.0f);	  //歩き状態(銃所持)
+		ptrDraw->AddAnimation(L"Shot_Gun", 646, 3, true, 24.0f);	  //銃を撃つ
+		ptrDraw->AddAnimation(L"GunEnd", 624, 3, false, 24.0f);		  //銃を戻す
+		ptrDraw->AddAnimation(L"Hit", 632, 7, false, 24.0f);		  //やられ
+
+
+		// 影をつける（シャドウマップを描画する）
 		auto shadowPtr = AddComponent<Shadowmap>();
-		//影の形（メッシュ）を設定
+		// 影の形（メッシュ）を設定
 		shadowPtr->SetMultiMeshResource(L"PlayerModelTestVer2.0");
 		shadowPtr->SetMeshToTransformMatrix(spanMat);
 
-		//コリジョン作成
+		// コリジョン作成
 		auto ptrColl = AddComponent<CollisionSphere>(); // コリジョンスフィアの方が壁にぶつかる判定に違和感がない
 		ptrColl->SetAfterCollision(AfterCollision::Auto);
 		ptrColl->SetDrawActive(false);
 
-		//接地判定
+		// 接地判定
 		m_LandDetect->SetBindPos(Vec3(0, -1.0f, 0));
-		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(1.0f);
-		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(2.0f, 2.0f, 2.0f));
+		m_LandDetect->GetComponent<CollisionSphere>()->SetMakedRadius(0.5f);
+		m_LandDetect->GetComponent<Transform>()->SetScale(Vec3(4.5f, 4.5f, 4.5f));
 
-		AddTag(L"Player");//Player用のタグ
+		AddTag(L"Player"); // Player用のタグ
 		m_stateMachine = unique_ptr<PlayerStateMachine>(new PlayerStateMachine(GetThis<GameObject>()));
 
-		//ジャスト回避時の演出用スプライト
+		// ジャスト回避時の演出用スプライト
 		m_JastDodgeSprite = GetStage()->AddGameObject<Sprite>(L"SlowTex",Vec2(1280,800));
 		m_JastDodgeSprite->SetColor(Col4(1.0f, 1.0f, 1.0f, 0.0f));
 		
-		//最初に流れる音SE
+		// 最初に流れる音SE
 		PlaySnd(L"StartVoiceSE", 0.9f, 0);
 	}
 
 	void Player::OnUpdate()
 	{
-		//装備しているパーツは何があるのか確認する
+		// 装備しているパーツは何があるのか確認する
 		auto testParts = m_equippedParts;
 
-		//もしポーズフラグがオンであればアップデート処理は出来なくなる
+		// もしポーズフラグがオンであればアップデート処理は出来なくなる
 		if (m_PauseFlag)
 		{
 			return;
 		}
 
-		//親クラス処理
-		Actor::OnUpdate();
-		auto testVol = GetSEVol();
-		//地面に立っているときは地面にめり込まないようにする
-		if (m_isLand)
-		{
-			m_pos = GetPosition();
-			if (m_pos.y < 1.0f)
-			{
-				m_isLand = true;
-				m_pos.y = 1.0f;
-				SetPosition(m_pos);
-				auto test = GetVelocity();
-				test.y = 0.0f;
-				SetVelocity(test);
+		// 親クラス処理/////////////////////////////
+		//Actor::OnUpdate();
+		MyGameObject::OnUpdate();
+
+		// deltatimeの更新
+		_delta = App::GetApp()->GetElapsedTime();
+		//deltascaleを適用する
+		if (!m_ignoreDeltaScale) {
+			auto ws = GetWaveStage(false);
+			if (ws) {
+				_delta *= ws->GetDeltaScale();
 			}
-
 		}
-		m_pos = GetPosition();
 
-		auto cntl = App::GetApp()->GetInputDevice().GetControlerVec();
-		auto angle = GetAngle();
-		auto stage = GetStage();
+		// 着地判定(無効化時間中ならそれを減算する)
+		if (m_LandDetect) {
+			OnLanding();
+		}
 
-		//リロード処理
+		// 物理的な処理
+		if (m_doPhysics) {
+			if (m_isLand) {
+				Friction();
+			}
+			else {
+				Gravity();
+			}
+		}
+		//////////////////////
+
+		// 地面に立っているときは地面にめり込まないようにする
+		ImmersedInCheck();
+
+		// リロード処理
 		ReloadBullet(3.0f);
 
-		//UIバーを更新する
-		auto playerUI = stage->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
-		playerUI->SetPLHPSprite(m_HPCurrent);
-		playerUI->SetPLSPSprite(m_SPCurrent);
 
-		//回避クールタイム計算
+		// 回避クールタイム計算
 		if (!m_dodgeFlag)
 		{
 			m_dodgeCoolTime += _delta;
 			if (m_dodgeCoolTime >= m_maxDodgeCoolTime)
 			{
-				m_dodgeCoolTime = 0.0f;//リセット
-				m_dodgeFlag = true;//回避できるようにする
+				m_dodgeCoolTime = 0.0f;	//リセット
+				m_dodgeFlag = true;		//回避できるようにする
 			}
 		}
 
-		//ジャスト回避処理
+		// プレイヤー関係のUI処理
+		PlayerUi();
+		// ジャスト回避処理
 		JastDodge(0.3f, 1.0f);
-
-
-		//ステート処理
+		// ステート処理
 		m_stateMachine->Update(_delta);
-
-		auto keybord = App::GetApp()->GetInputDevice().GetKeyState();
-
-		// テストエフェクト // 後で消す //----------------------------
-		if (keybord.m_bPressedKeyTbl[VK_RETURN])
-		{
-			//EfkPlaying(L"Beam", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"Dodge", angle + XM_PI, Vec3(0, 1, 0));
-			//EfkPlaying(L"Dash", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"PathBullet", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"Slap", angle + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"SpinAttack", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"Charge", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"Slash01Efk", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-			//EfkPlaying(L"WaveEfk", GetAngle(), Vec3(0, 1, 0));
-
-			//EfkPlaying(L"DamageEfk", GetAngle(), Vec3(0, 1, 0));
-			//EfkPlaying(L"Damage", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-
-			//EfkPlaying(L"SlashHitEfk", GetAngle() + XM_PI, Vec3(0, 1, 1));
-
-		}
-		//-------------------------------------------------------------
-		
-
-		//アニメーション再生
+		// アニメーション再生
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
-		//移動ですり抜けない処理
-		auto objVec = stage->GetGameObjectVec();
-
-		Vec3 hitPos; // 出力用：レイの交差地点(衝突点)
-		TRIANGLE triangle; // レイが交差したポリゴンを構成する頂点の座標
-		size_t triangleNumber; // レイが交差したポリゴンの番号
-		float min = 9999999.9f;//Playerから見てカメラの障害となる距離の最小値
-
-		Vec3 beforPos = GetPosition();//移動前
-		Vec3 afterPos = (m_velocity * _delta) + GetPosition();//移動後
-		//障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
-		for (auto obj : objVec)
-		{
-			auto obstacles = dynamic_pointer_cast<GameObject>(obj);//当たり判定の対象
-			float hitLength = min;//Playerと障害物の距離の長さ
-
-			//障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
-			if (obstacles)
-			{
-				//カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
-				if (!obstacles->FindTag(L"CameraObstacles")) continue;
-
-				auto ptrDraw = obstacles->GetComponent<SmBaseDraw>();
-				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
-				Vec3 playerorObstaclesVec = hitPos - beforPos;
-				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
-			}
-
-			//minよりhitLengthが短かったら位置更新する
-			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
-			{
-				min = hitLength;
-				hitPos.y = afterPos.y;//Y座標は変えないようにする
-				afterPos = hitPos;
-			}
-		}
-		GetComponent<Transform>()->SetPosition(afterPos);//移動処理
-
-		//DebugLog();//デバックログ
-		//めり込み防止処理
-		//ImmersedInCheck();
+		// 移動で壁をすり抜けないようにする処理
+		WallCollisionCheck();
+		// 位置情報更新
+		m_pos = GetPosition();
 	}
 
 	//ジャンプ処理
@@ -249,43 +193,13 @@ namespace basecross {
 		m_stateMachine->ChangeState(stateName);
 	}
 
-	//ダッシュ処理
-	void Player::Dash()
-	{
-		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice();
-		auto controller = inputDevice.GetControlerVec()[0];
-
-		//回避した後にA長押しでダッシュ
-		if (controller.wButtons & XINPUT_GAMEPAD_A && m_dodgeFlag) {
-			m_dashFlag = true;
-		}
-		//ダッシュしている際Aボタンを離したらでダッシュ解除
-		if (controller.wPressedButtons & XINPUT_GAMEPAD_A && m_dashFlag) {
-			m_dashFlag = false;
-		}
-	}
-
-	//回避のフラグを渡す処理
-	void Player::Dodge()
-	{
-		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice();
-		auto controller = inputDevice.GetControlerVec()[0];
-
-		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
-			m_dodgeFlag = true;//回避した
-		}
-
-	}
-
 	//リロード処理
 	void Player::ReloadBullet(float reloadTime)
 	{
 		if (m_bulletNum <= 0)
 		{
-
 			m_reloadTimeCount += _delta;
+
 			//時間経過したら球を補充させる
 			if (m_reloadTimeCount >= reloadTime)
 			{
@@ -294,6 +208,15 @@ namespace basecross {
 				m_bulletNum = m_bulletNumMax;
 			}
 		}
+	}
+
+	// プレイヤー関係のUI
+	void Player::PlayerUi()
+	{
+		//体力バーを更新する
+		auto playerUI = GetStage()->GetSharedGameObject<PlayerGaugeUI>(L"PlayerUI");//Playerバーを取得
+		playerUI->SetPLHPSprite(m_HPCurrent);
+		playerUI->SetPLSPSprite(m_SPCurrent);
 	}
 
 	// アニメーションの更新
@@ -351,33 +274,102 @@ namespace basecross {
 		}
 	}
 
-	//めり込み処理チェック処理
+	// めり込み処理チェック処理(地面)
 	void Player::ImmersedInCheck()
 	{
-		m_pos = GetPosition();
-
-		float immersedInTimeMax = 0.1f;
-		//めり込んで居なければカウントをリセット
-		if (m_pos.y >= 1.0f)
+		// 地面に立っているときは地面にめり込まないようにする
+		if (m_isLand)
 		{
-			m_immersedInTime = 0.0f;
+			m_pos = GetPosition();
+			if (m_pos.y < 1.0f)
+			{
+				m_isLand = true;
+				m_pos.y = 1.0f;
+				SetPosition(m_pos);
+				auto test = GetVelocity();
+				test.y = 0.0f;
+				SetVelocity(test);
+			}
+		}
+	}
+
+	// めり込み処理チェック処理(壁)
+	void Player::WallCollisionCheck()
+	{
+		auto objVec = GetStage()->GetGameObjectVec();
+
+		Vec3 hitPos;			// 出力用：レイの交差地点(衝突点)
+		TRIANGLE triangle;		// レイが交差したポリゴンを構成する頂点の座標
+		size_t triangleNumber;	// レイが交差したポリゴンの番号
+		float min = 9999999.9f;	//Playerから見てカメラの障害となる距離の最小値
+
+		Vec3 beforPos = GetPosition();//移動前
+		Vec3 afterPos = (m_velocity * _delta) + GetPosition();//移動後
+
+		// 障害物になりえるオブジェクト達にカメラの機能を邪魔していないか見る
+		for (auto obj : objVec)
+		{
+			auto obstacles = dynamic_pointer_cast<GameObject>(obj); //当たり判定の対象
+			float hitLength = min;									//Playerと障害物の距離の長さ
+
+			// 障害物になりえそうならカメラの表示に邪魔をしていないか確認をする
+			if (obstacles)
+			{
+				// カメラの障害になりえるオブジェクトしかカメラを邪魔をしているか評価しない
+				if (!obstacles->FindTag(L"CameraObstacles")) continue;
+
+				auto ptrDraw = obstacles->GetComponent<SmBaseDraw>();
+				ptrDraw->HitTestStaticMeshSegmentTriangles(beforPos, afterPos, hitPos, triangle, triangleNumber);
+				Vec3 playerorObstaclesVec = hitPos - beforPos;
+				hitLength = abs(playerorObstaclesVec.x) + abs(playerorObstaclesVec.y) + abs(playerorObstaclesVec.z);
+			}
+
+			// minよりhitLengthが短かったら位置更新する
+			if (hitPos != Vec3(0.0f, 0.0f, 0.0f) && min > hitLength)
+			{
+				min = hitLength;
+				hitPos.y = afterPos.y;//Y座標は変えないようにする
+				afterPos = hitPos;
+			}
 		}
 
-		//めり込んでいる時間をカウントする
-		if (m_pos.y < 1.0f)
-		{
-			m_immersedInTime += _delta;
+		GetComponent<Transform>()->SetPosition(afterPos); // 移動処理
+	}
+
+	// 接地判定
+	void Player::OnLanding()
+	{
+		if (m_landDetectDisableTime > 0) {
+			m_landDetectDisableTime -= _delta;
 		}
+		else {
+			if (m_LandDetect->GetLand() != m_isLand) {
+				//���n��������
+				if (!m_isLand)
+				{
+					m_velocity.y = 0;
+					EfkPlaying(L"Landing", GetAngle(), Vec3(0, 1, 0));
+				}
 
-		//一定時間めり込んでいたら強制的にめり込まないようにする
-		if (m_immersedInTime >= immersedInTimeMax)
-		{
-			m_pos.y = 1.0f;
-			SetPosition(m_pos);
-			m_velocity.y = 0.0f;
+				//地面に立っているときは地面にめり込まないようにする
+				if (m_isLand)
+				{
+					m_pos = GetPosition();
+					if (m_pos.y < 1.0f)
+					{
+						m_isLand = true;
+						m_pos.y = 1.0f;
+						SetPosition(m_pos);
+						auto test = GetVelocity();
+						test.y = 0.0f;
+						SetVelocity(test);
+					}
 
-			//リセット
-			m_immersedInTime = 0.0f;
+				}
+				m_pos = GetPosition();
+
+				m_isLand = !m_isLand;
+			}
 		}
 
 	}
@@ -425,7 +417,7 @@ namespace basecross {
 		}
 		if (!m_controller.bConnected)
 		{
-			//リセット
+			// リセット
 			m_stickL = Vec3(0.0f, 0, 0.0f);
 
 			auto keyState = App::GetApp()->GetInputDevice().GetKeyState();
@@ -585,32 +577,6 @@ namespace basecross {
 		return totalAngle;
 	}
 
-	////エフェクトを出す処理
-	//void Player::AddEffect(int addEffect)
-	//{
-	//	switch (addEffect)
-	//	{
-	//	case PlayerEffect_Attack1:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0));
-	//		break;
-	//	case PlayerEffect_Attack2:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-	//		break;
-	//	case PlayerEffect_Attack3:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(1.0f, 0.94f, 0.45f, 1.0f));
-	//		break;
-	//	case PlayerEffect_AttackEx:
-	//		EfkPlaying(L"Sword", GetAngle() + XM_PI, Vec3(0, 1, 0), Col4(0.22f, 1.0f, 0.48f, 1.0f));
-	//		EfkPlaying(L"Sword", GetAngle(), Vec3(0, 1, 0));
-	//		break;
-	//	case PlayerEffect_Beam:
-	//		EfkPlaying(L"Laser", GetAngle() + XM_PIDIV2, Vec3(0, 1, 0));
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
-
 	//HPのゲッター
 	int Player::GetHP()
 	{
@@ -755,28 +721,22 @@ namespace basecross {
 				m_timeOfJastDodgeCount = 0.0f;
 			}
 		}
-
-		////コリジョンが地面を接触してしまったら少し弾ませる
-		//if (FindTag(L"Ground"))
-		//{
-		//	m_pos.y = 2.0f;
-		//	SetPosition(m_pos);
-		//}
 	}
 
 	//ダメージを受けたらヒットステートに移動する
 	void Player::OnDamaged()
-	{//現在はHitステートを作ってノックバック処理の作成をする
+	{
+		// 現在はHitステートを作ってノックバック処理の作成をする
 		m_stateMachine->ChangeState(L"Hit");
 	}
 
-	////ノックバックの移動処理
+	// ノックバックの移動処理
 	void Player::hitbackMove()
 	{
 		//エラー対策
 	}
 
-	//デバック用文字列表示関数
+	// デバック用文字列表示関数
 	void Player::DebugLog()
 	{
 		auto waveStage = GetWaveStage(false);
@@ -786,7 +746,7 @@ namespace basecross {
 			deltaScale = GetWaveStage(false)->GetDeltaScale();
 		}
 
-		////デバック用
+		// デバック用
 		wstringstream wss(L"");
 		auto scene = App::GetApp()->GetScene<Scene>();
 		auto quat = GetComponent<Transform>()->GetQuaternion();
@@ -805,7 +765,6 @@ namespace basecross {
 			<< L"\nAngle : " << GetAngle()
 			<< L"\ninstance : " << efkMana
 			<< L"\nMeleeFlag : " << m_meleeFlag
-			//<< L"\nLandDetect : "<<m_LandDetect
 			<< endl;
 
 		scene->SetDebugString(wss.str());

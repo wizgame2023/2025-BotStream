@@ -78,8 +78,6 @@ namespace basecross {
 		{
 			m_meleeFlag = true;
 			m_player->SetMeleeFlag(true);
-			//m_player->GetStage()->GetSharedGameObject<CameraManager>(L"CameraManager")->SetGunNow(true);
-
 		}
 	};
 	// ターゲット対象との距離を取得する
@@ -178,16 +176,6 @@ namespace basecross {
 
 		}
 
-		//// もしSPゲージがMAXであれば必殺技が打てる　もしかしたら復活するかもしれないので残す
-		//auto SPCurrent = m_player->GetSP();
-		//auto SPMAX = m_player->GetMaxSP();
-		//if (SPCurrent >= SPMAX)
-		//{
-		//	if (m_controller.wPressedButtons & XINPUT_GAMEPAD_X && m_controller.wPressedButtons & XINPUT_GAMEPAD_A)
-		//	{
-		//		m_player->ChangeState(L"AttackSpecial");
-		//	}
-		//}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,22 +189,11 @@ namespace basecross {
 
 		PlayerStateBase::Enter();
 
-		// 何もなければ立ち止まるアニメーション
-		//m_player->ChangeAnim(L"Idle");
-
-		////現在攻撃していないことを渡す
-		//m_player->SetMeleeNow(false);
-		//m_player->SetGunNow(false);
-
 		m_timeOfPushAttackButton = 0.0f;
 		m_chargeEffectFlag = false;
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
-		////プレイヤーが地面に接触していなければ操作は効かない(問題が発生したのでコメントアウト)
-		//auto playerLand = m_player->GetLand();
-		//if (!playerLand) return;
-
 		PlayerStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 
@@ -254,7 +231,12 @@ namespace basecross {
 
 	void PlayerWalkState::Exit()
 	{
-		m_SEManager->Stop(m_chargeSE);
+		// チャージ関係リセット
+		if (m_chargeSE != nullptr)
+		{
+			m_SEManager->Stop(m_chargeSE);
+			m_chargeSE.reset();
+		}
 		EffectManager::Instance().StopEffect(m_chargeEffect);
 	}
 
@@ -459,7 +441,13 @@ namespace basecross {
 		EffectManager::Instance().StopEffect(m_effect);
 
 		// チャージ関係リセット
-		m_SEManager->Stop(m_chargeSE);
+		if (m_chargeSE != nullptr)
+		{
+			m_SEManager->Stop(m_chargeSE);
+			m_chargeSE.reset();
+
+		}		
+		
 		EffectManager::Instance().StopEffect(m_chargeEffect);
 	}
 
@@ -556,7 +544,6 @@ namespace basecross {
 		// 攻撃エフェクトを出す
 		m_player->AddEffect(PlayerEffect_Attack1);
 
-
 		//Attack1アニメーションに変更
 		m_player->ChangeAnim(L"Attack1");
 
@@ -575,10 +562,10 @@ namespace basecross {
 		PlayerStateBase::Update(deltaTime);
 
 		//アニメーションの更新
-		auto mag = 1.42f;//倍率
-		m_player->SetAddTimeAnimation((deltaTime * 1.5f) * mag);
+		auto animationScale = 1.42f;//倍率
+		m_player->SetAddTimeAnimation((deltaTime * 1.5f) * animationScale);
 		//アニメーションの経過時間計測
-		m_timeOfAnimation += (deltaTime * 1.5f) * mag;
+		m_timeOfAnimation += (deltaTime * 1.5f) * animationScale;
 
 		//アニメーションが終わったら移動はしない(違和感が出てくるため)
 		if (m_timeOfAnimation <= 0.63f)
@@ -928,29 +915,14 @@ namespace basecross {
 
 		//回避処理
 		float timeSpeed = 80.0f;
-		m_curveTime += XMConvertToRadians(deltaTime * timeSpeed);
-
-		//二次関数的な動きで回避行動をする
-		//今は向いている方向に前方回避をする
-		//float dodge = 8.0f * 2.5f;
-		//totalVec.x = cos(m_angle) * dodge * abs(cos(m_dodgeTime));
-		//totalVec.z = sin(m_angle) * dodge * abs(cos(m_dodgeTime));
+		m_curveTime += XMConvertToRadians(deltaTime * timeSpeed);		 
 		 
-		 
-		auto mag = 1.66f;
+		auto animationScale = 1.66f; //アニメーション倍率
 		//アニメーションの経過時間計測
-		m_timeOfAnimation += ((deltaTime * 1.5f) * mag) * abs(cos(m_curveTime));
-
-		////アニメーションが終わったら移動はしない(違和感が出てくるため)
-		////if (m_timeOfAnimation <= 1.68f)
-		////{
-		////	//移動処理
-		////	m_player->PlayerMove(PlayerState_Attack3);
-		////}
+		m_timeOfAnimation += ((deltaTime * 1.5f) * animationScale) * abs(cos(m_curveTime));
 
 		//アニメーションの更新
-		//auto mag = 1.66f;//倍率
-		m_player->SetAddTimeAnimation(((deltaTime * 2.2f) * mag) * cos(m_curveTime));
+		m_player->SetAddTimeAnimation(((deltaTime * 2.2f) * animationScale) * cos(m_curveTime));
 
 		AttackCollisionOccurs();
 		//次のステートに行く処理
@@ -1020,11 +992,11 @@ namespace basecross {
 	{
 		PlayerStateBase::Update(deltaTime);
 
-		auto mag = 1.25f;
+		auto animationScale = 1.25f;
 
-		m_countTimeOfState += deltaTime * mag;
+		m_countTimeOfState += deltaTime * animationScale;
 		//アニメーション更新
-		m_player->SetAddTimeAnimation(1.0f * deltaTime * mag);
+		m_player->SetAddTimeAnimation(1.0f * deltaTime * animationScale);
 
 		//このステートは回避できる
 		Dodge(m_dodgeFlag);

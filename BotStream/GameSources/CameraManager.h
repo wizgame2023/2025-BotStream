@@ -112,6 +112,9 @@ namespace basecross{
 		// 現在のステートは何かの変数
 		int ModeState = 0;
 
+		// リセットしたいときのPlayerの向き
+		float m_resetPlayerAngle;
+
 		// 右か左かそれとも真ん中か
 		enum LeftOrRight
 		{
@@ -147,7 +150,7 @@ namespace basecross{
 		void MovePlayerAngle(float playerAngle);									// Playerの背中を見える角度にする
 		void MoveLockAt(Vec3 targetPos);											// 注視点の移動処理//ここを作業する
 		bool MoveAngle(float targetAngle,int XorY);									// 回転度の移動処理
-		void AdjustmentAngle();														// 角度の調整
+		float AdjustmentAngle(float angle);											// 角度の調整
 		
 		void UpdateTargesDeta(Vec3 playerPos);					// LockOnCanのデータを更新する関数
 		void ChangeLockOn(int leftOrRight,float targetAngle);	// LockOnTargetを変更する処理
@@ -164,7 +167,7 @@ namespace basecross{
 		// カメラの操作をする処理
 		void CameraControlNomalMode();
 		void CameraControlShotMode();
-		void CameraControlTransitionMode();
+		void CameraControlTransitionMode(bool firstFlag);
 		void CameraControlStartMovieMode();
 
 		// マウスでのカメラ移動処理

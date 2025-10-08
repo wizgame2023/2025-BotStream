@@ -40,8 +40,6 @@ namespace basecross {
 		//X軸回転の制限処理
 		m_cameraManager->CameraAngleXLimit(XMConvertToRadians(120.0f), XMConvertToRadians(60.0f));
 
-		//角度の調整0~360度までしか出ないようにする
-		m_cameraManager->AdjustmentAngle();
 		////カメラの位置更新
 		//m_cameraManager->CameraPosUpdate();
 	}
@@ -136,18 +134,27 @@ namespace basecross {
 	//カメラのリセットモードのステート
 	void CameraResetState::Enter()
 	{
+		// 初期化
+		m_firstFlag = true;
+
 		CameraStateBase::Enter();
 	}
 
 	void CameraResetState::Update(float deltaTime)
 	{
-		CameraStateBase::Update(deltaTime);
+		//CameraStateBase::Update(deltaTime);
 
 		//カメラの位置更新
 		m_cameraManager->CameraPosUpdate();
 
 		//移動モード時のカメラ操作処理
-		m_cameraManager->CameraControlTransitionMode();
+		m_cameraManager->CameraControlTransitionMode(m_firstFlag);
+
+		// アップデートが最初の時という処理をしたいからこうします
+		if (m_firstFlag)
+		{
+			m_firstFlag = false;
+		}
 	}
 
 	void CameraResetState::Exit()
@@ -256,9 +263,6 @@ namespace basecross {
 
 		//移動モード時のカメラ操作処理
 		m_cameraManager->CameraControlStartMovieMode();
-
-		//角度の調整0~360度までしか出ないようにする
-		m_cameraManager->AdjustmentAngle();
 	}
 
 	void CameraStartMovieState_First::Exit()
@@ -285,8 +289,6 @@ namespace basecross {
 
 		//移動モード時のカメラ操作処理
 		m_cameraManager->CameraControlStartMovieMode();
-		//角度の調整0~360度までしか出ないようにする
-		m_cameraManager->AdjustmentAngle();
 
 		//カメラの位置更新
 		auto moveEnd = m_cameraManager->CameraPosUpdate(8, 0, 17.0f,60.0f);

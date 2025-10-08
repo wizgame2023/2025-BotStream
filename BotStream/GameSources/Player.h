@@ -134,13 +134,6 @@ namespace basecross {
 		Vec3 m_stickL;
 
 		void Jump();
-
-		//ダッシュ処理
-		void Dash();
-
-		//回避処理
-		void Dodge();
-
 	public:
 		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
 		~Player();
@@ -154,8 +147,14 @@ namespace basecross {
 		}
 		//void AddEffect(int addEffect)override;//エフェクトを出す処理
 
+		// 接地判定
+		void OnLanding()override;
+
+
 		//プレイヤーの移動処理
 		void PlayerMove(int playerState);
+		// 移動入力の取得処理
+		void GetInputVector();
 		//移動ベクトルの計算処理
 		Vec3 GetMoveVector(int playerState);
 		//移動方向の処理
@@ -163,14 +162,16 @@ namespace basecross {
 
 		//球がなくなった時のリロード処理
 		void ReloadBullet(float ReloadTime);
+		// プレイヤー関係のUI処理
+		void PlayerUi();
 		//アニメーションの更新
 		void UpdateAnimation(float addTime);
-
 		//ジャスト回避時の処理
 		void JastDodge(float deltaScale,float slowTime);
-
 		//地面めり込み回避処理
 		void ImmersedInCheck();
+		// 壁めり込み回避処理
+		void WallCollisionCheck();
 
 		//HPのゲッター
 		int GetHP();
