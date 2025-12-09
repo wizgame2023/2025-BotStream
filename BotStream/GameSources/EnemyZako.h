@@ -17,7 +17,7 @@ namespace basecross {
 		shared_ptr<BillBoardGauge> m_HPBer = nullptr;
 
 		//攻撃のタイプ　テスト用に近距離にしたいのでそうする
-		int m_AttackType = Zako_Melee;
+		int m_attackType = Zako_Melee;
 
 		//アニメーションの更新時間
 		float m_addTimeAnimation = 0.0f;
@@ -41,7 +41,7 @@ namespace basecross {
 
 		EnemyZako(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, bool used = false, int attackType = Zako_Melee) :
 			EnemyBase(stagePtr, pos, rot, scale, used),
-			m_AttackType(attackType)
+			m_attackType(attackType)
 		{
 
 		}
@@ -84,7 +84,7 @@ namespace basecross {
 		//攻撃のタイプのゲッタ
 		virtual int GetAttackType()
 		{
-			return m_AttackType;
+			return m_attackType;
 		}
 
 		//攻撃フラグのゲッタセッタ
