@@ -93,7 +93,61 @@ namespace basecross {
 
 	void EquippedParts::OnUpdate()
 	{
-		auto test = m_EquippedParts;
+		auto test = m_equippedParts;
 		auto a = 0;
 	}
+
+	//ポーチにパーツを入れる処理
+	void EquippedParts::AddParts(PartsStatus addParts)
+	{
+		auto player = GetStage()->GetSharedGameObject<Player>(L"Player");
+
+		//装備している全てのパーツのステータス
+		PartsStatus allParts;
+		allParts.addAttack = 0;
+		allParts.addAttribute = 0;
+		allParts.addHP = 0;
+		allParts.addSpeed = 0.0f;
+
+		//パーツポーチに入れる
+		m_partspoach.push_back(addParts);
+
+		// 最大可能装備数
+		int equippedPartsMax = 3;
+		//パーツを３つ以上付けていないときは自動的に装備される
+		if (m_equippedParts.size() < equippedPartsMax)
+		{
+			m_equippedParts.push_back(addParts);
+		}
+		//そうでなければ、パーツを古いやつを捨てて新しいやつに変える
+		else if (m_equippedParts.size() >= equippedPartsMax)
+		{
+			//一番最初に取ったものを削除して新しく手に入れたものを入れる
+			m_equippedParts.erase(m_equippedParts.begin());
+			m_equippedParts.push_back(addParts);
+		}
+
+		int roop = 0;
+		//装備している合計のステータスを計算する
+		for (auto parts : m_equippedParts)
+		{
+			allParts.id = 0;
+			allParts.addAttack += m_equippedParts[roop].addAttack;
+			allParts.addAttribute += m_equippedParts[roop].addAttribute;
+			allParts.addHP += m_equippedParts[roop].addHP;
+			allParts.addSpeed += m_equippedParts[roop].addSpeed;
+			allParts.partsImagePass = L"使わないデータ";
+			allParts.partsName = L"使わないデータ";
+
+			roop++;
+		}
+
+		//パーツ入手SE再生
+		auto m_SEManager = App::GetApp()->GetXAudio2Manager();
+		m_SEManager->Start(L"GetPartsSE", 0, 0.4f * m_SEVol);
+
+		//プレイヤーに装備した合計のステータス値を渡す
+		player->SetEquippedParts(allParts);
+	}
+
 }
