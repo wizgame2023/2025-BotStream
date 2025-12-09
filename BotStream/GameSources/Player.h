@@ -11,9 +11,7 @@
 
 namespace basecross {
 	class EfkEffect;
-	class StageSato;
 	class PlayerBulletUI;
-	class EnemyBase;//EnemyZakoが居なくなったら消す
 	class BillBoard;
 	class BillBoardGauge;
 	class Sprite;
@@ -30,25 +28,11 @@ namespace basecross {
 		PlayerState_AttackEx
 	};
 
-
 	enum ActorName
 	{
 		ActorName_Player,
 		ActorName_Enemy
 	};
-
-	////装備しているパーツのステータス合計一覧
-	//struct EquippedParts
-	//{
-	//	//攻撃力
-	//	int addAttack;
-	//	//速度
-	//	int addSpeed;
-	//	//善か悪
-	//	int addAttribute;
-	//	//追加HP
-	//	int addHP;
-	//};
 
 	class Player : public Actor
 	{
@@ -114,10 +98,6 @@ namespace basecross {
 		//リロードしている時間計測
 		float m_reloadTimeCount = 0.0f;
 
-		// ほぼごり押しだからメンバー要確認
-		//shared_ptr<GameStage> m_Stage;
-		shared_ptr<StageSato> m_Stage;
-
 		//アニメーションの更新時間
 		float m_addTimeAnimation = 1.0f * _delta;
 
@@ -132,8 +112,6 @@ namespace basecross {
 		//コントローラー関係
 		CONTROLER_STATE m_controller;
 		Vec3 m_stickL;
-
-		void Jump();
 	public:
 		Player(const shared_ptr<Stage>& stagePtr, Vec3 pos, Vec3 rot, Vec3 scale, int HP = 100, int attack = 10, int defense = 1);
 		~Player();
@@ -145,7 +123,6 @@ namespace basecross {
 		wstring GetStateName() {
 			return m_stateMachine->GetStateName();
 		}
-		//void AddEffect(int addEffect)override;//エフェクトを出す処理
 
 		// 接地判定
 		void OnLanding()override;
@@ -153,8 +130,6 @@ namespace basecross {
 
 		//プレイヤーの移動処理
 		void PlayerMove(int playerState);
-		// 移動入力の取得処理
-		void GetInputVector();
 		//移動ベクトルの計算処理
 		Vec3 GetMoveVector(int playerState);
 		//移動方向の処理

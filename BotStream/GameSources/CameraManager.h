@@ -103,14 +103,15 @@ namespace basecross{
 		bool m_meleeNow = false;	// 攻撃をしているフラグ
 		bool m_gunNow = false;		// 遠距離攻撃をしているフラグ
 
-		bool m_PauseFlag;	// ポーズのフラグ
+		bool m_pauseFlag;	// ポーズのフラグ
+		bool m_beforPauseFlag; // 前フレームでのポーズのフラグ
 
 		// カーソルがワープした際のフラグ
 		bool m_cursorFlagX = false; // x座標版
 		bool m_cursorFlagY = false; // y座標版
 
 		// 現在のステートは何かの変数
-		int ModeState = 0;
+		int m_modeState = 0;
 
 		// リセットしたいときのPlayerの向き
 		float m_resetPlayerAngle;
@@ -189,9 +190,6 @@ namespace basecross{
 		// ポーズ処理のオンオフ
 		void PoseSwitch(bool onOff);
 
-		// 近遠どちらの攻撃をするかの処理
-		void MeleeFlagUpdate();
-
 		// ロックオン処理
 		void LockOn(shared_ptr<Player> player);
 		// ロックオンする敵を決める処理
@@ -202,7 +200,7 @@ namespace basecross{
 		// ステートのゲッタセッタ
 		void SetStateMode(int stateMode)
 		{
-			ModeState = stateMode;
+			m_modeState = stateMode;
 		}
 
 		// 角度のゲッタセッタ
@@ -266,11 +264,11 @@ namespace basecross{
 		// ポーズフラグのゲッタセッタ
 		bool GetPose()
 		{
-			return m_PauseFlag;
+			return m_pauseFlag;
 		}
 		void SetPause(bool onOff)
 		{
-			m_PauseFlag = onOff;
+			m_pauseFlag = onOff;
 		}
 
 		// pushPosのゲッタセッタ

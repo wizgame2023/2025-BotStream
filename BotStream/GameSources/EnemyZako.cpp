@@ -38,11 +38,11 @@ namespace basecross {
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
 
 		//攻撃タイプによって見た目が変わる
-		if (m_AttackType == Zako_Long)
+		if (m_attackType == Zako_Long)
 		{
 			ptrDraw->SetMeshResource(L"Enemy_A");
 		}
-		if (m_AttackType == Zako_Melee)
+		if (m_attackType == Zako_Melee)
 		{
 			ptrDraw->SetMeshResource(L"Enemy_C");
 		}
@@ -57,7 +57,7 @@ namespace basecross {
 		ptrDraw->AddAnimation(L"Down", 362, 62, false, 24.0f);
 		ptrDraw->AddAnimation(L"Hit", 350, 11, false, 24.0f);
 		ptrDraw->AddAnimation(L"Stan", 320, 19, false, 24.0f);
-		if (m_AttackType == Zako_Melee)
+		if (m_attackType == Zako_Melee)
 		{
 			ptrDraw->AddAnimation(L"Melee_Jamp", 625, 74, false, 24.0f);
 			ptrDraw->AddAnimation(L"Melee_Scratch", 700, 22, false, 24.0f);
@@ -427,11 +427,11 @@ namespace basecross {
 		//ドローメッシュの設定
 		auto ptrDraw = GetComponent<PNTBoneModelDraw>();
 		//攻撃タイプによって見た目が変わる
-		if (m_AttackType == Zako_Long)
+		if (m_attackType == Zako_Long)
 		{
 			ptrDraw->SetMeshResource(L"Enemy_A");
 		}
-		if (m_AttackType == Zako_Melee)
+		if (m_attackType == Zako_Melee)
 		{
 			ptrDraw->SetMultiMeshResource(L"Enemy_B");
 		}

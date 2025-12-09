@@ -23,7 +23,7 @@ namespace basecross {
 		m_speedYAxis(speedYAxis),
 		m_contrloerVec(Vec2(0.0f,0.0f)),
 		m_movePlayerAngleFlag(false),
-		m_PauseFlag(false)
+		m_pauseFlag(false)
 	{
 
 	}
@@ -84,14 +84,17 @@ namespace basecross {
 			GetStage()->RemoveGameObject<CameraManager>(GetThis<CameraManager>());
 			return;
 		}
+
+
 		//ポーズフラグがオンならカメラ移動はできない
-		if (m_PauseFlag)
-		{		
+		if (m_beforPauseFlag != m_pauseFlag)
+		{
 			if (ActiveWindow == MyWindowHandle)
 			{	
 				SetCursorPos(850, 450);		
 				GetCursorPos(&m_mouseBeforPos);
 			}
+			m_beforPauseFlag = m_pauseFlag;
 			return;
 		}
 
@@ -114,45 +117,6 @@ namespace basecross {
 
 		// Y軸の角度の調整0~360度までしか出ないようにする
 		m_cameraAngleY = AdjustmentAngle(m_cameraAngleY);
-
-		////デバック用
-		//wstringstream wss(L"");
-		//auto scene = App::GetApp()->GetScene<Scene>();
-		//////ロックオン対象との距離を計算
-		////if (m_targetObj)
-		////{
-		////	Vec3 targetVec = m_targetObj->GetComponent<Transform>()->GetPosition() - m_playerPos;
-		////	m_targetDis = (targetVec.x*targetVec.x) + (targetVec.z*targetVec.z);
-		////}
-
-		//
-		//wss /* << L"デバッグ用文字列 "*/
-		//	<< L"\nPlayerから見てカメラの角度Y軸: " << XMConvertToDegrees(m_cameraAngleY)
-		//	<< L"\nPlayerから見てカメラの角度X軸: " << XMConvertToDegrees(m_cameraAngleX)
-		//	<< L"\nPlayerの向いている角度: " << XMConvertToDegrees(-playerAngle)
-		//	<< L"\nターゲット対象の距離: " << m_targetDis
-		//	<< L"\nFPS: " << 1.0f / m_delta
-		//	<< L"\nmelee : " << m_meleeFlag
-		//	<< L"\nMousePos.x : " << m_mouseCurrentPos.x
-		//	<< L"\nMousePos.y : " << m_mouseCurrentPos.y
-		//	<< L"\nMouseVec.x : " << m_mouseMoveVec.x
-		//	<< L"\nMouseVec.y : " << m_mouseMoveVec.y
-		//	<< L"\nNowState : " << ModeState
-		//	//<< L"\n当たった場所x: " << hitPos.x
-		//	//<< L"\n当たった場所y: " << hitPos.y
-		//	//<< L"\n当たった場所z: " << hitPos.z
-		//	//<<L"\nコントローラーの入力 x:"<<contrloerVec.x<<L" y:"<<contrloerVec.y
-		//	//<<L"\nFPS:"<< 1.0f/delta
-		//	<< endl;
-
-		//	//if (m_lockOnNum >= 0)
-		//	//{		
-		//	//	auto targetAngle = m_lockOnAngle[m_lockOnNum];
-		//	//	float a = targetAngle;
-		//	//	wss << L"ロックオン角度 " << XMConvertToDegrees(targetAngle);
-		//	//}
-
-		//scene->SetDebugString(wss.str());
 
 	}
 
@@ -291,15 +255,9 @@ namespace basecross {
 				}
 			}
 		}
-
-
-		//右スティック入力がされていない方向はスピードが落ちていく
-		float maxAddAngleXAxis = 0.025f;
-		float maxAddAngleYAxis = 0.08f;
 		
 		m_cameraAngleX += m_addAngleXAxis * m_delta;//追加
 		m_cameraAngleY += -m_addAngleYAxis * m_delta;//追加
-
 	}
 
 	//通常モード時のカメラ操作処理
@@ -677,9 +635,7 @@ namespace basecross {
 		auto m_targetRad = atan2(lockOnVec.z, lockOnVec.x);
 
 		//計算した角度を入れてカメラを旋回させる
-		//m_cameraAngleY = m_targetRad + XMConvertToRadians(180.0f);
 		MoveAngle(m_targetRad + XMConvertToRadians(180.0f), 1);
-		//m_lockStageCamera->SetAt(lockOnPos);
 		MoveLockAt(lockOnPos);//注視点移動
 	}
 
@@ -767,8 +723,6 @@ namespace basecross {
 	//Playerの向いている方向の鏡合わせになるように角度を変更する
 	void CameraManager::MovePlayerAngle(float playerAngle)
 	{
-		//m_cameraAngleY = -playerAngle + XMConvertToRadians(180.0f);
-		//auto targetAngleY = -playerAngle + XMConvertToRadians(180.0f);
 		bool Movechage = false;
 		Movechage = MoveAngle(playerAngle, 1);//角度を移動させる
 
@@ -1054,22 +1008,7 @@ namespace basecross {
 	//ポーズ処理のオンオフ
 	void CameraManager::PoseSwitch(bool onOff)
 	{
-		m_PauseFlag = onOff;
-	}
-
-	//近遠どちらの攻撃をするかの処理
-	void CameraManager::MeleeFlagUpdate()
-	{
-		//近距離攻撃の有効範囲
-		float meleeRange = 200.0f;
-		if (m_targetDis >= meleeRange)
-		{
-			//m_meleeFlag = true;
-		}
-		if (m_targetDis < meleeRange)
-		{
-			//m_meleeFlag = false;
-		}
+		m_pauseFlag = onOff;
 	}
 
 	//近距離攻撃をするかの処理のゲッタ
@@ -1077,14 +1016,14 @@ namespace basecross {
 	{
 		return m_meleeFlag;
 	}
+
+	//近距離攻撃をするかの処理のセッタ
 	void CameraManager::SetMeleeFlag(bool onOff)
 	{
 		m_meleeFlag = onOff;
 	}
 
-
-
-	//ロックオン範囲を知らせるためのオブジェクト
+	//ロックオン範囲を知らせるためのオブジェクト 現在はロックオン機能は実装から省いています
 	//第一引数　ロックオン有効範囲,第二引数　ロックオン範囲の中心となるオブジェクト
 	LockOnRange::LockOnRange(const shared_ptr<Stage>& stagePtr,float range,shared_ptr<Player> player):
 		ObjectMove(stagePtr),
@@ -1302,8 +1241,6 @@ namespace basecross {
 		tmp.Damage = 10;//ダメージ
 		tmp.HitVel_Stand = Vec3(-30, 1, 0);//ヒットバック距離
 		tmp.HitTime_Stand = 3.0f;//のけぞり時間
-		//tmp.PauseTime = 5.0f;
-		//tmp.ForceRecover = true;
 		DefAttack(.5f, tmp);
 		GetAttackPtr()->SetPos(Vec3(0, 0, 10));
 		auto AttackPtr = GetAttackPtr();
@@ -1316,20 +1253,6 @@ namespace basecross {
 	void EnemyCube::OnUpdate()
 	{
 		Actor::OnUpdate();
-
-		//auto tmp = GetAttackPtr()->GetHitInfo();
-		////tmp.HitSound = L"Attack1";
-		//tmp.Type = AttackType::Enemy;//攻撃のタイプは敵
-		//tmp.HitOnce = true;//一回しかヒットしないか
-		//tmp.Damage = 10;//ダメージ
-		//tmp.HitVel_Stand = Vec3(-2, 5, 0);//ヒットバック距離
-		//tmp.HitTime_Stand = 3.0f;//のけぞり時間
-		////tmp.ForceRecover = true;
-		//DefAttack(.5f, tmp);
-		//GetAttackPtr()->SetPos(Vec3(0, 1, 0));
-		//auto AttackPtr = GetAttackPtr();
-		//AttackPtr->SetCollScale(20.0f);
-
 
 	}
 
