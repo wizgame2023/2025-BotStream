@@ -174,19 +174,6 @@ namespace basecross {
 		m_pos = GetPosition();
 	}
 
-	//ジャンプ処理
-	void Player::Jump() {
-		// 入力デバイス取得
-		auto inputDevice = App::GetApp()->GetInputDevice();
-		auto controller = inputDevice.GetControlerVec()[0];
-
-		if (controller.wPressedButtons & XINPUT_GAMEPAD_A) {
-			m_velocity.y = m_jumpPower;
-			m_isLand = false;
-			m_landDetectDisableTime = 1.0f;
-		}
-	}
-
 	//ステート変更処理 引数に入れたステートに変更する
 	void Player::ChangeState(wstring stateName)
 	{
