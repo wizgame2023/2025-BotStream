@@ -86,18 +86,6 @@ namespace basecross {
 		}
 
 
-		//ポーズフラグがオンならカメラ移動はできない
-		if (m_beforPauseFlag != m_pauseFlag)
-		{
-			if (ActiveWindow == MyWindowHandle)
-			{	
-				SetCursorPos(850, 450);		
-				GetCursorPos(&m_mouseBeforPos);
-			}
-			m_beforPauseFlag = m_pauseFlag;
-			return;
-		}
-
 		//プレイヤーを取得
 		auto player = m_stage->GetSharedGameObject<Player>(L"Player");
 		m_playerPos = player->GetComponent<Transform>()->GetPosition();
@@ -198,6 +186,17 @@ namespace basecross {
 		else
 		{
 			//コントローラーが接続されていないときはキーマウで操作できるようにする
+
+			// 今選択しているウィンドウハンドルを取得
+			auto ActiveWindow = GetActiveWindow();
+			// このゲームのウィンドウハンドルを取得
+			auto MyWindowHandle = App::GetApp()->GetHWnd();
+
+			// 選択しているウィンドウがこのゲームの時はマウスポインタ固定する,そうでない場合は解除
+			if (ActiveWindow != MyWindowHandle) return;
+			// ポーズしているときはカメラ回転処理はしない
+			if (m_pauseFlag) return;
+
 
 			auto speedMouseYAixs = (m_speedYAxis * 0.05f);
 			//Y軸回転
@@ -390,40 +389,46 @@ namespace basecross {
 		int maxPosX = 1500;	int minPosX = 0;
 		int maxPosY = 850;	int minPosY = 0;
 
-		// 移動ループした後は移動量が大きくなるので調整
-		if (m_cursorFlagX)
-		{
-			// 右端から左端へ// 今ここ作業中
-			if (m_mouseMoveVec.x <= -1)
-			{
-				m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
-			}
-			// 左端から右端へ
-			else if (m_mouseMoveVec.x >= +1)
-			{
-				m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
-			}
+		//// 移動ループした後は移動量が大きくなるので調整  マウスポインタを固定しているのでこの処理使わなくて問題ない
+		// だけど必要になる可能性はあるので残しておきます。
+		//if (m_cursorFlagX)
+		//{
+		//	// 右端から左端へ
+		//	if (m_mouseMoveVec.x <= -1)
+		//	{
+		//		m_mouseMoveVec.x = (m_mouseCurrentPos.x + maxPosX) - m_mouseBeforPos.x;
+		//	}
+		//	// 左端から右端へ
+		//	else if (m_mouseMoveVec.x >= +1)
+		//	{
+		//		m_mouseMoveVec.x = m_mouseCurrentPos.x - (m_mouseBeforPos.x + maxPosX);
+		//	}
 
-			m_cursorFlagX = false;
-		}
+		//	m_cursorFlagX = false;
+		//}
 
-		if (m_cursorFlagY)
-		{
-			//上端から下端へ
-			if (m_mouseMoveVec.y <= -1)
-			{
-				m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
-			}
-			//下端から上端へ
-			else if (m_mouseMoveVec.y >= 1)
-			{
-				m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
-			}
+		//if (m_cursorFlagY)
+		//{
+		//	//上端から下端へ
+		//	if (m_mouseMoveVec.y <= -1)
+		//	{
+		//		m_mouseMoveVec.y = (m_mouseCurrentPos.y + maxPosY) - m_mouseBeforPos.y;
+		//	}
+		//	//下端から上端へ
+		//	else if (m_mouseMoveVec.y >= 1)
+		//	{
+		//		m_mouseMoveVec.y = m_mouseCurrentPos.y - (m_mouseBeforPos.y + maxPosY);
+		//	}
 
-			m_cursorFlagY = false;
-		}
+		//	m_cursorFlagY = false;
+		//}
 
-		SetCursorPos(850, 450);
+		//// 今選択しているウィンドウハンドルを取得
+		//auto ActiveWindow = GetActiveWindow();
+		//// このゲームのウィンドウハンドルを取得
+		//auto MyWindowHandle = App::GetApp()->GetHWnd();
+
+		SetCursorPos(750, 420);
 		GetCursorPos(&m_mouseBeforPos);
 
 		// X座標

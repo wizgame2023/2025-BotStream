@@ -9,6 +9,7 @@
 
 namespace basecross {
 	#define ControllerAttackButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER	
+	#define ControllerContinuationAttackButton m_controller.wButtons& XINPUT_GAMEPAD_RIGHT_SHOULDER
 	
 	//ダッシュ関係
 	#define MouseDashButton App::GetApp()->GetInputDevice().GetKeyState().m_bPushKeyTbl[VK_SPACE]
@@ -22,12 +23,14 @@ namespace basecross {
 
 
 	#define MouseAimButton GetAsyncKeyState(VK_RBUTTON) & 0x8000
-	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_LBUTTON]
+	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_LBUTTON]
+    #define MouseContinuationAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPushKeyTbl[VK_LBUTTON]
 	#define MouseGunButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_RBUTTON]
 	#define MouseGunCancellationButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_RBUTTON]
 	#define MouseControllerCancellationButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER
 
 	#define AttackButton (ControllerAttackButton || MouseAttackButton)
+	#define ContinuationAttackButton (ControllerContinuationAttackButton || MouseContinuationAttackButton)
 
 	void PlayerStateBase::Enter()
 	{
@@ -117,7 +120,7 @@ namespace basecross {
 		if (!onOff) return;
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		if (m_controller.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+		if (MouseContinuationAttackButton)
 		{
 			//近接攻撃していい状態以外はチャージできない
 			if (m_meleeFlag)
