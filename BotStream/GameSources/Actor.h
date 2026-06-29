@@ -5,9 +5,7 @@
 
 #pragma once
 #include "stdafx.h"
-//#include "Project.h"
 #include "LandDetect.h"
-//#include "MyGameObject.h"
 
 namespace basecross {
 	enum ActorEffect
@@ -168,7 +166,7 @@ namespace basecross {
 
 	public:
 		Actor(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale);
-		~Actor();
+		virtual ~Actor();
 
 		void OnCreate() override;
 		void OnUpdate() override;

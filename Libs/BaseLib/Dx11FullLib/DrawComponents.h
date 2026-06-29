@@ -1748,7 +1748,7 @@ namespace basecross {
 		template<typename T_VShader, typename T_PShader>
 		void DrawModel(const MeshPrimData& data) {
 			auto Dev = App::GetApp()->GetDeviceResources();
-			auto pD3D11DeviceContext = Dev->GetD3DDeviceContext();
+			auto pD3D11DeviceContext = Dev->GetD3DDeviceContext(); // 描画処理の更新をするために必要
 			auto RenderState = Dev->GetRenderState();
 			//NULLのシェーダリソースの準備
 			ID3D11ShaderResourceView* pNull[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = { nullptr };

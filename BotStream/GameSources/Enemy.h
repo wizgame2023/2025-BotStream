@@ -40,7 +40,7 @@ namespace basecross{
 	public:
 		EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale);
 		EnemyBase(const shared_ptr<Stage>& stagePtr, const Vec3& pos, const Vec3& rot, const Vec3& scale, bool use);
-		~EnemyBase() {}
+		virtual ~EnemyBase() {}
 
 		virtual void HitBackStandBehavior();
 

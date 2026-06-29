@@ -187,16 +187,10 @@ namespace basecross {
 
 		waveStage->SetDeltaScale(0.5f);
 
-		////カットシーンフェーズに移行
-		//waveStage->SetGamePhase(waveStage->GPhase_CutScene);
-
 		// カメラのステートを変更
 		auto castCameraManager = m_cameraManager.lock();
 		castCameraManager->ChangeState(L"BossDieMovie_First");
 
-		
 		m_startMovie = Movie_BossDie;
-
-
 	}
 }

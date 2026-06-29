@@ -48,7 +48,7 @@ namespace basecross {
 		{
 
 		}
-		~PlayerStateBase()
+		virtual ~PlayerStateBase()
 		{
 		}
 
@@ -84,14 +84,14 @@ namespace basecross {
 		{
 		}
 
-		~PlayerMoveStateBase()
+		virtual ~PlayerMoveStateBase()
 		{
 		}
 
-		// いったん共通処理が見つかるまでコメントアウト
-		virtual void Enter() {};
-		virtual void Update(float deltaTime) {};
-		virtual void Exit() {};
+		// 共通処理が見つかるまでコメントアウト
+		//virtual void Enter() {};
+		//virtual void Update(float deltaTime) {};
+		//virtual void Exit() {};
 	};
 
 	//徒歩ステート
@@ -116,7 +116,7 @@ namespace basecross {
 	};
 
 	//回避ステート
-	class PlayerDodgeState : public PlayerStateBase
+	class PlayerDodgeState : public PlayerMoveStateBase
 	{
 	private:
 		//回避していいかのフラグ
@@ -126,7 +126,7 @@ namespace basecross {
 		Handle m_effect = NULL;
 	public:
 		PlayerDodgeState(const shared_ptr<GameObject>& obj) :
-			PlayerStateBase(obj)
+			PlayerMoveStateBase(obj)
 		{
 
 		}
@@ -228,12 +228,13 @@ namespace basecross {
 			PlayerStateBase(obj)
 		{
 		}
-		~PlayerAttackBaseState()
+		virtual ~PlayerAttackBaseState()
 		{
 		}
 
+		// 共通処理が出たらコメントアウトは解除します
 		virtual void Enter();
-		virtual void Update(float deltaTime) {};
+		//virtual void Update(float deltaTime) {};
 		virtual void Exit();
 
 		//攻撃コリジョン発生
@@ -451,10 +452,6 @@ namespace basecross {
 		float m_timeMaxOfAttack = 2.0f;
 		//攻撃時間計測
 		float m_timeOfAttack;
-		//次の攻撃ボタン受付時間
-		//float m_graceTimeOfNextAttack = 0.9f;
-		////次の攻撃をするかのフラグ
-		//float m_nestAttackFlag = false;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 
@@ -508,10 +505,6 @@ namespace basecross {
 		float m_timeMaxOfHitBack = 1.2f;
 		//攻撃時間計測
 		float m_timeOfHitBack = 0.0f;
-		////次の攻撃の猶予時間
-		//float m_graceTimeOfNextAttack = 0.9f;
-		////次の攻撃をするかのフラグ
-		//float m_nestAttackFlag = false;
 
 		shared_ptr<Cube> m_AttackObj = nullptr;
 

@@ -92,7 +92,7 @@ namespace basecross {
 		float m_ActiveTime = 0.0f;
 	public:
 		AttackCollision(const shared_ptr<Stage>& stagePtr);
-		~AttackCollision();
+		virtual ~AttackCollision();
 
 		void OnCreate() override;
 		void OnUpdate() override;

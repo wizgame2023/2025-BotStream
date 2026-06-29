@@ -127,17 +127,6 @@ namespace basecross {
 		//現在の使用状況と見比べて変わっていないか見る
 		m_beforUsed = m_used;
 
-		////アーマー回復
-		//if (m_armorMax != 0 && m_armor <= 0) 
-		//{
-		//	m_armorRecoverCountTime += _delta;
-		//	if (m_armorRecoverTime <= m_armorRecoverCountTime) 
-		//	{
-		//		m_armor = m_armorMax;
-		//		m_armorRecoverCountTime = 0;
-		//	}
-		//}
-
 		EnemyBase::OnUpdate();
 
 		//着地判定(無効化時間中ならそれを減算する)
@@ -152,14 +141,11 @@ namespace basecross {
 		{
 			RemoveTag(L"LockOnCan");
 			RemoveTag(L"LockOnTarget");
-
-			//m_used = false;
 		}
 
 		//アニメーション更新
 		GetComponent<PNTBoneModelDraw>()->UpdateAnimation(m_addTimeAnimation);
 		//位置更新
-		//SpeedLimit(3.0f); //スピードリミット
 		UpdatePosition();
 	}
 

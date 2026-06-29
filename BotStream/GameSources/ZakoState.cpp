@@ -1,6 +1,6 @@
 /*!
 @file ZakoState.cpp
-@brief ŽG‹›‚ĚXe[g
+@brief 雑魚敵のステート
 */
 
 #include "stdafx.h"
@@ -121,10 +121,8 @@ namespace basecross {
 		auto LandFlag = m_enemyZako->GetLand();
 		auto testVector = m_enemyZako->GetVelocity();
 
-
 		//攻撃っぽいアニメーションにしてみる
 		m_enemyZako->ChangeAnim(L"Melee_Jamp");
-		//m_enemyZako->ChangeAnim(L"Walk");//歩くアニメーションに変更
 
 		//攻撃しているタグ追加
 		m_enemyZako->AddTag(L"AttackNow");
@@ -156,7 +154,6 @@ namespace basecross {
 			tmp.HitTime_Stand = .3f;
 			tmp.Type = AttackType::Enemy;
 			tmp.HitEffect = L"EnemyHitEfk";
-			//tmp.ForceRecover = false;//ノックバックする
 			m_enemyZako->DefAttack(.5f, tmp);
 			m_enemyZako->GetAttackPtr()->SetPos(Vec3(3, 1, 0));
 			auto AttackPtr = m_enemyZako->GetAttackPtr();
@@ -233,22 +230,6 @@ namespace basecross {
 
 		//スピード制限
 		m_enemyZako->SpeedLimit(3.0f);
-
-		////移動中なのでそれに合わせたアニメーション
-		//m_enemyZako->ChangeAnim(L"Walk");
-
-		////プレイヤーのいる方向に回転する
-		//auto PushAngle = 0.0f;//回転のずれ
-		//m_enemyZako->RotateToPlayer(1.0f, PushAngle);
-
-		//auto angleForPlayer = m_enemyZako->GetPlayerSubDirection();//雑魚敵から見てプレイヤーのいる方向
-
-		////ある程度プレイヤーのいる方向に回転出来たら突進攻撃する
-		//float forgiveAngle = XMConvertToRadians(3.0f);
-		//if (angleForPlayer <= forgiveAngle)
-		//{
-		//	m_enemyZako->ChangeState(L"Charge");//突進ステートに遷移
-		//}
 	}
 	void EnemyZakoPreparationforChargeState::Exit()
 	{
@@ -305,7 +286,8 @@ namespace basecross {
 			m_playerdistance -= m_enemyZako->GetVelocity().length() * deltaTime;//進んでいる距離分引く
 		}
 		else
-		{//ステート変更処理
+		{
+			//ステート変更処理
 			m_enemyZako->ChangeState(L"Stand");
 		}
 
@@ -495,7 +477,7 @@ namespace basecross {
 			if (m_timeOfShot >= m_timeMaxOfShot)
 			{
 				m_timeOfShot = 0.0f;//リセット
-				m_enemyZako->ChangeState(L"Shot");//打つステートがないのでコメントアウト
+				m_enemyZako->ChangeState(L"Shot");
 			}
 		}
 
@@ -572,7 +554,6 @@ namespace basecross {
 		m_enemyZako->ChangeAnim(L"Hit",true);
 		//攻撃を受けたのでヒットバックする
 		m_enemyZako->HitBack();
-
 
 		//ダメージ処理
 		m_enemyZako->SetHPCurrent(HPNow - hitInfo.Damage);

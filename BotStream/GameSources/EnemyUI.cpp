@@ -126,13 +126,6 @@ namespace basecross {
 			PtrTransform->SetQuaternion(Qt);
 
 		}
-		//auto verticesVec = m_SquareMeshResource->GetBackupVerteces<VertexPositionColorTexture>();
-		////verticesVec[1].position
-		//
-		////ワールドマトリックス取得
-		//auto world = GetComponent<Transform>()->GetWorldMatrix();
-		//world.transpose();//ワールド座標できるように変換
-
 	}
 
 	//何パーセントテクスチャを出すか決める

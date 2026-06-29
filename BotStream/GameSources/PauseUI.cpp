@@ -13,7 +13,7 @@ namespace basecross {
 	void PauseSprite::OnCreate()
 	{
 		m_stage = GetStage();
-		////BGM,SEのボリュームの初期化したい！(他のステージで設定している可能性があるため)
+		////BGM,SEのボリュームの初期化
 		m_scene = App::GetApp()->GetScene<Scene>();
 		m_stageType = m_scene->GetStageType();
 		m_audioMax[0] = m_scene->GetBGMVolume();

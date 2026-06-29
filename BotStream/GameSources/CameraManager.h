@@ -1,6 +1,6 @@
 /*!
 @file CameraManager.h
-@brief カメラの管理
+@brief カメラの制御処理
 */
 
 #pragma once
@@ -147,23 +147,34 @@ namespace basecross{
 		void OnCreate()override; // 作成
 		void OnUpdate()override; // 更新
 
-		void LockOn(shared_ptr<GameObject> lockOnObj, shared_ptr<Player> originObj);// ロックオン機能
-		void MovePlayerAngle(float playerAngle);									// Playerの背中を見える角度にする
-		void MoveLockAt(Vec3 targetPos);											// 注視点の移動処理//ここを作業する
-		bool MoveAngle(float targetAngle,int XorY);									// 回転度の移動処理
-		float AdjustmentAngle(float angle);											// 角度の調整
-		
-		void UpdateTargesDeta(Vec3 playerPos);					// LockOnCanのデータを更新する関数
-		void ChangeLockOn(int leftOrRight,float targetAngle);	// LockOnTargetを変更する処理
+		// Playerの背中を見える角度にする
+		// 引数1：プレイヤーの向いている角度
+		void MovePlayerAngle(float playerAngle);
 
-		// LockOnCanを決める関数
-		void LockOnCandidate(vector<shared_ptr<EnemyBase>> enemyVec, Vec3 playerPos);
-		// ロックオンの解除
-		void LockOff(vector<shared_ptr<EnemyBase>> enemyVec);
+		// 注視点の移動処理
+		// 引数1：目標の位置
+		void MoveLockAt(Vec3 targetPos);			
+		
+		// 回転度の移動処理
+		//第一引数：向きたい目標角度 第二引数：どの軸で移動するか(Xが0Yが1) 戻り値 移動処理が終わったか
+		bool MoveAngle(float targetAngle,int XorY);					
+		
+		// 角度の調整
+		// 第一引数：現在角度
+		float AdjustmentAngle(float angle);											
+		
 		// カメラのX軸回転の制限
-		void CameraAngleXLimit(float maxRad= XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
-		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f,float cameraSpeed = 100.0f,int moveMode = NormalMove);//カメラのポジションの更新
-		void InertialRotation(float MagnificationSpeed = 1.0f,float decelerationSpeed = 10.0f);//慣性付きの回転処理
+		// 第一引数：上限角度(ラジアン) 第二引数：下限角度(ラジアン)
+		void CameraAngleXLimit(float maxRad = XMConvertToRadians(140.0f), float minRad = XMConvertToRadians(10.0f));
+
+		// カメラのポジションの更新
+		// 第一引数：Y座標をどの位ずらすか 第二引数：銃モードでのプレイヤーから離れる追加距離 
+		// 第三引数：通常時のプレイヤーから離れる距離 第四引数：カメラの移動モード
+		bool CameraPosUpdate(float maxPushPosY = 10.0f, float maxGunLength = 0.0f,float CameraLenght = 15.0f,float cameraSpeed = 100.0f,int moveMode = NormalMove);
+		
+		// 慣性付きの回転処理
+		// 第一引数：カメラ移動時のスピード 第二引数：カメラ減速時のスピード
+		void InertialRotation(float moveSpeed = 1.0f, float decelerationSpeed = 10.0f);
 
 		// カメラの操作をする処理
 		void CameraControlNomalMode();
@@ -175,9 +186,11 @@ namespace basecross{
 		void MouseCameraMove();
 
 		// 現在地から目的地までの移動処理
+		// 第一引数：現在地　第二引数：目的地　第三引数：移動スピード
 		float MoveToDestination(float nowOnePos,float destination, float speed = 20.0f);
 		 
 		// ステート変更処理 引数に入れたステートに変更する
+		// 第一引数：変更したいステート名
 		void ChangeState(wstring stateName);
 		
 		// 近距離攻撃をするかの処理のゲッターセッタ
@@ -189,13 +202,6 @@ namespace basecross{
 
 		// ポーズ処理のオンオフ
 		void PoseSwitch(bool onOff);
-
-		// ロックオン処理
-		void LockOn(shared_ptr<Player> player);
-		// ロックオンする敵を決める処理
-		void SelectTargetObj(vector<shared_ptr<EnemyBase>> enemyVec,float playerAngle);
-		// ロックオンを解除する条件
-		void ConditionsLockOff(vector<shared_ptr<EnemyBase>> enemyVec);
 
 		// ステートのゲッタセッタ
 		void SetStateMode(int stateMode)
@@ -327,25 +333,6 @@ namespace basecross{
 		void OnCreate()override;
 		void OnUpdate()override;
 	};
-
-	class LockOnLook : public ObjectMove
-	{
-	private:
-		//Vec3 m_pos;//位置
-		Vec3 m_rot;//回転
-		Vec3 m_scale;//大きさ
-		Vec3 m_pushPos;//追加座標
-		Col4 m_color;//色
-
-		weak_ptr<Actor> m_parentObj;//追跡対象
-		shared_ptr<Transform> m_trans;
-	public:
-		LockOnLook(const shared_ptr<Stage>& stagePtr, Vec3 rot, Vec3 scale,weak_ptr<Actor> parenatObj,Vec3 pushPos = Vec3(0.0f,0.0f,0.0f));
-		~LockOnLook();
-		void OnCreate()override;//作成
-		void OnUpdate()override;//更新
-	};
-
 
 	//デバック用のただの四角いやつ
 	class Cube : public ObjectNotMove

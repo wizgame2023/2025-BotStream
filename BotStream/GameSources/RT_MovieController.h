@@ -1,8 +1,14 @@
+/*!
+@file RT_MovieController.h
+@brief リアルタイムのムービー制御処理
+*/
+
 #pragma once
 #include "stdafx.h"
 #include "MyGameObject.h"
 
 namespace basecross {
+    // ムービー再生用のフェーズ
     enum RT_MoviePhase
     {
         Movie_None,

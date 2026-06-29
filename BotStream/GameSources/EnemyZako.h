@@ -45,7 +45,7 @@ namespace basecross {
 		{
 
 		}
-		~EnemyZako() {}
+		virtual ~EnemyZako() {}
 
 		//ó‚¯‚½UŒ‚‚Ìî•ñ‚ğ“n‚·ƒQƒbƒ^[
 		HitInfo EnemyZako::GetHitInfo()

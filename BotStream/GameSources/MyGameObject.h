@@ -16,7 +16,7 @@ namespace basecross {
 		bool m_pose;//ポーズフラグ
 	public:
 		MyGameObject(const shared_ptr<Stage>& stagePtr);
-		~MyGameObject();
+		virtual ~MyGameObject();
 
 		Vec3 GetPosition() {
 			return GetComponent<Transform>()->GetPosition();

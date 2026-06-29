@@ -2217,6 +2217,7 @@ namespace basecross {
 	}
 
 	void PNTStaticModelDraw::OnDraw() {
+		// “§–¾ˆ—‚ªƒIƒ“‚ÌŽž
 		if (GetGameObject()->GetAlphaActive()) {
 			if (!(GetBlendState() == BlendState::AlphaBlend || GetBlendState() == BlendState::Additive)) {
 				SetBlendState(BlendState::AlphaBlend);

@@ -21,7 +21,7 @@ namespace basecross {
 	#define MouseDodgeButton App::GetApp()->GetInputDevice().GetKeyState().m_bPressedKeyTbl[VK_SPACE]
 	#define DodgeButton (ControllerDodgeButton || MouseDodgeButton)
 
-
+	//遠距離関係
 	#define MouseAimButton GetAsyncKeyState(VK_RBUTTON) & 0x8000
 	#define MouseAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_LBUTTON]
     #define MouseContinuationAttackButton App::GetApp()->GetInputDevice().GetKeyState().m_bPushKeyTbl[VK_LBUTTON]
@@ -29,9 +29,11 @@ namespace basecross {
 	#define MouseGunCancellationButton App::GetApp()->GetInputDevice().GetKeyState().m_bUpKeyTbl[VK_RBUTTON]
 	#define MouseControllerCancellationButton m_controller.wReleasedButtons & XINPUT_GAMEPAD_LEFT_SHOULDER
 
+	// まとめ
 	#define AttackButton (ControllerAttackButton || MouseAttackButton)
 	#define ContinuationAttackButton (ControllerContinuationAttackButton || MouseContinuationAttackButton)
 
+	// プレイヤー用のステートベースクラス これを親としてプレイヤー用のステートを作る
 	void PlayerStateBase::Enter()
 	{
 		m_SEManager = App::GetApp()->GetXAudio2Manager();
@@ -89,7 +91,11 @@ namespace basecross {
 		return m_targetDistance;
 	}
 
-	// 移動についての処理
+	/*!
+	@brief 移動についての処理
+	@param state 移動する際時の現在ステート
+	@param onOff 移動するかのフラグ
+	*/
 	void PlayerStateBase::Walk(int state, bool onOff)
 	{
 		// フラグがオフなら移動しない
@@ -99,7 +105,10 @@ namespace basecross {
 		m_player->PlayerMove(state);
 	}
 
-	// 回避についての処理
+	/*!
+	@brief 回避についての処理
+	@param onOff 回避するかのフラグ
+	*/
 	void PlayerStateBase::Dodge(bool onOff)
 	{
 		// フラグがオフなら移動しない
@@ -111,16 +120,19 @@ namespace basecross {
 			m_player->ChangeState(L"Dodge");
 		}
 	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// Playerの動く元となるステート//////////////////////////////////////////////////////////////////////////////////
-	// 攻撃についての処理
+	/*!
+	* @brief 攻撃についての処理
+	* @param onOff 攻撃するかのフラグ
+	*/
 	void PlayerMoveStateBase::AttackTransition(bool onOff)
 	{
 		// 攻撃していい判定でなければ通らない
 		if (!onOff) return;
 
 		//攻撃ステートに変更する　長押しだったら回転攻撃そうでなければ通常攻撃
-		if (MouseContinuationAttackButton)
+		if (ContinuationAttackButton)
 		{
 			//近接攻撃していい状態以外はチャージできない
 			if (m_meleeFlag)
@@ -189,15 +201,14 @@ namespace basecross {
 	void PlayerWalkState::Enter()
 	{
 		//初期化はちゃんと最初にしよう
-
-		PlayerStateBase::Enter();
+		PlayerMoveStateBase::Enter();
 
 		m_timeOfPushAttackButton = 0.0f;
 		m_chargeEffectFlag = false;
 	}
 	void PlayerWalkState::Update(float deltaTime)
 	{
-		PlayerStateBase::Update(deltaTime);
+		PlayerMoveStateBase::Update(deltaTime);
 		Vec3 stick = Vec3(m_controller.fThumbLX, 0, m_controller.fThumbLY);
 
 		//移動処理
@@ -248,7 +259,7 @@ namespace basecross {
 	//回避ステート
 	void PlayerDodgeState::Enter()
 	{
-		PlayerStateBase::Enter();
+		PlayerMoveStateBase::Enter();
 
 		//現在攻撃していないことを渡す
 		m_player->SetMeleeNow(false);
@@ -280,7 +291,7 @@ namespace basecross {
 	void PlayerDodgeState::Update(float deltaTime)
 	{
 		// 入力デバイス取得
-		PlayerStateBase::Update(deltaTime);
+		PlayerMoveStateBase::Update(deltaTime);
 
 		//移動処理
 		Vec3 move = m_player->GetMoveVector(PlayerState_Dodge);
@@ -328,7 +339,7 @@ namespace basecross {
 	// ダッシュステート
 	void PlayerDashState::Enter()
 	{
-		PlayerStateBase::Enter();
+		PlayerMoveStateBase::Enter();
 		// ダッシュ用SEを再生
 		m_SE = m_SEManager->Start(L"Landing", 0, 0.9f * m_SEVol);
 		// ダッシュ用エフェクトを再生
@@ -352,7 +363,7 @@ namespace basecross {
 		}
 
 		// 入力デバイス取得
-		PlayerStateBase::Update(deltaTime);
+		PlayerMoveStateBase::Update(deltaTime);
 
 		//ダッシュ用SEの音量の更新
 		auto SEVoice = m_SE->m_SourceVoice;
@@ -561,8 +572,8 @@ namespace basecross {
 
 	void PlayerAttack1State::Update(float deltaTime)
 	{
-		// 入力デバイス取得
-		PlayerStateBase::Update(deltaTime);
+		// 入力デバイス取得 
+		PlayerAttackBaseState::Update(deltaTime);
 
 		//アニメーションの更新
 		auto animationScale = 1.42f;//倍率
@@ -701,9 +712,10 @@ namespace basecross {
 		PlayerAttackBaseState::Exit();
 
 		auto stage = m_player->GetStage();
-		m_timeOfAttack = 0.0f;//リセット
+		// 初期化
+		m_timeOfAttack = 0.0f;
 		m_nestAttackFlag = false;
-		m_attackCollisionFlag = 0;//リセット
+		m_attackCollisionFlag = 0;
 		m_timeOfAnimation = 0.0f;
 	}
 

@@ -14,7 +14,7 @@ namespace basecross {
 		bool m_pose;//ポーズフラグ
 	public:
 		ObjectMove(const shared_ptr<Stage>& stagePtr);
-		~ObjectMove();
+		virtual ~ObjectMove();
 	protected:
 		//void OnCreate()override;
 		//void OnUpdate()override;

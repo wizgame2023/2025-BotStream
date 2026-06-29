@@ -5,8 +5,6 @@
 
 #pragma once
 #include "stdafx.h"
-//#include "State.h"
-//#include "CameraManager.h"
 
 namespace basecross {
 	class CameraManager;
@@ -36,7 +34,7 @@ namespace basecross {
 		{
 
 		}
-		~CameraStateBase()
+		virtual ~CameraStateBase()
 		{
 		}
 
@@ -59,7 +57,7 @@ namespace basecross {
 		{
 
 		}
-		~CameraNomalState()
+		virtual ~CameraNomalState()
 		{
 		}
 

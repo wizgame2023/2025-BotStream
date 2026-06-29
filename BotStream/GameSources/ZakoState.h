@@ -1,7 +1,7 @@
 #pragma once
 /*!
 @file ZakoState.h
-@brief ŽG‹›‚ĚXe[g
+@brief 雑魚敵のステート
 */
 
 #include "stdafx.h"
@@ -31,6 +31,7 @@ namespace basecross {
 		{
 
 		}
+		virtual ~EnemyZakoStateBase() {};
 
 		virtual void Enter() 
 		{

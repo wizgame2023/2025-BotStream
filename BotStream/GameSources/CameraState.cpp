@@ -35,13 +35,8 @@ namespace basecross {
 		//ステージ取得
 		m_stage = m_cameraManager->GetStage();
 
-		////慣性付きの回転処理
-		//m_cameraManager->InertialRotation();
 		//X軸回転の制限処理
 		m_cameraManager->CameraAngleXLimit(XMConvertToRadians(120.0f), XMConvertToRadians(60.0f));
-
-		////カメラの位置更新
-		//m_cameraManager->CameraPosUpdate();
 	}
 
 	void CameraStateBase::Exit()
@@ -142,8 +137,6 @@ namespace basecross {
 
 	void CameraResetState::Update(float deltaTime)
 	{
-		//CameraStateBase::Update(deltaTime);
-
 		//カメラの位置更新
 		m_cameraManager->CameraPosUpdate();
 
@@ -259,8 +252,6 @@ namespace basecross {
 
 	void CameraStartMovieState_First::Update(float deltaTime)
 	{
-		//CameraStateBase::Update(deltaTime);
-
 		//移動モード時のカメラ操作処理
 		m_cameraManager->CameraControlStartMovieMode();
 	}
@@ -285,8 +276,6 @@ namespace basecross {
 
 	void CameraStartMovieState_Second::Update(float deltaTime)
 	{
-		//CameraStateBase::Update(deltaTime);
-
 		//移動モード時のカメラ操作処理
 		m_cameraManager->CameraControlStartMovieMode();
 
@@ -452,7 +441,6 @@ namespace basecross {
 		auto bossPos = lockBoss->GetPosition();
 
 		//ボスの正面を見る
-		//m_cameraManager->SetCameraEye(bossPos + Vec3(0.0f, 2.0f, -20.0f));
 		m_cameraManager->SetCameraAt(bossPos + Vec3(0.0f, 0.0f, 0.0f));
 
 		m_timeCount += deltaTime;
@@ -485,8 +473,6 @@ namespace basecross {
 		m_boss = boss;
 		Vec3 fwd = boss->GetForward();
 		m_bossAngle = atan2(fwd.z, fwd.x);
-		//m_bossAngle = XMConvertToRadians(-90.0f);
-		auto test = XMConvertToDegrees(m_bossAngle);
 
 		auto playerPos = m_cameraManager->GetStage()->GetSharedGameObject<Player>(L"Player")->GetPosition();
 		m_cameraManager->SetPushPos(m_cameraManager->GetCameraEye() - playerPos);
@@ -512,16 +498,6 @@ namespace basecross {
 			//元のステートに移行する
 			m_cameraManager->ChangeState(L"Normal");
 		}
-
-
-		////カメラの位置更新
-		//auto moveEnd = m_cameraManager->CameraPosUpdate(8, 0, 17.0f);
-		//m_cameraManager->SetPushStart(false);
-
-		//if (moveEnd)
-		//{
-		//	m_cameraManager->ChangeState(L"Normal");
-		//}
 	}
 
 	void CameraBossDieMovieState_First::Exit()

@@ -33,7 +33,7 @@ namespace basecross {
 		//AddStateは継承先のコンストラクタで行ってください
 		//また、必ず最初にChangeStateを呼び出してcurrentStateを初期化すること
 		StateMachineBase() {}
-		~StateMachineBase() {}
+		virtual ~StateMachineBase() {}
 
 		bool ChangeState(wstring stateName);
 
@@ -56,7 +56,7 @@ namespace basecross {
 		StateBase(const shared_ptr<GameObject>& obj) {
 			_obj = obj;
 		}
-		~StateBase() {}
+		virtual ~StateBase() {}
 
 		virtual void Enter() {}
 		virtual void Update(float deltatime) {}
